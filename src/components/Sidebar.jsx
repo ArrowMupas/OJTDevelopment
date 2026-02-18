@@ -16,7 +16,7 @@ export default function Sidebar() {
             href="#todos"
             className="block p-2 rounded hover:bg-blue-500 hover:text-white transition"
           >
-            Todos
+            Management
           </a>
         </li>
         <li>
@@ -24,7 +24,7 @@ export default function Sidebar() {
             href="#about"
             className="block p-2 rounded hover:bg-blue-500 hover:text-white transition"
           >
-            About
+            Transactions
           </a>
         </li>
         <li>

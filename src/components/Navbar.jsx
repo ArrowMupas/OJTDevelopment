@@ -1,8 +1,18 @@
 export default function Navbar() {
   return (
-    <header className="bg-blue-600 text-white p-4 shadow-md">
-      <div className="max-w-4xl mx-auto flex justify-between items-center">
-        <h1 className="text-xl font-bold">Todo App</h1>
+    <header className="bg-green-600 text-white p-4 shadow-md">
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <div className="flex items-center space-x-4">
+        <img
+              className="h-11 w-auto cursor-pointer"
+              src="https://rmn.ph/wp-content/uploads/2017/04/NEA-LOGO.png"
+              alt="Logo"
+              onError={(e) => {
+                e.currentTarget.src = 'https://8upload.com/display/68d52d9e15810/logo-alas1.jpg.php';
+              }}
+            />
+        <h1 className="text-xl font-bold">NEA Transportation</h1>
+        </div>
         <nav className="space-x-4">
           <a href="/" className="hover:underline">
             Home
