@@ -1,16 +1,48 @@
-# React + Vite
+# This is an OJT Internship System for the National Electrification Administration
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Not finished yet and not sure what really will be the future of this but
+We will be doing our best to finish the tasks asigned to us for our OJT
+Which is 300 Hours
 
-Currently, two official plugins are available:
+## 🛠 Technologies Used/ You can use
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Node.js** – JavaScript runtime environment
+- **Git** – Version control
+- **Visual Studio Code** – Code editor
+- **Supabase** - Cloud Backend and Database
 
-## React Compiler
+## 🚀 Git Commands (Quick Reference)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+# Create a new branch
+git checkout -b your-branch-name
 
-## Expanding the ESLint configuration
+# Switch to an existing branch
+git checkout your-branch-name
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# Switch back to main branch
+git checkout main
+
+# Stage all changes
+git add .
+
+# Commit changes with a message
+git commit -m "your message here"
+
+# Push your branch to GitHub
+git push origin your-branch-name
+
+# List all local branches
+git branch
+
+# List remote branches
+git branch -r
+
+# pull latest main
+git pull origin main
+
+# fetch
+git fetch
+```
+
+---
