@@ -17,6 +17,5 @@
   --font-*: initial;
   --font-sans: Rubik, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
-  --color-primary: oklch(0.35 0 0);
   --color-highlight: #349c2a;
 }
