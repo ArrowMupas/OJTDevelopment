@@ -4,7 +4,7 @@
 }
 
 @font-face {
-  font-family: "Rubik";
+  font-family: "Inter";
   src:
     url("/fonts/Inter_24pt-Regular.woff2") format("woff2"),
     url("/fonts/Inter_24pt--Regular.ttf") format("truetype");
@@ -18,4 +18,19 @@
   --font-sans: Rubik, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
   --color-highlight: #349c2a;
+}
+
+:root {
+  --neutral: #f4f4f8;
+  --admin: #fcfffc;
+}
+
+.dark {
+  --neutral: oklch(0.25 0.01 270);
+  --admin: oklch(0.2 0.02 240);
+}
+
+@theme inline {
+  --color-neutral: var(--neutral);
+  --color-admin: var(--admin);
 }
