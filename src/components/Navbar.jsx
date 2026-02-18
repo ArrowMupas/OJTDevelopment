@@ -20,7 +20,7 @@ export default function Navbar() {
           <a href="#about" className="hover:underline">
             About
           </a>
-          <a href="#contact" className="hover:underline">
+          <a href="/Contact" className="hover:underline">
             Contact
           </a>
         </nav>
