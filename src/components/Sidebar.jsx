@@ -9,23 +9,26 @@ export default function Sidebar() {
           <a
             href="/"
             className="block p-2 rounded hover:bg-highlight hover:text-white transition"
-          ><House className="h-4 w-4 inline-block mr-2" />
+          >
+            <House className="h-4 w-4 inline-block mr-2" />
             Home
           </a>
         </li>
         <li>
           <a
-            href="#todos"
+            href="/management"
             className="block p-2 rounded hover:bg-highlight hover:text-white transition"
-          ><UsersRound className="h-4 w-4 inline-block mr-2" />
+          >
+            <UsersRound className="h-4 w-4 inline-block mr-2" />
             Management
           </a>
         </li>
         <li>
           <a
-            href="#about"
+            href="/transactions"
             className="block p-2 rounded hover:bg-highlight hover:text-white transition"
-          ><ScrollText className="h-4 w-4 inline-block mr-2" />
+          >
+            <ScrollText className="h-4 w-4 inline-block mr-2" />
             Transactions
           </a>
         </li>
