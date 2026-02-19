@@ -51,7 +51,7 @@ export default function ContactPage() {
 
           <p>Formerly located at the D&E and CDC Buildings, 1050 Quezon Avenue, Paligsahan, their office is now inside Triangle Park at the National Government Center in Quezon City.<strong></strong></p>
          
-          <p><strong><PhoneCall className="h-10 w-4 inline-block mr-2" /> Phone:</strong> 0916 423 0007</p>
+          <p><strong><PhoneCall className="h-10 w-4 inline-block mr-2" /> Phone:</strong> (929) 190-9119</p>
           <p><strong><Mail className="h-10 w-4 inline-block mr-2" /> Email:</strong> nea.motorpool@gmail.com </p>
           <p><strong><MapPin className="h-4 w-4 inline-block mr-2" /> Address:</strong> 57 NEA Building, NIA Road, Government Center, Diliman , Quezon City, Philippines, 1001</p>
           
