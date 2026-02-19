@@ -1,4 +1,4 @@
-import { House, ScrollText, UsersRound } from "lucide-react";
+import { House, ScrollText, SquarePen, UsersRound } from "lucide-react";
 
 export default function Sidebar() {
   return (
@@ -12,6 +12,15 @@ export default function Sidebar() {
           >
             <House className="h-4 w-4 inline-block mr-2" />
             Home
+          </a>
+        </li>
+        <li>
+          <a
+            href="/survey"
+            className="block p-2 rounded hover:bg-highlight hover:text-white transition"
+          >
+            <SquarePen className="h-4 w-4 inline-block mr-2" />
+            Survey
           </a>
         </li>
         <li>
