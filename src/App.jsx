@@ -5,7 +5,7 @@ import ManagementPage from "./pages/ManagementPage";
 import TransactionsPage from "./pages/TransactionsPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import MainLayout from "./layouts/MainLayout";
-import SurveyPage from "./pages/home/SurveyPage";
+import DriverMonitoringPage from "./pages/home/DriverMonitoringPage";
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
         <Route path="/transactions" element={<TransactionsPage />} />
         <Route path="/management" element={<ManagementPage />} />
         <Route path="/contact" element={<ContactPage />} />
-        <Route path="/survey" element={<SurveyPage />} />
+        <Route path="/drivermonitoring" element={<DriverMonitoringPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
