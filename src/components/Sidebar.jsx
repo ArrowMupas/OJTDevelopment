@@ -2,7 +2,7 @@ import { House, ScrollText, UsersRound } from "lucide-react";
 
 export default function Sidebar() {
   return (
-    <aside className="w-64 bg-gray-100 p-4 hidden md:block shadow-inner">
+    <aside className="w-64 bg-gray-100 p-4 hidden md:block shadow-inner h-screen">
       {/* <h2 className="text-lg font-bold mb-4">Menu</h2> */}
       <ul className="space-y-2">
         <li>

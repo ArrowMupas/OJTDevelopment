@@ -2,7 +2,7 @@ import { Clipboard, ClipboardCheck, ClipboardClock } from "lucide-react";
 
 export default function HomePage() {
   return (
-    <main className="p-4 w-full">
+    <main className="p-7 w-full h-full">
       <h1 className="text-2xl font-bold mb-4">Home</h1>
 
       <div className="flex flex-col md:flex-row gap-4">
