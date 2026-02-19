@@ -8,13 +8,13 @@ export default function MainLayout() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <div className="flex flex-1">
+      <div className="flex flex-1 ">
         <Sidebar />
-        <main className="flex-1 p-4 bg-gray-50">
+        <main className="flex-1 flex flex-col ">
           <Outlet />
+          <Footer />
         </main>
       </div>
-      <Footer />
     </div>
   );
 }
