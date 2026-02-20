@@ -5,7 +5,6 @@ import MaintenancePage from "./pages/MaintenancePage";
 import TransactionsPage from "./pages/TransactionsPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import MainLayout from "./layouts/MainLayout";
-import SurveyPage from "./pages/home/SurveyPage";
 import Drivers from "./pages/Drivers";
 import DriverMonitoringPage from "./pages/home/DriverMonitoringPage";
 
@@ -17,7 +16,6 @@ function App() {
         <Route path="/transactions" element={<TransactionsPage />} />
         <Route path="/maintenance" element={<MaintenancePage />} />
         <Route path="/contact" element={<ContactPage />} />
-        <Route path="/survey" element={<SurveyPage />} />
         <Route path="/drivers" element={<Drivers />} />
         <Route path="/drivermonitoring" element={<DriverMonitoringPage />} />
       </Route>

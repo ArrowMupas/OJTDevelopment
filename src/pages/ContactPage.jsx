@@ -1,4 +1,13 @@
-import { FacebookIcon, Mail, MapIcon, MapPin, PhoneCall, Twitter, TwitterIcon, Youtube, YoutubeIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "../supabaseClient";
+import {
+  FacebookIcon,
+  Mail,
+  MapPin,
+  PhoneCall,
+  TwitterIcon,
+  YoutubeIcon,
+} from "lucide-react";
 
 export default function ContactPage() {
   return (
@@ -49,43 +58,61 @@ export default function ContactPage() {
         <div className="bg-green-600 text-white p-6 rounded-lg space-y-4">
           <h2 className="text-xl font-semibold mb-2">Contact Us</h2>
 
-          <p>Formerly located at the D&E and CDC Buildings, 1050 Quezon Avenue, Paligsahan, their office is now inside Triangle Park at the National Government Center in Quezon City.<strong></strong></p>
-         
-          <p><strong><PhoneCall className="h-10 w-4 inline-block mr-2" /> Phone:</strong> (929) 190-9119</p>
-          <p><strong><Mail className="h-10 w-4 inline-block mr-2" /> Email:</strong> nea.motorpool@gmail.com </p>
-          <p><strong><MapPin className="h-4 w-4 inline-block mr-2" /> Address:</strong> 57 NEA Building, NIA Road, Government Center, Diliman , Quezon City, Philippines, 1001</p>
-          
-  <div className="flex justify-center items-center gap-6">
-  <a
-    href="https://twitter.com/nea_ph"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-[#d1dadf] text-4xl transition duration-200 hover:scale-110"
-  >
-    <TwitterIcon className="w-8 h-20" />
-  </a>
+          <p>
+            Formerly located at the D&E and CDC Buildings, 1050 Quezon Avenue,
+            Paligsahan, their office is now inside Triangle Park at the National
+            Government Center in Quezon City.<strong></strong>
+          </p>
 
-  <a
-    href="https://www.youtube.com/@NEAPhilippines"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-[#e2e2d1] text-3xl transition duration-200 hover:scale-110"
-  >
-    <YoutubeIcon className="w-8 h-20" />
-  </a>
-  <a
-    href= "https://www.facebook.com/NEAPhilippines"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-[#e2e2d1] text-3xl transition duration-200 hover:scale-110"
-  >
-    <FacebookIcon className="w-8 h-20" />
-  </a>
-</div>
+          <p>
+            <strong>
+              <PhoneCall className="h-10 w-4 inline-block mr-2" /> Phone:
+            </strong>{" "}
+            (929) 190-9119
+          </p>
+          <p>
+            <strong>
+              <Mail className="h-10 w-4 inline-block mr-2" /> Email:
+            </strong>{" "}
+            nea.motorpool@gmail.com{" "}
+          </p>
+          <p>
+            <strong>
+              <MapPin className="h-4 w-4 inline-block mr-2" /> Address:
+            </strong>{" "}
+            57 NEA Building, NIA Road, Government Center, Diliman , Quezon City,
+            Philippines, 1001
+          </p>
 
+          <div className="flex justify-center items-center gap-6">
+            <a
+              href="https://twitter.com/nea_ph"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#d1dadf] text-4xl transition duration-200 hover:scale-110"
+            >
+              <TwitterIcon className="w-8 h-20" />
+            </a>
+
+            <a
+              href="https://www.youtube.com/@NEAPhilippines"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#e2e2d1] text-3xl transition duration-200 hover:scale-110"
+            >
+              <YoutubeIcon className="w-8 h-20" />
+            </a>
+            <a
+              href="https://www.facebook.com/NEAPhilippines"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#e2e2d1] text-3xl transition duration-200 hover:scale-110"
+            >
+              <FacebookIcon className="w-8 h-20" />
+            </a>
+          </div>
         </div>
       </div>
     </div>
   );
 }
-
