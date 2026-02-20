@@ -22,11 +22,11 @@ export default function Sidebar() {
         </li>
         <li>
           <a
-            href="/survey"
+            href="/drivermonitoring"
             className="block p-2 rounded hover:bg-highlight hover:text-white transition"
           >
             <SquarePen className="h-4 w-4 inline-block mr-2" />
-            Survey
+            Driver Monitoring
           </a>
         </li>
         <li>

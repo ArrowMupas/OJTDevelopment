@@ -7,6 +7,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import MainLayout from "./layouts/MainLayout";
 import SurveyPage from "./pages/home/SurveyPage";
 import Drivers from "./pages/Drivers";
+import DriverMonitoringPage from "./pages/home/DriverMonitoringPage";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/survey" element={<SurveyPage />} />
         <Route path="/drivers" element={<Drivers />} />
+        <Route path="/drivermonitoring" element={<DriverMonitoringPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
