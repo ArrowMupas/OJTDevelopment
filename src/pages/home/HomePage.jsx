@@ -36,7 +36,6 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-
       <h2 className="text-2xl font-bold mt-12 ">Pending Service Monitor</h2>
 
       <div className="bg-base-100 mt-4">

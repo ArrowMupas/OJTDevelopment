@@ -1,0 +1,268 @@
+import Filter from "daisyui/components/filter";
+import {
+  ArchiveRestore,
+  Car,
+  FilterIcon,
+  PenLine,
+  SquarePlus,
+  UsersRound,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+
+export default function MaintenancePage() {
+  return (
+    <main className="p-7 w-full h-full">
+      <h1 className="text-2xl font-bold mb-6">Maintenance</h1>
+
+      <div>
+        <button className="btn bg-white text-black border-black hover:bg-green-700 hover:text-white transition">
+          <Car className="h-4 w-6 inline-block mr-2" />
+          Vehicles
+        </button>
+
+        <Link to="/drivers">
+          <button className="btn bg-white text-black border-black hover:bg-green-700 hover:text-white transition ml-3">
+            <UsersRound className="h-4 w-6 inline-block mr-2" />
+            Drivers
+          </button>
+        </Link>
+      </div>
+
+      <label className="input mt-5 w-115 border-black">
+        <svg
+          className="h-[1em] opacity-100"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+        >
+          <g
+            strokeLinejoin="round"
+            strokeLinecap="round"
+            strokeWidth="2.5"
+            fill="none"
+            stroke="currentColor"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.3-4.3"></path>
+          </g>
+        </svg>
+        <input type="search" required placeholder="Search" />
+      </label>
+
+      <div className="dropdown">
+        <div
+          tabIndex={0}
+          role="button"
+          className="btn mt-5 ml-2 bg-green-700 text-white"
+        >
+          <FilterIcon className="h-4 w-6" />
+          Filter
+        </div>
+        <ul
+          tabIndex="-1"
+          className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+        >
+          <li className="rounded-sm focus:bg-highlight">
+            <a className="active:bg-highlight">Ascending</a>
+          </li>
+          <li>
+            <a className="active:bg-highlight">Descending</a>
+          </li>
+          <li>
+            <a className="active:bg-highlight">Date</a>
+          </li>
+          <li>
+            <a className="active:bg-highlight">Time</a>
+          </li>
+        </ul>
+      </div>
+
+      <button
+        className="btn flex-end mt-5 ml-4 bg-white text-black border-black hover:bg-green-700 hover:text-white transition ml-3"
+        onClick={() => document.getElementById("my_modal_3").showModal()}
+      >
+        <SquarePlus className="h-4 w-6" />
+        Add New
+      </button>
+      <dialog id="my_modal_3" className="modal">
+        <div className="modal-box">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          <h3 className="font-bold text-lg">Add Vehicle</h3>
+
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">Vehicle Name</legend>
+            <input type="text" className="input" placeholder="Type here" />
+            {/* <p className="label">Optional</p> */}
+          </fieldset>
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">Policy ID</legend>
+            <input type="text" className="input" placeholder="Type here" />
+            {/* <p className="label">Optional</p> */}
+          </fieldset>
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">Plate Number</legend>
+            <input type="text" className="input" placeholder="Type here" />
+            {/* <p className="label">Optional</p> */}
+          </fieldset>
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">Vehicle Name</legend>
+            <input type="text" className="input" placeholder="Type here" />
+            {/* <p className="label">Optional</p> */}
+          </fieldset>
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">Plate Number</legend>
+            <input type="text" className="input" placeholder="Type here" />
+            {/* <p className="label">Optional</p> */}
+          </fieldset>
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">Issue Date</legend>
+            <input type="text" className="input" placeholder="Type here" />
+            {/* <p className="label">Optional</p> */}
+          </fieldset>
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">Period Covered</legend>
+            <input type="text" className="input" placeholder="Type here" />
+            {/* <p className="label">Optional</p> */}
+          </fieldset>
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend">Required Covered</legend>
+            <input type="text" className="input" placeholder="Type here" />
+            {/* <p className="label">Optional</p> */}
+          </fieldset>
+        </div>
+      </dialog>
+
+      <h2 className="text-2xl mt-7 font-bold mb-6">Vehicles</h2>
+      <div className="bg-base-100 mt-2 border border-gray-200">
+        <div className="overflow-x-auto">
+          <table className="table table-zebra">
+            <thead>
+              <tr>
+                <th>Policy ID</th>
+                <th>Policy No.</th>
+                <th>Vehicle</th>
+                <th>Plate No.</th>
+                <th>Issue Date</th>
+                <th>Period Covered</th>
+                <th>Required Covered</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>1000775941</th>
+                <td>MV-PC-GSISHO-0202730</td>
+                <td>Toyota Altis</td>
+                <td>SJX840</td>
+                <td>Sep. 28, 2023</td>
+                <td>Nov. 01, 2023 to Nov. 01, 2024</td>
+                <td>Comprehensive & TPL</td>
+                <td>
+                  <ul>
+                    <li className="flex gap-2">
+                      <button className="btn btn-square">
+                        <PenLine className="h-4 w-6" />
+                      </button>
+                      <button className="btn btn-square">
+                        <ArchiveRestore className="h-4 w-6" />
+                      </button>
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+              <tr>
+                <th>1000775941</th>
+                <td>MV-PC-GSISHO-0202730</td>
+                <td>Honda City</td>
+                <td>SJH180</td>
+                <td>Sep. 28, 2023</td>
+                <td>Nov. 01, 2023 to Nov. 01, 2024</td>
+                <td>Comprehensive & TPL</td>
+                <td>
+                  <ul>
+                    <li className="flex gap-2">
+                      <button className="btn btn-square">
+                        <PenLine className="h-4 w-6" />
+                      </button>
+                      <button className="btn btn-square">
+                        <ArchiveRestore className="h-4 w-6" />
+                      </button>
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+              <tr>
+                <th>1000772907</th>
+                <td>MV-PC-GSISHO-0201339</td>
+                <td>Isuzu Sportivo</td>
+                <td>SLD629</td>
+                <td>Aug. 29, 2023</td>
+                <td>Oct. 01, 2023 to Oct. 01, 2024</td>
+                <td>Comprehensive & TPL</td>
+                <td>
+                  <ul>
+                    <li className="flex gap-2">
+                      <button className="btn btn-square">
+                        <PenLine className="h-4 w-6" />
+                      </button>
+                      <button className="btn btn-square">
+                        <ArchiveRestore className="h-4 w-6" />
+                      </button>
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+              <tr>
+                <th>1000769364</th>
+                <td>MV-PC-GSISHO-0200044</td>
+                <td>Isuzu Crosswind</td>
+                <td>SKX918</td>
+                <td>Jul. 21, 2023</td>
+                <td>Sept. 01, 2023 to Sept. 01, 2024</td>
+                <td>Comprehensive & TPL</td>
+                <td>
+                  <ul>
+                    <li className="flex gap-2">
+                      <button className="btn btn-square">
+                        <PenLine className="h-4 w-6" />
+                      </button>
+                      <button className="btn btn-square">
+                        <ArchiveRestore className="h-4 w-6" />
+                      </button>
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+              <tr>
+                <th>1000769366</th>
+                <td>MV-PC-GSISHO-0200045</td>
+                <td>Isuzu Sportivo</td>
+                <td>SLD628</td>
+                <td>Jul. 21, 2023</td>
+                <td>Sept. 01, 2023 to Sept. 01, 2024</td>
+                <td>Comprehensive & TPL</td>
+                <td>
+                  <ul>
+                    <li className="flex gap-2">
+                      <button className="btn btn-square">
+                        <PenLine className="h-4 w-6" />
+                      </button>
+                      <button className="btn btn-square">
+                        <ArchiveRestore className="h-4 w-6" />
+                      </button>
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot></tfoot>
+          </table>
+        </div>
+      </div>
+    </main>
+  );
+}
