@@ -15,10 +15,12 @@ export default function MaintenancePage() {
       <h1 className="text-2xl font-bold mb-6">Maintenance</h1>
 
       <div>
-        <button className="btn bg-white text-black border-black hover:bg-green-700 hover:text-white transition">
-          <Car className="h-4 w-6 inline-block mr-2" />
-          Vehicles
-        </button>
+        <Link to="/maintenance">
+          <button className="btn bg-white text-black border-black hover:bg-green-700 hover:text-white transition">
+            <Car className="h-4 w-6 inline-block mr-2" />
+            Vehicles
+          </button>
+        </Link>
 
         <Link to="/drivers">
           <button className="btn bg-white text-black border-black hover:bg-green-700 hover:text-white transition ml-3">
@@ -85,54 +87,109 @@ export default function MaintenancePage() {
       </button>
       <dialog id="my_modal_3" className="modal">
         <div className="modal-box">
-          <form method="dialog">
+          <h1 className="text-2xl font-bold mb-6">Add Vehicle</h1>
+          <form method="dialog max-w-md mx-auto">
             {/* if there is a button in form, it will close the modal */}
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
               ✕
             </button>
+            <div class="relative z-0 w-116 mb-3 group">
+              <fieldset className="fieldset">
+                <legend className="fieldset-legendc">Vehicle Name</legend>
+                <input
+                  type="text"
+                  className="input w-full"
+                  placeholder="Type here"
+                />
+                {/* <p className="label">Optional</p> */}
+              </fieldset>
+            </div>
+            <div class="grid md:grid-cols-2 md:gap-6">
+              <div class="relative z-0 w-full mb-4 group">
+                <fieldset className="fieldset">
+                  <legend className="fieldset-legend">Required Covered</legend>
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="Type here"
+                  />
+                  {/* <p className="label">Optional</p> */}
+                </fieldset>
+              </div>
+              <div class="relative z-0 w-full mb-4 group">
+                <fieldset className="fieldset">
+                  <legend className="fieldset-legend">Plate Number</legend>
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="Type here"
+                  />
+                  {/* <p className="label">Optional</p> */}
+                </fieldset>
+              </div>
+            </div>
+            <div class="grid md:grid-cols-2 md:gap-6">
+              <div class="relative z-0 w-full mb-5 group">
+                <fieldset className="fieldset">
+                  <legend className="fieldset-legend">Policy ID</legend>
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="Type here"
+                  />
+                  {/* <p className="label">Optional</p> */}
+                </fieldset>
+              </div>
+              <div class="relative z-0 w-full mb-5 group">
+                <fieldset className="fieldset">
+                  <legend className="fieldset-legend">Policy Number</legend>
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="Type here"
+                  />
+                  {/* <p className="label">Optional</p> */}
+                </fieldset>
+              </div>
+            </div>
+            <div class="grid md:grid-cols-2 md:gap-6">
+              <div class="relative z-0 w-full mb-5 group">
+                <fieldset className="fieldset">
+                  <legend className="fieldset-legend">Issue Date</legend>
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="Type here"
+                  />
+                  {/* <p className="label">Optional</p> */}
+                </fieldset>
+              </div>
+              <div class="relative z-0 w-full mb-5 group">
+                <fieldset className="fieldset">
+                  <legend className="fieldset-legend">Period Covered</legend>
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="Type here"
+                  />
+                  {/* <p className="label">Optional</p> */}
+                </fieldset>
+              </div>
+            </div>
           </form>
-          <h3 className="font-bold text-lg">Add Vehicle</h3>
+          <div className="flex justify-center mt-3">
+            <Link to="">
+              <button className="btn bg-[#990808] text-white hover:bg-[#d41919] hover:text-white transition w-32">
+                Cancel
+              </button>
+            </Link>
 
-          <fieldset className="fieldset">
-            <legend className="fieldset-legend">Vehicle Name</legend>
-            <input type="text" className="input" placeholder="Type here" />
-            {/* <p className="label">Optional</p> */}
-          </fieldset>
-          <fieldset className="fieldset">
-            <legend className="fieldset-legend">Policy ID</legend>
-            <input type="text" className="input" placeholder="Type here" />
-            {/* <p className="label">Optional</p> */}
-          </fieldset>
-          <fieldset className="fieldset">
-            <legend className="fieldset-legend">Plate Number</legend>
-            <input type="text" className="input" placeholder="Type here" />
-            {/* <p className="label">Optional</p> */}
-          </fieldset>
-          <fieldset className="fieldset">
-            <legend className="fieldset-legend">Vehicle Name</legend>
-            <input type="text" className="input" placeholder="Type here" />
-            {/* <p className="label">Optional</p> */}
-          </fieldset>
-          <fieldset className="fieldset">
-            <legend className="fieldset-legend">Plate Number</legend>
-            <input type="text" className="input" placeholder="Type here" />
-            {/* <p className="label">Optional</p> */}
-          </fieldset>
-          <fieldset className="fieldset">
-            <legend className="fieldset-legend">Issue Date</legend>
-            <input type="text" className="input" placeholder="Type here" />
-            {/* <p className="label">Optional</p> */}
-          </fieldset>
-          <fieldset className="fieldset">
-            <legend className="fieldset-legend">Period Covered</legend>
-            <input type="text" className="input" placeholder="Type here" />
-            {/* <p className="label">Optional</p> */}
-          </fieldset>
-          <fieldset className="fieldset">
-            <legend className="fieldset-legend">Required Covered</legend>
-            <input type="text" className="input" placeholder="Type here" />
-            {/* <p className="label">Optional</p> */}
-          </fieldset>
+            <Link to="">
+              <button className="btn bg-green-700 text-white hover:bg-[#5DBE3F] hover:text-white transition w-32 ml-1">
+                Done
+              </button>
+            </Link>
+          </div>
         </div>
       </dialog>
 
