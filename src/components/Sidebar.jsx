@@ -13,15 +13,6 @@ export default function Sidebar() {
       <ul className="space-y-2">
         <li>
           <a
-            href="/"
-            className="block p-2 rounded hover:bg-highlight hover:text-white transition"
-          >
-            <House className="h-4 w-4 inline-block mr-2" />
-            Home
-          </a>
-        </li>
-        <li>
-          <a
             href="/drivermonitoring"
             className="block p-2 rounded hover:bg-highlight hover:text-white transition"
           >
