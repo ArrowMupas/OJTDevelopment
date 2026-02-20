@@ -6,11 +6,14 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 
 export default function ContactPage() {
-  const { register, handleSubmit, reset } = useForm();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { register, handleSubmit, reset } = useForm(); // React Hook Form package for form handling
+  const [isSubmitting, setIsSubmitting] = useState(false); // Loading state
 
+  // Function to handle contact submission
   const submitMessage = async (data) => {
+    // 1. Set loading state to true
     setIsSubmitting(true);
+    // 2. Insert data into Supabase "contacts" table
     const { error } = await supabase.from("contacts").insert([
       {
         first_name: data.firstName,
@@ -22,12 +25,15 @@ export default function ContactPage() {
     ]);
 
     if (error) {
+      // 3. Show error toast if insertion fails
       toast.error("Failed to send message");
     } else {
+      // 4. Show success toast and reset form if insertion succeeds
       toast.success("Message sent!");
       reset();
     }
 
+    // 5. Set loading state back to false
     setIsSubmitting(false);
   };
 
@@ -36,9 +42,9 @@ export default function ContactPage() {
       {/* Header */}
       <h1 className="text-3xl font-bold mb-10 text-center">Contact Us</h1>
 
-      {/* Grid Layout */}
       <div className="grid md:grid-cols-2 gap-8">
         <form
+          // On submit button click call handleSubmit from react-hook-form which will call our submitMessage function
           onSubmit={handleSubmit(submitMessage)}
           className="py-3 h-full flex flex-col justify-between"
         >
@@ -46,6 +52,7 @@ export default function ContactPage() {
             <input
               type="text"
               placeholder="First Name"
+              // Register the input of user (for exampple "firstName") with react-hook-form using the "register" function
               {...register("firstName")}
               className="input"
             />
@@ -83,7 +90,9 @@ export default function ContactPage() {
             className="btn btn-success flex items-center gap-2 w-full"
             disabled={isSubmitting}
           >
+            {/* isSubmitting is a state and if it's true we show a loading spinner the "&&" means if true show this*/}
             {isSubmitting && <span className="loading loading-spinner"></span>}
+            {/* the "? :" is a ternary operator which is basically if this is true show this else show that" */}
             {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </form>
