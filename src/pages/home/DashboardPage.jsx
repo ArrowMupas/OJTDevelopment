@@ -3,7 +3,10 @@ import { Clipboard, ClipboardCheck, ClipboardClock } from "lucide-react";
 export default function HomePage() {
   return (
     <main className="p-7 w-full h-full">
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+      <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
+     <p className="text-gray-500 mb-6">
+          Overview of requests and driver activity
+        </p>
 
       <div className="flex flex-col md:flex-row gap-4">
         <div className="card w-96 bg-base-100 card-md shadow-sm">

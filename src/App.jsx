@@ -19,12 +19,12 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/transactions" element={<TransactionsPage />} />
+         <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/maintenance" element={<MaintenancePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/drivers" element={<Drivers />} />
           <Route path="/drivermonitoring" element={<DriverMonitoringPage />} />
-          
+                    
       </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

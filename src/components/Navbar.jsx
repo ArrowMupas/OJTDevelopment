@@ -13,12 +13,15 @@ export default function Navbar() {
             }}
           />
           <h1 className="text-xl font-bold hidden sm:block">
-            NEA Transportation
+            National Electrification Administration
+            <p className="text-sm text-yellow-200">
+              Transport Operations Services Unit (TOSU)
+            </p>
           </h1>
         </div>
 
         <nav className="space-x-7">
-          <a href="/" className="hover:underline  ">
+          <a href="/ " className="hover:underline  ">
             Home
           </a>
           <a href="#about" className="hover:underline ">
