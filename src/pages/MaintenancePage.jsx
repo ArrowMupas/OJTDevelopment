@@ -11,9 +11,13 @@ import { Link } from "react-router-dom";
 
 export default function MaintenancePage() {
   return (
+    
     <main className="p-7 w-full h-full">
-      <h1 className="text-2xl font-bold mb-6">Maintenance</h1>
-
+         <h1 className="text-3xl font-bold text-gray-800">Maintenance</h1>
+         <p className="text-gray-500 mb-6">
+          Vehicle and driver management
+        </p>
+        
       <div>
         <Link to="/maintenance">
           <button className="btn bg-white text-black border-black hover:bg-green-700 hover:text-white transition">
