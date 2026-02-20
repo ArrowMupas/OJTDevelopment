@@ -12,23 +12,7 @@ import { Link } from "react-router-dom";
 export default function MaintenancePage() {
   return (
     <main className="p-7 w-full h-full">
-      <h1 className="text-2xl font-bold mb-6">Maintenance</h1>
-
-      <div>
-        <Link to="/maintenance">
-          <button className="btn bg-white text-black border-black hover:bg-green-700 hover:text-white transition">
-            <Car className="h-4 w-6 inline-block mr-2" />
-            Vehicles
-          </button>
-        </Link>
-
-        <Link to="/drivers">
-          <button className="btn bg-white text-black border-black hover:bg-green-700 hover:text-white transition ml-3">
-            <UsersRound className="h-4 w-6 inline-block mr-2" />
-            Drivers
-          </button>
-        </Link>
-      </div>
+      <h1 className="text-2xl font-bold mb-0">Maintenance</h1>
 
       <label className="input mt-5 w-115 border-black">
         <svg
@@ -167,11 +151,27 @@ export default function MaintenancePage() {
         </div>
       </dialog>
 
+      <div className="flex gap-2 mt-5">
+        <Link to="/maintenance">
+          <button className="btn bg-white text-black border-black hover:bg-green-700 hover:text-white transition">
+            <Car className="h-4 w-6 inline-block mr-2" />
+            Vehicles
+          </button>
+        </Link>
+
+        <Link to="/drivers">
+          <button className="btn bg-white text-black border-black hover:bg-green-700 hover:text-white transition ml-3">
+            <UsersRound className="h-4 w-6 inline-block mr-2" />
+            Drivers
+          </button>
+        </Link>
+      </div>
+
       <h2 className="text-2xl mt-7 font-bold mb-6">Drivers</h2>
-      <div className="bg-base-100 mt-2 border border-gray-200">
+      <div className="bg-base-100 mt-2 border border-black-200 border-black/20">
         <div className="overflow-x-auto">
           <table className="table table-zebra">
-            <thead>
+            <thead className="bg-green-700 text-white">
               <tr>
                 <th>Driver ID</th>
                 <th>Name</th>

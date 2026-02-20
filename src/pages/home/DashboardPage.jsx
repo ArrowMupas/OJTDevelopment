@@ -7,12 +7,12 @@ export default function HomePage() {
 
       <div className="flex flex-col md:flex-row gap-4">
         <div className="card w-96 bg-base-100 card-md shadow-sm">
-          <div className="card-body flex-row justify-between border-[#d2dc15] border-b-2 rounded-sm">
+          <div className="card-body flex-row justify-between border-[#4c95b0] border-b-2 rounded-sm">
             <div>
               <h2 className="card-title">21</h2>
               <p>Today's Request</p>
             </div>
-            <Clipboard className="h-8 w-12 mr-2 text-[#d2dc15]" />
+            <Clipboard className="h-8 w-12 mr-2 text-[#4c95b0]" />
           </div>
         </div>
 
@@ -38,10 +38,10 @@ export default function HomePage() {
       </div>
       <h2 className="text-2xl font-bold mt-12 ">Pending Service Monitor</h2>
 
-      <div className="bg-base-100 mt-4">
+      <div className="bg-base-100 mt-2 border border-black-200 border-black/20">
         <div className="overflow-x-auto">
           <table className="table table-zebra">
-            <thead>
+            <thead className="bg-green-700 text-white">
               <tr>
                 <th></th>
                 <th>Email</th>
