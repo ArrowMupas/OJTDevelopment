@@ -3,9 +3,9 @@
   themes: light --default;
 }
 
-html {
+/* html {
   scrollbar-gutter: stable;
-}
+} */
 
 @font-face {
   font-family: "Inter";
