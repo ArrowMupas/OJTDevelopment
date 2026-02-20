@@ -1,5 +1,6 @@
 import {
   House,
+  LayoutDashboard,
   ScrollText,
   Settings,
   SquarePen,
@@ -13,6 +14,23 @@ export default function Sidebar() {
       <ul className="space-y-2">
         <li>
           <a
+            href="/"
+            className="block p-2 rounded hover:bg-highlight hover:text-white transition">
+            <House className="h-4 w-4 inline-block mr-2" />
+            Home
+          </a>
+        </li>
+        <li>
+            <a
+            href="/dashboard"
+            className="block p-2 rounded hover:bg-highlight hover:text-white transition"
+          >
+            <LayoutDashboard className="h-4 w-4 inline-block mr-2" />
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <a
             href="/drivermonitoring"
             className="block p-2 rounded hover:bg-highlight hover:text-white transition"
           >
@@ -21,6 +39,7 @@ export default function Sidebar() {
           </a>
         </li>
         <li>
+         
           <a
             href="/transactions"
             className="block p-2 rounded hover:bg-highlight hover:text-white transition"
