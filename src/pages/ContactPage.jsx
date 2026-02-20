@@ -1,58 +1,92 @@
-import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import {
-  FacebookIcon,
-  Mail,
-  MapPin,
-  PhoneCall,
-  TwitterIcon,
-  YoutubeIcon,
-} from "lucide-react";
+import { Mail, MapPin, PhoneCall } from "lucide-react";
+import { FaFacebook, FaTwitter, FaYoutube } from "react-icons/fa";
+import toast from "react-hot-toast";
+import { useForm } from "react-hook-form";
+import { useState } from "react";
 
 export default function ContactPage() {
+  const { register, handleSubmit, reset } = useForm();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const submitMessage = async (data) => {
+    setIsSubmitting(true);
+    const { error } = await supabase.from("contacts").insert([
+      {
+        first_name: data.firstName,
+        last_name: data.lastName,
+        email: data.email,
+        phone_number: data.phone,
+        message: data.message,
+      },
+    ]);
+
+    if (error) {
+      toast.error("Failed to send message");
+    } else {
+      toast.success("Message sent!");
+      reset();
+    }
+
+    setIsSubmitting(false);
+  };
+
   return (
     <div className="p-6 max-w-5xl mx-auto font-inter">
       {/* Header */}
-      <h1 className="text-3xl font-bold mb-8 text-center">Contact Us</h1>
+      <h1 className="text-3xl font-bold mb-10 text-center">Contact Us</h1>
 
       {/* Grid Layout */}
       <div className="grid md:grid-cols-2 gap-8">
-        {/* Left: Customer Input */}
-        <div className="space-y-4">
+        <form
+          onSubmit={handleSubmit(submitMessage)}
+          className="py-3 h-full flex flex-col justify-between"
+        >
           <div className="flex gap-4">
             <input
               type="text"
               placeholder="First Name"
-              className="w-1/2 p-3 border border-gray-300 rounded"
+              {...register("firstName")}
+              className="input"
             />
+
             <input
               type="text"
               placeholder="Last Name"
-              className="w-1/2 p-3 border border-gray-300 rounded"
+              {...register("lastName")}
+              className="input"
             />
           </div>
 
           <input
-            type="text"
+            type="email"
             placeholder="Email"
-            className="w-full p-3 border border-gray-300 rounded"
+            {...register("email")}
+            className="input w-full"
           />
 
           <input
             type="text"
             placeholder="Phone Number"
-            className="w-full p-3 border border-gray-300 rounded"
+            {...register("phone")}
+            className="input w-full"
           />
 
           <textarea
             placeholder="Your Message"
-            className="w-full p-3 border border-gray-300 rounded h-40"
-          ></textarea>
+            {...register("message")}
+            className="textarea w-full h-40"
+          />
 
-          <button className="bg-green-600 hover:bg-blue-700 text-white px-6 py-3 rounded mt-2">
-            Submit
+          <button
+            type="submit"
+            className="btn btn-success flex items-center gap-2 w-full"
+            disabled={isSubmitting}
+          >
+            {isSubmitting && <span className="loading loading-spinner"></span>}
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
-        </div>
+        </form>
 
         {/* Right: Company Info */}
         <div className="bg-green-600 text-white p-6 rounded-lg space-y-4">
@@ -91,7 +125,7 @@ export default function ContactPage() {
               rel="noopener noreferrer"
               className="text-[#d1dadf] text-4xl transition duration-200 hover:scale-110"
             >
-              <TwitterIcon className="w-8 h-20" />
+              <FaTwitter className="w-8 h-20" />
             </a>
 
             <a
@@ -100,7 +134,7 @@ export default function ContactPage() {
               rel="noopener noreferrer"
               className="text-[#e2e2d1] text-3xl transition duration-200 hover:scale-110"
             >
-              <YoutubeIcon className="w-8 h-20" />
+              <FaYoutube className="w-8 h-20" />
             </a>
             <a
               href="https://www.facebook.com/NEAPhilippines"
@@ -108,7 +142,7 @@ export default function ContactPage() {
               rel="noopener noreferrer"
               className="text-[#e2e2d1] text-3xl transition duration-200 hover:scale-110"
             >
-              <FacebookIcon className="w-8 h-20" />
+              <FaFacebook className="w-8 h-20" />
             </a>
           </div>
         </div>
