@@ -1,6 +1,7 @@
 import {
   House,
   LayoutDashboard,
+  MessageCircleQuestionMark,
   ScrollText,
   Settings,
   SquareActivity,
@@ -53,6 +54,15 @@ export default function Sidebar() {
           >
             <ScrollText className="h-4 w-4 inline-block mr-2" />
             Transactions
+          </a>
+        </li>
+        <li>
+          <a
+            href="/inquiry"
+            className="block p-2 rounded hover:bg-highlight hover:text-white transition text-sm"
+          >
+            <MessageCircleQuestionMark className="h-4 w-4 inline-block mr-2" />
+            Inquiry
           </a>
         </li>
         <li>
