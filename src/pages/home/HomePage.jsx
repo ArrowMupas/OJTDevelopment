@@ -36,8 +36,8 @@ export default function HomePage() {
             Submit your request to the Transport Operations Services Unit (TOSU) for review and approval.
           </p>
 
-          {/* Button */}
-          <div className="flex flex-col sm:flex-row gap-4">
+         {/* Button */}
+          <div className="flex flex-col items-start">
             <a 
               href={googleFormLink}
               target="_blank"
@@ -46,6 +46,12 @@ export default function HomePage() {
             >
               Request Vehicle
             </a>
+            
+            <p className="mt-4 text-sm text-slate-400 font-medium italic">
+              * (1) One vehicle per request.
+            </p>
+
+
           </div>
 
         </div>
