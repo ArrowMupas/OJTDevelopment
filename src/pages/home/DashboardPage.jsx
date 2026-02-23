@@ -4,9 +4,9 @@ export default function HomePage() {
   return (
     <main className="p-7 w-full h-full">
       <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
-     <p className="text-gray-500 mb-6">
-          Overview of requests and driver activity
-        </p>
+      <p className="text-gray-500 mb-6">
+        Overview of requests and driver activity
+      </p>
 
       <div className="flex flex-col md:flex-row gap-4">
         <div className="card w-96 bg-base-100 card-md shadow-sm">
@@ -42,9 +42,9 @@ export default function HomePage() {
       <h2 className="text-2xl font-bold mt-12 ">Pending Service Monitor</h2>
 
       <div className="bg-base-100 mt-4">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto border border-green-600">
           <table className="table table-zebra">
-            <thead>
+            <thead className="bg-green-600 text-white">
               <tr>
                 <th></th>
                 <th>Email</th>

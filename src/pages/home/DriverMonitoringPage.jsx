@@ -1,4 +1,11 @@
-import { Car, Clock, FileChartColumnIncreasing, ShipWheel, StarIcon, TimerIcon } from "lucide-react";
+import {
+  Car,
+  Clock,
+  FileChartColumnIncreasing,
+  ShipWheel,
+  StarIcon,
+  TimerIcon,
+} from "lucide-react";
 import { useState } from "react";
 
 export default function DriverMonitoringPage() {
@@ -51,10 +58,8 @@ export default function DriverMonitoringPage() {
   };
 
   const getStatus = (avg) => {
-    if (avg <= 1.2)
-      return "bg-green-100 text-green-700";
-    if (avg <= 1.5)
-      return "bg-yellow-100 text-yellow-700";
+    if (avg <= 1.2) return "bg-green-100 text-green-700";
+    if (avg <= 1.5) return "bg-yellow-100 text-yellow-700";
     return "bg-red-100 text-red-700";
   };
 
@@ -70,9 +75,7 @@ export default function DriverMonitoringPage() {
         <h1 className="text-3xl font-bold text-gray-800">
           Driver Performance Monitoring
         </h1>
-        <p className="text-gray-500">
-          Survey evaluation of drivers
-        </p>
+        <p className="text-gray-500">Survey evaluation of drivers</p>
       </div>
 
       {/* Filters */}
@@ -91,62 +94,59 @@ export default function DriverMonitoringPage() {
           <option>Others</option>
         </select>
       </div>
-{/* Summary Cards */}
-<div className="grid md:grid-cols-4 gap-4 mb-6">
+      {/* Summary Cards */}
+      <div className="grid md:grid-cols-4 gap-4 mb-6">
+        {/* Average Rating */}
+        <div className="bg-white p-6 rounded-2xl shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold">{overallAverage}</h2>
+              <p className="text-gray-500">Average Rating</p>
+            </div>
+            <StarIcon className="w-8 h-8 text-yellow-400" />
+          </div>
+        </div>
 
-  {/* Average Rating */}
-  <div className="bg-white p-6 rounded-2xl shadow">
-    <div className="flex items-center justify-between">
-      <div>
-        <h2 className="text-2xl font-bold">{overallAverage}</h2>
-        <p className="text-gray-500">Average Rating</p>
+        {/* Total Surveys */}
+
+        <button>
+          <div className="bg-white p-6 rounded-2xl shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold">3</h2>
+                <p className="text-gray-500">Total Surveys</p>
+              </div>
+              <FileChartColumnIncreasing className="w-8 h-8 text-green-600" />
+            </div>
+          </div>
+        </button>
+        {/* On-Time Rate */}
+        <div className="bg-white p-6 rounded-2xl shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold">95%</h2>
+              <p className="text-gray-500">On-Time Rate</p>
+            </div>
+            <Clock className="w-8 h-8 text-yellow-400" />
+          </div>
+        </div>
+
+        {/* Active Drivers */}
+        <div className="bg-white p-6 rounded-2xl shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold">{drivers.length}</h2>
+              <p className="text-gray-500">Active Drivers</p>
+            </div>
+            <Car className="w-10 h-10 text-green-600" />
+          </div>
+        </div>
       </div>
-      <StarIcon className="w-8 h-8 text-yellow-400" />
-    </div>
-  </div>
-
-  {/* Total Surveys */}
- 
- <button>
-  <div className="bg-white p-6 rounded-2xl shadow">
-    <div className="flex items-center justify-between">
-      <div>
-        <h2 className="text-2xl font-bold">3</h2>
-        <p className="text-gray-500">Total Surveys</p>
-      </div>
-      <FileChartColumnIncreasing className="w-8 h-8 text-green-600" />
-    </div>
-  </div>
-</button>
-  {/* On-Time Rate */}
-  <div className="bg-white p-6 rounded-2xl shadow">
-    <div className="flex items-center justify-between">
-      <div>
-        <h2 className="text-2xl font-bold">95%</h2>
-        <p className="text-gray-500">On-Time Rate</p>
-      </div>
-      <Clock className="w-8 h-8 text-yellow-400" />
-    </div>
-  </div>
-
-  {/* Active Drivers */}
-  <div className="bg-white p-6 rounded-2xl shadow">
-    <div className="flex items-center justify-between">
-      <div>
-        <h2 className="text-2xl font-bold">{drivers.length}</h2>
-        <p className="text-gray-500">Active Drivers</p>
-      </div>
-      <Car className="w-10 h-10 text-green-600" />
-    </div>
-  </div>
-
-</div>
-
 
       {/* Driver Table */}
       <div className="bg-white rounded-2xl shadow overflow-x-auto">
         <table className="w-full text-left">
-          <thead className="bg-gray-100 text-gray-600 text-sm">
+          <thead className="bg-green-600 text-white text-sm">
             <tr>
               <th className="p-4">Driver</th>
               <th className="p-4">Vehicle</th>
@@ -164,9 +164,7 @@ export default function DriverMonitoringPage() {
                     key={index}
                     className="border-t hover:bg-gray-50 cursor-pointer"
                     onClick={() =>
-                      setSelectedDriver(
-                        selectedDriver === index ? null : index
-                      )
+                      setSelectedDriver(selectedDriver === index ? null : index)
                     }
                   >
                     <td className="p-4 font-medium">{driver.name}</td>
@@ -176,14 +174,14 @@ export default function DriverMonitoringPage() {
                     <td className="p-4">
                       <span
                         className={`px-3 py-1 text-sm rounded-full ${getStatus(
-                          avg
+                          avg,
                         )}`}
                       >
                         {avg <= 1.2
                           ? "Excellent"
                           : avg <= 1.5
-                          ? "Good"
-                          : "Needs Review"}
+                            ? "Good"
+                            : "Needs Review"}
                       </span>
                     </td>
                   </tr>
