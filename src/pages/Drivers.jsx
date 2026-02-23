@@ -1,81 +1,143 @@
-import Filter from "daisyui/components/filter";
+import { supabase } from "../supabaseClient";
+import toast from "react-hot-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useEffect, useState } from "react";
 import {
   ArchiveRestore,
   Car,
   FilterIcon,
   PenLine,
+  Search,
   SquarePlus,
+  Truck,
+  UserRoundX,
   UsersRound,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
+const driverSchema = z.object({
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  email: z.email({ message: "Please enter a valid email" }),
+  phone: z.string().optional(),
+});
+
 export default function MaintenancePage() {
+  const [drivers, setDrivers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchDrivers() {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("drivers")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+      } else {
+        setDrivers(data);
+      }
+      setLoading(false);
+    }
+    fetchDrivers();
+  }, []);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(driverSchema),
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const createDriver = async (data) => {
+    setIsSubmitting(true);
+    const { error } = await supabase.from("drivers").insert([
+      {
+        first_name: data.firstName,
+        last_name: data.lastName,
+        email: data.email,
+        contact_number: data.phone,
+      },
+    ]);
+
+    if (error) {
+      toast.error("Failed to create driver");
+    } else {
+      toast.success("Driver created successfully!", {
+        position: "top-center",
+      });
+      document.getElementById("driverModal")?.close();
+      reset();
+    }
+
+    setIsSubmitting(false);
+  };
+
   return (
     <main className="p-7 w-full h-full">
-      <h1 className="text-3xl font-bold text-gray-800">Maintenance</h1>
+      <h1 className="text-3xl font-bold text-gray-800">Driver Maintenance</h1>
       <p className="text-gray-500 mb-6">Vehicle and driver management</p>
 
-      <label className="input mt-5 w-115 border-black">
-        <svg
-          className="h-[1em] opacity-100"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-        >
-          <g
-            strokeLinejoin="round"
-            strokeLinecap="round"
-            strokeWidth="2.5"
-            fill="none"
-            stroke="currentColor"
-          >
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.3-4.3"></path>
-          </g>
-        </svg>
-        <input type="search" required placeholder="Search" />
-      </label>
+      <div className="space-x-3">
+        <label className="input w-1/3 border-black">
+          <Search className="h-4 w-6" />
+          <input type="search" required placeholder="Search" />
+        </label>
 
-      <div className="dropdown">
-        <div
-          tabIndex={0}
-          role="button"
-          className="btn mt-5 ml-2 bg-green-600 text-white"
-        >
-          <FilterIcon className="h-4 w-6" />
-          Filter
+        <div className="dropdown">
+          <div
+            tabIndex={0}
+            role="button"
+            className="btn ml-2 bg-green-600 text-white"
+          >
+            <FilterIcon className="h-4 w-6" />
+            Filter
+          </div>
+          <ul
+            tabIndex="-1"
+            className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+          >
+            <li className="rounded-sm focus:bg-highlight">
+              <a className="active:bg-highlight">Ascending</a>
+            </li>
+            <li>
+              <a className="active:bg-highlight">Descending</a>
+            </li>
+            <li>
+              <a className="active:bg-highlight">Date</a>
+            </li>
+            <li>
+              <a className="active:bg-highlight">Time</a>
+            </li>
+          </ul>
         </div>
-        <ul
-          tabIndex="-1"
-          className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+
+        <button
+          className="btn btn-outline btn-neutral"
+          onClick={() => document.getElementById("driverModal").showModal()}
         >
-          <li className="rounded-sm focus:bg-highlight">
-            <a className="active:bg-highlight">Ascending</a>
-          </li>
-          <li>
-            <a className="active:bg-highlight">Descending</a>
-          </li>
-          <li>
-            <a className="active:bg-highlight">Date</a>
-          </li>
-          <li>
-            <a className="active:bg-highlight">Time</a>
-          </li>
-        </ul>
+          <SquarePlus className="h-4 w-6" />
+          Add New Driver
+        </button>
       </div>
 
-      <button
-        className="btn flex-end mt-5 ml-4 bg-white text-black border-black hover:bg-green-600 hover:text-white transition ml-3"
-        onClick={() => document.getElementById("my_modal_3").showModal()}
-      >
-        <SquarePlus className="h-4 w-6" />
-        Add New
-      </button>
-      <dialog id="my_modal_3" className="modal">
+      <dialog id="driverModal" className="modal">
         <div className="modal-box">
-          <h1 className="text-2xl font-bold mb-6">Add Driver</h1>
-          <form method="dialog max-w-md mx-auto">
-            {/* if there is a button in form, it will close the modal */}
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+          <h1 className="text-2xl font-bold ">Add Driver</h1>
+          <p className="text-gray-600 text-sm mb-7">Create your driver here!</p>
+          <form onSubmit={handleSubmit(createDriver)} method="dialog">
+            <button
+              type="button"
+              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+              onClick={() => document.getElementById("driverModal").close()}
+            >
               ✕
             </button>
             <div class="grid md:grid-cols-2 md:gap-6">
@@ -84,10 +146,15 @@ export default function MaintenancePage() {
                   <legend className="fieldset-legend">First Name</legend>
                   <input
                     type="text"
-                    className="input"
+                    className={`input ${errors.firstName ? "border-red-500" : ""}`}
                     placeholder="Type here"
+                    {...register("firstName")}
                   />
-                  {/* <p className="label">Optional</p> */}
+                  {errors.firstName && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.firstName.message}
+                    </p>
+                  )}
                 </fieldset>
               </div>
               <div class="relative z-0 w-full mb-4 group">
@@ -95,22 +162,32 @@ export default function MaintenancePage() {
                   <legend className="fieldset-legend">Last Name</legend>
                   <input
                     type="text"
-                    className="input"
+                    className={`input  ${errors.lastName ? "border-red-500" : ""}`}
                     placeholder="Type here"
+                    {...register("lastName")}
                   />
-                  {/* <p className="label">Optional</p> */}
+                  {errors.lastName && (
+                    <p className="text-red-500 text-sm mt-1 ">
+                      {errors.lastName.message}
+                    </p>
+                  )}{" "}
                 </fieldset>
               </div>
             </div>
             <div class="relative z-0 w-116 mb-4 group">
               <fieldset className="fieldset">
-                <legend className="fieldset-legendc">Username</legend>
+                <legend className="fieldset-legendc">Contact Number</legend>
                 <input
                   type="text"
-                  className="input w-full"
+                  className={`input w-full ${errors.phone ? "border-red-500" : ""}`}
                   placeholder="Type here"
+                  {...register("phone")}
                 />
-                {/* <p className="label">Optional</p> */}
+                {errors.phone && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.phone.message}
+                  </p>
+                )}{" "}
               </fieldset>
             </div>
             <div class="relative z-0 w-116 mb-4 group">
@@ -118,13 +195,18 @@ export default function MaintenancePage() {
                 <legend className="fieldset-legendc">Email</legend>
                 <input
                   type="text"
-                  className="input w-full"
+                  className={`input w-full ${errors.email ? "border-red-500" : ""}`}
                   placeholder="Type here"
+                  {...register("email")}
                 />
-                {/* <p className="label">Optional</p> */}
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.email.message}
+                  </p>
+                )}{" "}
               </fieldset>
             </div>
-            <div class="relative z-0 w-116 mb-4 group">
+            {/* <div class="relative z-0 w-116 mb-4 group">
               <fieldset className="fieldset">
                 <legend className="fieldset-legendc">Password</legend>
                 <input
@@ -132,23 +214,22 @@ export default function MaintenancePage() {
                   className="input w-full"
                   placeholder="Type here"
                 />
-                {/* <p className="label">Optional</p> */}
+                <p className="label">Optional</p>
               </fieldset>
-            </div>
-          </form>
-          <div className="flex justify-center mt-3">
-            <Link to="">
-              <button className="btn bg-[#990808] text-white hover:bg-[#d41919] hover:text-white transition w-32">
-                Cancel
-              </button>
-            </Link>
+            </div> */}
 
-            <Link to="">
-              <button className="btn bg-green-600 text-white hover:bg-[#5DBE3F] hover:text-white transition w-32 ml-1">
-                Done
-              </button>
-            </Link>
-          </div>
+            <button
+              type="submit"
+              className="btn btn-lg bg-green-600 text-white hover:bg-highlight hover:text-white transition w-full mt-4 "
+              disabled={isSubmitting}
+            >
+              <Truck className="size-5 mr-2" />
+              {isSubmitting && (
+                <span className="loading loading-spinner"></span>
+              )}
+              {isSubmitting ? "Creating driver..." : "Create Driver"}
+            </button>
+          </form>
         </div>
       </dialog>
 
@@ -175,111 +256,69 @@ export default function MaintenancePage() {
             <thead className="bg-green-600 text-white">
               <tr>
                 <th>Driver ID</th>
-                <th>Name</th>
-                <th>Username</th>
+                <th>Image</th>
+                <th>Fullname</th>
                 <th>Email</th>
-                <th>Password</th>
+                <th>Contact Number</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <th>001</th>
-                <td>Golloso, Dexter O.</td>
-                <td>Gollosodo</td>
-                <td>golosodo@gmail.com</td>
-                <td>380016</td>
-                <td>
-                  <ul>
-                    <li className="flex gap-2">
-                      <button className="btn btn-square">
-                        <PenLine className="h-4 w-6" />
-                      </button>
-                      <button className="btn btn-square">
-                        <ArchiveRestore className="h-4 w-6" />
-                      </button>
-                    </li>
-                  </ul>
-                </td>
-              </tr>
-              <tr>
-                <th>002</th>
-                <td>Dela Cruz, Jerome C.</td>
-                <td>delacruzjc</td>
-                <td>delacruzjc@gmail.com</td>
-                <td>123456</td>
-                <td>
-                  <ul>
-                    <li className="flex gap-2">
-                      <button className="btn btn-square">
-                        <PenLine className="h-4 w-6" />
-                      </button>
-                      <button className="btn btn-square">
-                        <ArchiveRestore className="h-4 w-6" />
-                      </button>
-                    </li>
-                  </ul>
-                </td>
-              </tr>
-              <tr>
-                <th>003</th>
-                <td>Revilla, Rolando C.</td>
-                <td>revillarc</td>
-                <td>revillarc@gmail.com</td>
-                <td>revilla24</td>
-                <td>
-                  <ul>
-                    <li className="flex gap-2">
-                      <button className="btn btn-square">
-                        <PenLine className="h-4 w-6" />
-                      </button>
-                      <button className="btn btn-square">
-                        <ArchiveRestore className="h-4 w-6" />
-                      </button>
-                    </li>
-                  </ul>
-                </td>
-              </tr>
-              <tr>
-                <th>004</th>
-                <td>Gonzales, Rustico A.</td>
-                <td>gonzalesra</td>
-                <td>gonzalesra@gmail.com</td>
-                <td>123456</td>
-                <td>
-                  <ul>
-                    <li className="flex gap-2">
-                      <button className="btn btn-square">
-                        <PenLine className="h-4 w-6" />
-                      </button>
-                      <button className="btn btn-square">
-                        <ArchiveRestore className="h-4 w-6" />
-                      </button>
-                    </li>
-                  </ul>
-                </td>
-              </tr>
-              <tr>
-                <th>005</th>
-                <td>Susaya, Virgilio Y.</td>
-                <td>susayavy</td>
-                <td>susayav@gmail.com</td>
-                <td>123456</td>
-                <td>
-                  <ul>
-                    <li className="flex gap-2">
-                      <button className="btn btn-square">
-                        <PenLine className="h-4 w-6" />
-                      </button>
-                      <button className="btn btn-square">
-                        <ArchiveRestore className="h-4 w-6" />
-                      </button>
-                    </li>
-                  </ul>
-                </td>
-              </tr>
+              {drivers.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="text-center">
+                    <div className="flex flex-col justify-center items-center h-20 gap-5">
+                      {loading && (
+                        <span className="loading loading-spinner text-success"></span>
+                      )}
+                      {loading ? (
+                        <p className="font-bold text-sm">Loading drivers...</p>
+                      ) : (
+                        <div className="flex flex-col justify-center items-center gap-2">
+                          <UserRoundX className="size-12 text-red-300" />
+                          <p className="font-bold text-sm text-red-300">
+                            No drivers found
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                drivers.map((driver) => (
+                  <tr key={driver.id}>
+                    <th>{driver.id}</th>
+                    <td>
+                      <img
+                        src={
+                          driver.image_url ||
+                          "https://img.daisyui.com/images/profile/demo/2@94.webp"
+                        }
+                        alt={`${driver.first_name} ${driver.last_name}`}
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+                    </td>
+                    <td>
+                      {driver.first_name} {driver.last_name}
+                    </td>
+                    <td>{driver.email}</td>
+                    <td>{driver.contact_number}</td>
+                    <td>
+                      <ul>
+                        <li className="flex gap-2">
+                          <button className="btn btn-square">
+                            <PenLine className="h-4 w-6" />
+                          </button>
+                          <button className="btn btn-square">
+                            <ArchiveRestore className="h-4 w-6" />
+                          </button>
+                        </li>
+                      </ul>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
-            <tfoot></tfoot>
           </table>
         </div>
       </div>
