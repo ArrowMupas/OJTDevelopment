@@ -20,14 +20,20 @@ export default function Navbar() {
           </h1>
         </div>
 
-        <nav className="space-x-7">
-          <a href="/ " className="hover:underline  ">
+        <nav className="space-x-7 ">
+          <a href="/ " className="hover:no-underline hover:text-yellow-200">
             Home
           </a>
-          <a href="#about" className="hover:underline ">
+          <a
+            href="#about"
+            className="hover:no-underline hover:text-yellow-200 "
+          >
             About
           </a>
-          <a href="/Contact" className="hover:underline ">
+          <a
+            href="/Contact"
+            className="hover:no-underline hover:text-yellow-200"
+          >
             Contact
           </a>
         </nav>

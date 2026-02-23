@@ -12,23 +12,8 @@ import { Link } from "react-router-dom";
 export default function MaintenancePage() {
   return (
     <main className="p-7 w-full h-full">
-      <h1 className="text-2xl font-bold mb-6">Maintenance</h1>
-
-      <div>
-        <Link to="/maintenance">
-          <button className="btn bg-white text-black border-black hover:bg-green-700 hover:text-white transition">
-            <Car className="h-4 w-6 inline-block mr-2" />
-            Vehicles
-          </button>
-        </Link>
-
-        <Link to="/drivers">
-          <button className="btn bg-white text-black border-black hover:bg-green-700 hover:text-white transition ml-3">
-            <UsersRound className="h-4 w-6 inline-block mr-2" />
-            Drivers
-          </button>
-        </Link>
-      </div>
+      <h1 className="text-3xl font-bold text-gray-800">Maintenance</h1>
+      <p className="text-gray-500 mb-6">Vehicle and driver management</p>
 
       <label className="input mt-5 w-115 border-black">
         <svg
@@ -54,7 +39,7 @@ export default function MaintenancePage() {
         <div
           tabIndex={0}
           role="button"
-          className="btn mt-5 ml-2 bg-green-700 text-white"
+          className="btn mt-5 ml-2 bg-green-600 text-white"
         >
           <FilterIcon className="h-4 w-6" />
           Filter
@@ -79,7 +64,7 @@ export default function MaintenancePage() {
       </div>
 
       <button
-        className="btn flex-end mt-5 ml-4 bg-white text-black border-black hover:bg-green-700 hover:text-white transition ml-3"
+        className="btn flex-end mt-5 ml-4 bg-white text-black border-black hover:bg-green-600 hover:text-white transition ml-3"
         onClick={() => document.getElementById("my_modal_3").showModal()}
       >
         <SquarePlus className="h-4 w-6" />
@@ -159,7 +144,7 @@ export default function MaintenancePage() {
             </Link>
 
             <Link to="">
-              <button className="btn bg-green-700 text-white hover:bg-[#5DBE3F] hover:text-white transition w-32 ml-1">
+              <button className="btn bg-green-600 text-white hover:bg-[#5DBE3F] hover:text-white transition w-32 ml-1">
                 Done
               </button>
             </Link>
@@ -167,11 +152,27 @@ export default function MaintenancePage() {
         </div>
       </dialog>
 
+      <div className="flex gap-2 mt-5">
+        <Link to="/maintenance">
+          <button className="btn bg-white text-black border-black hover:bg-green-600 hover:text-white transition">
+            <Car className="h-4 w-6 inline-block mr-2" />
+            Vehicles
+          </button>
+        </Link>
+
+        <Link to="/drivers">
+          <button className="btn bg-white text-black border-black hover:bg-green-600 hover:text-white transition ml-3">
+            <UsersRound className="h-4 w-6 inline-block mr-2" />
+            Drivers
+          </button>
+        </Link>
+      </div>
+
       <h2 className="text-2xl mt-7 font-bold mb-6">Drivers</h2>
-      <div className="bg-base-100 mt-2 border border-gray-200">
+      <div className="bg-base-100 mt-2 border border-green-600">
         <div className="overflow-x-auto">
           <table className="table table-zebra">
-            <thead>
+            <thead className="bg-green-600 text-white">
               <tr>
                 <th>Driver ID</th>
                 <th>Name</th>
