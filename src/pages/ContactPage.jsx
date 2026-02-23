@@ -3,11 +3,28 @@ import { Mail, MapPin, PhoneCall } from "lucide-react";
 import { FaFacebook, FaTwitter, FaYoutube } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useState } from "react";
 
+const contactSchema = z.object({
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  email: z.email({ message: "Please enter a valid email" }),
+  phone: z.string().optional(),
+  message: z.string().min(10, "Message must be at least 10 characters"),
+});
+
 export default function ContactPage() {
-  const { register, handleSubmit, reset } = useForm(); // React Hook Form package for form handling
-  const [isSubmitting, setIsSubmitting] = useState(false); // Loading state
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(contactSchema),
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Function to handle contact submission
   const submitMessage = async (data) => {
@@ -33,13 +50,12 @@ export default function ContactPage() {
       reset();
     }
 
-    // 5. Set loading state back to false
+    // 5. Stop the loading state
     setIsSubmitting(false);
   };
 
   return (
     <div className="p-6 max-w-5xl mx-auto font-inter">
-      {/* Header */}
       <h1 className="text-3xl font-bold mb-10 text-center">Contact Us</h1>
 
       <div className="grid md:grid-cols-2 gap-8">
@@ -49,50 +65,83 @@ export default function ContactPage() {
           className="py-3 h-full flex flex-col justify-between"
         >
           <div className="flex gap-4">
-            <input
-              type="text"
-              placeholder="First Name"
-              // Register the input of user (for exampple "firstName") with react-hook-form using the "register" function
-              {...register("firstName")}
-              className="input"
-            />
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="First Name"
+                // Register the input of user (for exampple "firstName") with react-hook-form using the "register" function
+                {...register("firstName")}
+                className={`input w-full ${errors.firstName ? "border-red-500" : ""}`}
+              />
+              {errors.firstName && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.firstName.message}
+                </p>
+              )}
+            </div>
 
-            <input
-              type="text"
-              placeholder="Last Name"
-              {...register("lastName")}
-              className="input"
-            />
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="Last Name"
+                {...register("lastName")}
+                className={`input w-full ${errors.lastName ? "border-red-500" : ""}`}
+              />
+              {errors.lastName && (
+                <p className="text-red-500 text-sm mt-1 ">
+                  {errors.lastName.message}
+                </p>
+              )}
+            </div>
           </div>
 
-          <input
-            type="email"
-            placeholder="Email"
-            {...register("email")}
-            className="input w-full"
-          />
+          <div className="mt-4">
+            <input
+              type="email"
+              placeholder="Email"
+              {...register("email")}
+              className={`input w-full ${errors.email ? "border-red-500" : ""}`}
+            />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
 
-          <input
-            type="text"
-            placeholder="Phone Number"
-            {...register("phone")}
-            className="input w-full"
-          />
+          <div className="mt-4">
+            <input
+              type="text"
+              placeholder="Phone Number"
+              {...register("phone")}
+              className={`input w-full ${errors.phone ? "border-red-500" : ""}`}
+            />
+            {errors.phone && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.phone.message}
+              </p>
+            )}
+          </div>
 
-          <textarea
-            placeholder="Your Message"
-            {...register("message")}
-            className="textarea w-full h-40"
-          />
+          <div className="mt-4">
+            <textarea
+              placeholder="Your Message"
+              {...register("message")}
+              className={`textarea w-full h-40 ${errors.message ? "border-red-500" : ""}`}
+            />
+            {errors.message && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.message.message}
+              </p>
+            )}
+          </div>
 
           <button
             type="submit"
-            className="btn btn-success flex items-center gap-2 w-full"
+            className="btn btn-success flex items-center gap-2 w-full mt-4"
             disabled={isSubmitting}
           >
-            {/* isSubmitting is a state and if it's true we show a loading spinner the "&&" means if true show this*/}
             {isSubmitting && <span className="loading loading-spinner"></span>}
-            {/* the "? :" is a ternary operator which is basically if this is true show this else show that" */}
             {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </form>
@@ -104,7 +153,7 @@ export default function ContactPage() {
           <p>
             Formerly located at the D&E and CDC Buildings, 1050 Quezon Avenue,
             Paligsahan, their office is now inside Triangle Park at the National
-            Government Center in Quezon City.<strong></strong>
+            Government Center in Quezon City.
           </p>
 
           <p>
@@ -117,7 +166,7 @@ export default function ContactPage() {
             <strong>
               <Mail className="h-10 w-4 inline-block mr-2" /> Email:
             </strong>{" "}
-            nea.motorpool@gmail.com{" "}
+            nea.motorpool@gmail.com
           </p>
           <p>
             <strong>
