@@ -5,7 +5,7 @@ export default function Navbar() {
         <div className="flex items-center space-x-4">
           <img
             className="h-11 w-auto cursor-pointer"
-            src="https://rmn.ph/wp-content/uploads/2017/04/NEA-LOGO.png"
+            src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/nea-logo.png"
             alt="Logo"
             onError={(e) => {
               e.currentTarget.src =
