@@ -1,11 +1,4 @@
-import {
-  Car,
-  Clock,
-  FileChartColumnIncreasing,
-  ShipWheel,
-  StarIcon,
-  TimerIcon,
-} from "lucide-react";
+import { Car, Clock, FileChartColumnIncreasing, StarIcon } from "lucide-react";
 import { useState } from "react";
 
 export default function DriverMonitoringPage() {

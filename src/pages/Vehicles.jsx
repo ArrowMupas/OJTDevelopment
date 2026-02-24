@@ -1,75 +1,60 @@
-import Filter from "daisyui/components/filter";
 import {
   ArchiveRestore,
-  Car,
   FilterIcon,
   PenLine,
+  Search,
   SquarePlus,
-  UsersRound,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function MaintenancePage() {
   return (
     <main className="p-7 w-full h-full">
-      <h1 className="text-3xl font-bold text-gray-800">Maintenance</h1>
+      <h1 className="text-3xl font-bold text-gray-800">Vehicle Maintenance</h1>
       <p className="text-gray-500 mb-6">Vehicle and driver management</p>
 
-      <label className="input mt-5 w-115 border-black">
-        <svg
-          className="h-[1em] opacity-100"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-        >
-          <g
-            strokeLinejoin="round"
-            strokeLinecap="round"
-            strokeWidth="2.5"
-            fill="none"
-            stroke="currentColor"
-          >
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.3-4.3"></path>
-          </g>
-        </svg>
-        <input type="search" required placeholder="Search" />
-      </label>
+      <div className="space-x-3">
+        <label className="input w-1/3 border-black">
+          <Search className="h-4 w-6" />
+          <input type="search" required placeholder="Search" />
+        </label>
 
-      <div className="dropdown">
-        <div
-          tabIndex={0}
-          role="button"
-          className="btn mt-5 ml-2 bg-green-600 text-white"
-        >
-          <FilterIcon className="h-4 w-6" />
-          Filter
+        <div className="dropdown">
+          <div
+            tabIndex={0}
+            role="button"
+            className="btn ml-2 bg-green-600 text-white"
+          >
+            <FilterIcon className="h-4 w-6" />
+            Filter
+          </div>
+          <ul
+            tabIndex="-1"
+            className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+          >
+            <li className="rounded-sm focus:bg-highlight">
+              <a className="active:bg-highlight">Ascending</a>
+            </li>
+            <li>
+              <a className="active:bg-highlight">Descending</a>
+            </li>
+            <li>
+              <a className="active:bg-highlight">Date</a>
+            </li>
+            <li>
+              <a className="active:bg-highlight">Time</a>
+            </li>
+          </ul>
         </div>
-        <ul
-          tabIndex="-1"
-          className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+        <button
+          className="btn flex-end  bg-white text-black border-black hover:bg-green-600 hover:text-white transition ml-3"
+          onClick={() => document.getElementById("my_modal_3").showModal()}
         >
-          <li className="rounded-sm focus:bg-highlight">
-            <a className="active:bg-highlight">Ascending</a>
-          </li>
-          <li>
-            <a className="active:bg-highlight">Descending</a>
-          </li>
-          <li>
-            <a className="active:bg-highlight">Date</a>
-          </li>
-          <li>
-            <a className="active:bg-highlight">Time</a>
-          </li>
-        </ul>
+          <SquarePlus className="h-4 w-6" />
+          Add New
+        </button>
       </div>
 
-      <button
-        className="btn flex-end mt-5 ml-4 bg-white text-black border-black hover:bg-green-600 hover:text-white transition ml-3"
-        onClick={() => document.getElementById("my_modal_3").showModal()}
-      >
-        <SquarePlus className="h-4 w-6" />
-        Add New
-      </button>
       <dialog id="my_modal_3" className="modal">
         <div className="modal-box">
           <h1 className="text-2xl font-bold mb-6">Add Vehicle</h1>
@@ -177,22 +162,6 @@ export default function MaintenancePage() {
           </div>
         </div>
       </dialog>
-
-      <div className="flex gap-2 mt-5">
-        <Link to="/maintenance">
-          <button className="btn bg-white text-black border-black hover:bg-green-600 hover:text-white transition">
-            <Car className="h-4 w-6 inline-block mr-2" />
-            Vehicles
-          </button>
-        </Link>
-
-        <Link to="/drivers">
-          <button className="btn bg-white text-black border-black hover:bg-green-600 hover:text-white transition ml-3">
-            <UsersRound className="h-4 w-6 inline-block mr-2" />
-            Drivers
-          </button>
-        </Link>
-      </div>
 
       <h2 className="text-2xl mt-7 font-bold mb-6">Vehicles</h2>
       <div className="bg-base-100 mt-2 border border-green-600">
