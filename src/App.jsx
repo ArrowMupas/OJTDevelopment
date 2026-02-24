@@ -1,14 +1,14 @@
 import { Routes, Route } from "react-router-dom";
-import HomePage from "./pages/home/HomePage";
-import DashboardPage from "./pages/home/DashboardPage";
+import HomePage from "./pages/HomePage";
+import DashboardPage from "./pages/DashboardPage";
 import ContactPage from "./pages/ContactPage";
-import MaintenancePage from "./pages/MaintenancePage";
+import VehiclePage from "./pages/Vehicles";
 import TransactionsPage from "./pages/TransactionsPage";
 import InquiryPage from "./pages/InquiryPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import MainLayout from "./layouts/MainLayout";
 import Drivers from "./pages/Drivers";
-import DriverMonitoringPage from "./pages/home/DriverMonitoringPage";
+import DriverMonitoringPage from "./pages/DriverMonitoringPage";
 import { Toaster } from "react-hot-toast";
 
 function App() {
@@ -21,7 +21,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/inquiry" element={<InquiryPage />} />
-          <Route path="/maintenance" element={<MaintenancePage />} />
+          <Route path="/vehicles" element={<VehiclePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/drivers" element={<Drivers />} />
           <Route path="/drivermonitoring" element={<DriverMonitoringPage />} />

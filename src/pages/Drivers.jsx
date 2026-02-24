@@ -6,16 +6,13 @@ import { z } from "zod";
 import { useEffect, useState } from "react";
 import {
   ArchiveRestore,
-  Car,
   FilterIcon,
   PenLine,
   Search,
   SquarePlus,
   Truck,
   UserRoundX,
-  UsersRound,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 
 const driverSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -232,22 +229,6 @@ export default function MaintenancePage() {
           </form>
         </div>
       </dialog>
-
-      <div className="flex gap-2 mt-5">
-        <Link to="/maintenance">
-          <button className="btn bg-white text-black border-black hover:bg-green-600 hover:text-white transition">
-            <Car className="h-4 w-6 inline-block mr-2" />
-            Vehicles
-          </button>
-        </Link>
-
-        <Link to="/drivers">
-          <button className="btn bg-white text-black border-black hover:bg-green-600 hover:text-white transition ml-3">
-            <UsersRound className="h-4 w-6 inline-block mr-2" />
-            Drivers
-          </button>
-        </Link>
-      </div>
 
       <h2 className="text-2xl mt-7 font-bold mb-6">Drivers</h2>
       <div className="bg-base-100 mt-2 border border-green-600">
