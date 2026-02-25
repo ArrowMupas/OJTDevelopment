@@ -13,22 +13,31 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useEffect, useState } from "react";
+import { format } from "date-fns";
 
-const vehicleSchema = z.object({
-  vehicleName: z.string().min(2, "Vehicle name must be at least 2 characters"),
-  plateNumber: z.string().min(2, "Plate number must be at least 2 characters"),
-  policyNumber: z
-    .string()
-    .min(2, "Policy number must be at least 2 characters"),
-  policyID: z.string().min(2, "Policy ID must be at least 2 characters"),
-  requiredCovered: z
-    .string()
-    .min(2, "Required covered must be at least 2 characters"),
-  // issueDate: z.string().min(2, "Issue date must be at least 2 characters"),
-  // periodCovered: z
-  //   .string()
-  //   .min(2, "Period covered must be at least 2 characters"),
-});
+const vehicleSchema = z
+  .object({
+    vehicleName: z
+      .string()
+      .min(2, "Vehicle name must be at least 2 characters"),
+    plateNumber: z
+      .string()
+      .min(2, "Plate number must be at least 2 characters"),
+    policyNumber: z
+      .string()
+      .min(2, "Policy number must be at least 2 characters"),
+    policyID: z.string().min(2, "Policy ID must be at least 2 characters"),
+    requiredCovered: z
+      .string()
+      .min(2, "Required covered must be at least 2 characters"),
+    issueDate: z.string().min(1, "Issue date is required"),
+    periodFrom: z.string().min(1, "Period from is required"),
+    periodTo: z.string().min(1, "Period to is required"),
+  })
+  .refine((data) => new Date(data.periodTo) >= new Date(data.periodFrom), {
+    message: "Period To must be after Period From",
+    path: ["periodTo"],
+  });
 
 export default function MaintenancePage() {
   const [vehicles, setVehicles] = useState([]);
@@ -69,8 +78,9 @@ export default function MaintenancePage() {
         policy_number: data.policyNumber,
         policy_id: data.policyID,
         required_covered: data.requiredCovered,
-        // issue_date: data.issueDate,
-        // period_covered: data.periodCovered,
+        issue_date: data.issueDate,
+        period_from: data.periodFrom,
+        period_to: data.periodTo,
       },
     ]);
 
@@ -82,7 +92,7 @@ export default function MaintenancePage() {
       toast.success("Vehicle created successfully!", {
         position: "top-center",
       });
-      document.getElementById("my_modal_3")?.close();
+      document.getElementById("vehicleModal")?.close();
       reset();
     }
 
@@ -95,7 +105,7 @@ export default function MaintenancePage() {
       <p className="text-gray-500 mb-6">Vehicle and driver management</p>
 
       <div className="space-x-3">
-        <label className="input w-1/3 border-black">
+        <label className="input w-1/3 input-neutral">
           <Search className="h-4 w-6" />
           <input type="search" required placeholder="Search" />
         </label>
@@ -127,16 +137,17 @@ export default function MaintenancePage() {
             </li>
           </ul>
         </div>
+
         <button
           className="btn btn-outline btn-neutral"
-          onClick={() => document.getElementById("my_modal_3").showModal()}
+          onClick={() => document.getElementById("vehicleModal").showModal()}
         >
           <Van className="h-4 w-6" />
           Add New Vehicle
         </button>
       </div>
 
-      <dialog id="my_modal_3" className="modal">
+      <dialog id="vehicleModal" className="modal">
         <div className="modal-box">
           <div className="mb-7">
             <h1 className="text-2xl font-bold ">Add Vehicle</h1>
@@ -146,7 +157,7 @@ export default function MaintenancePage() {
             <button
               type="button"
               className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-              onClick={() => document.getElementById("my_modal_3").close()}
+              onClick={() => document.getElementById("vehicleModal").close()}
             >
               ✕
             </button>
@@ -235,7 +246,7 @@ export default function MaintenancePage() {
               </div>
             </div>
 
-            {/* <div class="grid md:grid-cols-2 md:gap-6">
+            <div class="grid md:grid-cols-2 md:gap-6">
               <div class="relative z-0 w-full mb-5 group">
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend">Issue Date</legend>
@@ -252,23 +263,38 @@ export default function MaintenancePage() {
                   )}
                 </fieldset>
               </div>
-              <div class="relative z-0 w-full mb-5 group">
-                <fieldset className="fieldset">
-                  <legend className="fieldset-legend">Period Covered</legend>
-                  <input
-                    type="text"
-                    className={`input ${errors.periodCovered ? "border-red-500" : ""}`}
-                    placeholder="Type here"
-                    {...register("periodCovered")}
-                  />
-                  {errors.periodCovered && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.periodCovered.message}
-                    </p>
-                  )}
-                </fieldset>
-              </div>
-            </div> */}
+              {/* Period Covered From */}
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">
+                  Period Covered (From)
+                </legend>
+                <input
+                  type="date"
+                  className={`input ${errors.periodFrom ? "border-red-500" : ""}`}
+                  {...register("periodFrom")}
+                />
+                {errors.periodFrom && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.periodFrom.message}
+                  </p>
+                )}
+              </fieldset>
+
+              {/* Period Covered To */}
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">Period Covered (To)</legend>
+                <input
+                  type="date"
+                  className={`input ${errors.periodTo ? "border-red-500" : ""}`}
+                  {...register("periodTo")}
+                />
+                {errors.periodTo && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.periodTo.message}
+                  </p>
+                )}
+              </fieldset>
+            </div>
 
             <div className="flex justify-center mt-3">
               <button
@@ -331,8 +357,16 @@ export default function MaintenancePage() {
                     <td>{vehicle.policy_number}</td>
                     <td>{vehicle.name}</td>
                     <td>{vehicle.plate_number}</td>
-                    <td>{vehicle.issue_date}</td>
-                    <td>{vehicle.period_covered}</td>
+                    <td>
+                      {vehicle.issue_date
+                        ? `${format(new Date(vehicle.issue_date), "MMM. d, yyyy")}`
+                        : "N/A"}
+                    </td>
+                    <td>
+                      {vehicle.period_from && vehicle.period_to
+                        ? `${format(new Date(vehicle.period_from), "MMM. d, yyyy")} to ${format(new Date(vehicle.period_to), "MMM. d, yyyy")}`
+                        : "N/A"}
+                    </td>
                     <td>{vehicle.required_covered}</td>
                     <td>
                       <ul>

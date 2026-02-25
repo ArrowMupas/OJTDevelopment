@@ -83,7 +83,7 @@ export default function MaintenancePage() {
       <p className="text-gray-500 mb-6">Vehicle and driver management</p>
 
       <div className="space-x-3">
-        <label className="input w-1/3 border-black">
+        <label className="input w-1/3 input-neutral">
           <Search className="h-4 w-6" />
           <input type="search" required placeholder="Search" />
         </label>
@@ -92,7 +92,7 @@ export default function MaintenancePage() {
           <div
             tabIndex={0}
             role="button"
-            className="btn ml-2 bg-green-600 text-white"
+            className="btn  bg-green-600 text-white"
           >
             <FilterIcon className="h-4 w-6" />
             Filter

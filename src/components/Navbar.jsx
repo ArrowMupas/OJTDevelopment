@@ -11,6 +11,7 @@ export default function Navbar() {
               e.currentTarget.src =
                 "https://8upload.com/display/68d52d9e15810/logo-alas1.jpg.php";
             }}
+            onClick={() => (window.location.href = "/")}
           />
           <h1 className="text-xl font-bold hidden sm:block">
             National Electrification Administration

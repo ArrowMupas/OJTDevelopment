@@ -66,74 +66,89 @@ export default function ContactPage() {
         >
           <div className="flex gap-4">
             <div className="flex-1">
-              <input
-                type="text"
-                placeholder="First Name"
-                // Register the input of user (for exampple "firstName") with react-hook-form using the "register" function
-                {...register("firstName")}
-                className={`input w-full ${errors.firstName ? "border-red-500" : ""}`}
-              />
-              {errors.firstName && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.firstName.message}
-                </p>
-              )}
+              <label className="floating-label">
+                <span>First Name</span>
+                <input
+                  type="text"
+                  placeholder="First Name"
+                  // Register the input of user (for exampple "firstName") with react-hook-form using the "register" function
+                  {...register("firstName")}
+                  className={`input w-full ${errors.firstName ? "border-red-500" : ""}`}
+                />
+                {errors.firstName && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.firstName.message}
+                  </p>
+                )}
+              </label>
             </div>
 
             <div className="flex-1">
-              <input
-                type="text"
-                placeholder="Last Name"
-                {...register("lastName")}
-                className={`input w-full ${errors.lastName ? "border-red-500" : ""}`}
-              />
-              {errors.lastName && (
-                <p className="text-red-500 text-sm mt-1 ">
-                  {errors.lastName.message}
-                </p>
-              )}
+              <label className="floating-label" htmlFor="">
+                <span>Last Name</span>
+                <input
+                  type="text"
+                  placeholder="Last Name"
+                  {...register("lastName")}
+                  className={`input w-full ${errors.lastName ? "border-red-500" : ""}`}
+                />
+                {errors.lastName && (
+                  <p className="text-red-500 text-sm mt-1 ">
+                    {errors.lastName.message}
+                  </p>
+                )}
+              </label>
             </div>
           </div>
 
           <div className="mt-4">
-            <input
-              type="email"
-              placeholder="Email"
-              {...register("email")}
-              className={`input w-full ${errors.email ? "border-red-500" : ""}`}
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.email.message}
-              </p>
-            )}
+            <label className="floating-label" htmlFor="">
+              <span>Email</span>
+              <input
+                type="email"
+                placeholder="Email"
+                {...register("email")}
+                className={`input w-full ${errors.email ? "border-red-500" : ""}`}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.email.message}
+                </p>
+              )}
+            </label>
           </div>
 
           <div className="mt-4">
-            <input
-              type="text"
-              placeholder="Phone Number"
-              {...register("phone")}
-              className={`input w-full ${errors.phone ? "border-red-500" : ""}`}
-            />
-            {errors.phone && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.phone.message}
-              </p>
-            )}
+            <label className="floating-label" htmlFor=" ">
+              <span>Phone Number</span>
+              <input
+                type="text"
+                placeholder="Phone Number"
+                {...register("phone")}
+                className={`input w-full ${errors.phone ? "border-red-500" : ""}`}
+              />
+              {errors.phone && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.phone.message}
+                </p>
+              )}
+            </label>
           </div>
 
           <div className="mt-4">
-            <textarea
-              placeholder="Your Message"
-              {...register("message")}
-              className={`textarea w-full h-40 ${errors.message ? "border-red-500" : ""}`}
-            />
-            {errors.message && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.message.message}
-              </p>
-            )}
+            <label className="floating-label" htmlFor="message">
+              <span>Message</span>
+              <textarea
+                placeholder="Your Message"
+                {...register("message")}
+                className={`textarea w-full h-40 ${errors.message ? "border-red-500" : ""}`}
+              />
+              {errors.message && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.message.message}
+                </p>
+              )}
+            </label>
           </div>
 
           <button
@@ -182,7 +197,7 @@ export default function ContactPage() {
               href="https://twitter.com/nea_ph"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#d1dadf] text-4xl transition duration-200 hover:scale-110"
+              className="text-4xl transition duration-200 hover:scale-110"
             >
               <FaTwitter className="w-8 h-20" />
             </a>
@@ -191,7 +206,7 @@ export default function ContactPage() {
               href="https://www.youtube.com/@NEAPhilippines"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#e2e2d1] text-3xl transition duration-200 hover:scale-110"
+              className=" text-3xl transition duration-200 hover:scale-110"
             >
               <FaYoutube className="w-8 h-20" />
             </a>
@@ -199,7 +214,7 @@ export default function ContactPage() {
               href="https://www.facebook.com/NEAPhilippines"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#e2e2d1] text-3xl transition duration-200 hover:scale-110"
+              className=" text-3xl transition duration-200 hover:scale-110"
             >
               <FaFacebook className="w-8 h-20" />
             </a>
