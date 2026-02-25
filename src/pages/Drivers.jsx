@@ -13,6 +13,7 @@ import {
   UserPlus,
   UserRoundX,
 } from "lucide-react";
+import OurInput from "../components/OurInput";
 
 const driverSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -72,6 +73,15 @@ export default function MaintenancePage() {
       });
       document.getElementById("driverModal")?.close();
       reset();
+
+      // Refetch all drivers after insertion
+      setLoading(true);
+      const { data } = await supabase
+        .from("drivers")
+        .select("*")
+        .order("created_at", { ascending: false });
+      setDrivers(data);
+      setLoading(false);
     }
 
     setIsSubmitting(false);
@@ -137,87 +147,41 @@ export default function MaintenancePage() {
             >
               ✕
             </button>
-            <div class="grid md:grid-cols-2 md:gap-6">
-              <div class="relative z-0 w-full mb-4 group">
-                <fieldset className="fieldset">
-                  <legend className="fieldset-legend">First Name</legend>
-                  <input
-                    type="text"
-                    className={`input ${errors.firstName ? "border-red-500" : ""}`}
-                    placeholder="Type here"
-                    {...register("firstName")}
-                  />
-                  {errors.firstName && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.firstName.message}
-                    </p>
-                  )}
-                </fieldset>
-              </div>
-              <div class="relative z-0 w-full mb-4 group">
-                <fieldset className="fieldset">
-                  <legend className="fieldset-legend">Last Name</legend>
-                  <input
-                    type="text"
-                    className={`input  ${errors.lastName ? "border-red-500" : ""}`}
-                    placeholder="Type here"
-                    {...register("lastName")}
-                  />
-                  {errors.lastName && (
-                    <p className="text-red-500 text-sm mt-1 ">
-                      {errors.lastName.message}
-                    </p>
-                  )}{" "}
-                </fieldset>
-              </div>
+
+            <div className="grid md:grid-cols-2 md:gap-6">
+              <OurInput
+                label="First Name"
+                name="firstName"
+                register={register}
+                error={errors.firstName}
+              />
+
+              <OurInput
+                label="Last Name"
+                name="lastName"
+                register={register}
+                error={errors.lastName}
+              />
             </div>
-            <div class="relative z-0 w-116 mb-4 group">
-              <fieldset className="fieldset">
-                <legend className="fieldset-legendc">Contact Number</legend>
-                <input
-                  type="text"
-                  className={`input w-full ${errors.phone ? "border-red-500" : ""}`}
-                  placeholder="Type here"
-                  {...register("phone")}
-                />
-                {errors.phone && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.phone.message}
-                  </p>
-                )}{" "}
-              </fieldset>
-            </div>
-            <div class="relative z-0 w-116 mb-4 group">
-              <fieldset className="fieldset">
-                <legend className="fieldset-legendc">Email</legend>
-                <input
-                  type="text"
-                  className={`input w-full ${errors.email ? "border-red-500" : ""}`}
-                  placeholder="Type here"
-                  {...register("email")}
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.email.message}
-                  </p>
-                )}{" "}
-              </fieldset>
-            </div>
-            {/* <div class="relative z-0 w-116 mb-4 group">
-              <fieldset className="fieldset">
-                <legend className="fieldset-legendc">Password</legend>
-                <input
-                  type="text"
-                  className="input w-full"
-                  placeholder="Type here"
-                />
-                <p className="label">Optional</p>
-              </fieldset>
-            </div> */}
+
+            <OurInput
+              label="Contact Number"
+              name="phone"
+              register={register}
+              error={errors.phone}
+            />
+
+            <OurInput
+              label="Email"
+              name="email"
+              type="email"
+              register={register}
+              error={errors.email}
+            />
 
             <button
               type="submit"
-              className="btn btn-lg bg-green-600 text-white hover:bg-highlight hover:text-white transition w-full mt-4 "
+              className="btn btn-lg bg-green-600 text-white hover:bg-highlight hover:text-white transition w-full mt-4"
               disabled={isSubmitting}
             >
               <Truck className="size-5 mr-2" />
