@@ -1,4 +1,5 @@
 import {
+  ClipboardCheck,
   LayoutDashboard,
   MessageCircleQuestionMark,
   ScrollText,
@@ -28,6 +29,7 @@ export default function Sidebar() {
             </summary>
             <ul className="menu  rounded-box ml-4 p-2">
               <li>
+                 <li>
                 <a
                   href="/drivermonitoring"
                   className="hover:bg-highlight hover:text-white transition text-sm"
@@ -35,7 +37,6 @@ export default function Sidebar() {
                   Driver Monitoring
                 </a>
               </li>
-              <li>
                 <a
                   href="/vehiclemonitoring"
                   className="hover:bg-highlight hover:text-white transition text-sm"
@@ -57,6 +58,18 @@ export default function Sidebar() {
             Transactions
           </a>
         </li>
+
+         {/* Survey */}
+        <li>
+          <a
+            href="/survey"
+            className="flex items-center p-2 rounded hover:bg-highlight hover:text-white transition text-sm"
+          >
+            <ClipboardCheck className="h-4 w-4 mr-2" />
+            Survey
+          </a>
+        </li>
+
 
         {/* Maintenance */}
         <li>
