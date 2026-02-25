@@ -2,10 +2,6 @@ import React from "react";
 import Neabg from "../assets/Neabg.png";
 
 export default function HomePage() {
-  // Google form link
-  const googleFormLink =
-    "https://docs.google.com/forms/d/12wQf-ejjEcC3GBcGb0ISnC2mnr5q8hJkG_f52dMcYAI/viewform";
-
   return (
     <div className="relative min-h-screen bg-white font-sans overflow-hidden">
       {/* Background Image Container */}
@@ -39,7 +35,7 @@ export default function HomePage() {
           {/* Button */}
           <div className="flex flex-col items-start">
             <a
-              href={googleFormLink}
+              href="/request-vehicle"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-4 px-10 rounded-xl transition-all shadow-lg active:scale-95 no-underline"
