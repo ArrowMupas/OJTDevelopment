@@ -2,8 +2,8 @@ import { Clipboard, ClipboardCheck, ClipboardClock } from "lucide-react";
 
 export default function HomePage() {
   return (
-    <main className="p-7 w-full h-full">
-      <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
+    <main className="p-8 h-full">
+      <h1 className="text-4xl font-bold ">Dashboard</h1>
       <p className="text-gray-500 mb-6">
         Overview of requests and driver activity
       </p>

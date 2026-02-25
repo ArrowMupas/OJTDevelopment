@@ -22,14 +22,13 @@ export default function Sidebar() {
         </li>
 
         <li>
-          <details className="group">
+          <details className="group" open>
             <summary className="flex items-center p-2 rounded cursor-pointer hover:bg-highlight hover:text-white transition text-sm">
               <SquareActivity className="h-4 w-4 mr-2" />
               Monitoring
             </summary>
             <ul className="menu  rounded-box ml-4 p-2">
               <li>
-                 <li>
                 <a
                   href="/drivermonitoring"
                   className="hover:bg-highlight hover:text-white transition text-sm"
@@ -37,6 +36,8 @@ export default function Sidebar() {
                   Driver Monitoring
                 </a>
               </li>
+
+              <li>
                 <a
                   href="/vehiclemonitoring"
                   className="hover:bg-highlight hover:text-white transition text-sm"
@@ -59,7 +60,7 @@ export default function Sidebar() {
           </a>
         </li>
 
-         {/* Survey */}
+        {/* Survey */}
         <li>
           <a
             href="/survey"
@@ -70,10 +71,9 @@ export default function Sidebar() {
           </a>
         </li>
 
-
         {/* Maintenance */}
         <li>
-          <details className="group">
+          <details className="group" open>
             <summary className="flex items-center p-2 rounded cursor-pointer hover:bg-highlight hover:text-white transition text-sm">
               <Settings className="h-4 w-4 mr-2" />
               Maintenance
@@ -98,6 +98,7 @@ export default function Sidebar() {
             </ul>
           </details>
         </li>
+
         {/* Inquiry */}
         <li>
           <a

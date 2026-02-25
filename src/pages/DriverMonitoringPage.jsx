@@ -68,12 +68,10 @@ export default function DriverMonitoringPage() {
   ).toFixed(2);
 
   return (
-    <div className="min-h-screen bg-white p-6">
+    <div className="min-h-screen bg-white p-8">
       {/* Header */}
       <div className="mb-7">
-        <h1 className="text-3xl font-bold text-black">
-          Driver Performance Monitoring
-        </h1>
+        <h1 className="text-4xl font-bold ">Driver Performance Monitoring</h1>
         <p className="text-gray-500">Survey evaluation of drivers</p>
       </div>
 

@@ -14,58 +14,49 @@ export default function SurveyPage() {
     "Juan Dela Cruz",
     "Pedro Santos",
     "Mark Reyes",
-    "Anthony Garcia"
+    "Anthony Garcia",
   ];
 
   const vehicles = [
     "Toyota Hiace",
     "Mitsubishi L300",
     "Isuzu Elf",
-    "Toyota Innova"
+    "Toyota Innova",
   ];
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center py-10 px-4">
-      <div className="w-full max-w-3xl bg-white shadow-lg rounded-lg p-8">
-        
+      <div className="w-full max-w-xl bg-white shadow-lg rounded-lg p-8">
         <h1 className="text-3xl font-bold text-center mb-2">
           Passenger Satisfaction Survey
         </h1>
-        <p className="text-center text-gray-600 mb-8">
-          Survey for passengers
-        </p>
+        <p className="text-center text-gray-600 mb-8">Survey for passengers</p>
 
         <form className="space-y-8">
-
           {/* Passenger Name */}
           <div>
             <label className="block font-medium mb-3">
               Passenger Name <span className="text-red-500">*</span>
             </label>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
                 type="text"
                 placeholder="Last Name"
                 value={lastName}
-                onChange={(e) => setLastName(capitalizeFirstLetter(e.target.value))}
-                className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+                onChange={(e) =>
+                  setLastName(capitalizeFirstLetter(e.target.value))
+                }
+                className=" input input-neutral"
                 required
               />
               <input
                 type="text"
                 placeholder="First Name"
                 value={firstName}
-                onChange={(e) => setFirstName(capitalizeFirstLetter(e.target.value))}
-                className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-                required
-              />
-              <input
-                type="text"
-                placeholder="Middle Initial"
-                maxLength="1"
-                value={middleInitial}
-                onChange={(e) => setMiddleInitial(e.target.value.toUpperCase())}
-                className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+                onChange={(e) =>
+                  setFirstName(capitalizeFirstLetter(e.target.value))
+                }
+                className=" input input-neutral"
                 required
               />
             </div>
@@ -78,7 +69,7 @@ export default function SurveyPage() {
             </label>
             <input
               type="date"
-              className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+              className=" input input-neutral w-full"
               required
             />
           </div>
@@ -88,13 +79,12 @@ export default function SurveyPage() {
             <label className="block font-medium mb-1">
               Name of Driver <span className="text-red-500">*</span>
             </label>
-            <select
-              className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-              required
-            >
+            <select className=" input input-neutral w-full" required>
               <option value="">-- Select Driver --</option>
               {drivers.map((driver, index) => (
-                <option key={index} value={driver}>{driver}</option>
+                <option key={index} value={driver}>
+                  {driver}
+                </option>
               ))}
             </select>
           </div>
@@ -104,13 +94,12 @@ export default function SurveyPage() {
             <label className="block font-medium mb-1">
               Type of Vehicle <span className="text-red-500">*</span>
             </label>
-            <select
-              className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-              required
-            >
+            <select className=" input input-neutral w-full" required>
               <option value="">-- Select Vehicle --</option>
               {vehicles.map((vehicle, index) => (
-                <option key={index} value={vehicle}>{vehicle}</option>
+                <option key={index} value={vehicle}>
+                  {vehicle}
+                </option>
               ))}
             </select>
           </div>
@@ -121,13 +110,14 @@ export default function SurveyPage() {
               Driver's Appearance <span className="text-red-500">*</span>
             </p>
             <p className="text-sm italic text-gray-500 mt-1">
-              Wearing proper uniform; Maintaining cleanliness and proper hygiene; Alert and Attentive, not drowsy.
+              Wearing proper uniform; Maintaining cleanliness and proper
+              hygiene; Alert and Attentive, not drowsy.
             </p>
             <p className="text-xs italic text-gray-400 mt-1">
               {`{1 = Poor; 2 = Fair; 3 = Good; 4 = Satisfied; 5 = Excellent}`}
             </p>
             <div className="flex gap-8 mt-3">
-              {[1,2,3,4,5].map((num) => (
+              {[1, 2, 3, 4, 5].map((num) => (
                 <label key={num} className="flex flex-col items-center">
                   <input type="radio" name="appearance" value={num} required />
                   <span className="text-sm">{num}</span>
@@ -142,13 +132,15 @@ export default function SurveyPage() {
               Driver's Behavior <span className="text-red-500">*</span>
             </p>
             <p className="text-sm italic text-gray-500 mt-1">
-              Courteous, reminds passenger to fasten seatbelts before departure; ensures discharge of passengers; assists with luggage; avoids excessive conversation; provides trip ticket signatures.
+              Courteous, reminds passenger to fasten seatbelts before departure;
+              ensures discharge of passengers; assists with luggage; avoids
+              excessive conversation; provides trip ticket signatures.
             </p>
             <p className="text-xs italic text-gray-400 mt-1">
               {`{1 = Poor; 2 = Fair; 3 = Good; 4 = Satisfied; 5 = Excellent}`}
             </p>
             <div className="flex gap-8 mt-3">
-              {[1,2,3,4,5].map((num) => (
+              {[1, 2, 3, 4, 5].map((num) => (
                 <label key={num} className="flex flex-col items-center">
                   <input type="radio" name="behavior" value={num} required />
                   <span className="text-sm">{num}</span>
@@ -160,16 +152,18 @@ export default function SurveyPage() {
           {/* Driver's Safety Driving Skills */}
           <div className="border rounded-md p-5">
             <p className="font-medium">
-              Driver's Safety Driving Skills <span className="text-red-500">*</span>
+              Driver's Safety Driving Skills{" "}
+              <span className="text-red-500">*</span>
             </p>
             <p className="text-sm italic text-gray-500 mt-1">
-              Focuses on the road, avoids potholes; adheres to traffic laws; does not use cellphone while driving.
+              Focuses on the road, avoids potholes; adheres to traffic laws;
+              does not use cellphone while driving.
             </p>
             <p className="text-xs italic text-gray-400 mt-1">
               {`{1 = Poor; 2 = Fair; 3 = Good; 4 = Satisfied; 5 = Excellent}`}
             </p>
             <div className="flex gap-8 mt-3">
-              {[1,2,3,4,5].map((num) => (
+              {[1, 2, 3, 4, 5].map((num) => (
                 <label key={num} className="flex flex-col items-center">
                   <input type="radio" name="safety" value={num} required />
                   <span className="text-sm">{num}</span>
@@ -181,16 +175,18 @@ export default function SurveyPage() {
           {/* Vehicle Condition/Cleanliness */}
           <div className="border rounded-md p-5">
             <p className="font-medium">
-              Vehicle Condition/Cleanliness <span className="text-red-500">*</span>
+              Vehicle Condition/Cleanliness{" "}
+              <span className="text-red-500">*</span>
             </p>
             <p className="text-sm italic text-gray-500 mt-1">
-              Clean and well-maintained vehicle; Pleasant fragrance; Effective air conditioning.
+              Clean and well-maintained vehicle; Pleasant fragrance; Effective
+              air conditioning.
             </p>
             <p className="text-xs italic text-gray-400 mt-1">
               {`{1 = Poor; 2 = Fair; 3 = Good; 4 = Satisfied; 5 = Excellent}`}
             </p>
             <div className="flex gap-8 mt-3">
-              {[1,2,3,4,5].map((num) => (
+              {[1, 2, 3, 4, 5].map((num) => (
                 <label key={num} className="flex flex-col items-center">
                   <input type="radio" name="vehicle" value={num} required />
                   <span className="text-sm">{num}</span>
@@ -205,13 +201,14 @@ export default function SurveyPage() {
               On Time <span className="text-red-500">*</span>
             </p>
             <p className="text-sm italic text-gray-500 mt-1">
-              On call time upon leaving (pick-up) and arrival at destination (drop-off).
+              On call time upon leaving (pick-up) and arrival at destination
+              (drop-off).
             </p>
             <p className="text-xs italic text-gray-400 mt-1">
               {`{1 = Poor; 2 = Fair; 3 = Good; 4 = Satisfied; 5 = Excellent}`}
             </p>
             <div className="flex gap-8 mt-3">
-              {[1,2,3,4,5].map((num) => (
+              {[1, 2, 3, 4, 5].map((num) => (
                 <label key={num} className="flex flex-col items-center">
                   <input type="radio" name="ontime" value={num} required />
                   <span className="text-sm">{num}</span>
@@ -226,11 +223,12 @@ export default function SurveyPage() {
               Comments/Suggestions <span className="text-red-500">*</span>
             </label>
             <p className="text-sm italic text-gray-500 mb-2">
-              Comments and suggestions are very well appreciated to improve our services. Thank you!
+              Comments and suggestions are very well appreciated to improve our
+              services. Thank you!
             </p>
             <textarea
-              rows="4"
-              className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+              placeholder="bio"
+              className=" textarea textarea-neutral w-full"
               required
             ></textarea>
           </div>
@@ -244,7 +242,6 @@ export default function SurveyPage() {
               Submit
             </button>
           </div>
-
         </form>
       </div>
     </div>
