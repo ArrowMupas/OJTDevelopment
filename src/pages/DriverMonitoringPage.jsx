@@ -1,4 +1,10 @@
-import { Car, Clock, FileChartColumnIncreasing, StarIcon } from "lucide-react";
+import {
+  Car,
+  Clock,
+  FileChartColumnIncreasing,
+  Search,
+  StarIcon,
+} from "lucide-react";
 import { useState } from "react";
 
 export default function DriverMonitoringPage() {
@@ -62,27 +68,31 @@ export default function DriverMonitoringPage() {
   ).toFixed(2);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-white p-6">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">
+      <div className="mb-7">
+        <h1 className="text-3xl font-bold text-black">
           Driver Performance Monitoring
         </h1>
         <p className="text-gray-500">Survey evaluation of drivers</p>
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-4 rounded-xl shadow mb-6 flex gap-4 flex-wrap">
-        <input
-          type="text"
-          placeholder="Search Driver..."
-          className="border rounded-lg px-4 py-2 w-64"
-        />
-        <select className="border rounded-lg px-4 py-2">
-          <option>Date Range</option>
+      <div className=" mb-6 flex gap-4 flex-wrap">
+        <label className="input  border-black">
+          <Search className="h-4 w-6" />
+          <input type="search" required placeholder="Search" />
+        </label>
+
+        <select defaultValue="Date Range" className="select">
+          <option disabled={true}>Pick a color</option>
+          <option>Crimson</option>
+          <option>Amber</option>
+          <option>Velvet</option>
         </select>
-        <select className="border rounded-lg px-4 py-2">
-          <option>Vehicle Type</option>
+
+        <select defaultValue="Vehicle Type" className="select">
+          <option disabled={true}>Pick a vehicle</option>
           <option>Isuzu DMax</option>
           <option>Others</option>
         </select>

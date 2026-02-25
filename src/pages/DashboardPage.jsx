@@ -8,8 +8,8 @@ export default function HomePage() {
         Overview of requests and driver activity
       </p>
 
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="card w-96 bg-base-100 card-md shadow-sm">
+      <div className="grid grid-cols-3 md:flex-row gap-5">
+        <div className="card bg-base-100 card-md shadow-sm">
           <div className="card-body flex-row justify-between border-[#d2dc15] border-b-2 rounded-sm">
             <div>
               <h2 className="card-title">21</h2>
@@ -19,7 +19,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="card w-96 bg-base-100 card-md shadow-sm">
+        <div className="card bg-base-100 card-md shadow-sm">
           <div className="card-body flex-row justify-between border-highlight border-b-2 rounded-sm">
             <div>
               <h2 className="card-title">4</h2>
@@ -29,7 +29,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="card w-96 bg-base-100 card-md shadow-sm">
+        <div className="card bg-base-100 card-md shadow-sm">
           <div className="card-body flex-row justify-between border-[#745fc9] border-b-2 rounded-sm">
             <div>
               <h2 className="card-title">19</h2>

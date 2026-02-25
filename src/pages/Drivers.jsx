@@ -9,8 +9,8 @@ import {
   FilterIcon,
   PenLine,
   Search,
-  SquarePlus,
   Truck,
+  UserPlus,
   UserRoundX,
 } from "lucide-react";
 
@@ -120,7 +120,7 @@ export default function MaintenancePage() {
           className="btn btn-outline btn-neutral"
           onClick={() => document.getElementById("driverModal").showModal()}
         >
-          <SquarePlus className="h-4 w-6" />
+          <UserPlus className="h-4 w-6" />
           Add New Driver
         </button>
       </div>
@@ -231,10 +231,10 @@ export default function MaintenancePage() {
       </dialog>
 
       <h2 className="text-2xl mt-7 font-bold mb-6">Drivers</h2>
-      <div className="bg-base-100 mt-2 border border-green-600">
-        <div className="overflow-x-auto">
-          <table className="table table-zebra">
-            <thead className="bg-green-600 text-white">
+      <div className="bg-base-100 mt-2 border-0">
+        <div className="overflow-x-auto rounded-lg">
+          <table className="table table-zebra ">
+            <thead className="bg-green-600 text-white ">
               <tr>
                 <th>Driver ID</th>
                 <th>Image</th>
@@ -273,7 +273,7 @@ export default function MaintenancePage() {
                       <img
                         src={
                           driver.image_url ||
-                          "https://img.daisyui.com/images/profile/demo/2@94.webp"
+                          "https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/placeholder.png"
                         }
                         alt={`${driver.first_name} ${driver.last_name}`}
                         className="w-10 h-10 rounded-full object-cover"

@@ -1,5 +1,5 @@
 import { supabase } from "../supabaseClient";
-import { Mail, MapPin, PhoneCall } from "lucide-react";
+import { Contact, Mail, MapPin, PhoneCall } from "lucide-react";
 import { FaFacebook, FaTwitter, FaYoutube } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
@@ -62,7 +62,7 @@ export default function ContactPage() {
         <form
           // On submit button click call handleSubmit from react-hook-form which will call our submitMessage function
           onSubmit={handleSubmit(submitMessage)}
-          className="py-3 h-full flex flex-col justify-between"
+          className="py-2 h-full flex flex-col justify-between"
         >
           <div className="flex gap-4">
             <div className="flex-1">
@@ -138,11 +138,12 @@ export default function ContactPage() {
 
           <button
             type="submit"
-            className="btn btn-success flex items-center gap-2 w-full mt-4"
+            className="btn btn-lg bg-green-500 hover:bg-highlight flex items-center gap-2 w-full mt-4 text-white"
             disabled={isSubmitting}
           >
+            <Contact className="h-5 w-5" />
             {isSubmitting && <span className="loading loading-spinner"></span>}
-            {isSubmitting ? "Submitting..." : "Submit"}
+            {isSubmitting ? "Submitting..." : "Submit your inquiry"}
           </button>
         </form>
 
