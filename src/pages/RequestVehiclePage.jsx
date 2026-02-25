@@ -2,12 +2,8 @@ import { CircleCheckBig } from "lucide-react";
 
 export default function TransactionsPage() {
   return (
-    <main className="p-7 w-full h-full">
-      <h1 className="text-3xl font-bold text-gray-800">Request Vehicles</h1>
-      <p className="text-gray-500 mb-6">
-        Fill up the form to request a vehicle for your official use.
-      </p>
-      <div class="card lg:card-side bg-base-100 shadow-sm">
+    <main className="p-7 w-full h-full ">
+      <div class="card lg:card-side bg-base-100 w-186 p-6 max-w-l mx-auto">
         <figure>
           {/* <img
             src="https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp"
@@ -15,7 +11,13 @@ export default function TransactionsPage() {
           /> */}
         </figure>
         <div class="card-body bg-[#FDFDFD] border-2 border-green-600 rounded-lg">
-          <h2 class="card-title">Request for NEA Service Vehicle</h2>
+          <div className="mb-4 justify-center items-center text-center p-3">
+            <h1 class="text-xl font-bold">Request for NEA Service Vehicle</h1>
+            <p className="text-gray-500">
+              Fill up the form to request a vehicle for your official use.
+            </p>
+          </div>
+
           <div class="w-full mt-4">
             <fieldset className="fieldset">
               <legend className="fieldset-legendc font-bold">
