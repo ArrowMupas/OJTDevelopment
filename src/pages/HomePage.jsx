@@ -3,19 +3,19 @@ import Neabg from "../assets/Neabg.png";
 
 export default function HomePage() {
   return (
-    <div className="relative min-h-screen bg-white font-sans overflow-hidden">
+    <div className="relative min-h-full bg-white font-sans overflow-hidden">
       {/* Background Image Container */}
       <div className="absolute right-0 top-0 w-full lg:w-2/3 h-full">
         <div
           className="w-full h-full bg-cover bg-center"
           style={{ backgroundImage: `url(${Neabg})` }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/40 lg:via-transparent to-transparent"></div>
+          <div className="absolute inset-0 bg-linear-to-r from-white via-white/40 lg:via-transparent to-transparent"></div>
         </div>
       </div>
 
       {/* Content Overlay */}
-      <div className="relative z-10 container mx-auto px-6 lg:px-12 flex flex-col justify-center min-h-screen">
+      <div className="relative z-10 container px-6 lg:px-12 flex flex-col justify-center min-h-screen">
         <div className="max-w-xl">
           {/* Badge */}
           <div className="inline-block bg-yellow-400 text-white text-xs font-bold px-3 py-1 rounded-full mb-6 uppercase tracking-wider">

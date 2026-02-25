@@ -90,8 +90,8 @@ export default function MaintenancePage() {
   };
 
   return (
-    <main className="p-7 w-full h-full">
-      <h1 className="text-3xl font-bold text-gray-800">Vehicle Maintenance</h1>
+    <main className="p-8 h-full">
+      <h1 className="text-4xl font-bold ">Vehicle Maintenance</h1>
       <p className="text-gray-500 mb-6">Vehicle and driver management</p>
 
       <div className="space-x-3">
