@@ -45,9 +45,27 @@ export default function Sidebar() {
                   Vehicle Monitoring
                 </a>
               </li>
+
+           <li>
+                <a
+                  href="/vehiclestatusqueue"
+                  className="hover:bg-highlight hover:text-white transition text-sm"
+                >
+                  Vehicle Status
+                </a>
+              </li>
+
+
+
             </ul>
           </details>
         </li>
+
+
+
+
+
+        
 
         {/* Transactions */}
         <li>

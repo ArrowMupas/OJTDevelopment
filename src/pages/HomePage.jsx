@@ -22,12 +22,12 @@ export default function HomePage() {
             NEA Motorpool
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 leading-tight mb-6">
-            Official Vehicle <br />
-            <span className="text-green-600">Request System</span>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight mb-6">
+            Transport Operations <br />
+            <span className="text-green-600">Services System</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-slate-600 mb-8 max-w-md">
+          <p className="text-s md:text-s text-slate-600 mb-8 max-w-md">
             Submit your request to the Transport Operations Services Unit (TOSU)
             for review and approval.
           </p>
