@@ -247,22 +247,6 @@ export default function MaintenancePage() {
             </div>
 
             <div class="grid md:grid-cols-2 md:gap-6">
-              <div class="relative z-0 w-full mb-5 group">
-                <fieldset className="fieldset">
-                  <legend className="fieldset-legend">Issue Date</legend>
-                  <input
-                    type="date"
-                    className={`input ${errors.issueDate ? "border-red-500" : ""}`}
-                    placeholder="Type here"
-                    {...register("issueDate")}
-                  />
-                  {errors.issueDate && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.issueDate.message}
-                    </p>
-                  )}
-                </fieldset>
-              </div>
               {/* Period Covered From */}
               <fieldset className="fieldset">
                 <legend className="fieldset-legend">
@@ -294,6 +278,23 @@ export default function MaintenancePage() {
                   </p>
                 )}
               </fieldset>
+
+              <div class="relative z-0 w-full mb-5 group">
+                <fieldset className="fieldset">
+                  <legend className="fieldset-legend">Issue Date</legend>
+                  <input
+                    type="date"
+                    className={`input ${errors.issueDate ? "border-red-500" : ""}`}
+                    placeholder="Type here"
+                    {...register("issueDate")}
+                  />
+                  {errors.issueDate && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.issueDate.message}
+                    </p>
+                  )}
+                </fieldset>
+              </div>
             </div>
 
             <div className="flex justify-center mt-3">

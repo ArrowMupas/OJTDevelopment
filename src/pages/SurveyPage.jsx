@@ -1,15 +1,31 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { supabase } from "../supabaseClient";
+import toast from "react-hot-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import OurInput from "../components/OurInput";
+
+const satisfactionSurveySchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email" }),
+
+  lastName: z.string().nonempty("Last name is required"),
+  firstName: z.string().nonempty("First name is required"),
+
+  travelDate: z.string().nonempty("Travel date is required"),
+  driverName: z.string().nonempty("Driver is required"),
+  vehicle: z.string().nonempty("Vehicle is required"),
+
+  appearance: z.string().nonempty("Required"),
+  behavior: z.string().nonempty("Required"),
+  safety: z.string().nonempty("Required"),
+  vehicleCondition: z.string().nonempty("Required"),
+  onTime: z.string().nonempty("Required"),
+
+  comments: z.string().nonempty("Comments are required"),
+});
 
 export default function SurveyPage() {
-  const [lastName, setLastName] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [middleInitial, setMiddleInitial] = useState("");
-
-  const capitalizeFirstLetter = (value) => {
-    if (!value) return "";
-    return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
-  };
-
   const drivers = [
     "Juan Dela Cruz",
     "Pedro Santos",
@@ -24,226 +40,221 @@ export default function SurveyPage() {
     "Toyota Innova",
   ];
 
-  return (
-    <div className="min-h-screen bg-lime-100 flex justify-center p-8">
-      <div className="w-full max-w-xl bg-white shadow-lg rounded-lg p-8">
-        <h1 className="text-3xl font-bold text-center mb-2">
-          Passenger Satisfaction Survey
-        </h1>
-        <p className="text-center text-gray-600 mb-8">Survey for passengers</p>
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(satisfactionSurveySchema),
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-        <form className="space-y-8">
-          {/* Passenger Name */}
+  const submitSurvey = async (data) => {
+    setIsSubmitting(true);
+
+    const fullName = `${data.lastName}, ${data.firstName}`;
+
+    const { error } = await supabase.from("passenger_survey").insert([
+      {
+        email: data.email,
+        passenger_name: fullName,
+        travel_date: data.travelDate,
+        driver_name: data.driverName,
+        vehicle: data.vehicle,
+
+        rating_appearance: data.appearance,
+        rating_behavior: data.behavior,
+        rating_safety: data.safety,
+        rating_vehicle: data.vehicleCondition,
+        rating_ontime: data.onTime,
+
+        comments: data.comments,
+      },
+    ]);
+
+    if (error) {
+      toast.error("Failed to submit survey", { position: "top-center" });
+    } else {
+      toast.success("Survey submitted successfully!", {
+        position: "top-center",
+      });
+      reset();
+    }
+
+    setIsSubmitting(false);
+  };
+
+  const RatingGroup = ({ name, title, description }) => (
+    <div className="border rounded-md p-5">
+      <p className="font-medium">{title}</p>
+      <p className="text-sm italic text-gray-500 mt-1">{description}</p>
+      <p className="text-xs italic text-gray-400 mt-1">
+        {`{1 = Poor; 2 = Fair; 3 = Good; 4 = Satisfied; 5 = Excellent}`}
+      </p>
+
+      <div className="flex gap-8 mt-3">
+        {[1, 2, 3, 4, 5].map((num) => (
+          <label key={num} className="flex flex-col items-center">
+            <input type="radio" value={num} {...register(name)} />
+            <span className="text-sm">{num}</span>
+          </label>
+        ))}
+      </div>
+
+      {errors[name] && (
+        <p className="text-red-500 text-sm mt-1">{errors[name].message}</p>
+      )}
+    </div>
+  );
+
+  return (
+    <main className="min-h-screen bg-linear-to-b from-emerald-100 to-emerald-200 pb-25 flex justify-center p-8">
+      <div className="card w-xl bg-white shadow-lg rounded-3xl p-10 ">
+        <div className=" text-center items-center justify-center flex flex-col gap-1 mb-4 ">
+          <img
+            className="size-25 "
+            src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/nea-logo.png"
+            alt="NEA Logo"
+            onError={(e) => {
+              e.currentTarget.src =
+                "https://8upload.com/display/68d52d9e15810/logo-alas1.jpg.php";
+            }}
+          />
+          <div className="space-x-0">
+            <h1 className="text-4xl font-bold text-center mb-2 text-green-800">
+              Tell us about the service!
+            </h1>
+            <p className="text-center text-gray-500 mb-4 text-sm">
+              Tell us how is your experience with our service vehicles and
+              drivers. Your feedback is important to us!
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-0">
+          <OurInput
+            label="Last Name"
+            name="lastName"
+            register={register}
+            error={errors.lastName}
+            placeholder="Enter last name"
+          />
+
+          <OurInput
+            label="First Name"
+            name="firstName"
+            register={register}
+            error={errors.firstName}
+            placeholder="Enter first name"
+          />
+        </div>
+
+        <form onSubmit={handleSubmit(submitSurvey)} className="space-y-8">
+          <OurInput
+            label="Email"
+            name="email"
+            register={register}
+            error={errors.email}
+          />
+
+          <OurInput
+            label="Travel Date"
+            type="date"
+            name="travelDate"
+            register={register}
+            error={errors.travelDate}
+          />
+
+          {/* DRIVER */}
           <div>
-            <label className="block font-medium mb-3">
-              Passenger Name <span className="text-red-500">*</span>
-            </label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input
-                type="text"
-                placeholder="Last Name"
-                value={lastName}
-                onChange={(e) =>
-                  setLastName(capitalizeFirstLetter(e.target.value))
-                }
-                className=" input input-neutral"
-                required
-              />
-              <input
-                type="text"
-                placeholder="First Name"
-                value={firstName}
-                onChange={(e) =>
-                  setFirstName(capitalizeFirstLetter(e.target.value))
-                }
-                className=" input input-neutral"
-                required
-              />
-            </div>
+            <label className="font-medium">Driver</label>
+            <select
+              className={`select w-full ${
+                errors.driverName ? "border-red-500" : ""
+              }`}
+              defaultValue=""
+              {...register("driverName")}
+            >
+              <option value="" disabled>
+                Select Driver
+              </option>
+              {drivers.map((d) => (
+                <option key={d}>{d}</option>
+              ))}
+            </select>
           </div>
 
-          {/* Date */}
+          {/* VEHICLE */}
           <div>
-            <label className="block font-medium mb-1">
-              Date <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="date"
-              className=" input input-neutral w-full"
-              required
+            <label className="font-medium">Vehicle</label>
+            <select
+              className={`select w-full ${
+                errors.vehicle ? "border-red-500" : ""
+              }`}
+              defaultValue=""
+              {...register("vehicle")}
+            >
+              <option value="" disabled>
+                Select Vehicle
+              </option>
+              {vehicles.map((v) => (
+                <option key={v}>{v}</option>
+              ))}
+            </select>
+          </div>
+
+          <RatingGroup
+            name="appearance"
+            title="Driver's Appearance"
+            description="Uniform, hygiene, alertness"
+          />
+
+          <RatingGroup
+            name="behavior"
+            title="Driver's Behavior"
+            description="Courtesy, assistance, professionalism"
+          />
+
+          <RatingGroup
+            name="safety"
+            title="Safety Driving Skills"
+            description="Traffic laws, attention, safe driving"
+          />
+
+          <RatingGroup
+            name="vehicleCondition"
+            title="Vehicle Condition"
+            description="Cleanliness, AC, maintenance"
+          />
+
+          <RatingGroup
+            name="onTime"
+            title="On Time"
+            description="Pickup and arrival punctuality"
+          />
+
+          {/* COMMENTS */}
+          <div className="gap-2 flex flex-col">
+            <label className="font-medium">Comments / Suggestions</label>
+            <textarea
+              className={`textarea textarea-neutral w-full ${
+                errors.comments ? "border-red-500" : ""
+              }`}
+              placeholder="Any comments about our service?"
+              {...register("comments")}
             />
           </div>
 
-          {/* Driver Dropdown */}
-          <div>
-            <label className="block font-medium mb-1">
-              Name of Driver <span className="text-red-500">*</span>
-            </label>
-            <select className=" input input-neutral w-full" required>
-              <option value="">-- Select Driver --</option>
-              {drivers.map((driver, index) => (
-                <option key={index} value={driver}>
-                  {driver}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Vehicle Dropdown */}
-          <div>
-            <label className="block font-medium mb-1">
-              Type of Vehicle <span className="text-red-500">*</span>
-            </label>
-            <select className=" input input-neutral w-full" required>
-              <option value="">-- Select Vehicle --</option>
-              {vehicles.map((vehicle, index) => (
-                <option key={index} value={vehicle}>
-                  {vehicle}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Driver's Appearance */}
-          <div className="border rounded-md p-5">
-            <p className="font-medium">
-              Driver's Appearance <span className="text-red-500">*</span>
-            </p>
-            <p className="text-sm italic text-gray-500 mt-1">
-              Wearing proper uniform; Maintaining cleanliness and proper
-              hygiene; Alert and Attentive, not drowsy.
-            </p>
-            <p className="text-xs italic text-gray-400 mt-1">
-              {`{1 = Poor; 2 = Fair; 3 = Good; 4 = Satisfied; 5 = Excellent}`}
-            </p>
-            <div className="flex gap-8 mt-3">
-              {[1, 2, 3, 4, 5].map((num) => (
-                <label key={num} className="flex flex-col items-center">
-                  <input type="radio" name="appearance" value={num} required />
-                  <span className="text-sm">{num}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Driver's Behavior */}
-          <div className="border rounded-md p-5">
-            <p className="font-medium">
-              Driver's Behavior <span className="text-red-500">*</span>
-            </p>
-            <p className="text-sm italic text-gray-500 mt-1">
-              Courteous, reminds passenger to fasten seatbelts before departure;
-              ensures discharge of passengers; assists with luggage; avoids
-              excessive conversation; provides trip ticket signatures.
-            </p>
-            <p className="text-xs italic text-gray-400 mt-1">
-              {`{1 = Poor; 2 = Fair; 3 = Good; 4 = Satisfied; 5 = Excellent}`}
-            </p>
-            <div className="flex gap-8 mt-3">
-              {[1, 2, 3, 4, 5].map((num) => (
-                <label key={num} className="flex flex-col items-center">
-                  <input type="radio" name="behavior" value={num} required />
-                  <span className="text-sm">{num}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Driver's Safety Driving Skills */}
-          <div className="border rounded-md p-5">
-            <p className="font-medium">
-              Driver's Safety Driving Skills{" "}
-              <span className="text-red-500">*</span>
-            </p>
-            <p className="text-sm italic text-gray-500 mt-1">
-              Focuses on the road, avoids potholes; adheres to traffic laws;
-              does not use cellphone while driving.
-            </p>
-            <p className="text-xs italic text-gray-400 mt-1">
-              {`{1 = Poor; 2 = Fair; 3 = Good; 4 = Satisfied; 5 = Excellent}`}
-            </p>
-            <div className="flex gap-8 mt-3">
-              {[1, 2, 3, 4, 5].map((num) => (
-                <label key={num} className="flex flex-col items-center">
-                  <input type="radio" name="safety" value={num} required />
-                  <span className="text-sm">{num}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Vehicle Condition/Cleanliness */}
-          <div className="border rounded-md p-5">
-            <p className="font-medium">
-              Vehicle Condition/Cleanliness{" "}
-              <span className="text-red-500">*</span>
-            </p>
-            <p className="text-sm italic text-gray-500 mt-1">
-              Clean and well-maintained vehicle; Pleasant fragrance; Effective
-              air conditioning.
-            </p>
-            <p className="text-xs italic text-gray-400 mt-1">
-              {`{1 = Poor; 2 = Fair; 3 = Good; 4 = Satisfied; 5 = Excellent}`}
-            </p>
-            <div className="flex gap-8 mt-3">
-              {[1, 2, 3, 4, 5].map((num) => (
-                <label key={num} className="flex flex-col items-center">
-                  <input type="radio" name="vehicle" value={num} required />
-                  <span className="text-sm">{num}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* On Time */}
-          <div className="border rounded-md p-5">
-            <p className="font-medium">
-              On Time <span className="text-red-500">*</span>
-            </p>
-            <p className="text-sm italic text-gray-500 mt-1">
-              On call time upon leaving (pick-up) and arrival at destination
-              (drop-off).
-            </p>
-            <p className="text-xs italic text-gray-400 mt-1">
-              {`{1 = Poor; 2 = Fair; 3 = Good; 4 = Satisfied; 5 = Excellent}`}
-            </p>
-            <div className="flex gap-8 mt-3">
-              {[1, 2, 3, 4, 5].map((num) => (
-                <label key={num} className="flex flex-col items-center">
-                  <input type="radio" name="ontime" value={num} required />
-                  <span className="text-sm">{num}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Comments */}
-          <div>
-            <label className="block font-medium mb-1">
-              Comments/Suggestions <span className="text-red-500">*</span>
-            </label>
-            <p className="text-sm italic text-gray-500 mb-2">
-              Comments and suggestions are very well appreciated to improve our
-              services. Thank you!
-            </p>
-            <textarea
-              placeholder="bio"
-              className=" textarea textarea-neutral w-full"
-              required
-            ></textarea>
-          </div>
-
-          {/* Submit */}
-          <div className="text-center">
-            <button
-              type="submit"
-              className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-800 transition"
-            >
-              Submit
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="btn btn-lg bg-lime-400 hover:bg-lime-500 text-white py-7 w-full rounded-2xl mt-5"
+          >
+            {isSubmitting ? "Submitting..." : "Submit Survey"}
+          </button>
         </form>
       </div>
-    </div>
+    </main>
   );
 }
