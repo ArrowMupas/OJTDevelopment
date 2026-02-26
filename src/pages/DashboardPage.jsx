@@ -51,6 +51,7 @@ export default function HomePage() {
                 <th>Requested by</th>
                 <th>Purpose</th>
                 <th>Destination</th>
+                <th>Driver</th>
                 <th>Time</th>
                 <th>Date</th>
               </tr>
@@ -62,6 +63,7 @@ export default function HomePage() {
                 <td>ccsmo staff</td>
                 <td>to deliver nea annual report and calendars</td>
                 <td>Lucena, Dalahican Airport</td>
+                <td>John Doe</td>
                 <td>11:26:44</td>
                 <td>1/12/2026</td>
               </tr>
@@ -71,6 +73,7 @@ export default function HomePage() {
                 <td>CORSEC</td>
                 <td>Board Meeting</td>
                 <td>Accomodation to NEA</td>
+                <td>Michael Smith</td>
                 <td>9:48:59</td>
                 <td>1/7/2026</td>
               </tr>
@@ -83,6 +86,7 @@ export default function HomePage() {
                   (DSM)
                 </td>
                 <td>CASURECO I</td>
+                <td>Carlos Mendoza</td>
                 <td>9:08:26</td>
                 <td>1/7/2026</td>
               </tr>

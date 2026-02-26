@@ -17,13 +17,14 @@ import Drivers from "./pages/Drivers";
 import DriverMonitoringPage from "./pages/DriverMonitoringPage";
 import VehicleMonitoringPage from "./pages/VehicleMonitoringPage";
 import VehicleStatusPage from "./pages/VehicleStatusPage";
+import ManageRequestsPage from "./pages/ManageRequestPage";
+
 function App() {
   return (
     <>
       <Toaster position="bottom-right" />
       <Routes>
         <Route element={<MainLayout />}>
-          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/inquiry" element={<InquiryPage />} />
           <Route path="/vehicles" element={<VehiclePage />} />
@@ -32,12 +33,14 @@ function App() {
           <Route path="/drivermonitoring" element={<DriverMonitoringPage />} />
           <Route path="/vehiclemonitoring" element={<VehicleMonitoringPage />}  />
           <Route path="/vehiclestatusqueue" element={<VehicleStatusPage />} />
+          <Route path="/manage-requests" element={<ManageRequestsPage />} />
           <Route path="/" element={<HomePage />} />
         </Route>
 
         <Route element={<PublicLayout />}>
           <Route path="/survey" element={<SurveyPage />} />
           <Route path="/request-vehicle" element={<RequestVehiclePage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

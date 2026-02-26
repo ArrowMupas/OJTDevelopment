@@ -12,13 +12,31 @@ export default function Sidebar() {
     <aside className="w-58 bg-gray-50 hidden md:block shadow-inner h-auto p-2">
       <ul className="menu rounded-box w-full">
         <li>
-          <a
-            href="/dashboard"
-            className="flex items-center p-2 rounded hover:bg-highlight hover:text-white transition text-sm"
-          >
-            <LayoutDashboard className="h-4 w-4 mr-2" />
-            Dashboard
-          </a>
+          <details className="group" open>
+            <summary className="flex items-center p-2 rounded cursor-pointer hover:bg-highlight hover:text-white transition text-sm">
+              <LayoutDashboard className="h-4 w-4 mr-2" />
+              Dashboard
+            </summary>
+            <ul className="menu  rounded-box ml-4 p-2">
+              <li>
+                <a
+                  href="/dashboard"
+                  className="hover:bg-highlight hover:text-white transition text-sm"
+                >
+                  Acitivity View
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="/manage-requests"
+                  className="hover:bg-highlight hover:text-white transition text-sm"
+                >
+                  Manage Request
+                </a>
+              </li>
+            </ul>
+          </details>
         </li>
 
         <li>
