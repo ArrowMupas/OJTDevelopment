@@ -1,10 +1,10 @@
-import { Car, CircleCheckBig } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import OurInput from "../components/OurInput";
 
 const vehicleRequestSchema = z.object({
   email: z.email({ message: "Please enter a valid email" }),
@@ -15,13 +15,20 @@ const vehicleRequestSchema = z.object({
   departureTime: z.string().nonempty({ message: "Departure time is required" }),
   departureDate: z.string().nonempty({ message: "Departure date is required" }),
   purpose: z.string().nonempty({ message: "Purpose of travel is required" }),
-  items: z.string().optional(),
+
+  items: z
+    .string()
+    .nonempty({ message: "Please select what you are bringing" }),
+  itemsOther: z.string().optional(),
+
   passengers: z
     .string()
     .nonempty({ message: "Passenger name(s) are required" }),
+
   travelDuration: z
     .string()
     .nonempty({ message: "Travel duration is required" }),
+
   otherInstructions: z.string().optional(),
   passengerContactNumber: z.string().optional(),
   requestedBy: z.string().nonempty({ message: "Requester name is required" }),
@@ -32,14 +39,18 @@ export default function TransactionsPage() {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(vehicleRequestSchema),
   });
+
+  const selectedItem = watch("items");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const requestVehicle = async (data) => {
     setIsSubmitting(true);
+
     const { error } = await supabase.from("service_vehicle_requests").insert([
       {
         email: data.email,
@@ -48,7 +59,7 @@ export default function TransactionsPage() {
         departure_time: data.departureTime,
         departure_date: data.departureDate,
         purpose: data.purpose,
-        items: data.items,
+        items: data.items === "Others" ? data.itemsOther : data.items,
         passengers: data.passengers,
         travel_duration: data.travelDuration,
         other_instructions: data.otherInstructions,
@@ -65,7 +76,6 @@ export default function TransactionsPage() {
       toast.success("Vehicle request submitted successfully!", {
         position: "top-center",
       });
-      document.getElementById("vehicleRequestModal ")?.close();
       reset();
     }
 
@@ -73,228 +83,184 @@ export default function TransactionsPage() {
   };
 
   return (
-    <main className=" h-full p-8 bg-lime-100">
-      <div className="card lg:card-side p-5 w-xl mx-auto bg-white shadow-xl">
-        {/* <figure>
-          <img
-            src="https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp"
-            alt="Album"
-          />
-        </figure> */}
-        <form className="card-body max-w-2xl border-2 border-green-600 rounded-lg border-dashed">
-          <div className="mb-4 justify-center items-center text-center p-3">
-            <h1 className="text-2xl font-bold tracking-tight">
-              Request for NEA Service Vehicle
+    <main className="h-full p-8 bg-linear-to-b from-lime-100 to-green-200 pb-25">
+      <div className="card lg:card-side p-7 w-xl mx-auto bg-white shadow-lg">
+        <form
+          onSubmit={handleSubmit(requestVehicle)}
+          className="card-body max-w-2xl border-2 border-green-600 rounded-lg border-dashed p-7"
+        >
+          <div className=" text-center p-3 items-center justify-center flex flex-col gap-2">
+            <img
+              className="size-20 "
+              src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/nea-logo.png"
+              alt="NEA Logo"
+              onError={(e) => {
+                e.currentTarget.src =
+                  "https://8upload.com/display/33ff4ec683a6b52a/nea-logo.png.php";
+              }}
+            />
+            <h1 className="text-4xl font-bold text-green-700 tracking-tight font-rubik">
+              Request a Service Vehicle
             </h1>
             <p className="text-gray-500 text-sm">
               Fill up the form to request a vehicle for your official use.
             </p>
           </div>
 
-          <div className="w-full mt-4">
-            <fieldset className="fieldset">
-              <legend className="fieldset-legendc font-bold">
-                Service Vehicle to be used by:
-              </legend>
-              <p className="font-syle: italic">Department/Division/Offices</p>
-              <input
-                type="text"
-                className="input input-neutral w-full"
-                placeholder="Type here"
-              />
-              {/* <p className="label">Optional</p> */}
-            </fieldset>
-          </div>
-          <div className="w-full mt-3">
-            <fieldset className="fieldset">
-              <legend className="fieldset-legendc font-bold">
-                In going to:
-              </legend>
-              <p className="font-syle: italic">The Destination</p>
-              <input
-                type="text"
-                className="input input-neutral w-full"
-                placeholder="Type here"
-              />
-              {/* <p className="label">Optional</p> */}
-            </fieldset>
-          </div>
-          <div className="w-full mt-3">
-            <fieldset className="fieldset">
-              <legend className="fieldset-legendc font-bold">
-                Time of Departure:
-              </legend>
-              <input
-                type="time"
-                className="input input-neutral w-full"
-                placeholder="Type here"
-              />
-              {/* <p className="label">Optional</p> */}
-            </fieldset>
-          </div>
-          <div className="w-full mt-3">
-            <fieldset className="fieldset">
-              <legend className="fieldset-legendc font-bold">
-                Date of Departure:
-              </legend>
-              <input
-                type="date"
-                className="input input-neutral w-full"
-                placeholder="Type here"
-              />
-              {/* <p className="label">Optional</p> */}
-            </fieldset>
-          </div>
-          <div className="w-full mt-3">
-            <fieldset className="fieldset">
-              <legend className="fieldset-legendc font-bold">
-                Purpose of Travel:
-              </legend>
-              <input
-                type="text"
-                className="input input-neutral w-full"
-                placeholder="Type here"
-              />
-              {/* <p className="label">Optional</p> */}
-            </fieldset>
-          </div>
-          <div className="flex flex-col gap-5 mt-3">
-            <legend className="fieldset-legendc font-bold">With:</legend>
-            <div className="inline-flex items-center">
-              <label className="relative flex items-center cursor-pointer">
-                <input name="radio" type="radio" className="radio h-3 w-3" />
-              </label>
-              <label className="ml-2 text-slate-600 cursor-pointer text-sm">
-                Baggage
-              </label>
-            </div>
+          <OurInput
+            label="Email:"
+            name="email"
+            register={register}
+            error={errors.email}
+          />
+          <OurInput
+            label="Service Vehicle to be used by:"
+            label2="Department/Division/Offices"
+            name="department"
+            register={register}
+            error={errors.department}
+          />
+          <OurInput
+            label="In going to:"
+            name="destination"
+            register={register}
+            error={errors.destination}
+          />
+          <OurInput
+            label="Date of departure:"
+            type="date"
+            name="departureDate"
+            register={register}
+            error={errors.departureDate}
+          />
+          <OurInput
+            label="Time of departure:"
+            type="time"
+            name="departureTime"
+            register={register}
+            error={errors.departureTime}
+          />
+          <OurInput
+            label="Purpose of travel:"
+            name="purpose"
+            register={register}
+            error={errors.purpose}
+          />
 
-            <div className="inline-flex items-center w-full">
-              <label className="relative flex items-center cursor-pointer">
-                <input
-                  name="radio"
-                  type="radio"
-                  className="radio h-3 w-3"
-                  id="equipment-custom"
-                />
-              </label>
-              <label
-                className="ml-2 text-slate-600 cursor-pointer text-sm"
-                for="equipment-custom"
-              >
-                Equipment
-              </label>
-            </div>
+          {/* RADIO GROUP */}
+          <div className="flex flex-col mb-4 space-y-2">
+            <legend className="fieldset-legend text-sm">With:</legend>
 
-            <div className="inline-flex items-center">
-              <label className="relative flex items-center cursor-pointer">
-                <input
-                  name="radio"
-                  type="radio"
-                  className="radio h-3 w-3"
-                  id="equipment-custom"
-                />
-              </label>
-              <label
-                className="ml-2 text-slate-600 cursor-pointer text-sm w-full"
-                for="equipment-custom"
-              >
-                <div className="w-75">
-                  <fieldset className="fieldset">
-                    <input
-                      type="text"
-                      className="input input-neutral w-full"
-                      placeholder="Others (please specify)"
-                    />
-                    {/* <p className="label">Optional</p> */}
-                  </fieldset>
-                </div>
-              </label>
-            </div>
-            <div className="w-full mt-3">
-              <fieldset className="fieldset">
-                <legend className="fieldset-legendc font-bold">
-                  Name of Passenger:
-                </legend>
-                <p className="font-syle: italic">
-                  Input all the names if more than one (1).
-                </p>
+            <label className="inline-flex items-center cursor-pointer">
+              <input
+                type="radio"
+                value="Baggage"
+                className="radio h-3 w-3"
+                {...register("items")}
+              />
+              <span className="ml-2 text-sm">Baggage</span>
+            </label>
+
+            <label className="inline-flex items-center cursor-pointer">
+              <input
+                type="radio"
+                value="Equipment"
+                className="radio h-3 w-3"
+                {...register("items")}
+              />
+              <span className="ml-2 text-sm">Equipment</span>
+            </label>
+
+            <label className="inline-flex items-center cursor-pointer w-full">
+              <input
+                type="radio"
+                value="Others"
+                className="radio h-3 w-3"
+                {...register("items")}
+              />
+              <div className="ml-2 w-full">
                 <input
                   type="text"
-                  className="input input-neutral w-full"
-                  placeholder="Type here"
+                  placeholder="Others (please specify)"
+                  className={`input w-full ${errors.itemsOther ? "border-red-500" : ""}`}
+                  disabled={selectedItem !== "Others"}
+                  {...register("itemsOther")}
                 />
-                {/* <p className="label">Optional</p> */}
-              </fieldset>
-            </div>
-            <div className="w-full mt-3">
-              <fieldset className="fieldset">
-                <legend className="fieldset-legendc font-bold">
-                  Duration of Travel:
-                </legend>
-                <select
-                  defaultValue="Pick a browser"
-                  className="select w-full select-neutral"
-                >
-                  <option disabled={true}>Choose</option>
-                  <option>Same Day</option>
-                  <option>2 Days</option>
-                  <option>3 Days</option>
-                  <option>4 Days</option>
-                  <option>5 Days or more</option>
-                </select>
-              </fieldset>
-            </div>
-            <div className="w-full mt-3">
-              <fieldset className="fieldset">
-                <legend className="fieldset-legendc font-bold">
-                  Other Instructions:
-                </legend>
-                <input
-                  type="text"
-                  className="input input-neutral w-full"
-                  rows="2"
-                  placeholder="Type here"
-                />
-                {/* <p className="label">Optional</p> */}
-              </fieldset>
-            </div>
-            <div className="w-full mt-3">
-              <fieldset className="fieldset">
-                <legend className="fieldset-legendc font-bold">
-                  Contact Number of Passenger:
-                </legend>
-                <input
-                  type="text"
-                  className="input input-neutral w-full"
-                  placeholder="Type here"
-                />
-                {/* <p className="label">Optional</p> */}
-              </fieldset>
-            </div>
-            <div className="w-full mt-3">
-              <fieldset className="fieldset">
-                <legend className="fieldset-legendc font-bold">
-                  Requested By:
-                </legend>
-                <p className="font-syle: italic">
-                  Division Manager/Department Manager/Deputy Administrator.
-                </p>
-                <input
-                  type="text"
-                  className="input input-neutral w-full"
-                  placeholder="Type here"
-                />
-                {/* <p className="label">Optional</p> */}
-              </fieldset>
-            </div>
-            <div className="card-actions justify-end mt-4">
-              <button className="btn btn-lg bg-green-600 hover:bg-highlight text-white p-4 w-full">
-                <Car className="size-7 mr-2" />
-                Request a Vehicle
-              </button>
-            </div>
+              </div>
+            </label>
+
+            {errors.items && (
+              <span className="text-red-500 text-sm">
+                {errors.items.message}
+              </span>
+            )}
           </div>
+
+          <OurInput
+            label="Name of Passenger:"
+            label2="Input all the names if more than one (1)."
+            name="passengers"
+            register={register}
+            error={errors.passengers}
+          />
+
+          {/* SELECT */}
+          <div className="w-full mb-4">
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend text-sm">
+                Duration of Travel:
+              </legend>
+
+              <select
+                className={`select w-full  ${errors.travelDuration ? "border-red-500" : ""}`}
+                defaultValue=""
+                {...register("travelDuration")}
+              >
+                <option value="" disabled>
+                  Choose
+                </option>
+                <option value="Same Day">Same Day</option>
+                <option value="2 Days">2 Days</option>
+                <option value="3 Days">3 Days</option>
+                <option value="4 Days">4 Days</option>
+                <option value="5 Days or more">5 Days or more</option>
+              </select>
+
+              {errors.travelDuration && (
+                <span className="text-red-500 text-sm">
+                  {errors.travelDuration.message}
+                </span>
+              )}
+            </fieldset>
+          </div>
+
+          <OurInput
+            label="Other Instructions:"
+            name="otherInstructions"
+            register={register}
+            error={errors.otherInstructions}
+          />
+          <OurInput
+            label="Passenger Contact Number:"
+            name="passengerContactNumber"
+            register={register}
+            error={errors.passengerContactNumber}
+          />
+          <OurInput
+            label="Requested By:"
+            label2="Division Manager/Department Manager/Deputy Administrator."
+            name="requestedBy"
+            register={register}
+            error={errors.requestedBy}
+          />
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="btn btn-lg bg-green-500 hover:bg-green-400 text-white py-7 w-full rounded-2xl mt-5"
+          >
+            {isSubmitting ? "Requesting vehicle..." : "Request Vehicle"}
+          </button>
         </form>
       </div>
     </main>
