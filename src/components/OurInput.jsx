@@ -14,7 +14,7 @@ export default function FormInput({
         <legend className="fieldset-legend text-sm">{label}</legend>
         <input
           type={type}
-          className={`input w-full  ${error ? "border-red-500" : ""}`}
+          className={`input w-full  ${error ? "input-error" : ""}`}
           placeholder={placeholder}
           {...register(name)}
         />

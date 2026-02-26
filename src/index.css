@@ -4,9 +4,9 @@
   /* dark --prefersdark; */
 }
 
-/* html {
+html {
   scrollbar-gutter: stable;
-} */
+}
 
 @font-face {
   font-family: "Inter";
@@ -18,9 +18,20 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Rubik";
+  src:
+    url("/fonts/Rubik-Regular.woff2") format("woff2"),
+    url("/fonts/Rubik-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --font-*: initial;
-  --font-sans: Rubik, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-rubik: Rubik, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
   --color-highlight: #349c2a;
 }

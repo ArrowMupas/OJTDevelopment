@@ -7,21 +7,17 @@ import { z } from "zod";
 import OurInput from "../components/OurInput";
 
 const satisfactionSurveySchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email" }),
-
+  email: z.email({ message: "Please enter a valid email" }),
   lastName: z.string().nonempty("Last name is required"),
   firstName: z.string().nonempty("First name is required"),
-
   travelDate: z.string().nonempty("Travel date is required"),
   driverName: z.string().nonempty("Driver is required"),
   vehicle: z.string().nonempty("Vehicle is required"),
-
   appearance: z.string().nonempty("Required"),
   behavior: z.string().nonempty("Required"),
   safety: z.string().nonempty("Required"),
   vehicleCondition: z.string().nonempty("Required"),
   onTime: z.string().nonempty("Required"),
-
   comments: z.string().nonempty("Comments are required"),
 });
 
@@ -62,13 +58,11 @@ export default function SurveyPage() {
         travel_date: data.travelDate,
         driver_name: data.driverName,
         vehicle: data.vehicle,
-
         rating_appearance: data.appearance,
         rating_behavior: data.behavior,
         rating_safety: data.safety,
         rating_vehicle: data.vehicleCondition,
         rating_ontime: data.onTime,
-
         comments: data.comments,
       },
     ]);
@@ -118,13 +112,13 @@ export default function SurveyPage() {
             alt="NEA Logo"
             onError={(e) => {
               e.currentTarget.src =
-                "https://8upload.com/display/68d52d9e15810/logo-alas1.jpg.php";
+                "https://8upload.com/display/33ff4ec683a6b52a/nea-logo.png.php";
             }}
           />
           <div className="space-x-0">
-            <h1 className="text-4xl font-bold text-center mb-2 text-green-800">
+            <h2 className="text-4xl font-bold text-center mb-2 text-green-800 font-rubik">
               Tell us about the service!
-            </h1>
+            </h2>
             <p className="text-center text-gray-500 mb-4 text-sm">
               Tell us how is your experience with our service vehicles and
               drivers. Your feedback is important to us!
@@ -168,9 +162,9 @@ export default function SurveyPage() {
 
           {/* DRIVER */}
           <div>
-            <label className="font-medium">Driver</label>
+            <label className="font-bold text-sm">Driver</label>
             <select
-              className={`select w-full ${
+              className={`select w-full mt-1 ${
                 errors.driverName ? "border-red-500" : ""
               }`}
               defaultValue=""
@@ -187,7 +181,7 @@ export default function SurveyPage() {
 
           {/* VEHICLE */}
           <div>
-            <label className="font-medium">Vehicle</label>
+            <label className="font-bold text-sm mt-1 ">Vehicle</label>
             <select
               className={`select w-full ${
                 errors.vehicle ? "border-red-500" : ""
@@ -236,7 +230,7 @@ export default function SurveyPage() {
 
           {/* COMMENTS */}
           <div className="gap-2 flex flex-col">
-            <label className="font-medium">Comments / Suggestions</label>
+            <label className="font-bold text-sm">Comments / Suggestions</label>
             <textarea
               className={`textarea textarea-neutral w-full ${
                 errors.comments ? "border-red-500" : ""

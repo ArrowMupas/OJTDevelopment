@@ -96,10 +96,10 @@ export default function TransactionsPage() {
               alt="NEA Logo"
               onError={(e) => {
                 e.currentTarget.src =
-                  "https://8upload.com/display/68d52d9e15810/logo-alas1.jpg.php";
+                  "https://8upload.com/display/33ff4ec683a6b52a/nea-logo.png.php";
               }}
             />
-            <h1 className="text-4xl font-bold text-green-700 tracking-tight ">
+            <h1 className="text-4xl font-bold text-green-700 tracking-tight font-rubik">
               Request a Service Vehicle
             </h1>
             <p className="text-gray-500 text-sm">
@@ -212,7 +212,7 @@ export default function TransactionsPage() {
               </legend>
 
               <select
-                className={`select w-full select-neutral ${errors.travelDuration ? "border-red-500" : ""}`}
+                className={`select w-full  ${errors.travelDuration ? "border-red-500" : ""}`}
                 defaultValue=""
                 {...register("travelDuration")}
               >
