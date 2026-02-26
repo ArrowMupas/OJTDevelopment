@@ -15,6 +15,8 @@ import RequestVehiclePage from "./pages/RequestVehiclePage";
 import NotFoundPage from "./pages/NotFoundPage";
 import Drivers from "./pages/Drivers";
 import DriverMonitoringPage from "./pages/DriverMonitoringPage";
+import VehicleMonitoringPage from "./pages/VehicleMonitoringPage";
+import VehicleStatusPage from "./pages/VehicleStatusPage";
 import ManageRequestsPage from "./pages/ManageRequestPage";
 
 function App() {
@@ -29,6 +31,8 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/drivers" element={<Drivers />} />
           <Route path="/drivermonitoring" element={<DriverMonitoringPage />} />
+          <Route path="/vehiclemonitoring" element={<VehicleMonitoringPage />}  />
+          <Route path="/vehiclestatusqueue" element={<VehicleStatusPage />} />
           <Route path="/manage-requests" element={<ManageRequestsPage />} />
           <Route path="/" element={<HomePage />} />
         </Route>
