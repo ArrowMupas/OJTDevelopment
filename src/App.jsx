@@ -15,6 +15,7 @@ import RequestVehiclePage from "./pages/RequestVehiclePage";
 import NotFoundPage from "./pages/NotFoundPage";
 import Drivers from "./pages/Drivers";
 import DriverMonitoringPage from "./pages/DriverMonitoringPage";
+import ManageRequestsPage from "./pages/ManageRequestPage";
 
 function App() {
   return (
@@ -22,19 +23,20 @@ function App() {
       <Toaster position="bottom-right" />
       <Routes>
         <Route element={<MainLayout />}>
-          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/inquiry" element={<InquiryPage />} />
           <Route path="/vehicles" element={<VehiclePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/drivers" element={<Drivers />} />
           <Route path="/drivermonitoring" element={<DriverMonitoringPage />} />
+          <Route path="/manage-requests" element={<ManageRequestsPage />} />
           <Route path="/" element={<HomePage />} />
         </Route>
 
         <Route element={<PublicLayout />}>
           <Route path="/survey" element={<SurveyPage />} />
           <Route path="/request-vehicle" element={<RequestVehiclePage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
