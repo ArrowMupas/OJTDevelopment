@@ -1,9 +1,9 @@
 import {
-  ArchiveRestore,
   BeanOff,
   FilterIcon,
   PenLine,
   Search,
+  Trash2,
   Truck,
   Van,
 } from "lucide-react";
@@ -97,6 +97,16 @@ export default function MaintenancePage() {
     }
 
     setIsSubmitting(false);
+  };
+
+  const deleteVehicle = async (id) => {
+    const { error } = await supabase.from("vehicles").delete().eq("id", id);
+
+    if (error) console.error(error);
+    else {
+      setVehicles((prev) => prev.filter((vehicle) => vehicle.id !== id));
+      toast.success("Vehicle deleted successfully!");
+    }
   };
 
   return (
@@ -318,11 +328,11 @@ export default function MaintenancePage() {
       <div className="bg-base-100 mt-2 border-0 ">
         <div className="overflow-x-auto rounded-lg">
           <table className="table table-zebra">
-            <thead className="bg-green-600 text-white">
+            <thead className="bg-violet-500 text-white">
               <tr>
+                <th>Vehicle</th>
                 <th>Policy ID</th>
                 <th>Policy No.</th>
-                <th>Vehicle</th>
                 <th>Plate No.</th>
                 <th>Issue Date</th>
                 <th>Period Covered</th>
@@ -354,29 +364,47 @@ export default function MaintenancePage() {
               ) : (
                 vehicles.map((vehicle) => (
                   <tr key={vehicle.id}>
-                    <th>{vehicle.policy_id}</th>
-                    <td>{vehicle.policy_number}</td>
-                    <td>{vehicle.name}</td>
-                    <td>{vehicle.plate_number}</td>
+                    <th>{vehicle.name}</th>
+                    <td className="text-xs">{vehicle.policy_id}</td>
+                    <td className="text-xs">{vehicle.policy_number}</td>
+                    <td>
+                      <div className="badge badge-dash badge-primary">
+                        {vehicle.plate_number}
+                      </div>
+                    </td>
                     <td>
                       {vehicle.issue_date
                         ? `${format(new Date(vehicle.issue_date), "MMM. d, yyyy")}`
                         : "N/A"}
                     </td>
                     <td>
-                      {vehicle.period_from && vehicle.period_to
-                        ? `${format(new Date(vehicle.period_from), "MMM. d, yyyy")} to ${format(new Date(vehicle.period_to), "MMM. d, yyyy")}`
-                        : "N/A"}
+                      {vehicle.period_from && vehicle.period_to ? (
+                        <>
+                          {format(
+                            new Date(vehicle.period_from),
+                            "MMM. d, yyyy",
+                          )}
+                          <br />
+                          to
+                          <br />
+                          {format(new Date(vehicle.period_to), "MMM. d, yyyy")}
+                        </>
+                      ) : (
+                        "N/A"
+                      )}
                     </td>
                     <td>{vehicle.required_covered}</td>
                     <td>
                       <ul>
                         <li className="flex gap-2">
-                          <button className="btn btn-square">
+                          {/* <button className="btn btn-square">
                             <PenLine className="h-4 w-6" />
-                          </button>
-                          <button className="btn btn-square">
-                            <ArchiveRestore className="h-4 w-6" />
+                          </button> */}
+                          <button
+                            onClick={() => deleteVehicle(vehicle.id)}
+                            className="btn btn-square"
+                          >
+                            <Trash2 className="h-4 w-6" />
                           </button>
                         </li>
                       </ul>

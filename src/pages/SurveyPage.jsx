@@ -68,11 +68,9 @@ export default function SurveyPage() {
     ]);
 
     if (error) {
-      toast.error("Failed to submit survey", { position: "top-center" });
+      toast.error("Failed to submit survey");
     } else {
-      toast.success("Survey submitted successfully!", {
-        position: "top-center",
-      });
+      toast.success("Survey submitted successfully!");
       reset();
     }
 

@@ -1,15 +1,120 @@
+import { supabase } from "../supabaseClient";
 import {
-  BadgeInfo,
-  Search,
   Clipboard,
   ClipboardCheck,
   ClipboardClock,
   Ellipsis,
   Info,
-  FilterIcon,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function ManageRequestsPage() {
+  const [drivers, setDrivers] = useState([]);
+  const [vehicles, setVehicles] = useState([]);
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  async function fetchRequests() {
+    const { data, error } = await supabase
+      .from("service_vehicle_requests")
+      .select("*")
+      .order("timestamp", { ascending: false });
+
+    if (error) {
+      console.error("Requests error:", error);
+      return [];
+    }
+
+    return data;
+  }
+
+  useEffect(() => {
+    async function fetchAllData() {
+      setLoading(true);
+
+      const [
+        { data: driversData, error: driversError },
+        { data: vehiclesData, error: vehiclesError },
+        requestsData,
+      ] = await Promise.all([
+        supabase.from("drivers").select("*"),
+        supabase.from("vehicles").select("*"),
+        fetchRequests(),
+      ]);
+
+      if (driversError) console.error("Drivers error:", driversError);
+      if (vehiclesError) console.error("Vehicles error:", vehiclesError);
+
+      if (driversData) setDrivers(driversData);
+      if (vehiclesData) setVehicles(vehiclesData);
+      if (requestsData) setRequests(requestsData);
+
+      setLoading(false);
+    }
+
+    fetchAllData();
+  }, []);
+
+  async function updateAssignedVehicle(requestId, vehicleId) {
+    const { error } = await supabase
+      .from("service_vehicle_requests")
+      .update({ vehicle_id: vehicleId })
+      .eq("id", requestId);
+
+    if (error) {
+      console.error("Error updating vehicle:", error);
+    } else {
+      // Optimistically update UI immediately
+      setRequests((prev) =>
+        prev.map((req) =>
+          req.id === requestId ? { ...req, vehicle_id: vehicleId } : req,
+        ),
+      );
+
+      console.log("Vehicle updated successfully for request", requestId);
+    }
+  }
+
+  async function updateAssignedDriver(requestId, driverId) {
+    const { error } = await supabase
+      .from("service_vehicle_requests")
+      .update({ driver_id: driverId })
+      .eq("id", requestId);
+
+    if (error) {
+      console.error("Error updating driver:", error);
+    } else {
+      // Optimistically update UI immediately
+      setRequests((prev) =>
+        prev.map((req) =>
+          req.id === requestId ? { ...req, driver_id: driverId } : req,
+        ),
+      );
+
+      console.log("Driver updated successfully for request", requestId);
+    }
+  }
+
+  async function updateStatus(requestId, status) {
+    const { error } = await supabase
+      .from("service_vehicle_requests")
+      .update({ status: status })
+      .eq("id", requestId);
+
+    if (error) {
+      console.error("Error updating status:", error);
+    } else {
+      // Optimistically update UI immediately
+      setRequests((prev) =>
+        prev.map((req) =>
+          req.id === requestId ? { ...req, status: status } : req,
+        ),
+      );
+
+      console.log("Status updated successfully for request", requestId);
+    }
+  }
+
   return (
     <main className="p-8 h-full">
       <h1 className="text-4xl font-bold ">Manage Request</h1>
@@ -55,16 +160,16 @@ export default function ManageRequestsPage() {
           <table className="table table-zebra">
             <thead className="bg-green-600 text-white">
               <tr>
+                <th>Passengers</th>
                 {/* <th>Request Number</th> */}
                 {/* <th>Timestamp</th> */}
-                <th>Email Address</th>
+                {/* <th>Email Address</th> */}
                 {/* <th>Service Vehicle</th> */}
                 <th>Destination</th>
                 {/* <th>Time of departure</th>
                 <th>Date of departure</th>
                 <th>Purpose of travel</th>
                 <th>with:</th> */}
-                <th>Passengers</th>
                 {/* <th>Requested by</th> */}
                 {/* <th>Duration of travel</th> */}
                 {/* <th>Other instructions</th> */}
@@ -81,189 +186,94 @@ export default function ManageRequestsPage() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>rhangue@nea.gov.ph</td>
-                <td>NAIA T3</td>
-                <td>rhangue@nea.gov.ph</td>
-                <td>09190048776</td>
-                <td>
-                  <select
-                    defaultValue="Pick a font"
-                    className="select select-ghost"
-                  >
-                    <option disabled={true}>Driver</option>
-                    <option>Dexter O. Golloso</option>
-                    <option>Jonathan G.Mendros</option>
-                    <option>Edwin Christian Verano</option>
-                    <option>Nector T. Cinanan Jr.</option>
-                    <option>Virgilio Y. Susaya</option>
-                    <option>Rolando C. Revilla Jr.</option>
-                    <option>Guy G. Rivera</option>
-                  </select>
-                </td>
-                <td>
-                  <select
-                    defaultValue="Pick a font"
-                    className="select select-ghost"
-                  >
-                    <option disabled={true}>Vehicle</option>
-                    <option>Toyota Altis</option>
-                    <option>Honda City</option>
-                    <option>Isuzu Crosswind</option>
-                    <option>Isuzu Sportivo</option>
-                    <option>Toyota Coaster</option>
-                    <option>Toyota Hi-Ace Grandia</option>
-                    <option>Isuzu MuX</option>
-                  </select>
-                </td>
-                <td>SLD 626</td>
-                <td>
-                  <select
-                    defaultValue="Pick a font"
-                    className="select select-ghost"
-                  >
-                    <option disabled={true}>Status</option>
-                    <option>Completed</option>
-                    <option>Cancelled</option>
-                  </select>
-                </td>
-                <td>
-                  <ul>
-                    <li className="flex gap-2">
-                      <button
-                        className="btn btn-square"
-                        onClick={() =>
-                          document.getElementById("my_modal_3").showModal()
-                        }
-                      >
-                        <Ellipsis className="h-4 w-6" />
-                      </button>
-                    </li>
-                  </ul>
-                </td>
-              </tr>
-              <tr>
-                <td>jamesrafaelsevilla@gmail.com</td>
-                <td>OSG </td>
-                <td>James Rafael Sevilla</td>
-                <td>.</td>
-                <td>
-                  <select
-                    defaultValue="Pick a font"
-                    className="select select-ghost"
-                  >
-                    <option disabled={true}>Driver</option>
-                    <option>Dexter O. Golloso</option>
-                    <option>Jonathan G.Mendros</option>
-                    <option>Edwin Christian Verano</option>
-                    <option>Nector T. Cinanan Jr.</option>
-                    <option>Virgilio Y. Susaya</option>
-                    <option>Rolando C. Revilla Jr.</option>
-                    <option>Guy G. Rivera</option>
-                  </select>
-                </td>
-                <td>
-                  <select
-                    defaultValue="Pick a font"
-                    className="select select-ghost"
-                  >
-                    <option disabled={true}>Vehicle</option>
-                    <option>Toyota Altis</option>
-                    <option>Honda City</option>
-                    <option>Isuzu Crosswind</option>
-                    <option>Isuzu Sportivo</option>
-                    <option>Toyota Coaster</option>
-                    <option>Toyota Hi-Ace Grandia</option>
-                    <option>Isuzu MuX</option>
-                  </select>
-                </td>
-                <td>SLD 624</td>
-                <td>
-                  <select
-                    defaultValue="Pick a font"
-                    className="select select-ghost"
-                  >
-                    <option disabled={true}>Status</option>
-                    <option>Completed</option>
-                    <option>Cancelled</option>
-                  </select>
-                </td>
-                <td>
-                  <ul>
-                    <li className="flex gap-2">
-                      <button
-                        className="btn btn-square"
-                        onClick={() =>
-                          document.getElementById("my_modal_3").showModal()
-                        }
-                      >
-                        <Ellipsis className="h-4 w-6" />
-                      </button>
-                    </li>
-                  </ul>
-                </td>
-              </tr>
-              <tr>
-                <td>johnzedric.isipin1@gmail.com</td>
-                <td>UP</td>
-                <td>John Zedric Isipin and Mark John Alondra</td>
-                <td>09083065323</td>
-                <td>
-                  <select
-                    defaultValue="Pick a font"
-                    className="select select-ghost"
-                  >
-                    <option disabled={true}>Driver</option>
-                    <option>Dexter O. Golloso</option>
-                    <option>Jonathan G.Mendros</option>
-                    <option>Edwin Christian Verano</option>
-                    <option>Nector T. Cinanan Jr.</option>
-                    <option>Virgilio Y. Susaya</option>
-                    <option>Rolando C. Revilla Jr.</option>
-                    <option>Guy G. Rivera</option>
-                  </select>
-                </td>
-                <td>
-                  <select
-                    defaultValue="Pick a font"
-                    className="select select-ghost"
-                  >
-                    <option disabled={true}>Vehicle</option>
-                    <option>Toyota Altis</option>
-                    <option>Honda City</option>
-                    <option>Isuzu Crosswind</option>
-                    <option>Isuzu Sportivo</option>
-                    <option>Toyota Coaster</option>
-                    <option>Toyota Hi-Ace Grandia</option>
-                    <option>Isuzu MuX</option>
-                  </select>
-                </td>
-                <td>SJX840</td>
-                <td>
-                  <select
-                    defaultValue="Pick a font"
-                    className="select select-ghost"
-                  >
-                    <option disabled={true}>Status</option>
-                    <option>Completed</option>
-                    <option>Cancelled</option>
-                  </select>
-                </td>
-                <td>
-                  <ul>
-                    <li className="flex gap-2">
-                      <button
-                        className="btn btn-square"
-                        onClick={() =>
-                          document.getElementById("my_modal_3").showModal()
-                        }
-                      >
-                        <Ellipsis className="h-4 w-6" />
-                      </button>
-                    </li>
-                  </ul>
-                </td>
-              </tr>
+              {requests.map((req) => (
+                <tr key={req.id}>
+                  <th className="flex flex-col">
+                    <span>{req.passengers}</span>
+                    <span className="text-xs text-gray-500 font-medium">
+                      {req.email}
+                    </span>
+                  </th>
+                  <td>{req.destination}</td>
+                  <td>{req.passenger_contact_number}</td>
+
+                  {/* DRIVER SELECT */}
+                  <td>
+                    <select
+                      className="select select-ghost"
+                      value={req.driver_id || ""}
+                      onChange={(e) =>
+                        updateAssignedDriver(req.id, Number(e.target.value))
+                      }
+                    >
+                      <option value="">Unassigned</option>
+
+                      {drivers.map((driver) => (
+                        <option key={driver.id} value={driver.id}>
+                          {driver.first_name} {driver.last_name}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+
+                  {/* VEHICLE SELECT */}
+                  <td>
+                    <select
+                      className="select select-ghost"
+                      value={req.vehicle_id || ""}
+                      onChange={(e) =>
+                        updateAssignedVehicle(req.id, Number(e.target.value))
+                      }
+                    >
+                      <option value="">Unassigned</option>
+
+                      {vehicles.map((vehicle) => (
+                        <option key={vehicle.id} value={vehicle.id}>
+                          {vehicle.name}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+
+                  <td>
+                    <div className="badge badge-dash badge-primary">
+                      {vehicles.find((v) => v.id === req.vehicle_id)
+                        ?.plate_number ?? "N/A"}
+                    </div>
+                  </td>
+
+                  {/* STATUS */}
+                  <td>
+                    <select
+                      className={`select select-ghost ${
+                        req.status === "Completed"
+                          ? "bg-green-200 text-green-800"
+                          : req.status === "Cancelled"
+                            ? "bg-red-200 text-red-800"
+                            : "bg-yellow-100 text-yellow-800"
+                      }`}
+                      value={req.status || ""}
+                      onChange={(e) => updateStatus(req.id, e.target.value)}
+                    >
+                      <option value="">Pending</option>
+                      <option value="Completed">Completed</option>
+                      <option value="Cancelled">Cancelled</option>
+                    </select>
+                  </td>
+
+                  {/* ACTION */}
+                  <td>
+                    <button
+                      className="btn btn-square"
+                      onClick={() =>
+                        document.getElementById("my_modal_3").showModal()
+                      }
+                    >
+                      <Ellipsis className="h-4 w-6" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
             <tfoot></tfoot>
           </table>
