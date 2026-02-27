@@ -7,6 +7,7 @@ import {
   Info,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function ManageRequestsPage() {
   const [drivers, setDrivers] = useState([]);
@@ -263,14 +264,11 @@ export default function ManageRequestsPage() {
 
                   {/* ACTION */}
                   <td>
-                    <button
-                      className="btn btn-square"
-                      onClick={() =>
-                        document.getElementById("my_modal_3").showModal()
-                      }
-                    >
-                      <Ellipsis className="h-4 w-6" />
-                    </button>
+                    <Link to="/moreinfo">
+                      <button className="btn btn-square">
+                        <Ellipsis className="h-4 w-6" />
+                      </button>
+                    </Link>
                   </td>
                 </tr>
               ))}
