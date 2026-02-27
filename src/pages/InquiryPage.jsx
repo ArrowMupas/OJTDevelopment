@@ -46,7 +46,7 @@ export default function InquiryPage() {
       <p className="text-gray-500 mb-6">All inquiries can be viewed here.</p>
 
       <div className="space-x-2">
-        <label className="input w-1/3 border-black">
+        <label className="input w-1/3 input-neutral">
           <Search className="h-4 w-6" />
           <input
             type="search"

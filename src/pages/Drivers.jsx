@@ -15,6 +15,8 @@ import {
   UserXIcon,
 } from "lucide-react";
 import OurInput from "../components/OurInput";
+import debounce from "lodash.debounce";
+import { useMemo } from "react";
 
 const driverSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -26,24 +28,40 @@ const driverSchema = z.object({
 export default function MaintenancePage() {
   const [drivers, setDrivers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+
+  async function fetchDrivers(searchTerm = "") {
+    setLoading(true);
+
+    let query = supabase
+      .from("drivers")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (searchTerm) {
+      query = query.or(
+        `first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%`,
+      );
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error(error);
+    } else {
+      setDrivers(data);
+    }
+    setLoading(false);
+  }
 
   useEffect(() => {
-    async function fetchDrivers() {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("drivers")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error(error);
-      } else {
-        setDrivers(data);
-      }
-      setLoading(false);
-    }
     fetchDrivers();
   }, []);
+
+  const debouncedSearch = useMemo(
+    () => debounce((value) => fetchDrivers(value), 400),
+    [],
+  );
 
   const {
     register,
@@ -106,7 +124,16 @@ export default function MaintenancePage() {
       <div className="space-x-3">
         <label className="input w-1/3 input-neutral">
           <Search className="h-4 w-6" />
-          <input type="search" required placeholder="Search" />
+          <input
+            type="search"
+            placeholder="Search"
+            value={search}
+            onChange={(e) => {
+              const value = e.target.value;
+              setSearch(value);
+              debouncedSearch(value);
+            }}
+          />
         </label>
 
         <div className="dropdown">
@@ -213,8 +240,6 @@ export default function MaintenancePage() {
               <tr>
                 <th>Image</th>
                 <th>Fullname</th>
-                <th>Email</th>
-                <th>Contact Number</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -248,8 +273,6 @@ export default function MaintenancePage() {
                     <td className="font-bold">
                       {driver.first_name} {driver.last_name}
                     </td>
-                    <td>{driver.email}</td>
-                    <td>{driver.contact_number}</td>
                     <td>
                       <ul>
                         <li className="flex gap-2">
