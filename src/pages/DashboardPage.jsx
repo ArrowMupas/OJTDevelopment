@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import { Clipboard, ClipboardCheck, ClipboardClock } from "lucide-react";
+import { parse, format } from "date-fns";
 
 export default function HomePage() {
   const [requests, setRequests] = useState([]);
@@ -9,7 +10,7 @@ export default function HomePage() {
   // Fetch service vehicle requests
   async function fetchRequests() {
     const { data, error } = await supabase
-      .from("service_vehicle_requests")
+      .from("request_dashboard_view")
       .select("*")
       .order("timestamp", { ascending: false });
 
@@ -31,7 +32,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <main className="p-8 h-full">
+    <main className="p-4 h-full">
       <h1 className="text-4xl font-bold">Dashboard</h1>
       <p className="text-gray-500 mb-6">
         Overview of requests and driver activity
@@ -78,16 +79,17 @@ export default function HomePage() {
       <div className="bg-base-100 mt-4">
         <div className="overflow-x-auto border border-green-600">
           <table className="table table-zebra">
-            <thead className="bg-green-600 text-white">
+            <thead className="bg-green-500 text-white">
               <tr>
-                <th>#</th>
-                <th>Email</th>
-                <th>Requested by</th>
-                <th>Purpose</th>
+                <th>Department</th>
+                <th>Date & Time</th>
                 <th>Destination</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Instructions</th>
                 <th>Driver</th>
-                <th>Time</th>
-                <th>Date</th>
+                <th>Vehicle</th>
+                <th>Plate Number</th>
               </tr>
             </thead>
             <tbody>
@@ -104,18 +106,57 @@ export default function HomePage() {
                   </td>
                 </tr>
               ) : (
-                requests.map((req, index) => (
-                  <tr key={req.id}>
-                    <th>{index + 1}</th>
-                    <td>{req.email}</td>
-                    <td>{req.requested_by}</td>
-                    <td>{req.purpose}</td>
-                    <td>{req.destination}</td>
-                    <td>{req.driver_name || "Unassigned"}</td>
-                    <td>{new Date(req.timestamp).toLocaleTimeString()}</td>
-                    <td>{new Date(req.timestamp).toLocaleDateString()}</td>
-                  </tr>
-                ))
+                requests.map((req) => {
+                  const date = req.departure_date;
+                  const time = req.departure_time;
+
+                  const parsedDateTime = parse(
+                    `${date} ${time}`,
+                    "yyyy-MM-dd HH:mm:ss",
+                    new Date(),
+                  );
+
+                  const formattedDateTime = format(
+                    parsedDateTime,
+                    "MMM. d, yyyy hh:mm a",
+                  );
+
+                  return (
+                    <tr key={req.id}>
+                      <th>{req.department}</th>
+                      <td className="flex flex-col justify-center items-start">
+                        <span className="text-sm">
+                          {format(formattedDateTime, "MMM. d, yyyy")}
+                        </span>
+                        <span className="text-xs ">
+                          {format(formattedDateTime, "hh:mm a")}
+                        </span>
+                      </td>
+                      <td>{req.destination}</td>
+                      <td className="flex flex-col">
+                        <span>{req.passengers}</span>
+                        <span className="text-xs text-gray-500 font-medium">
+                          {req.email}
+                        </span>
+                      </td>
+                      <td className="text-xs">
+                        {req.passenger_contact_number}
+                      </td>
+                      <td>{req.other_instructions}</td>
+                      <td>
+                        {req.driver_first_name} {req.driver_last_name}
+                      </td>
+                      <td>{req.vehicle_name}</td>
+                      <td>
+                        {req.plate_number && (
+                          <div className="badge badge-dash badge-primary">
+                            {req.plate_number}
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
             <tfoot></tfoot>
