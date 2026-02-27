@@ -8,26 +8,34 @@ export default function NotFoundPage() {
 }
 
 {
-  /* <td>
-                    <select
-                      className={`select  ${
-                        req.status === "Completed"
-                          ? " text-green-500 select-success"
-                          : req.status === "Cancelled" &&
-                            "select-error  text-red-500 "
-                      }`}
-                      value={req.status || ""}
-                      onChange={(e) => updateStatus(req.id, e.target.value)}
-                    >
-                      <option value="" className="text-black">
-                        Pending
-                      </option>
-                      <option value="Completed" className="text-green-500 ">
-                        Completed
-                      </option>
-                      <option value="Cancelled" className="text-red-500">
-                        Cancelled
-                      </option>
-                    </select>
-                  </td> */
+  /* 
+   <div className="stats shadow">
+        <div className="stat">
+          <div className="stat-title">Today's Request</div>
+          <div className="stat-value">{requests.length}</div>
+          <div className="stat-desc">21% more than last month</div>
+        </div>
+      </div>
+
+      <div className="stats shadow">
+        <div className="stat">
+          <div className="stat-title">Completed Request</div>
+          <div className="stat-value">
+            {requests.filter((r) => r.status === "Completed").length}
+          </div>
+          <div className="stat-desc">21% more than last month</div>
+        </div>
+      </div>
+
+      <div className="stats shadow">
+        <div className="stat">
+          <div className="stat-title">Today Request</div>
+          <div className="stat-value">
+            {requests.filter((r) => r.status !== "Completed").length}
+          </div>
+          <div className="stat-desc">21% more than last month</div>
+        </div>
+      </div>
+
+  */
 }
