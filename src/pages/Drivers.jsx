@@ -5,13 +5,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useEffect, useState } from "react";
 import {
-  ArchiveRestore,
   FilterIcon,
   PenLine,
   Search,
+  Trash2,
   Truck,
   UserPlus,
   UserRoundX,
+  UserXIcon,
 } from "lucide-react";
 import OurInput from "../components/OurInput";
 
@@ -85,6 +86,16 @@ export default function MaintenancePage() {
     }
 
     setIsSubmitting(false);
+  };
+
+  const deleteDriver = async (id) => {
+    const { error } = await supabase.from("drivers").delete().eq("id", id);
+
+    if (error) console.error(error);
+    else {
+      setDrivers((prev) => prev.filter((driver) => driver.id !== id));
+      toast.success("Driver deleted successfully!");
+    }
   };
 
   return (
@@ -198,9 +209,8 @@ export default function MaintenancePage() {
       <div className="bg-base-100 mt-2 border-0">
         <div className="overflow-x-auto rounded-lg">
           <table className="table table-zebra ">
-            <thead className="bg-green-600 text-white ">
+            <thead className="bg-blue-500 text-white ">
               <tr>
-                <th>Driver ID</th>
                 <th>Image</th>
                 <th>Fullname</th>
                 <th>Email</th>
@@ -232,18 +242,10 @@ export default function MaintenancePage() {
               ) : (
                 drivers.map((driver) => (
                   <tr key={driver.id}>
-                    <th>{driver.id}</th>
                     <td>
-                      <img
-                        src={
-                          driver.image_url ||
-                          "https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/placeholder.png"
-                        }
-                        alt={`${driver.first_name} ${driver.last_name}`}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
+                      <UserXIcon className="size-12 text-gray-300 rounded-full" />
                     </td>
-                    <td>
+                    <td className="font-bold">
                       {driver.first_name} {driver.last_name}
                     </td>
                     <td>{driver.email}</td>
@@ -251,12 +253,16 @@ export default function MaintenancePage() {
                     <td>
                       <ul>
                         <li className="flex gap-2">
-                          <button className="btn btn-square">
+                          <button
+                            onClick={() => deleteDriver(driver.id)}
+                            className="btn btn-soft btn-error"
+                          >
+                            <Trash2 className="h-4 w-6" />
+                            Delete Driver
+                          </button>
+                          {/* <button className="btn btn-square">
                             <PenLine className="h-4 w-6" />
-                          </button>
-                          <button className="btn btn-square">
-                            <ArchiveRestore className="h-4 w-6" />
-                          </button>
+                          </button> */}
                         </li>
                       </ul>
                     </td>

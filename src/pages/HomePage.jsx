@@ -1,14 +1,13 @@
-import React from "react";
-import Neabg from "../assets/Neabg.png";
-
 export default function HomePage() {
   return (
-    <div className="relative min-h-full bg-white font-sans overflow-hidden">
+    <div className="relative min-h-full bg-white  overflow-hidden">
       {/* Background Image Container */}
       <div className="absolute right-0 top-0 w-full lg:w-2/3 h-full">
         <div
           className="w-full h-full bg-cover bg-center"
-          style={{ backgroundImage: `url(${Neabg})` }}
+          style={{
+            backgroundImage: `url(https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/Neabg.png)`,
+          }}
         >
           <div className="absolute inset-0 bg-linear-to-r from-white via-white/40 lg:via-transparent to-transparent"></div>
         </div>

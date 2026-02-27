@@ -69,13 +69,9 @@ export default function TransactionsPage() {
     ]);
 
     if (error) {
-      toast.error("Failed to request a vehicle. Please try again.", {
-        position: "top-center",
-      });
+      toast.error("Failed to request a vehicle. Please try again.");
     } else {
-      toast.success("Vehicle request submitted successfully!", {
-        position: "top-center",
-      });
+      toast.success("Vehicle request submitted successfully!");
       reset();
     }
 
