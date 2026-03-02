@@ -30,7 +30,6 @@ function App() {
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/inquiry" element={<InquiryPage />} />
           <Route path="/vehicles" element={<VehiclePage />} />
-          <Route path="/contact" element={<ContactPage />} />
           <Route path="/drivers" element={<Drivers />} />
           <Route path="/drivermonitoring" element={<DriverMonitoringPage />} />
           <Route
@@ -40,10 +39,11 @@ function App() {
           <Route path="/vehiclestatusqueue" element={<VehicleStatusPage />} />
           <Route path="/manage-requests" element={<ManageRequestsPage />} />
           <Route path="/moreinfo" element={<MoreInfoPage />} />
-          <Route path="/" element={<HomePage />} />
         </Route>
 
         <Route element={<PublicLayout />}>
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/requestinput" element={<RequestInputPage />} />
           <Route path="/survey" element={<SurveyPage />} />
           <Route path="/request-vehicle" element={<RequestVehiclePage />} />
