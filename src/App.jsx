@@ -14,6 +14,7 @@ import InquiryPage from "./pages/InquiryPage";
 import RequestVehiclePage from "./pages/RequestVehiclePage";
 import NotFoundPage from "./pages/NotFoundPage";
 import Drivers from "./pages/Drivers";
+import RequestInputPage from "./pages/RequestInput";
 import DriverMonitoringPage from "./pages/DriverMonitoringPage";
 import VehicleMonitoringPage from "./pages/VehicleMonitoringPage";
 import VehicleStatusPage from "./pages/VehicleStatusPage";
@@ -43,6 +44,7 @@ function App() {
         </Route>
 
         <Route element={<PublicLayout />}>
+          <Route path="/requestinput" element={<RequestInputPage />} />
           <Route path="/survey" element={<SurveyPage />} />
           <Route path="/request-vehicle" element={<RequestVehiclePage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
