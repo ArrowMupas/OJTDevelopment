@@ -41,9 +41,11 @@ export default function InquiryPage() {
   );
 
   return (
-    <main className="p-7 w-full h-full">
-      <h1 className="text-3xl font-bold text-gray-800">Inquiry</h1>
-      <p className="text-gray-500 mb-6">All inquiries can be viewed here.</p>
+    <main className="px-5 py-4 w-full h-full">
+      <h1 className="text-lg font-bold ">Inquiry</h1>
+      <p className="text-gray-500 text-sm mb-6">
+        All inquiries can be viewed here.
+      </p>
 
       <div className="space-x-2">
         <label className="input w-1/3 input-neutral">

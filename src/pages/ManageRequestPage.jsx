@@ -118,13 +118,13 @@ export default function ManageRequestsPage() {
   }
 
   return (
-    <main className="p-8 h-full">
-      <h1 className="text-4xl font-bold ">Manage Request</h1>
-      <p className="text-gray-500 mb-6">
+    <main className="px-5 py-4 pb-40 h-full">
+      <h1 className="text-lg font-bold ">Manage Request</h1>
+      <p className="text-gray-500 text-sm mb-6">
         View and manage all service requests here.
       </p>
 
-      <div className="grid grid-cols-3 md:flex-row gap-5">
+      <div className="grid grid-cols-4 md:flex-row gap-5">
         <div className="card bg-base-100 card-md shadow-sm">
           <div className="card-body flex-row justify-between border-[#d2dc15] border-b-2 rounded-sm">
             <div>
@@ -154,13 +154,23 @@ export default function ManageRequestsPage() {
             <ClipboardClock className="h-8 w-12 mr-2 text-[#745fc9]" />
           </div>
         </div>
-      </div>
-      <h2 className="text-2xl font-bold mt-12    ">List of Request</h2>
 
-      <div className="bg-base-100 mt-4">
-        <div className="overflow-x-auto border border-green-600">
-          <table className="table table-zebra">
-            <thead className="bg-green-600 text-white">
+        <div className="card bg-base-100 card-md shadow-sm">
+          <div className="card-body flex-row justify-between border-[#745fc9] border-b-2 rounded-sm">
+            <div>
+              <h2 className="card-title">19</h2>
+              <p>Pending Request</p>
+            </div>
+            <ClipboardClock className="h-8 w-12 mr-2 text-[#745fc9]" />
+          </div>
+        </div>
+      </div>
+      <h2 className=" font-semibold mt-12 text-gray-700">List of Request</h2>
+
+      <div className="bg-green-50 mt-4">
+        <div className="overflow-x-auto  rounded-lg">
+          <table className="table ">
+            <thead className="bg-green-500 text-white">
               <tr>
                 <th>Department</th>
                 <th>Passengers</th>
@@ -189,16 +199,12 @@ export default function ManageRequestsPage() {
                 );
 
                 return (
-                  <tr key={req.id}>
+                  <tr key={req.id} className="hover:bg-green-100">
                     <th>{req.department}</th>
 
                     <td className="">
                       <span className="font-bold capitalize">
                         {req.passengers}
-                      </span>
-                      <br />
-                      <span className="text-xs text-gray-500 font-medium">
-                        {req.email}
                       </span>
                       <br />
                       <span className="text-xs  font-medium">
@@ -221,7 +227,7 @@ export default function ManageRequestsPage() {
                     {/* DRIVER SELECT */}
                     <td>
                       <select
-                        className="select select-ghost"
+                        className="select "
                         value={req.driver_id || ""}
                         onChange={(e) =>
                           updateAssignedDriver(req.id, Number(e.target.value))
@@ -257,10 +263,10 @@ export default function ManageRequestsPage() {
                             </option>
                           ))}
                         </select>
-                        <div className="badge badge-dash badge-primary">
+                        {/* <div className="badge badge-dash badge-primary">
                           {vehicles.find((v) => v.id === req.vehicle_id)
                             ?.plate_number ?? "N/A"}
-                        </div>
+                        </div> */}
                       </div>
                     </td>
 
@@ -299,7 +305,6 @@ export default function ManageRequestsPage() {
                   </tr>
                 );
               })}
-              )
             </tbody>
             <tfoot></tfoot>
           </table>

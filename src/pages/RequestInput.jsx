@@ -72,8 +72,6 @@ export default function RequestInputPage() {
                 Other instructions:
               </legend>
               <p className="mb-3">Other Instruction here.</p>
-              <legend className="fieldset-legendc font-bold">Duration:</legend>
-              <p className="mb-3">Duration here.</p>
             </div>
           </div>
         </form>
