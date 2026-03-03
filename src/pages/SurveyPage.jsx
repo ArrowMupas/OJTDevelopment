@@ -101,7 +101,7 @@ export default function SurveyPage() {
   );
 
   return (
-    <main className="min-h-screen bg-linear-to-b from-emerald-100 to-emerald-200 pb-25 flex justify-center p-8">
+    <main className="min-h-screen bg-linear-to-b from-emerald-100 to-emerald-200 pb-25 flex justify-center p-2 sm:p-8">
       <div className="card w-xl bg-white shadow-lg rounded-3xl p-10 ">
         <div className=" text-center items-center justify-center flex flex-col gap-1 mb-4 ">
           <img

@@ -1,6 +1,5 @@
-import { supabase } from "../supabaseClient";
-import { Contact, Icon, Mail, MapPin, PhoneCall } from "lucide-react";
-import { FaFacebook, FaTwitter, FaYoutube } from "react-icons/fa";
+import { supabase } from "../../supabaseClient";
+import { Contact, Mail, MapPin, PhoneCall } from "lucide-react";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -55,7 +54,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto ">
+    <div className="p-8 max-w-4xl mx-auto pb-40">
       <h1 className="text-4xl font-bold mb-10 text-center ">Contact Us</h1>
 
       <div className="grid md:grid-cols-2 gap-8">
@@ -166,22 +165,20 @@ export default function ContactPage() {
         <div className="bg-green-600 text-white p-6 rounded-lg space-y-8">
           <h2 className="text-xl font-semibold mb-2">Contact Us</h2>
 
-          
-
-         <div className="flex items-start">
-    <PhoneCall className="h-5 w-5 mr-3 mt-1 text-white" />
-    <div>
-      <p>
-        <strong>Trunkline:</strong> 8929-1909
-      </p>
-      <p className="ml-0">
-        <strong>Local:</strong> 1119
-      </p>
-      <p className="ml-0">
-        <strong>Mobile No.:</strong> 09164230007
-      </p>
-    </div>
-  </div>
+          <div className="flex items-start">
+            <PhoneCall className="h-5 w-5 mr-3 mt-1 text-white" />
+            <div>
+              <p>
+                <strong>Trunkline:</strong> 8929-1909
+              </p>
+              <p className="ml-0">
+                <strong>Local:</strong> 1119
+              </p>
+              <p className="ml-0">
+                <strong>Mobile No.:</strong> 09164230007
+              </p>
+            </div>
+          </div>
           <p>
             <strong>
               <Mail className="h-10 w-4 inline-block mr-2" /> Email:
@@ -195,10 +192,6 @@ export default function ContactPage() {
             57 NEA Building, NIA Road, Government Center, Diliman , Quezon City,
             Philippines, 1001
           </p>
-
-          
-            
-        
         </div>
       </div>
     </div>
