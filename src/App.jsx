@@ -21,6 +21,7 @@ import VehicleStatusPage from "./pages/VehicleStatusPage";
 import MoreInfoPage from "./pages/MoreInfoPage";
 import ManageRequestsPage from "./pages/ManageRequestPage";
 import HistoryPage from "./pages/HistoryPage";
+import AboutPage from "./pages/AboutPage"
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
           <Route path="/request-vehicle" element={<RequestVehiclePage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/history" element={<HistoryPage />} />
+          <Route path="/about" element={<AboutPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

@@ -1,5 +1,5 @@
 import { supabase } from "../supabaseClient";
-import { Contact, Mail, MapPin, PhoneCall } from "lucide-react";
+import { Contact, Icon, Mail, MapPin, PhoneCall } from "lucide-react";
 import { FaFacebook, FaTwitter, FaYoutube } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
@@ -163,21 +163,25 @@ export default function ContactPage() {
         </form>
 
         {/* Right: Company Info */}
-        <div className="bg-green-600 text-white p-6 rounded-lg space-y-4">
+        <div className="bg-green-600 text-white p-6 rounded-lg space-y-8">
           <h2 className="text-xl font-semibold mb-2">Contact Us</h2>
 
-          <p>
-            Formerly located at the D&E and CDC Buildings, 1050 Quezon Avenue,
-            Paligsahan, their office is now inside Triangle Park at the National
-            Government Center in Quezon City.
-          </p>
+          
 
-          <p>
-            <strong>
-              <PhoneCall className="h-10 w-4 inline-block mr-2" /> Phone:
-            </strong>{" "}
-            (929) 190-9119
-          </p>
+         <div className="flex items-start">
+    <PhoneCall className="h-5 w-5 mr-3 mt-1 text-white" />
+    <div>
+      <p>
+        <strong>Trunkline:</strong> 8929-1909
+      </p>
+      <p className="ml-0">
+        <strong>Local:</strong> 1119
+      </p>
+      <p className="ml-0">
+        <strong>Mobile No.:</strong> 09164230007
+      </p>
+    </div>
+  </div>
           <p>
             <strong>
               <Mail className="h-10 w-4 inline-block mr-2" /> Email:
@@ -192,33 +196,9 @@ export default function ContactPage() {
             Philippines, 1001
           </p>
 
-          <div className="flex justify-center items-center gap-6">
-            <a
-              href="https://twitter.com/nea_ph"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-4xl transition duration-200 hover:scale-110"
-            >
-              <FaTwitter className="w-8 h-20" />
-            </a>
-
-            <a
-              href="https://www.youtube.com/@NEAPhilippines"
-              target="_blank"
-              rel="noopener noreferrer"
-              className=" text-3xl transition duration-200 hover:scale-110"
-            >
-              <FaYoutube className="w-8 h-20" />
-            </a>
-            <a
-              href="https://www.facebook.com/NEAPhilippines"
-              target="_blank"
-              rel="noopener noreferrer"
-              className=" text-3xl transition duration-200 hover:scale-110"
-            >
-              <FaFacebook className="w-8 h-20" />
-            </a>
-          </div>
+          
+            
+        
         </div>
       </div>
     </div>
