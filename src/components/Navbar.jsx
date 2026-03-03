@@ -21,7 +21,7 @@ export default function Navbar() {
           </h1>
         </div>
 
-        <nav className="space-x-7 ">
+        <nav className="space-x-2 sm:space-x-4 md:space-x-5">
           <a
             href="/inquiry"
             className="text-sm hover:no-underline hover:text-yellow-200"

@@ -1,5 +1,5 @@
 import { BeanOff, FilterIcon, Search, Trash2, Truck, Van } from "lucide-react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

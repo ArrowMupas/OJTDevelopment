@@ -78,13 +78,12 @@ export default function TransactionsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-lime-100 to-green-200 pb-25 flex justify-center p-4 sm:p-6 lg:p-8">
+    <main className="min-h-screen bg-linear-to-b from-lime-100 to-green-200 pb-25 flex justify-center p-2 sm:p-8 ">
       <div className="card w-full max-w-xl bg-white shadow-lg rounded-3xl p-7">
         <form
           onSubmit={handleSubmit(requestVehicle)}
           className="card-body border-2 border-green-600 border-dashed rounded-lg p-5 sm:p-7 flex flex-col gap-4"
         >
-          
           <div className="text-center flex flex-col items-center justify-center gap-2 p-3">
             <img
               className="w-24 sm:w-28 lg:w-32 h-auto"
@@ -103,7 +102,7 @@ export default function TransactionsPage() {
             </p>
           </div>
 
-<OurInput
+          <OurInput
             label="Email:"
             name="email"
             register={register}
@@ -148,30 +147,32 @@ export default function TransactionsPage() {
             <legend className="fieldset-legend text-sm">With:</legend>
 
             <label className="flex flex-col sm:flex-row items-start sm:items-center cursor-pointer w-full">
-              <input 
-                type="radio" 
-                value="Baggage" 
-                className="h-3 w-3 mt-1 sm:mt-0" 
-                {...register("items")} 
-                />
+              <input
+                type="radio"
+                value="Baggage"
+                className="h-3 w-3 mt-1 sm:mt-0"
+                {...register("items")}
+              />
               <span className="ml-0 sm:ml-2 text-sm">Baggage</span>
             </label>
 
             <label className="flex flex-col sm:flex-row items-start sm:items-center cursor-pointer w-full">
-              <input 
-              type="radio" 
-              value="Equipment" 
-              className="h-3 w-3 mt-1 sm:mt-0" 
-              {...register("items")} />
+              <input
+                type="radio"
+                value="Equipment"
+                className="h-3 w-3 mt-1 sm:mt-0"
+                {...register("items")}
+              />
               <span className="ml-0 sm:ml-2 text-sm">Equipment</span>
             </label>
 
             <label className="flex flex-col sm:flex-row items-start sm:items-center cursor-pointer w-full">
-              <input 
-              type="radio" 
-              value="Others" 
-              className="h-3 w-3 mt-1 sm:mt-0" 
-              {...register("items")} />
+              <input
+                type="radio"
+                value="Others"
+                className="h-3 w-3 mt-1 sm:mt-0"
+                {...register("items")}
+              />
               <div className="ml-0 sm:ml-2 w-full sm:w-auto">
                 <input
                   type="text"
@@ -183,10 +184,11 @@ export default function TransactionsPage() {
               </div>
             </label>
 
-            {errors.items && 
-            <span className="text-red-500 text-sm">
-              {errors.items.message}
-              </span>}
+            {errors.items && (
+              <span className="text-red-500 text-sm">
+                {errors.items.message}
+              </span>
+            )}
           </div>
 
           <OurInput
@@ -199,25 +201,26 @@ export default function TransactionsPage() {
 
           {/* SELECT */}
           <div>
-            <label className="font-bold text-sm">
-              Duration of Travel:
-              </label>
+            <label className="font-bold text-sm">Duration of Travel:</label>
             <select
               className={`select w-full mt-1 ${errors.travelDuration ? "border-red-500" : ""}`}
               defaultValue=""
               {...register("travelDuration")}
             >
-              <option value="" disabled>Choose</option>
+              <option value="" disabled>
+                Choose
+              </option>
               <option value="Same Day">Same Day</option>
               <option value="2 Days">2 Days</option>
               <option value="3 Days">3 Days</option>
               <option value="4 Days">4 Days</option>
               <option value="5 Days or more">5 Days or more</option>
             </select>
-            {errors.travelDuration && 
-               <span className="text-red-500 text-sm">
+            {errors.travelDuration && (
+              <span className="text-red-500 text-sm">
                 {errors.travelDuration.message}
-                </span>}
+              </span>
+            )}
           </div>
 
           <OurInput
@@ -231,7 +234,7 @@ export default function TransactionsPage() {
             name="passengerContactNumber"
             register={register}
             error={errors.passengerContactNumber}
-          />          
+          />
           <OurInput
             label="Requested By:"
             label2="Division Manager/Department Manager/Deputy Administrator."

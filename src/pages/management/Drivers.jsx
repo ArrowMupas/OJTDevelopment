@@ -7,14 +7,14 @@ import {
   UserPlus,
   UserXIcon,
 } from "lucide-react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useEffect, useState, useMemo } from "react";
 import debounce from "lodash.debounce";
-import OurInput from "../components/OurInput";
+import OurInput from "../../components/OurInput";
 
 const driverSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
