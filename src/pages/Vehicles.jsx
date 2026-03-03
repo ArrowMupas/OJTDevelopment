@@ -1,19 +1,12 @@
-import {
-  BeanOff,
-  FilterIcon,
-  PenLine,
-  Search,
-  Trash2,
-  Truck,
-  Van,
-} from "lucide-react";
+import { BeanOff, FilterIcon, Search, Trash2, Truck, Van } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { format } from "date-fns";
+import debounce from "lodash.debounce";
 
 const vehicleSchema = z
   .object({
@@ -42,23 +35,44 @@ const vehicleSchema = z
 export default function MaintenancePage() {
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+
+  const fetchVehicles = async (searchTerm = "") => {
+    setLoading(true);
+
+    let query = supabase
+      .from("vehicles")
+      .select("*")
+      .order("name", { ascending: true });
+
+    if (searchTerm) {
+      query = query.or(
+        `name.ilike.%${searchTerm}%,plate_number.ilike.%${searchTerm}%,policy_number.ilike.%${searchTerm}%`,
+      );
+    }
+
+    const { data, error } = await query;
+
+    if (error) console.error(error);
+    else setVehicles(data);
+
+    setLoading(false);
+  };
+
+  const debouncedSearch = useMemo(
+    () => debounce((value) => fetchVehicles(value), 400),
+    [],
+  );
 
   useEffect(() => {
-    async function fetchVehicles() {
-      setLoading(true);
-      const { data, error } = await supabase.from("vehicles").select("*");
-      // .order("created_at", { ascending: false });
+    return () => debouncedSearch.cancel();
+  }, [debouncedSearch]);
 
-      if (error) {
-        console.error(error);
-      } else {
-        setVehicles(data);
-      }
-      setLoading(false);
-    }
+  useEffect(() => {
     fetchVehicles();
   }, []);
 
+  // React Hook Form setup
   const {
     register,
     handleSubmit,
@@ -84,16 +98,17 @@ export default function MaintenancePage() {
       },
     ]);
 
-    if (error) {
+    if (error)
       toast.error("Failed to create vehicle: " + error.message, {
         position: "top-center",
       });
-    } else {
+    else {
       toast.success("Vehicle created successfully!", {
         position: "top-center",
       });
       document.getElementById("vehicleModal")?.close();
       reset();
+      fetchVehicles(search);
     }
 
     setIsSubmitting(false);
@@ -101,10 +116,9 @@ export default function MaintenancePage() {
 
   const deleteVehicle = async (id) => {
     const { error } = await supabase.from("vehicles").delete().eq("id", id);
-
     if (error) console.error(error);
     else {
-      setVehicles((prev) => prev.filter((vehicle) => vehicle.id !== id));
+      setVehicles((prev) => prev.filter((v) => v.id !== id));
       toast.success("Vehicle deleted successfully!");
     }
   };
@@ -116,10 +130,23 @@ export default function MaintenancePage() {
 
       <div className="gap-3 flex justify-between">
         <div className="flex gap-2">
+          {/* Search Input */}
           <label className="input input-neutral">
             <Search className="h-4 w-6" />
-            <input type="search" required placeholder="Search" />
+            <input
+              type="search"
+              placeholder="Search vehicles..."
+              value={search}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearch(value);
+
+                if (!value) fetchVehicles("");
+                else debouncedSearch(value);
+              }}
+            />
           </label>
+
           <div className="dropdown">
             <div
               tabIndex={0}
@@ -172,7 +199,7 @@ export default function MaintenancePage() {
             >
               ✕
             </button>
-            <div class="relative z-0  mb-3 group">
+            <div className="relative z-0  mb-3 group">
               <fieldset className="fieldset">
                 <legend className="fieldset-legendc">Vehicle Name</legend>
                 <input
@@ -188,8 +215,8 @@ export default function MaintenancePage() {
                 )}
               </fieldset>
             </div>
-            <div class="grid md:grid-cols-2 md:gap-6">
-              <div class="relative z-0 w-full mb-4 group">
+            <div className="grid md:grid-cols-2 md:gap-6">
+              <div className="relative z-0 w-full mb-4 group">
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend">Required Covered</legend>
                   <input
@@ -205,7 +232,7 @@ export default function MaintenancePage() {
                   )}
                 </fieldset>
               </div>
-              <div class="relative z-0 w-full mb-4 group">
+              <div className="relative z-0 w-full mb-4 group">
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend">Plate Number</legend>
                   <input
@@ -222,8 +249,8 @@ export default function MaintenancePage() {
                 </fieldset>
               </div>
             </div>
-            <div class="grid md:grid-cols-2 md:gap-6">
-              <div class="relative z-0 w-full mb-5 group">
+            <div className="grid md:grid-cols-2 md:gap-6">
+              <div className="relative z-0 w-full mb-5 group">
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend">Policy ID</legend>
                   <input
@@ -239,7 +266,7 @@ export default function MaintenancePage() {
                   )}
                 </fieldset>
               </div>
-              <div class="relative z-0 w-full mb-5 group">
+              <div className="relative z-0 w-full mb-5 group">
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend">Policy Number</legend>
                   <input
@@ -257,7 +284,7 @@ export default function MaintenancePage() {
               </div>
             </div>
 
-            <div class="grid md:grid-cols-2 md:gap-6">
+            <div className="grid md:grid-cols-2 md:gap-6">
               {/* Period Covered From */}
               <fieldset className="fieldset">
                 <legend className="fieldset-legend">
@@ -290,7 +317,7 @@ export default function MaintenancePage() {
                 )}
               </fieldset>
 
-              <div class="relative z-0 w-full mb-5 group">
+              <div className="relative z-0 w-full mb-5 group">
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend">Issue Date</legend>
                   <input
@@ -351,7 +378,7 @@ export default function MaintenancePage() {
                 className="card bg-base-100 shadow border border-base-300"
               >
                 <figure className="px-4 pt-4">
-                  <div className="w-full h-32 bg-gradient-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center">
+                  <div className="w-full h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center">
                     <div className="text-center">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
