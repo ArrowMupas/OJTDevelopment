@@ -199,7 +199,9 @@ export default function TransactionsPage() {
 
           {/* SELECT */}
           <div>
-            <label className="font-bold text-sm">Duration of Travel:</label>
+            <label className="font-bold text-sm">
+              Duration of Travel:
+              </label>
             <select
               className={`select w-full mt-1 ${errors.travelDuration ? "border-red-500" : ""}`}
               defaultValue=""
