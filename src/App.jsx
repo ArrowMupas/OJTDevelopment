@@ -39,7 +39,7 @@ function App() {
           />
           <Route path="/vehiclestatusqueue" element={<VehicleStatusPage />} />
           <Route path="/manage-requests" element={<ManageRequestsPage />} />
-          <Route path="/moreinfo" element={<MoreInfoPage />} />
+          <Route path="/moreinfo/:id" element={<MoreInfoPage />} />
         </Route>
 
         <Route element={<PublicLayout />}>
@@ -49,7 +49,7 @@ function App() {
           <Route path="/survey" element={<SurveyPage />} />
           <Route path="/request-vehicle" element={<RequestVehiclePage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/history" element={<HistoryPage/>}/>
+          <Route path="/history" element={<HistoryPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
