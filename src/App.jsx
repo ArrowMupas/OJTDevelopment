@@ -18,6 +18,7 @@ import DriverMonitoringPage from "./pages/DriverMonitoringPage";
 import VehicleMonitoringPage from "./pages/VehicleMonitoringPage";
 import VehicleStatusPage from "./pages/VehicleStatusPage";
 import ManageRequestsPage from "./pages/ManageRequestPage";
+import HistoryPage from "./pages/HistoryPage";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
           <Route path="/survey" element={<SurveyPage />} />
           <Route path="/request-vehicle" element={<RequestVehiclePage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/history" element={<HistoryPage/>}/>
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
