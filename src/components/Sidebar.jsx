@@ -9,11 +9,32 @@ import {
   SquareActivity,
   Users,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function Sidebar() {
+  const location = useLocation();
+
+  const MenuLink = ({ to, icon: Icon, children }) => {
+    const isActive = location.pathname === to;
+    return (
+      <Link
+        to={to}
+        className={`flex items-center gap-2 p-2 rounded-r-lg text-sm transition-all 
+          ${
+            isActive
+              ? "border-l-4 border-green-600 bg-green-400 "
+              : "border-l-4 border-transparent"
+          }
+          hover:bg-green-400 hover:text-green-900`}
+      >
+        <Icon size={18} />
+        {children}
+      </Link>
+    );
+  };
+
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-green-300 hidden md:flex flex-col shadow-inner font-rubik">
+    <aside className="fixed left-0 top-0 h-screen w-64 bg-green-300 hidden md:flex flex-col shadow-inner ">
       <div className="px-4 py-3 border-b border-green-300">
         <div className="flex items-center gap-3">
           <img
@@ -35,123 +56,75 @@ export default function Sidebar() {
       </div>
 
       {/* Menu Section */}
-      <div className="flex-1 overflow-y-auto px-2 ">
-        <ul className="menu w-full">
+      <div className="flex-1 overflow-y-auto px-1 ">
+        <ul className="menu w-full space-y-1 font-semibold text-sm">
           <li>
-            <Link
-              to="/manage-requests"
-              className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
-            >
-              <Car size={18} />
+            <MenuLink to="/manage-requests" icon={Car}>
               Vehicle Requests
-            </Link>
+            </MenuLink>
           </li>
 
           <li>
             <details className="group" open>
-              <summary className="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-highlight hover:text-white transition text-sm">
-                <SquareActivity size={18} />
+              <summary className="flex items-center gap-3 p-2 rounded-r-lg cursor-pointer text-sm hover:bg-green-400 hover:text-green-900 transition-all">
                 Monitoring
               </summary>
-              <ul className="menu rounded-box ml-4 p-2 w-full">
+              <ul className="menu rounded-box ml-4 p-2 w-full space-y-1">
                 <li>
-                  <Link
-                    to="/drivermonitoring"
-                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
-                  >
-                    <Users size={16} />
+                  <MenuLink to="/drivermonitoring" icon={Users}>
                     Driver Monitoring
-                  </Link>
+                  </MenuLink>
                 </li>
                 <li>
-                  <Link
-                    to="/vehiclemonitoring"
-                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
-                  >
-                    <Car size={16} />
+                  <MenuLink to="/vehiclemonitoring" icon={Car}>
                     Vehicle Monitoring
-                  </Link>
+                  </MenuLink>
                 </li>
                 <li>
-                  <Link
-                    to="/vehiclestatusqueue"
-                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
-                  >
-                    <ActivityIcon size={16} />
+                  <MenuLink to="/vehiclestatusqueue" icon={ActivityIcon}>
                     Vehicle Status
-                  </Link>
+                  </MenuLink>
                 </li>
               </ul>
             </details>
-          </li>
-
-          <li>
-            <Link
-              to="/transactions"
-              className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
-            >
-              <ScrollText size={18} />
-              Transactions
-            </Link>
-          </li>
-
-          <li>
-            <Link
-              to="/survey"
-              className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
-            >
-              <ClipboardCheck size={18} />
-              Survey
-            </Link>
           </li>
 
           <li>
             <details className="group" open>
-              <summary className="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-highlight hover:text-white transition text-sm">
-                <Settings size={18} />
+              <summary className="flex items-center gap-3 p-2 rounded-r-lg cursor-pointer text-sm hover:bg-green-400 hover:text-green-900 transition-all">
                 Maintenance
               </summary>
-              <ul className="menu rounded-box ml-4 p-2 w-full">
+              <ul className="menu rounded-box ml-4 p-2 w-full space-y-1">
                 <li>
-                  <Link
-                    to="/vehicles"
-                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
-                  >
-                    <Car size={16} />
+                  <MenuLink to="/vehicles" icon={Car}>
                     Vehicle Maintenance
-                  </Link>
+                  </MenuLink>
                 </li>
                 <li>
-                  <Link
-                    to="/drivers"
-                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
-                  >
-                    <Users size={16} />
+                  <MenuLink to="/drivers" icon={Users}>
                     Driver Maintenance
-                  </Link>
+                  </MenuLink>
                 </li>
               </ul>
             </details>
           </li>
 
           <li>
-            <Link
-              to="/inquiry"
-              className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
-            >
-              <MessageCircleQuestionMark size={18} />
-              Inquiry
-            </Link>
+            <MenuLink to="/transactions" icon={ScrollText}>
+              Transactions
+            </MenuLink>
           </li>
 
           <li>
-            <Link
-              to="/"
-              className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
-            >
-              <House size={18} />
+            <MenuLink to="/inquiry" icon={MessageCircleQuestionMark}>
+              Inquiry
+            </MenuLink>
+          </li>
+
+          <li>
+            <MenuLink to="/" icon={House}>
               Home
-            </Link>
+            </MenuLink>
           </li>
         </ul>
       </div>
