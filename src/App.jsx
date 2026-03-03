@@ -20,6 +20,7 @@ import VehicleMonitoringPage from "./pages/VehicleMonitoringPage";
 import VehicleStatusPage from "./pages/VehicleStatusPage";
 import MoreInfoPage from "./pages/MoreInfoPage";
 import ManageRequestsPage from "./pages/ManageRequestPage";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             path="/vehiclemonitoring"
             element={<VehicleMonitoringPage />}
           />
+          <Route path="/admindashboard" element={<AdminDashboard />} />
           <Route path="/vehiclestatusqueue" element={<VehicleStatusPage />} />
           <Route path="/manage-requests" element={<ManageRequestsPage />} />
           <Route path="/moreinfo" element={<MoreInfoPage />} />
