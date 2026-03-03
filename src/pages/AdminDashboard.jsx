@@ -1,12 +1,17 @@
 import {
+  ArchiveX,
+  BookAlert,
   ChartSpline,
   Clipboard,
   ClipboardCheck,
   ClipboardClock,
   ClockArrowDown,
   Ellipsis,
+  FileCheck,
+  FileX,
   OctagonAlert,
   TriangleAlert,
+  Wrench,
 } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -35,18 +40,27 @@ export default function AdminDashboard() {
         VEHICLE REQUESTS
       </h1>
       <div className="grid grid-cols-2 md:flex-row gap-5">
-        <div className="card bg-base-100 card-md shadow-sm">
+        <div className="card bg-base-100 card-md">
           <div className="grid grid-cols-2 md:flex-row gap-5">
             <div className="card bg-base-100 card-md shadow-sm">
-              <div className="card-body flex-row justify-between border-highlight border-b-2 rounded-sm">
+              <div className="card-body flex-row justify-between border-highlight border-2 rounded-sm">
+                <div>
+                  <h2 className="card-title">19</h2>
+                  <p>Today's Request</p>
+                </div>
+                <Clipboard className="h-8 w-12 mr-2 text-highlight" />
+              </div>
+            </div>
+            <div className="card bg-base-100 card-md shadow-sm">
+              <div className="card-body flex-row justify-between border-highlight border-2 rounded-sm">
                 <div>
                   <h2 className="card-title">4</h2>
-                  <p>Completed Request</p>
+                  <p>Pending Request</p>
                 </div>
-                <ClipboardCheck className="h-8 w-12 mr-2 text-highlight" />
+                <ClipboardClock className="h-8 w-12 mr-2 text-highlight" />
               </div>
             </div>
-            <div className="card bg-base-100 card-md shadow-sm">
+            {/* <div className="card bg-base-100 card-md shadow-sm">
               <div className="card-body flex-row justify-between border-highlight border-b-2 rounded-sm">
                 <div>
                   <h2 className="card-title">19</h2>
@@ -54,31 +68,25 @@ export default function AdminDashboard() {
                 </div>
                 <ClipboardClock className="h-8 w-12 mr-2 text-highlight" />
               </div>
-            </div>
-            <div className="card bg-base-100 card-md shadow-sm">
-              <div className="card-body flex-row justify-between border-highlight border-b-2 rounded-sm">
-                <div>
-                  <h2 className="card-title">19</h2>
-                  <p>Pending Request</p>
-                </div>
-                <ClipboardClock className="h-8 w-12 mr-2 text-highlight" />
-              </div>
-            </div>
-            <div className="card-body flex-row justify-between border-highlight border-b-2 rounded-sm">
+            </div> */}
+          </div>
+          <div className="card bg-base-100 card-md shadow-sm mt-5">
+            <div className="card-body flex-row justify-between border-highlight border-2 rounded-sm">
               <div>
-                <h2 className="card-title">21</h2>
-                <p>Today's Request</p>
+                <h2 className="card-title">7</h2>
+                <p>Completed Request </p>
               </div>
-              <Clipboard className="h-8 w-12 mr-2 text-highlight" />
+              <ClipboardCheck className="h-8 w-12 mr-2 text-highlight" />
             </div>
           </div>
         </div>
+
         <div className="">
           <div className="card bg-base-100 card-md shadow-sm">
             <div className="card-body h-53 border-highlight border-b-2 rounded-sm">
               <div>
-                <h2 className="card-title">Pendings</h2>
-                <p>Probably table type for Vehicle Request</p>
+                <h2 className="card-title">Chart/Graph Here</h2>
+                <p>Insert Chart here for Vehicle Request</p>
               </div>
               <ClockArrowDown className="h-8 w-12 mr-2 text-highlight" />
             </div>
@@ -86,48 +94,28 @@ export default function AdminDashboard() {
         </div>
       </div>
       <h1 className="text-SM font-bold mb-1 text-[#745fc9] mt-10">
-        Driver Monitoring
+        DRIVER MONITORING
       </h1>
       <div className="grid grid-cols-2 md:flex-row gap-5">
-        <div className="grid grid-cols-2 md:flex-row gap-5">
-          <div className="card bg-base-100 card-md shadow-sm">
-            <div className="card-body flex-row justify-between border-[#745fc9] border-b-2 rounded-sm">
-              <div>
-                <h2 className="card-title">4</h2>
-                <p>Completed Request</p>
-              </div>
-              <ClipboardCheck className="h-8 w-12 mr-2 text-[#745fc9]" />
+        <div className="card bg-base-100 card-md shadow-sm">
+          <div className="card-body flex-row justify-between border-[#745fc9] border-2 rounded-sm">
+            <div>
+              <h2 className="card-title">4.4</h2>
+              <p>Average Driver Rating</p>
             </div>
-          </div>
-          <div className="card bg-base-100 card-md shadow-sm">
-            <div className="card-body flex-row justify-between border-[#745fc9] border-b-2 rounded-sm">
-              <div>
-                <h2 className="card-title">4</h2>
-                <p>Completed Request</p>
-              </div>
-              <ClipboardCheck className="h-8 w-12 mr-2 text-[#745fc9]" />
-            </div>
-          </div>
-          <div className="card bg-base-100 card-md shadow-sm">
-            <div className="card-body flex-row justify-between border-[#745fc9] border-b-2 rounded-sm">
-              <div>
-                <h2 className="card-title">4</h2>
-                <p>Completed Request</p>
-              </div>
-              <ClipboardCheck className="h-8 w-12 mr-2 text-[#745fc9]" />
-            </div>
-          </div>
-          <div className="card bg-base-100 card-md shadow-sm">
-            <div className="card-body flex-row justify-between border-[#745fc9] border-b-2 rounded-sm">
-              <div>
-                <h2 className="card-title">4</h2>
-                <p>Completed Request</p>
-              </div>
-              <ClipboardCheck className="h-8 w-12 mr-2 text-[#745fc9]" />
-            </div>
+            <ClipboardCheck className="h-8 w-12 mr-2 text-[#745fc9]" />
           </div>
         </div>
         <div className="card bg-base-100 card-md shadow-sm">
+          <div className="card-body flex-row justify-between border-[#745fc9] border-2 rounded-sm">
+            <div>
+              <h2 className="card-title">12</h2>
+              <p>Monthly Survey Total</p>
+            </div>
+            <ClipboardCheck className="h-8 w-12 mr-2 text-[#745fc9]" />
+          </div>
+        </div>
+        {/* <div className="card bg-base-100 card-md shadow-sm">
           <div className="card-body h-53 border-[#745fc9] border-b-2 rounded-sm">
             <div>
               <h2 className="card-title">Expiring Soon</h2>
@@ -135,56 +123,121 @@ export default function AdminDashboard() {
             </div>
             <TriangleAlert className="h-8 w-12 mr-2 text-[#745fc9]" />
           </div>
+        </div> */}
+      </div>
+      <h1 className="text-SM font-bold text-[#745fc9] mt-4 mb-1">
+        Top 3 Driver by Ratings
+      </h1>
+      <div className="grid grid-cols-3 md:flex-row gap-5">
+        <div className="card bg-base-100 card-md shadow-sm">
+          <div className="card-body flex-row justify-between border-[#745fc9] border-2 rounded-sm">
+            <div>
+              <h2 className="card-title">Rating: 4.9</h2>
+              <p>Jayzen P. Galvez</p>
+            </div>
+            <img
+              className="h-10 w-auto cursor-pointer"
+              src="https://cdn-icons-png.flaticon.com/512/5005/5005567.png"
+              alt="first"
+            />
+          </div>
+        </div>
+        <div className="card bg-base-100 card-md shadow-sm">
+          <div className="card-body flex-row justify-between border-[#745fc9] border-2 rounded-sm">
+            <div>
+              <h2 className="card-title">Rating: 4.1</h2>
+              <p>Joswe L. Tubio</p>
+            </div>
+            <img
+              className="h-10 w-auto cursor-pointer"
+              src="https://cdn-icons-png.flaticon.com/512/5005/5005572.png"
+              alt="first"
+            />
+          </div>
+        </div>
+        <div className="card bg-base-100 card-md shadow-sm">
+          <div className="card-body flex-row justify-between border-[#745fc9] border-2 rounded-sm">
+            <div>
+              <h2 className="card-title">Rating: 3.9</h2>
+              <p>Dester O. Golloso</p>
+            </div>
+            <img
+              className="h-10 w-auto cursor-pointer"
+              src="https://cdn-icons-png.flaticon.com/512/5005/5005579.png"
+              alt="first"
+            />
+          </div>
         </div>
       </div>
 
       <h1 className="text-SM font-bold mb-1 mt-10 text-[#E8CF00]">
-        Compliance Monitoring
+        COMPLIANCE MONITORING
       </h1>
       <div className="grid grid-cols-2 md:flex-row gap-5">
         <div className="grid grid-cols-2 md:flex-row gap-5">
           <div className="card bg-base-100 card-md shadow-sm">
-            <div className="card-body flex-row justify-between border-[#d2dc15] border-b-2 rounded-sm">
+            <div className="card-body flex-row justify-between border-[#d2dc15] border-2 rounded-sm">
               <div>
                 <h2 className="card-title">4</h2>
-                <p>Completed Request</p>
+                <p>Vehicles PMS Overdue</p>
               </div>
-              <ClipboardCheck className="h-8 w-12 mr-2 text-[#d2dc15]" />
+              <ArchiveX className="h-8 w-12 mr-2 text-[#d2dc15]" />
+            </div>
+          </div>
+          <div>
+            <div className="card bg-base-100 card-md shadow-sm">
+              <div className="card-body flex-row justify-between border-[#d2dc15] border-2 rounded-sm">
+                <div>
+                  <h2 className="card-title">16</h2>
+                  <p>Vehicle PMS Up-to-Date</p>
+                </div>
+                <Wrench className="h-8 w-12 mr-2 text-[#d2dc15]" />
+              </div>
             </div>
           </div>
           <div className="card bg-base-100 card-md shadow-sm">
-            <div className="card-body flex-row justify-between border-[#d2dc15] border-b-2 rounded-sm">
+            <div className="card-body flex-row justify-between border-[#d2dc15] border-2 rounded-sm">
               <div>
-                <h2 className="card-title">4</h2>
-                <p>Completed Request</p>
+                <h2 className="card-title">9</h2>
+                <p>Vehicles PMS Due Soon</p>
               </div>
-              <ClipboardCheck className="h-8 w-12 mr-2 text-[#d2dc15]" />
+              <TriangleAlert className="h-8 w-12 mr-2 text-[#d2dc15]" />
             </div>
           </div>
           <div className="card bg-base-100 card-md shadow-sm">
-            <div className="card-body flex-row justify-between border-[#d2dc15] border-b-2 rounded-sm">
+            <div className="card-body flex-row justify-between border-[#d2dc15] border-2 rounded-sm">
               <div>
                 <h2 className="card-title">4</h2>
-                <p>Completed Request</p>
+                <p>Insurance Expiring Soon</p>
               </div>
-              <ClipboardCheck className="h-8 w-12 mr-2 text-[#d2dc15]" />
+              <BookAlert className="h-8 w-12 mr-2 text-[#d2dc15]" />
             </div>
           </div>
           <div className="card bg-base-100 card-md shadow-sm">
-            <div className="card-body flex-row justify-between border-[#d2dc15] border-b-2 rounded-sm">
+            <div className="card-body flex-row justify-between border-[#d2dc15] border-2 rounded-sm">
               <div>
-                <h2 className="card-title">4</h2>
-                <p>Completed Request</p>
+                <h2 className="card-title">8</h2>
+                <p>Expired Insurances</p>
               </div>
-              <ClipboardCheck className="h-8 w-12 mr-2 text-[#d2dc15]" />
+              <FileX className="h-8 w-12 mr-2 text-[#d2dc15]" />
+            </div>
+          </div>
+          <div className="card bg-base-100 card-md shadow-sm">
+            <div className="card-body flex-row justify-between border-[#d2dc15] border-2 rounded-sm">
+              <div>
+                <h2 className="card-title">2</h2>
+                <p>Active Insurances</p>
+              </div>
+              <FileCheck className="h-8 w-12 mr-2 text-[#d2dc15]" />
             </div>
           </div>
         </div>
+
         <div className="card bg-base-100 card-md shadow-sm">
           <div className="card-body h-53 border-[#d2dc15] border-b-2 rounded-sm">
             <div>
               <h2 className="card-title">Overdue Soon</h2>
-              <p>Probably table type for Comliance Monitoring</p>
+              <p>Pie Chart here.</p>
             </div>
             <OctagonAlert className="h-8 w-12 mr-2 text-[#d2dc15]" />
           </div>

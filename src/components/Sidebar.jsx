@@ -6,7 +6,7 @@ import {
   MessageCircleQuestionMark,
   ScrollText,
   Settings,
-  SquareActivity,
+  ChartColumnStacked,
   Users,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -58,6 +58,11 @@ export default function Sidebar() {
       {/* Menu Section */}
       <div className="flex-1 overflow-y-auto px-1 ">
         <ul className="menu w-full space-y-1 font-semibold text-sm">
+          <li>
+            <MenuLink to="/admindashboard" icon={ChartColumnStacked}>
+              Admin Dashboard
+            </MenuLink>
+          </li>
           <li>
             <MenuLink to="/manage-requests" icon={Car}>
               Vehicle Requests
