@@ -32,13 +32,13 @@ export default function HomePage() {
   }, []);
 
   return (
-    <main className="p-4 h-full">
-      <h1 className="text-4xl font-bold">Dashboard</h1>
+    <main className=" h-full pb-40">
+      <h1 className="text-3xl font-bold">Service Vehicle Requests</h1>
       <p className="text-gray-500 mb-6">
         Overview of requests and driver activity
       </p>
 
-      <div className="grid grid-cols-3 md:flex-row gap-5">
+      {/* <div className="grid grid-cols-3 md:flex-row gap-5">
         <div className="card bg-base-100 card-md shadow-sm">
           <div className="card-body flex-row justify-between border-[#d2dc15] border-b-2 rounded-sm">
             <div>
@@ -72,24 +72,22 @@ export default function HomePage() {
             <ClipboardClock className="h-8 w-12 mr-2 text-[#745fc9]" />
           </div>
         </div>
-      </div>
-
-      <h2 className="text-2xl font-bold mt-12">Pending Service Monitor</h2>
+      </div> */}
 
       <div className="bg-base-100 mt-4">
         <div className="overflow-x-auto border border-green-600">
-          <table className="table table-zebra">
+          <table className="table table-lg">
             <thead className="bg-green-500 text-white">
-              <tr>
+              <tr className="uppercase">
                 <th>Department</th>
                 <th>Date & Time</th>
-                <th>Destination</th>
+                <th className="">Destination</th>
                 <th>Name</th>
                 <th>Phone</th>
                 <th>Instructions</th>
-                <th>Driver</th>
-                <th>Vehicle</th>
-                <th>Plate Number</th>
+                <th className="bg-blue-500">Driver</th>
+                <th className="bg-violet-500">Vehicle</th>
+                <th className="bg-violet-500">Plate Number</th>
               </tr>
             </thead>
             <tbody>
@@ -123,7 +121,7 @@ export default function HomePage() {
 
                   return (
                     <tr key={req.id}>
-                      <th>{req.department}</th>
+                      <th className="uppercase">{req.department}</th>
                       <td className="flex flex-col justify-center items-start">
                         <span className="text-sm">
                           {format(formattedDateTime, "MMM. d, yyyy")}
@@ -132,22 +130,29 @@ export default function HomePage() {
                           {format(formattedDateTime, "hh:mm a")}
                         </span>
                       </td>
-                      <td>{req.destination}</td>
+
+                      <td className="text-green-700 font-bold text-lg capitalize">
+                        {req.destination}
+                      </td>
+
                       <td className="flex flex-col">
-                        <span>{req.passengers}</span>
+                        <span className="capitalize">{req.passengers}</span>
                         <span className="text-xs text-gray-500 font-medium">
                           {req.email}
                         </span>
                       </td>
+
                       <td className="text-xs">
                         {req.passenger_contact_number}
                       </td>
-                      <td>{req.other_instructions}</td>
-                      <td>
+
+                      <td className="text-xs">{req.other_instructions}</td>
+
+                      <td className="bg-blue-50">
                         {req.driver_first_name} {req.driver_last_name}
                       </td>
-                      <td>{req.vehicle_name}</td>
-                      <td>
+                      <td className="bg-violet-50">{req.vehicle_name}</td>
+                      <td className="bg-violet-50">
                         {req.plate_number && (
                           <div className="badge badge-dash badge-primary">
                             {req.plate_number}

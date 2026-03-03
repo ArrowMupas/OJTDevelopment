@@ -1,26 +1,23 @@
 import {
+  ActivityIcon,
   Car,
   ClipboardCheck,
   House,
-  LayoutDashboard,
   MessageCircleQuestionMark,
   ScrollText,
   Settings,
   SquareActivity,
+  Users,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Sidebar() {
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-gray-50 hidden md:flex flex-col shadow-inner font-rubik">
-      {/* Logo and Header Section */}
-      <div className="px-4 py-3 border-b border-gray-200">
-        <div
-          className="flex items-center gap-3 cursor-pointer group"
-          onClick={() => (window.location.href = "/")}
-        >
-          {/* Logo */}
+    <aside className="fixed left-0 top-0 h-screen w-64 bg-green-300 hidden md:flex flex-col shadow-inner font-rubik">
+      <div className="px-4 py-3 border-b border-green-300">
+        <div className="flex items-center gap-3">
           <img
-            className="h-10 w-10 object-contain"
+            className="h-15 object-contain"
             src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/nea-logo.png"
             alt="NEA Logo"
             onError={(e) => {
@@ -28,151 +25,133 @@ export default function Sidebar() {
                 "https://8upload.com/display/68d52d9e15810/logo-alas1.jpg.php";
             }}
           />
-
-          {/* Organization Text */}
           <div className="tracking-tight">
             <p className="text-lg font-bold font-rubik">NEA Dashboard</p>
+            <p className="text-xs text-gray-800">
+              Transport Operations Services Unit (TOSU)
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Navigation Menu */}
-      <div className="flex-1 overflow-y-auto p-2">
-        <ul className="menu rounded-box w-full">
-          {/* Dashboard Section */}
+      {/* Menu Section */}
+      <div className="flex-1 overflow-y-auto px-2 ">
+        <ul className="menu w-full">
           <li>
-            <details className="group" open>
-              <summary className="flex items-center p-2 rounded cursor-pointer hover:bg-highlight hover:text-white transition text-sm">
-                <LayoutDashboard className="h-4 w-4 mr-2" />
-                Dashboard
-              </summary>
-              <ul className="menu rounded-box ml-4 p-2">
-                <li>
-                  <a
-                    href="/dashboard"
-                    className="hover:bg-highlight hover:text-white transition text-sm"
-                  >
-                    Activity View
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/manage-requests"
-                    className="hover:bg-highlight hover:text-white transition text-sm"
-                  >
-                    Manage Request
-                  </a>
-                </li>
-              </ul>
-            </details>
+            <Link
+              to="/manage-requests"
+              className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
+            >
+              <Car size={18} />
+              Vehicle Requests
+            </Link>
           </li>
 
-          {/* Monitoring Section */}
           <li>
             <details className="group" open>
-              <summary className="flex items-center p-2 rounded cursor-pointer hover:bg-highlight hover:text-white transition text-sm">
-                <SquareActivity className="h-4 w-4 mr-2" />
+              <summary className="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-highlight hover:text-white transition text-sm">
+                <SquareActivity size={18} />
                 Monitoring
               </summary>
-              <ul className="menu rounded-box ml-4 p-2">
+              <ul className="menu rounded-box ml-4 p-2 w-full">
                 <li>
-                  <a
-                    href="/drivermonitoring"
-                    className="hover:bg-highlight hover:text-white transition text-sm"
+                  <Link
+                    to="/drivermonitoring"
+                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
                   >
+                    <Users size={16} />
                     Driver Monitoring
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="/vehiclemonitoring"
-                    className="hover:bg-highlight hover:text-white transition text-sm"
+                  <Link
+                    to="/vehiclemonitoring"
+                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
                   >
+                    <Car size={16} />
                     Vehicle Monitoring
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="/vehiclestatusqueue"
-                    className="hover:bg-highlight hover:text-white transition text-sm"
+                  <Link
+                    to="/vehiclestatusqueue"
+                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
                   >
+                    <ActivityIcon size={16} />
                     Vehicle Status
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </details>
           </li>
 
-          {/* Transactions */}
           <li>
-            <a
-              href="/transactions"
-              className="flex items-center p-2 rounded hover:bg-highlight hover:text-white transition text-sm"
+            <Link
+              to="/transactions"
+              className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
             >
-              <ScrollText className="h-4 w-4 mr-2" />
+              <ScrollText size={18} />
               Transactions
-            </a>
+            </Link>
           </li>
 
-          {/* Survey */}
           <li>
-            <a
-              href="/survey"
-              className="flex items-center p-2 rounded hover:bg-highlight hover:text-white transition text-sm"
+            <Link
+              to="/survey"
+              className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
             >
-              <ClipboardCheck className="h-4 w-4 mr-2" />
+              <ClipboardCheck size={18} />
               Survey
-            </a>
+            </Link>
           </li>
 
-          {/* Maintenance Section */}
           <li>
             <details className="group" open>
-              <summary className="flex items-center p-2 rounded cursor-pointer hover:bg-highlight hover:text-white transition text-sm">
-                <Settings className="h-4 w-4 mr-2" />
+              <summary className="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-highlight hover:text-white transition text-sm">
+                <Settings size={18} />
                 Maintenance
               </summary>
-              <ul className="menu rounded-box ml-4 p-2">
+              <ul className="menu rounded-box ml-4 p-2 w-full">
                 <li>
-                  <a
-                    href="/vehicles"
-                    className="hover:bg-highlight hover:text-white transition text-sm"
+                  <Link
+                    to="/vehicles"
+                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
                   >
+                    <Car size={16} />
                     Vehicle Maintenance
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="/drivers"
-                    className="hover:bg-highlight hover:text-white transition text-sm"
+                  <Link
+                    to="/drivers"
+                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
                   >
+                    <Users size={16} />
                     Driver Maintenance
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </details>
           </li>
 
-          {/* Inquiry */}
           <li>
-            <a
-              href="/inquiry"
-              className="flex items-center p-2 rounded hover:bg-highlight hover:text-white transition text-sm"
+            <Link
+              to="/inquiry"
+              className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
             >
-              <MessageCircleQuestionMark className="h-4 w-4 mr-2" />
+              <MessageCircleQuestionMark size={18} />
               Inquiry
-            </a>
+            </Link>
           </li>
 
-          {/* Home Link */}
           <li>
-            <a
-              href="/"
-              className="flex items-center p-2 rounded hover:bg-highlight hover:text-white transition text-sm"
+            <Link
+              to="/"
+              className="flex items-center gap-3 p-2 rounded-lg hover:bg-highlight hover:text-white transition text-sm"
             >
-              <House className="h-4 w-4 mr-2" />
+              <House size={18} />
               Home
-            </a>
+            </Link>
           </li>
         </ul>
       </div>
