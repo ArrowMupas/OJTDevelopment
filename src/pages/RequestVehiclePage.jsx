@@ -88,7 +88,7 @@ export default function TransactionsPage() {
           <div className=" text-center p-3 items-center justify-center flex flex-col gap-2">
             <img
               className="size-20 "
-              src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/nea-logo.png"
+              src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/national_electrification_logo.png"
               alt="NEA Logo"
               onError={(e) => {
                 e.currentTarget.src =

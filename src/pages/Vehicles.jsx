@@ -110,9 +110,11 @@ export default function MaintenancePage() {
   };
 
   return (
-    <main className="p-8 h-full">
-      <h1 className="text-4xl font-bold ">Vehicle Maintenance</h1>
-      <p className="text-gray-500 mb-6">Vehicle and driver management</p>
+    <main className="px-5 py-4 h-full">
+      <h1 className="text-lg font-bold ">Vehicle Maintenance</h1>
+      <p className="text-gray-500 text-sm mb-6">
+        Vehicle and driver management
+      </p>
 
       <div className="space-x-3">
         <label className="input w-1/3 input-neutral">

@@ -106,7 +106,7 @@ export default function SurveyPage() {
         <div className=" text-center items-center justify-center flex flex-col gap-1 mb-4 ">
           <img
             className="size-25 "
-            src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/nea-logo.png"
+            src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/national_electrification_logo.png"
             alt="NEA Logo"
             onError={(e) => {
               e.currentTarget.src =
