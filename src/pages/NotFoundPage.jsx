@@ -39,3 +39,28 @@ export default function NotFoundPage() {
 
   */
 }
+
+// <div className="px-4 py-3 border-b border-green-300">
+//   <div
+//     className="flex items-center gap-3 cursor-pointer group"
+//     onClick={() => (window.location.href = "/")}
+//   >
+//     <img
+//       className="h-15 object-contain"
+//       src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/nea-logo.png"
+//       alt="NEA Logo"
+//       onError={(e) => {
+//         e.currentTarget.src =
+//           "https://8upload.com/display/68d52d9e15810/logo-alas1.jpg.php";
+//       }}
+//     />
+
+//     {/* Organization Text */}
+//     <div className="tracking-tight">
+//       <p className="text-lg font-bold font-rubik">NEA Dashboard </p>
+//       <p className="text-xs text-gray-800">
+//         Transport Operations Services Unit (TOSU)
+//       </p>
+//     </div>
+//   </div>
+// </div>;
