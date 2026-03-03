@@ -5,160 +5,179 @@ import {
   Users,
   PackageOpen,
   Star,
+  ArrowLeft,
 } from "lucide-react";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "../supabaseClient";
+import { format, parse } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 export default function MoreInfoPage() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [request, setRequest] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchRequest() {
+      const { data, error } = await supabase
+        .from("service_vehicle_requests")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        console.error(error);
+      } else {
+        setRequest(data);
+      }
+      setLoading(false);
+    }
+
+    fetchRequest();
+  }, [id]);
+
+  if (loading) return <p className="p-8">Loading...</p>;
+  if (!request) return <p className="p-8">Request not found.</p>;
+
+  const parsedDateTime = parse(
+    `${request.departure_date} ${request.departure_time}`,
+    "yyyy-MM-dd HH:mm:ss",
+    new Date(),
+  );
+
+  const formattedDate = format(parsedDateTime, "MMM d, yyyy");
+  const formattedTime = format(parsedDateTime, "hh:mm a");
+
+  const InfoRow = ({ label, value }) => (
+    <div className="flex justify-between text-sm border-b py-2">
+      <span className="text-gray-500">{label}</span>
+      <span className="font-medium text-gray-800 text-right">
+        {value || "N/A"}
+      </span>
+    </div>
+  );
+
   return (
-    <main className="p-8 h-full">
-      <h1 className="text-4xl font-bold">More Information</h1>
-      <p className="text-gray-500 mb-6">
-        Request Informations can be viewed here.
-      </p>
+    <main className="p-5 pb-32">
+      <div className="flex gap-2">
+        <div className="flex items-center gap-4 mb-6">
+          <button
+            onClick={() => navigate(-1)}
+            className="btn btn-square btn-warning btn-dash h-full  "
+          >
+            <ArrowLeft size={20} />
+          </button>
+        </div>
+        <div>
+          <h1 className="text-lg font-bold ">Request Overview</h1>
+          <p className="text-gray-500 mb-8 text-sm">
+            Complete summary and assignment details.
+          </p>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-3 md:flex-row gap-5">
-        <div className="card bg-[#FAFFF7] card-md shadow-sm">
-          <div className="card-body flex-row justify-between border-[#3C9C35] border-b-4 rounded-sm">
-            <div>
-              <h2 className="card-title mb-3 text-[#3C9C35]">
-                Request Details
-              </h2>
+      <div className="grid gap-6 md:grid-cols-3 auto-rows-[190px]">
+        <div className="relative bg-[#FAFFF7] border-b-4 border-[#3C9C35] rounded-xl shadow-sm p-6">
+          <ClipboardList
+            className="absolute top-5 right-5 text-[#3C9C35] opacity-80"
+            size={30}
+          />
 
-              <legend className="fieldset-legendc font-bold">
-                Request Number:
-              </legend>
-              <p className="mb-2">Request Number here.</p>
-              <legend className="fieldset-legendc font-bold">Timestamp:</legend>
-              <p className="mb-2">Timestamp here.</p>
-              <legend className="fieldset-legendc font-bold">Status:</legend>
-              <p className="mb-2">Status here.</p>
-              <legend className="fieldset-legendc font-bold">
-                Requested by:
-              </legend>
-              <p className="mb-2">Requested by here.</p>
-            </div>
-
-            <ClipboardList className="h-9 w-12 mr-2 text-[#3C9C35]" />
-          </div>
+          <p className="text-sm text-gray-500">Current Status</p>
+          <h2 className="text-3xl font-bold text-[#3C9C35] mt-2">
+            {request.status || "Pending"}
+          </h2>
         </div>
 
-        <div className="card bg-[#FCFFFF] card-md shadow-sm">
-          <div className="card-body flex-row justify-between border-[#07A3A3] border-b-4 rounded-sm">
-            <div>
-              <h2 className="card-title mb-3 text-[#07A3A3]">
-                Passenger Information
-              </h2>
+        <div className="relative md:col-span-2 bg-[#FFFBF7] border-b-4 border-[#F77100] rounded-xl shadow-sm p-6">
+          <Navigation
+            className="absolute top-5 right-5 text-[#F77100] opacity-80"
+            size={30}
+          />
 
-              <legend className="fieldset-legendc font-bold">
-                Passengers:
-              </legend>
-              <p className="mb-2">Passengers here.</p>
-              <legend className="fieldset-legendc font-bold">
-                Email Address:
-              </legend>
-              <p className="mb-2">Email here.</p>
-              <legend className="fieldset-legendc font-bold">
-                Contact Number:
-              </legend>
-              <p className="mb-2">Contact here.</p>
-            </div>
+          <p className="text-sm text-gray-500">Destination</p>
+          <h2 className="text-2xl font-semibold mt-1 capitalize">
+            {request.destination}
+          </h2>
 
-            <Users className="h-9 w-12 mr-2 text-[#07A3A3]" />
-          </div>
+          <p className="text-gray-600 mt-2">
+            {formattedDate} • {formattedTime}
+          </p>
         </div>
 
-        <div className="card bg-[#FFFCFC] card-md shadow-sm">
-          <div className="card-body flex-row justify-between border-[#C4412F] border-b-4 rounded-sm">
-            <div>
-              <h2 className="card-title mb-3 text-[#C4412F]">
-                Vehicle Assignment
-              </h2>
+        <div className="relative bg-[#FCFFFF] border-b-4 border-[#07A3A3] rounded-xl shadow-sm p-6">
+          <Users
+            className="absolute top-5 right-5 text-[#07A3A3] opacity-80"
+            size={30}
+          />
 
-              <legend className="fieldset-legendc font-bold">
-                Assigned Vehicle:
-              </legend>
-              <p className="mb-2">Vehicle here.</p>
-              <legend className="fieldset-legendc font-bold">
-                Service Vehicle:
-              </legend>
-              <p className="mb-2">Service Vehicle here.</p>
-              <legend className="fieldset-legendc font-bold">
-                Plate Number:
-              </legend>
-              <p className="mb-2">Plate no. here.</p>
-            </div>
+          <p className="text-sm text-gray-500">Passengers</p>
+          <h2 className="text-xl font-semibold mt-1 capitalize">
+            {request.passengers}
+          </h2>
 
-            <Car className="h-9 w-12 mr-2 text-[#C4412F]" />
-          </div>
+          <p className="text-sm text-gray-600 mt-2">
+            {request.passenger_contact_number}
+          </p>
         </div>
 
-        <div className="card bg-[#FFFBF7] card-md shadow-sm">
-          <div className="card-body flex-row justify-between border-[#F77100] border-b-4 rounded-sm">
-            <div>
-              <h2 className="card-title mb-3 text-[#F77100]">
-                Travel Information
-              </h2>
+        <div className="relative bg-[#FFFCFC] border-b-4 border-[#C4412F] rounded-xl shadow-sm p-6">
+          <Car
+            className="absolute top-5 right-5 text-[#C4412F] opacity-80"
+            size={30}
+          />
 
-              <legend className="fieldset-legendc font-bold">
-                Destination:
-              </legend>
-              <p className="mb-2">Destination here.</p>
-              <legend className="fieldset-legendc font-bold">
-                Date of Departure:
-              </legend>
-              <p className="mb-2">Date of Departure here.</p>
-              <legend className="fieldset-legendc font-bold">
-                Time of Departure:
-              </legend>
-              <p className="mb-2">Time of Departure here.</p>
-              <legend className="fieldset-legendc font-bold">
-                Duration of Travel:
-              </legend>
-              <p className="mb-2">Duration of Travel here.</p>
-            </div>
+          <p className="text-sm text-gray-500">Assigned Driver</p>
+          <p className="font-semibold mt-1">
+            {request.driver_id || "Unassigned"}
+          </p>
 
-            <Navigation className="h-9 w-12 mr-2 text-[#F77100]" />
-          </div>
+          <p className="text-sm text-gray-500 mt-4">Assigned Vehicle</p>
+          <p className="font-semibold">{request.vehicle_id || "Unassigned"}</p>
         </div>
 
-        <div className="card bg-[#FEFCFF] card-md shadow-sm">
-          <div className="card-body flex-row justify-between border-[#46244E] border-b-4 rounded-sm">
-            <div>
-              <h2 className="card-title mb-3 text-[#46244E]">
-                Additional Travel Data
-              </h2>
+        <div className="relative bg-[#F2FCF9] border-b-4 border-[#063E34] rounded-xl shadow-sm p-6">
+          <Star
+            className="absolute top-5 right-5 text-[#063E34] opacity-80"
+            size={30}
+          />
 
-              <legend className="fieldset-legendc font-bold">
-                Held Items:
-              </legend>
-              <p className="mb-2">Items here.</p>
-              <legend className="fieldset-legendc font-bold">
-                Other Instructions:
-              </legend>
-              <p className="mb-2">Instructions here.</p>
-              <legend className="fieldset-legendc font-bold">Remarks:</legend>
-              <p className="mb-2">Remarks here.</p>
-            </div>
+          <p className="text-sm text-gray-500">Rating</p>
+          <h2 className="text-xl font-semibold mt-1">
+            {request.rating || "Not rated"}
+          </h2>
 
-            <PackageOpen className="h-9 w-12 mr-2 text-[#46244E]" />
-          </div>
+          <p className="text-sm text-gray-500 mt-4">Cancel Reason</p>
+          <p className="font-medium">{request.cancel_reason || "—"}</p>
         </div>
 
-        <div className="card bg-[#F2FCF9] card-md shadow-sm">
-          <div className="card-body flex-row justify-between border-[#063E34] border-b-4 rounded-sm">
-            <div>
-              <h2 className="card-title mb-3 text-[#063E34]">
-                Completion Data
-              </h2>
+        <div className="relative md:col-span-3 bg-[#FEFCFF] border-b-4 border-[#46244E] rounded-xl shadow-sm p-6">
+          <PackageOpen
+            className="absolute top-5 right-5 text-[#46244E] opacity-80"
+            size={30}
+          />
 
-              <legend className="fieldset-legendc font-bold">Ratings:</legend>
-              <p className="mb-2">Ratings here.</p>
-              <legend className="fieldset-legendc font-bold">
-                Reason for not comepleting:
-              </legend>
-              <p className="mb-2">Reason here.</p>
+          <p className="text-sm text-gray-500">Additional Travel Data</p>
+
+          <div className="grid md:grid-cols-3 gap-6 mt-4 text-sm">
+            <div>
+              <p className="text-gray-500">Held Items</p>
+              <p className="font-medium mt-1">{request.items || "None"}</p>
             </div>
 
-            <Star className="h-9 w-12 mr-2 text-[#063E34]" />
+            <div>
+              <p className="text-gray-500">Instructions</p>
+              <p className="font-medium mt-1">
+                {request.instructions || "None"}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-gray-500">Remarks</p>
+              <p className="font-medium mt-1">{request.remarks || "None"}</p>
+            </div>
           </div>
         </div>
       </div>

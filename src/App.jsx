@@ -21,6 +21,7 @@ import VehicleStatusPage from "./pages/VehicleStatusPage";
 import MoreInfoPage from "./pages/MoreInfoPage";
 import ManageRequestsPage from "./pages/ManageRequestPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import HistoryPage from "./pages/HistoryPage";
 
 function App() {
   return (
@@ -40,7 +41,7 @@ function App() {
           <Route path="/admindashboard" element={<AdminDashboard />} />
           <Route path="/vehiclestatusqueue" element={<VehicleStatusPage />} />
           <Route path="/manage-requests" element={<ManageRequestsPage />} />
-          <Route path="/moreinfo" element={<MoreInfoPage />} />
+          <Route path="/moreinfo/:id" element={<MoreInfoPage />} />
         </Route>
 
         <Route element={<PublicLayout />}>
@@ -50,6 +51,7 @@ function App() {
           <Route path="/survey" element={<SurveyPage />} />
           <Route path="/request-vehicle" element={<RequestVehiclePage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/history" element={<HistoryPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

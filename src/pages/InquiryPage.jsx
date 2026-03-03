@@ -47,8 +47,8 @@ export default function InquiryPage() {
         All inquiries can be viewed here.
       </p>
 
-      <div className="space-x-2">
-        <label className="input w-1/3 input-neutral">
+      <div className="space-x-2 mb-4">
+        <label className="input input-neutral">
           <Search className="h-4 w-6" />
           <input
             type="search"
@@ -92,14 +92,11 @@ export default function InquiryPage() {
         </div>
       </div>
 
-      <h2 className="text-2xl mt-7 font-bold mb-6">Inquiries</h2>
-
       <div className="bg-base-100 mt-2 border-0">
         <div className="overflow-x-auto rounded-lg">
-          <table className="table table-zebra">
+          <table className="table ">
             <thead className="bg-green-600 text-white">
               <tr>
-                <th>ID</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Contact No.</th>
@@ -138,12 +135,13 @@ export default function InquiryPage() {
                   const date = new Date(inquiry.created_at);
 
                   return (
-                    <tr key={inquiry.id}>
-                      <th>{inquiry.id}</th>
-
-                      <td>
+                    <tr
+                      key={inquiry.id}
+                      className="bg-green-50 hover:bg-green-100"
+                    >
+                      <th>
                         {inquiry.first_name} {inquiry.last_name}
-                      </td>
+                      </th>
 
                       <td>{inquiry.email}</td>
 

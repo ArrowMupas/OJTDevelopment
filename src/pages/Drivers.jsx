@@ -117,7 +117,7 @@ export default function MaintenancePage() {
   };
 
   return (
-    <main className="px-5 py-4 h-full">
+    <main className="px-5 py-4 h-full pb-32">
       <h1 className="text-lg font-bold ">Driver Maintenance</h1>
       <p className="text-gray-500 text-sm mb-6">
         Vehicle and driver management

@@ -110,44 +110,43 @@ export default function MaintenancePage() {
   };
 
   return (
-    <main className="px-5 py-4 h-full">
-      <h1 className="text-lg font-bold ">Vehicle Maintenance</h1>
-      <p className="text-gray-500 text-sm mb-6">
-        Vehicle and driver management
-      </p>
+    <main className="px-5 py-4 h-full pb-25">
+      <h1 className="text-lg font-bold ">Vehicles</h1>
+      <p className="text-gray-500 text-sm mb-6">List of Vehicles available</p>
 
-      <div className="space-x-3">
-        <label className="input w-1/3 input-neutral">
-          <Search className="h-4 w-6" />
-          <input type="search" required placeholder="Search" />
-        </label>
-
-        <div className="dropdown">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn bg-green-600 text-white"
-          >
-            <FilterIcon className="h-4 w-6" />
-            Filter
+      <div className="gap-3 flex justify-between">
+        <div className="flex gap-2">
+          <label className="input input-neutral">
+            <Search className="h-4 w-6" />
+            <input type="search" required placeholder="Search" />
+          </label>
+          <div className="dropdown">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn bg-green-600 text-white"
+            >
+              <FilterIcon className="h-4 w-6" />
+              Filter
+            </div>
+            <ul
+              tabIndex="-1"
+              className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+            >
+              <li className="rounded-sm focus:bg-highlight">
+                <a className="active:bg-highlight">Ascending</a>
+              </li>
+              <li>
+                <a className="active:bg-highlight">Descending</a>
+              </li>
+              <li>
+                <a className="active:bg-highlight">Date</a>
+              </li>
+              <li>
+                <a className="active:bg-highlight">Time</a>
+              </li>
+            </ul>
           </div>
-          <ul
-            tabIndex="-1"
-            className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
-          >
-            <li className="rounded-sm focus:bg-highlight">
-              <a className="active:bg-highlight">Ascending</a>
-            </li>
-            <li>
-              <a className="active:bg-highlight">Descending</a>
-            </li>
-            <li>
-              <a className="active:bg-highlight">Date</a>
-            </li>
-            <li>
-              <a className="active:bg-highlight">Time</a>
-            </li>
-          </ul>
         </div>
 
         <button
@@ -326,98 +325,135 @@ export default function MaintenancePage() {
         </div>
       </dialog>
 
-      <h2 className="text-2xl mt-7 font-bold mb-6">Vehicles</h2>
-      <div className="bg-base-100 mt-2 border-0 ">
-        <div className="overflow-x-auto rounded-lg">
-          <table className="table table-zebra">
-            <thead className="bg-violet-500 text-white">
-              <tr>
-                <th>Vehicle</th>
-                <th>Policy ID</th>
-                <th>Policy No.</th>
-                <th>Plate No.</th>
-                <th>Issue Date</th>
-                <th>Period Covered</th>
-                <th>Required Covered</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {vehicles.length === 0 ? (
-                <tr>
-                  <td colSpan="8" className="text-center">
-                    <div className="flex flex-col justify-center items-center h-20 gap-5">
-                      {loading && (
-                        <span className="loading loading-spinner text-success"></span>
-                      )}
-                      {loading ? (
-                        <p className="font-bold text-sm">Loading vehicles...</p>
-                      ) : (
-                        <div className="flex flex-col justify-center items-center gap-2">
-                          <BeanOff className="size-12 text-red-300" />
-                          <p className="font-bold text-sm text-red-300">
-                            No vehicles found
-                          </p>
-                        </div>
-                      )}
+      <div className="bg-base-100 border-0 mt-4">
+        {vehicles.length === 0 ? (
+          <div className="flex flex-col justify-center items-center h-40 gap-5">
+            {loading && (
+              <>
+                <span className="loading loading-spinner text-success"></span>
+                <p className="font-bold text-sm">Loading vehicles...</p>
+              </>
+            )}
+            {!loading && (
+              <>
+                <BeanOff className="size-12 text-red-300" />
+                <p className="font-bold text-sm text-red-300">
+                  No vehicles found
+                </p>
+              </>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {vehicles.map((vehicle) => (
+              <div
+                key={vehicle.id}
+                className="card bg-base-100 shadow border border-base-300"
+              >
+                <figure className="px-4 pt-4">
+                  <div className="w-full h-32 bg-gradient-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center">
+                    <div className="text-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-12 w-12 mx-auto text-green-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+                        />
+                      </svg>
+                      <p className="text-sm text-violet-600 font-medium mt-1">
+                        Vehicle Image
+                      </p>
                     </div>
-                  </td>
-                </tr>
-              ) : (
-                vehicles.map((vehicle) => (
-                  <tr key={vehicle.id}>
-                    <th>{vehicle.name}</th>
-                    <td className="text-xs">{vehicle.policy_id}</td>
-                    <td className="text-xs">{vehicle.policy_number}</td>
-                    <td>
-                      <div className="badge badge-dash badge-primary">
+                  </div>
+                </figure>
+
+                <div className="card-body p-5 pt-2">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h2 className="card-title text-lg font-bold">
+                        {vehicle.name}
+                      </h2>
+                      <span className="text-gray-500 text-xs mr-2">
+                        Plate Number
+                      </span>
+                      <div className="badge badge-dash badge-primary text-sm ">
                         {vehicle.plate_number}
                       </div>
-                    </td>
-                    <td>
+                    </div>
+                    <div className="flex gap-1">
+                      {/* <button className="btn btn-ghost btn-square btn-sm">
+                  <PenLine className="h-4 w-4" />
+                </button> */}
+                      <button
+                        onClick={() => deleteVehicle(vehicle.id)}
+                        className="btn btn-ghost btn-square btn-sm text-error"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="text-gray-500 text-xs">Policy ID</span>
+                    <p className="font-medium">{vehicle.policy_id || "N/A"}</p>
+                  </div>
+
+                  <div>
+                    <span className="text-gray-500 text-xs">Policy No.</span>
+                    <p className="font-medium">
+                      {vehicle.policy_number || "N/A"}
+                    </p>
+                  </div>
+
+                  <div className="mt-2">
+                    <span className="text-gray-500 text-xs">Issue Date</span>
+                    <p className="text-sm">
                       {vehicle.issue_date
-                        ? `${format(new Date(vehicle.issue_date), "MMM. d, yyyy")}`
+                        ? format(new Date(vehicle.issue_date), "MMM. d, yyyy")
                         : "N/A"}
-                    </td>
-                    <td>
+                    </p>
+                  </div>
+
+                  <div className="mt-2">
+                    <span className="text-gray-500 text-xs">
+                      Period Covered
+                    </span>
+                    <p className="text-sm">
                       {vehicle.period_from && vehicle.period_to ? (
                         <>
                           {format(
                             new Date(vehicle.period_from),
                             "MMM. d, yyyy",
                           )}
-                          <br />
-                          to
-                          <br />
+                          {" - "}
                           {format(new Date(vehicle.period_to), "MMM. d, yyyy")}
                         </>
                       ) : (
                         "N/A"
                       )}
-                    </td>
-                    <td>{vehicle.required_covered}</td>
-                    <td>
-                      <ul>
-                        <li className="flex gap-2">
-                          {/* <button className="btn btn-square">
-                            <PenLine className="h-4 w-6" />
-                          </button> */}
-                          <button
-                            onClick={() => deleteVehicle(vehicle.id)}
-                            className="btn btn-square"
-                          >
-                            <Trash2 className="h-4 w-6" />
-                          </button>
-                        </li>
-                      </ul>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-            <tfoot></tfoot>
-          </table>
-        </div>
+                    </p>
+                  </div>
+
+                  <div className="mt-2">
+                    <span className="text-gray-500 text-xs">
+                      Required Covered
+                    </span>
+                    <p className="text-sm font-medium">
+                      {vehicle.required_covered}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );

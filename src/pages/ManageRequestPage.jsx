@@ -200,7 +200,7 @@ export default function ManageRequestsPage() {
 
                 return (
                   <tr key={req.id} className="hover:bg-green-100">
-                    <th>{req.department}</th>
+                    <th className="uppercase">{req.department}</th>
 
                     <td className="">
                       <span className="font-bold capitalize">
@@ -212,7 +212,7 @@ export default function ManageRequestsPage() {
                       </span>
                     </td>
 
-                    <td>{req.destination}</td>
+                    <td className="capitalize">{req.destination}</td>
 
                     <td className="">
                       <span className="text-sm">
@@ -296,7 +296,7 @@ export default function ManageRequestsPage() {
 
                     {/* ACTION */}
                     <td>
-                      <Link to="/moreinfo">
+                      <Link to={`/moreinfo/${req.id}`}>
                         <button className="btn btn-square">
                           <Ellipsis className="h-4 w-6" />
                         </button>

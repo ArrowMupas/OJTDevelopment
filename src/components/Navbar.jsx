@@ -44,6 +44,13 @@ export default function Navbar() {
           </a>
 
           <a
+            href="/survey "
+            className="text-sm hover:no-underline hover:text-yellow-200"
+          >
+            Survey
+          </a>
+
+          <a
             href="#about"
             className="text-sm hover:no-underline hover:text-yellow-200 "
           >
