@@ -28,7 +28,6 @@ const vehicleRequestSchema = z.object({
   travelDuration: z
     .string()
     .nonempty({ message: "Travel duration is required" }),
-
   otherInstructions: z.string().optional(),
   passengerContactNumber: z.string().optional(),
   requestedBy: z.string().nonempty({ message: "Requester name is required" }),
@@ -79,15 +78,16 @@ export default function TransactionsPage() {
   };
 
   return (
-    <main className="h-full p-8 bg-linear-to-b from-lime-100 to-green-200 pb-25">
-      <div className="card lg:card-side p-7 w-xl mx-auto bg-white shadow-lg">
+    <main className="min-h-screen bg-gradient-to-b from-lime-100 to-green-200 pb-25 flex justify-center p-4 sm:p-6 lg:p-8">
+      <div className="card w-full max-w-xl bg-white shadow-lg rounded-3xl p-7">
         <form
           onSubmit={handleSubmit(requestVehicle)}
-          className="card-body max-w-2xl border-2 border-green-600 rounded-lg border-dashed p-7"
+          className="card-body border-2 border-green-600 border-dashed rounded-lg p-5 sm:p-7 flex flex-col gap-4"
         >
-          <div className=" text-center p-3 items-center justify-center flex flex-col gap-2">
+          
+          <div className="text-center flex flex-col items-center justify-center gap-2 p-3">
             <img
-              className="size-20 "
+              className="w-24 sm:w-28 lg:w-32 h-auto"
               src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/national_electrification_logo.png"
               alt="NEA Logo"
               onError={(e) => {
@@ -103,7 +103,7 @@ export default function TransactionsPage() {
             </p>
           </div>
 
-          <OurInput
+<OurInput
             label="Email:"
             name="email"
             register={register}
@@ -147,49 +147,46 @@ export default function TransactionsPage() {
           <div className="flex flex-col mb-4 space-y-2">
             <legend className="fieldset-legend text-sm">With:</legend>
 
-            <label className="inline-flex items-center cursor-pointer">
-              <input
-                type="radio"
-                value="Baggage"
-                className="radio h-3 w-3"
-                {...register("items")}
-              />
-              <span className="ml-2 text-sm">Baggage</span>
+            <label className="flex flex-col sm:flex-row items-start sm:items-center cursor-pointer w-full">
+              <input 
+                type="radio" 
+                value="Baggage" 
+                className="h-3 w-3 mt-1 sm:mt-0" 
+                {...register("items")} 
+                />
+              <span className="ml-0 sm:ml-2 text-sm">Baggage</span>
             </label>
 
-            <label className="inline-flex items-center cursor-pointer">
-              <input
-                type="radio"
-                value="Equipment"
-                className="radio h-3 w-3"
-                {...register("items")}
-              />
-              <span className="ml-2 text-sm">Equipment</span>
+            <label className="flex flex-col sm:flex-row items-start sm:items-center cursor-pointer w-full">
+              <input 
+              type="radio" 
+              value="Equipment" 
+              className="h-3 w-3 mt-1 sm:mt-0" 
+              {...register("items")} />
+              <span className="ml-0 sm:ml-2 text-sm">Equipment</span>
             </label>
 
-            <label className="inline-flex items-center cursor-pointer w-full">
-              <input
-                type="radio"
-                value="Others"
-                className="radio h-3 w-3"
-                {...register("items")}
-              />
-              <div className="ml-2 w-full">
+            <label className="flex flex-col sm:flex-row items-start sm:items-center cursor-pointer w-full">
+              <input 
+              type="radio" 
+              value="Others" 
+              className="h-3 w-3 mt-1 sm:mt-0" 
+              {...register("items")} />
+              <div className="ml-0 sm:ml-2 w-full sm:w-auto">
                 <input
                   type="text"
                   placeholder="Others (please specify)"
-                  className={`input w-full ${errors.itemsOther ? "border-red-500" : ""}`}
+                  className={`input w-full sm:w-auto ${errors.itemsOther ? "border-red-500" : ""}`}
                   disabled={selectedItem !== "Others"}
                   {...register("itemsOther")}
                 />
               </div>
             </label>
 
-            {errors.items && (
-              <span className="text-red-500 text-sm">
-                {errors.items.message}
-              </span>
-            )}
+            {errors.items && 
+            <span className="text-red-500 text-sm">
+              {errors.items.message}
+              </span>}
           </div>
 
           <OurInput
@@ -201,33 +198,26 @@ export default function TransactionsPage() {
           />
 
           {/* SELECT */}
-          <div className="w-full mb-4">
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend text-sm">
-                Duration of Travel:
-              </legend>
-
-              <select
-                className={`select w-full  ${errors.travelDuration ? "border-red-500" : ""}`}
-                defaultValue=""
-                {...register("travelDuration")}
-              >
-                <option value="" disabled>
-                  Choose
-                </option>
-                <option value="Same Day">Same Day</option>
-                <option value="2 Days">2 Days</option>
-                <option value="3 Days">3 Days</option>
-                <option value="4 Days">4 Days</option>
-                <option value="5 Days or more">5 Days or more</option>
-              </select>
-
-              {errors.travelDuration && (
-                <span className="text-red-500 text-sm">
-                  {errors.travelDuration.message}
-                </span>
-              )}
-            </fieldset>
+          <div>
+            <label className="font-bold text-sm">
+              Duration of Travel:
+              </label>
+            <select
+              className={`select w-full mt-1 ${errors.travelDuration ? "border-red-500" : ""}`}
+              defaultValue=""
+              {...register("travelDuration")}
+            >
+              <option value="" disabled>Choose</option>
+              <option value="Same Day">Same Day</option>
+              <option value="2 Days">2 Days</option>
+              <option value="3 Days">3 Days</option>
+              <option value="4 Days">4 Days</option>
+              <option value="5 Days or more">5 Days or more</option>
+            </select>
+            {errors.travelDuration && 
+               <span className="text-red-500 text-sm">
+                {errors.travelDuration.message}
+                </span>}
           </div>
 
           <OurInput
@@ -241,7 +231,7 @@ export default function TransactionsPage() {
             name="passengerContactNumber"
             register={register}
             error={errors.passengerContactNumber}
-          />
+          />          
           <OurInput
             label="Requested By:"
             label2="Division Manager/Department Manager/Deputy Administrator."
