@@ -1,22 +1,20 @@
+import {
+  BeanOff,
+  FilterIcon,
+  Search,
+  Trash2,
+  Truck,
+  UserPlus,
+  UserXIcon,
+} from "lucide-react";
 import { supabase } from "../supabaseClient";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useEffect, useState } from "react";
-import {
-  FilterIcon,
-  PenLine,
-  Search,
-  Trash2,
-  Truck,
-  UserPlus,
-  UserRoundX,
-  UserXIcon,
-} from "lucide-react";
-import OurInput from "../components/OurInput";
+import { useEffect, useState, useMemo } from "react";
 import debounce from "lodash.debounce";
-import { useMemo } from "react";
+import OurInput from "../components/OurInput";
 
 const driverSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -30,13 +28,13 @@ export default function MaintenancePage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  async function fetchDrivers(searchTerm = "") {
+  const fetchDrivers = async (searchTerm = "") => {
     setLoading(true);
 
     let query = supabase
       .from("drivers")
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("first_name", { ascending: true });
 
     if (searchTerm) {
       query = query.or(
@@ -46,22 +44,28 @@ export default function MaintenancePage() {
 
     const { data, error } = await query;
 
-    if (error) {
-      console.error(error);
-    } else {
-      setDrivers(data);
-    }
+    if (error) console.error(error);
+    else setDrivers(data);
+
     setLoading(false);
-  }
+  };
+
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((value) => {
+        if (!value) fetchDrivers("");
+        else fetchDrivers(value);
+      }, 400),
+    [],
+  );
 
   useEffect(() => {
     fetchDrivers();
   }, []);
 
-  const debouncedSearch = useMemo(
-    () => debounce((value) => fetchDrivers(value), 400),
-    [],
-  );
+  useEffect(() => {
+    return () => debouncedSearch.cancel();
+  }, [debouncedSearch]);
 
   const {
     register,
@@ -87,97 +91,77 @@ export default function MaintenancePage() {
     if (error) {
       toast.error("Failed to create driver");
     } else {
-      toast.success("Driver created successfully!", {
-        position: "top-center",
-      });
+      toast.success("Driver created successfully!", { position: "top-center" });
       document.getElementById("driverModal")?.close();
       reset();
-
-      // Refetch all drivers after insertion
-      setLoading(true);
-      const { data } = await supabase
-        .from("drivers")
-        .select("*")
-        .order("created_at", { ascending: false });
-      setDrivers(data);
-      setLoading(false);
+      fetchDrivers(search);
     }
-
     setIsSubmitting(false);
   };
 
   const deleteDriver = async (id) => {
     const { error } = await supabase.from("drivers").delete().eq("id", id);
-
     if (error) console.error(error);
     else {
-      setDrivers((prev) => prev.filter((driver) => driver.id !== id));
+      setDrivers((prev) => prev.filter((d) => d.id !== id));
       toast.success("Driver deleted successfully!");
     }
   };
 
   return (
-    <main className="px-5 py-4 h-full pb-32">
-      <h1 className="text-lg font-bold ">Driver Maintenance</h1>
-      <p className="text-gray-500 text-sm mb-6">
-        Vehicle and driver management
-      </p>
+    <main className="px-5 py-4 h-full pb-25">
+      <h1 className="text-lg font-bold">Drivers</h1>
+      <p className="text-gray-500 text-sm mb-6">List of drivers available</p>
 
-      <div className="space-x-3">
-        <label className="input w-1/3 input-neutral">
-          <Search className="h-4 w-6" />
-          <input
-            type="search"
-            placeholder="Search"
-            value={search}
-            onChange={(e) => {
-              const value = e.target.value;
-              setSearch(value);
-              debouncedSearch(value);
-            }}
-          />
-        </label>
+      <div className="gap-3 flex justify-between">
+        <div className="flex gap-2">
+          <label className="input input-neutral">
+            <Search className="h-4 w-6" />
+            <input
+              type="search"
+              placeholder="Search drivers..."
+              value={search}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearch(value);
+                debouncedSearch(value);
+              }}
+            />
+          </label>
 
-        <div className="dropdown">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn  bg-green-600 text-white"
-          >
-            <FilterIcon className="h-4 w-6" />
-            Filter
+          <div className="dropdown">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn bg-green-600 text-white"
+            >
+              <FilterIcon className="h-4 w-6" /> Filter
+            </div>
+            <ul
+              tabIndex="-1"
+              className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+            >
+              <li className="rounded-sm focus:bg-highlight">
+                <a className="active:bg-highlight">Ascending</a>
+              </li>
+              <li>
+                <a className="active:bg-highlight">Descending</a>
+              </li>
+            </ul>
           </div>
-          <ul
-            tabIndex="-1"
-            className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
-          >
-            <li className="rounded-sm focus:bg-highlight">
-              <a className="active:bg-highlight">Ascending</a>
-            </li>
-            <li>
-              <a className="active:bg-highlight">Descending</a>
-            </li>
-            <li>
-              <a className="active:bg-highlight">Date</a>
-            </li>
-            <li>
-              <a className="active:bg-highlight">Time</a>
-            </li>
-          </ul>
         </div>
 
         <button
           className="btn btn-outline btn-neutral"
           onClick={() => document.getElementById("driverModal").showModal()}
         >
-          <UserPlus className="h-4 w-6" />
-          Add New Driver
+          <UserPlus className="h-4 w-6" /> Add New Driver
         </button>
       </div>
 
       <dialog id="driverModal" className="modal">
         <div className="modal-box">
-          <h1 className="text-2xl font-bold ">Add Driver</h1>
+          <h1 className="text-2xl font-bold">Add Driver</h1>
           <p className="text-gray-600 text-sm mb-7">Create your driver here!</p>
           <form onSubmit={handleSubmit(createDriver)} method="dialog">
             <button
@@ -195,7 +179,6 @@ export default function MaintenancePage() {
                 register={register}
                 error={errors.firstName}
               />
-
               <OurInput
                 label="Last Name"
                 name="lastName"
@@ -203,14 +186,12 @@ export default function MaintenancePage() {
                 error={errors.lastName}
               />
             </div>
-
             <OurInput
               label="Contact Number"
               name="phone"
               register={register}
               error={errors.phone}
             />
-
             <OurInput
               label="Email"
               name="email"
@@ -221,82 +202,67 @@ export default function MaintenancePage() {
 
             <button
               type="submit"
-              className="btn btn-lg bg-green-600 text-white hover:bg-highlight hover:text-white transition w-full mt-4"
+              className="btn btn-lg w-full bg-green-600 text-white hover:bg-highlight mt-4"
               disabled={isSubmitting}
             >
               <Truck className="size-5 mr-2" />
-              {isSubmitting && (
-                <span className="loading loading-spinner"></span>
-              )}
               {isSubmitting ? "Creating driver..." : "Create Driver"}
             </button>
           </form>
         </div>
       </dialog>
 
-      <h2 className="text-2xl mt-7 font-bold mb-6">Drivers</h2>
-      <div className="bg-base-100 mt-2 border-0">
-        <div className="overflow-x-auto rounded-lg">
-          <table className="table table-zebra ">
-            <thead className="bg-blue-500 text-white ">
-              <tr>
-                <th>Image</th>
-                <th>Fullname</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {drivers.length === 0 ? (
-                <tr>
-                  <td colSpan="6" className="text-center">
-                    <div className="flex flex-col justify-center items-center h-20 gap-5">
-                      {loading && (
-                        <span className="loading loading-spinner text-success"></span>
-                      )}
-                      {loading ? (
-                        <p className="font-bold text-sm">Loading drivers...</p>
-                      ) : (
-                        <div className="flex flex-col justify-center items-center gap-2">
-                          <UserRoundX className="size-12 text-red-300" />
-                          <p className="font-bold text-sm text-red-300">
-                            No drivers found
-                          </p>
-                        </div>
-                      )}
+      <div className="bg-base-100 border-0 mt-4">
+        {drivers.length === 0 ? (
+          <div className="flex flex-col justify-center items-center h-40 gap-5">
+            {loading ? (
+              <>
+                <span className="loading loading-spinner text-success"></span>
+                <p className="font-bold text-sm">Loading drivers...</p>
+              </>
+            ) : (
+              <>
+                <BeanOff className="size-12 text-red-300" />
+                <p className="font-bold text-sm text-red-300">
+                  No drivers found
+                </p>
+              </>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            {drivers.map((driver) => (
+              <div
+                key={driver.id}
+                className="card bg-base-100 shadow border border-base-300"
+              >
+                <figure className="px-4 pt-4">
+                  <div className="w-full h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center">
+                    <UserXIcon className="size-12 text-gray-300 rounded-full" />
+                  </div>
+                </figure>
+
+                <div className="card-body p-5 pt-2">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h2 className="card-title text-lg font-bold">
+                        {driver.first_name} {driver.last_name}
+                      </h2>
                     </div>
-                  </td>
-                </tr>
-              ) : (
-                drivers.map((driver) => (
-                  <tr key={driver.id}>
-                    <td>
-                      <UserXIcon className="size-12 text-gray-300 rounded-full" />
-                    </td>
-                    <td className="font-bold">
-                      {driver.first_name} {driver.last_name}
-                    </td>
-                    <td>
-                      <ul>
-                        <li className="flex gap-2">
-                          <button
-                            onClick={() => deleteDriver(driver.id)}
-                            className="btn btn-soft btn-error"
-                          >
-                            <Trash2 className="h-4 w-6" />
-                            Delete Driver
-                          </button>
-                          {/* <button className="btn btn-square">
-                            <PenLine className="h-4 w-6" />
-                          </button> */}
-                        </li>
-                      </ul>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => deleteDriver(driver.id)}
+                        className="btn btn-ghost btn-square btn-sm text-error"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );

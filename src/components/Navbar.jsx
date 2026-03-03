@@ -51,7 +51,7 @@ export default function Navbar() {
           </a>
 
           <a
-            href="#about"
+            href="/about"
             className="text-sm hover:no-underline hover:text-yellow-200 "
           >
             About
