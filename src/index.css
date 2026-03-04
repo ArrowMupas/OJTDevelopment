@@ -34,6 +34,7 @@ html {
   --font-rubik: Rubik, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
   --color-highlight: #349c2a;
+  --color-back: #f8fafc;
 }
 
 :root {

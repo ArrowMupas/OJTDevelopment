@@ -114,8 +114,8 @@ export default function SurveyPage() {
             }}
           />
           <div className="space-x-0">
-            <h2 className="text-4xl font-bold text-center mb-2 text-green-800 font-rubik">
-              Tell us about the service!
+            <h2 className="text-3xl font-bold text-center mb-2 text-green-800 uppercase tracking-tight">
+              Tell us about the service
             </h2>
             <p className="text-center text-gray-500 mb-4 text-sm">
               Tell us how is your experience with our service vehicles and
@@ -241,7 +241,7 @@ export default function SurveyPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn btn-lg bg-lime-400 hover:bg-lime-500 text-white py-7 w-full rounded-2xl mt-5"
+            className="btn btn-lg bg-green-600 hover:bg-green-500 text-white py-7 w-full rounded-2xl mt-5 font-bold tracking-woder uppercase"
           >
             {isSubmitting ? "Submitting..." : "Submit Survey"}
           </button>

@@ -5,7 +5,7 @@ import AdminNavbar from "../components/AdminNavbar.jsx";
 
 export default function MainLayout() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-back">
       <Sidebar />
 
       <div className="ml-64 flex flex-col min-h-screen">

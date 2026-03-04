@@ -92,7 +92,7 @@ export default function InquiryPage() {
         </div>
       </div>
 
-      <div className="bg-base-100 mt-2 border-0">
+      <div className="bg-white mt-2 border-0">
         <div className="overflow-x-auto rounded-lg">
           <table className="table ">
             <thead className="bg-green-600 text-white">
@@ -135,10 +135,7 @@ export default function InquiryPage() {
                   const date = new Date(inquiry.created_at);
 
                   return (
-                    <tr
-                      key={inquiry.id}
-                      className="bg-green-50 hover:bg-green-100"
-                    >
+                    <tr key={inquiry.id} className=" hover:bg-green-50">
                       <th>
                         {inquiry.first_name} {inquiry.last_name}
                       </th>

@@ -39,3 +39,20 @@ export default function NotFoundPage() {
 
   */
 }
+
+/* const location = useLocation();
+const path = location.pathname;
+
+let title = "National Electrification Administration";
+let subtitle = "Transport Operations Services Unit (TOSU)";
+
+if (path === "/dashboard") {
+  title = "Dashboard";
+  subtitle = "Overview of all operations";
+} else if (path === "/survey") {
+  title = "Survey";
+  subtitle = "Manage and view surveys";
+} else if (path === "/about") {
+  title = "About Us";
+  subtitle = "Learn more about our team";
+} */

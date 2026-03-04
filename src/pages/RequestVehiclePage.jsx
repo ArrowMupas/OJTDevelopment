@@ -94,7 +94,7 @@ export default function TransactionsPage() {
                   "https://8upload.com/display/33ff4ec683a6b52a/nea-logo.png.php";
               }}
             />
-            <h1 className="text-4xl font-bold text-green-700 tracking-tight font-rubik">
+            <h1 className="text-3xl font-bold text-green-700 tracking-tight uppercase">
               Request a Service Vehicle
             </h1>
             <p className="text-gray-500 text-sm">
@@ -246,7 +246,7 @@ export default function TransactionsPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn btn-lg bg-green-500 hover:bg-green-400 text-white py-7 w-full rounded-2xl mt-5"
+            className="btn btn-lg bg-green-500 hover:bg-green-400 text-white py-7 w-full rounded-2xl mt-5 uppercase font-bold tracking-wider"
           >
             {isSubmitting ? "Requesting vehicle..." : "Request Vehicle"}
           </button>

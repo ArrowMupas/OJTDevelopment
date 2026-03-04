@@ -118,56 +118,53 @@ export default function ManageRequestsPage() {
   }
 
   return (
-    <main className="px-5 py-4 pb-40 h-full">
+    <main className="px-5 py-4 pb-40 h-full ">
       <h1 className="text-lg font-bold ">Manage Request</h1>
       <p className="text-gray-500 text-sm mb-6">
         View and manage all service requests here.
       </p>
 
-      <div className="grid grid-cols-4 md:flex-row gap-5">
-        <div className="card bg-base-100 card-md shadow-sm">
-          <div className="card-body flex-row justify-between border-[#d2dc15] border-b-2 rounded-sm">
-            <div>
-              <h2 className="card-title">21</h2>
-              <p>Today's Request</p>
-            </div>
-            <Clipboard className="h-8 w-12 mr-2 text-[#d2dc15]" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 w-full">
+        <div className="stat bg-base-100 shadow rounded-md">
+          <div className="stat-figure">
+            <Clipboard className="h-8 w-12 text-[#d2dc15]" />
           </div>
+          <div className="stat-title">Today's Request</div>
+          <div className="stat-value text-[#d2dc15]">21</div>
+          <div className="stat-desc">New requests for today</div>
         </div>
 
-        <div className="card bg-base-100 card-md shadow-sm">
-          <div className="card-body flex-row justify-between border-highlight border-b-2 rounded-sm">
-            <div>
-              <h2 className="card-title">4</h2>
-              <p>Completed Request</p>
-            </div>
-            <ClipboardCheck className="h-8 w-12 mr-2 text-highlight" />
+        <div className="stat bg-base-100 shadow rounded-md">
+          <div className="stat-figure">
+            <ClipboardCheck className="h-8 w-12 text-highlight" />
           </div>
+          <div className="stat-title">Completed Request</div>
+          <div className="stat-value text-highlight">4</div>
+          <div className="stat-desc">Requests completed</div>
         </div>
 
-        <div className="card bg-base-100 card-md shadow-sm">
-          <div className="card-body flex-row justify-between border-[#745fc9] border-b-2 rounded-sm">
-            <div>
-              <h2 className="card-title">19</h2>
-              <p>Pending Request</p>
-            </div>
-            <ClipboardClock className="h-8 w-12 mr-2 text-[#745fc9]" />
+        <div className="stat bg-base-100 shadow rounded-md">
+          <div className="stat-figure">
+            <ClipboardClock className="h-8 w-12 text-[#745fc9]" />
           </div>
+          <div className="stat-title">Pending Request</div>
+          <div className="stat-value text-[#745fc9]">19</div>
+          <div className="stat-desc">Requests still pending</div>
         </div>
 
-        <div className="card bg-base-100 card-md shadow-sm">
-          <div className="card-body flex-row justify-between border-[#745fc9] border-b-2 rounded-sm">
-            <div>
-              <h2 className="card-title">19</h2>
-              <p>Pending Request</p>
-            </div>
-            <ClipboardClock className="h-8 w-12 mr-2 text-[#745fc9]" />
+        <div className="stat bg-base-100 shadow rounded-md">
+          <div className="stat-figure">
+            <ClipboardClock className="h-8 w-12 text-[#745fc9]" />
           </div>
+          <div className="stat-title">Another Pending</div>
+          <div className="stat-value text-[#745fc9]">19</div>
+          <div className="stat-desc">Something else</div>
         </div>
       </div>
+
       <h2 className=" font-semibold mt-12 text-gray-700">List of Request</h2>
 
-      <div className="bg-green-50 mt-4">
+      <div className="bg-white mt-4">
         <div className="overflow-x-auto  rounded-lg">
           <table className="table ">
             <thead className="bg-green-500 text-white">
@@ -199,7 +196,7 @@ export default function ManageRequestsPage() {
                 );
 
                 return (
-                  <tr key={req.id} className="hover:bg-green-100">
+                  <tr key={req.id} className="hover:bg-green-50">
                     <th className="uppercase">{req.department}</th>
 
                     <td className="">

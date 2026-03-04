@@ -114,6 +114,8 @@ export default function MaintenancePage() {
     setIsSubmitting(false);
   };
 
+  const [vehicleToDelete, setVehicleToDelete] = useState(null);
+
   const deleteVehicle = async (id) => {
     const { error } = await supabase.from("vehicles").delete().eq("id", id);
     if (error) console.error(error);
@@ -124,7 +126,7 @@ export default function MaintenancePage() {
   };
 
   return (
-    <main className="px-5 py-4 h-full pb-25">
+    <main className="px-5 py-4 h-full pb-25 bg-back">
       <h1 className="text-lg font-bold ">Vehicles</h1>
       <p className="text-gray-500 text-sm mb-6">List of Vehicles available</p>
 
@@ -352,7 +354,7 @@ export default function MaintenancePage() {
         </div>
       </dialog>
 
-      <div className="bg-base-100 border-0 mt-4">
+      <div className=" border-0 mt-4">
         {vehicles.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-40 gap-5">
             {loading && (
@@ -419,7 +421,12 @@ export default function MaintenancePage() {
                   <PenLine className="h-4 w-4" />
                 </button> */}
                       <button
-                        onClick={() => deleteVehicle(vehicle.id)}
+                        onClick={() => {
+                          setVehicleToDelete(vehicle);
+                          document
+                            .getElementById("deleteVehicleModal")
+                            .showModal();
+                        }}
                         className="btn btn-ghost btn-square btn-sm text-error"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -482,6 +489,45 @@ export default function MaintenancePage() {
           </div>
         )}
       </div>
+
+      <dialog id="deleteVehicleModal" className="modal">
+        <div className="modal-box">
+          <h2 className="text-xl font-bold text-center">Delete Vehicle</h2>
+
+          <p className="text-center mt-3">
+            Are you sure you want to delete{" "}
+            <span className="font-bold">
+              {vehicleToDelete?.name} ({vehicleToDelete?.plate_number})
+            </span>
+            ?
+          </p>
+
+          <div className="modal-action justify-center mt-6">
+            <button
+              className="btn btn-error text-white"
+              onClick={async () => {
+                if (vehicleToDelete) {
+                  await deleteVehicle(vehicleToDelete.id);
+                }
+                document.getElementById("deleteVehicleModal").close();
+                setVehicleToDelete(null);
+              }}
+            >
+              Yes, Delete
+            </button>
+
+            <button
+              className="btn btn-ghost"
+              onClick={() => {
+                document.getElementById("deleteVehicleModal").close();
+                setVehicleToDelete(null);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </dialog>
     </main>
   );
 }
