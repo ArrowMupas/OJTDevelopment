@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
-import { Clipboard, ClipboardCheck, ClipboardClock } from "lucide-react";
 import { parse, format } from "date-fns";
 
 export default function HomePage() {
@@ -33,11 +32,6 @@ export default function HomePage() {
 
   return (
     <main className=" h-full pb-40">
-      <h1 className="text-3xl font-bold">Service Vehicle Requests</h1>
-      <p className="text-gray-500 mb-6">
-        Overview of requests and driver activity
-      </p>
-
       {/* <div className="grid grid-cols-3 md:flex-row gap-5">
         <div className="card bg-base-100 card-md shadow-sm">
           <div className="card-body flex-row justify-between border-[#d2dc15] border-b-2 rounded-sm">
@@ -74,9 +68,9 @@ export default function HomePage() {
         </div>
       </div> */}
 
-      <div className="bg-base-100 mt-4">
-        <div className="overflow-x-auto border border-green-600">
-          <table className="table table-lg">
+      <div className="">
+        <div className="overflow-x-auto ">
+          <table className="table table-sm lg:table-md xl:table-lg">
             <thead className="bg-green-500 text-white">
               <tr className="uppercase">
                 <th>Department</th>
@@ -87,7 +81,7 @@ export default function HomePage() {
                 <th>Instructions</th>
                 <th className="bg-blue-500">Driver</th>
                 <th className="bg-violet-500">Vehicle</th>
-                <th className="bg-violet-500">Plate Number</th>
+                <th className="bg-violet-500">Plate</th>
               </tr>
             </thead>
             <tbody>
@@ -122,16 +116,17 @@ export default function HomePage() {
                   return (
                     <tr key={req.id}>
                       <th className="uppercase">{req.department}</th>
+
                       <td className="flex flex-col justify-center items-start">
-                        <span className="text-sm">
+                        <span className="">
                           {format(formattedDateTime, "MMM. d, yyyy")}
                         </span>
-                        <span className="text-xs ">
+                        <span className="">
                           {format(formattedDateTime, "hh:mm a")}
                         </span>
                       </td>
 
-                      <td className="text-green-700 font-bold text-lg capitalize">
+                      <td className="text-green-700 font-bold capitalize">
                         {req.destination}
                       </td>
 
@@ -142,11 +137,11 @@ export default function HomePage() {
                         </span>
                       </td>
 
-                      <td className="text-xs">
+                      <td className="text-sm">
                         {req.passenger_contact_number}
                       </td>
 
-                      <td className="text-xs">{req.other_instructions}</td>
+                      <td className="text-sm">{req.other_instructions}</td>
 
                       <td className="bg-blue-50">
                         {req.driver_first_name} {req.driver_last_name}

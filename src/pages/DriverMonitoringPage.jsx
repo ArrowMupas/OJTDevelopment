@@ -66,7 +66,7 @@ export default function DriverMonitoringPage() {
   const filtered = drivers.filter(
     (d) =>
       d.name.toLowerCase().includes(search.toLowerCase()) ||
-      d.vehicle.toLowerCase().includes(search.toLowerCase())
+      d.vehicle.toLowerCase().includes(search.toLowerCase()),
   );
 
   const overallAverage = (
@@ -75,18 +75,15 @@ export default function DriverMonitoringPage() {
   ).toFixed(2);
 
   return (
-    <div className="min-h-screen bg-white p-8 font-sans">
+    <div className="min-h-screen bg-back p-8 font-sans">
       <div className="max-w-7xl mx-auto">
-
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-4xl font-bold">
               Driver Performance Monitoring
             </h1>
-            <p className="text-gray-500">
-              Survey evaluation overview
-            </p>
+            <p className="text-gray-500">Survey evaluation overview</p>
           </div>
 
           <div className="relative w-72">
@@ -163,7 +160,7 @@ export default function DriverMonitoringPage() {
                       className="border-t hover:bg-gray-50 cursor-pointer transition"
                       onClick={() =>
                         setSelectedDriver(
-                          selectedDriver === index ? null : index
+                          selectedDriver === index ? null : index,
                         )
                       }
                     >
@@ -178,14 +175,14 @@ export default function DriverMonitoringPage() {
                       <td className="px-6 py-4">
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusStyle(
-                            avg
+                            avg,
                           )}`}
                         >
                           {avg <= 1.2
                             ? "Excellent"
                             : avg <= 1.5
-                            ? "Good"
-                            : "Needs Review"}
+                              ? "Good"
+                              : "Needs Review"}
                         </span>
                       </td>
                     </tr>
@@ -196,11 +193,22 @@ export default function DriverMonitoringPage() {
                         <td colSpan="5" className="px-6 py-6">
                           <div className="grid md:grid-cols-2 gap-6 text-sm text-gray-700">
                             <div>
-                              <p><strong>Appearance:</strong> {driver.appearance}</p>
-                              <p><strong>Behavior:</strong> {driver.behavior}</p>
-                              <p><strong>Safety Driving:</strong> {driver.safety}</p>
-                              <p><strong>Cleanliness:</strong> {driver.cleanliness}</p>
-                              <p><strong>On Time:</strong> {driver.onTime}</p>
+                              <p>
+                                <strong>Appearance:</strong> {driver.appearance}
+                              </p>
+                              <p>
+                                <strong>Behavior:</strong> {driver.behavior}
+                              </p>
+                              <p>
+                                <strong>Safety Driving:</strong> {driver.safety}
+                              </p>
+                              <p>
+                                <strong>Cleanliness:</strong>{" "}
+                                {driver.cleanliness}
+                              </p>
+                              <p>
+                                <strong>On Time:</strong> {driver.onTime}
+                              </p>
                             </div>
                             <div>
                               <strong>Comments:</strong>

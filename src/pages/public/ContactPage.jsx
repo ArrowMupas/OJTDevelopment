@@ -54,14 +54,21 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto pb-40">
-      <h1 className="text-4xl font-bold mb-10 text-center ">Contact Us</h1>
+    <div className="p-8 max-w-5xl mx-auto py-20">
+      <div className="flex items-center justify-center flex-col ">
+        <h1 className="text-5xl font-bold  text-center tracking-tight uppercase ">
+          Contact Us
+        </h1>
+        <p className="relative z-10 text-lg max-w-2xl mx-auto text-black leading-relaxed px-4">
+          Leave a message for your inquiries
+        </p>
+      </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid md:grid-cols-2 gap-12 py-20">
         <form
           // On submit button click call handleSubmit from react-hook-form which will call our submitMessage function
           onSubmit={handleSubmit(submitMessage)}
-          className="py-2 h-full flex flex-col justify-between"
+          className="p-8 h-full flex flex-col justify-between bg-white rounded-xl border border-gray-200 shadow-sm hover:border-green-700 transition-all duration-300"
         >
           <div className="flex gap-4">
             <div className="flex-1">
@@ -152,18 +159,19 @@ export default function ContactPage() {
 
           <button
             type="submit"
-            className="btn btn-lg bg-green-500 hover:bg-highlight flex items-center gap-2 w-full mt-4 text-white"
+            className="btn btn-lg bg-green-600 hover:bg-green-500 flex items-center gap-2 w-full mt-4 text-white uppercase rounded-lg tracking-wider"
             disabled={isSubmitting}
           >
-            <Contact className="h-5 w-5" />
             {isSubmitting && <span className="loading loading-spinner"></span>}
             {isSubmitting ? "Submitting..." : "Submit your inquiry"}
           </button>
         </form>
 
         {/* Right: Company Info */}
-        <div className="bg-green-600 text-white p-6 rounded-lg space-y-8">
-          <h2 className="text-xl font-semibold mb-2">Contact Us</h2>
+        <div className="bg-green-600 text-white py-8 px-10 rounded-lg space-y-8">
+          <h2 className="text-2xl font-semibold mb-12 text-center uppercase tracking-wider ">
+            Contact Us
+          </h2>
 
           <div className="flex items-start">
             <PhoneCall className="h-5 w-5 mr-3 mt-1 text-white" />

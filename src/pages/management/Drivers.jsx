@@ -19,8 +19,6 @@ import OurInput from "../../components/OurInput";
 const driverSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
-  email: z.email({ message: "Please enter a valid email" }),
-  phone: z.string().optional(),
 });
 
 export default function MaintenancePage() {
@@ -83,8 +81,6 @@ export default function MaintenancePage() {
       {
         first_name: data.firstName,
         last_name: data.lastName,
-        email: data.email,
-        contact_number: data.phone,
       },
     ]);
 
@@ -99,6 +95,7 @@ export default function MaintenancePage() {
     setIsSubmitting(false);
   };
 
+  const [driverToDelete, setDriverToDelete] = useState(null);
   const deleteDriver = async (id) => {
     const { error } = await supabase.from("drivers").delete().eq("id", id);
     if (error) console.error(error);
@@ -109,7 +106,7 @@ export default function MaintenancePage() {
   };
 
   return (
-    <main className="px-5 py-4 h-full pb-25">
+    <main className="px-5 py-4 h-full pb-25 ">
       <h1 className="text-lg font-bold">Drivers</h1>
       <p className="text-gray-500 text-sm mb-6">List of drivers available</p>
 
@@ -186,19 +183,18 @@ export default function MaintenancePage() {
                 error={errors.lastName}
               />
             </div>
-            <OurInput
-              label="Contact Number"
-              name="phone"
-              register={register}
-              error={errors.phone}
-            />
-            <OurInput
-              label="Email"
-              name="email"
-              type="email"
-              register={register}
-              error={errors.email}
-            />
+
+            <div className="form-control w-full max-w-xs mt-4">
+              <label className="label">
+                <span className="label-text">Upload Vehicle Image</span>
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                className="file-input file-input-bordered w-full"
+                onChange={(e) => setFile(e.target.files[0])}
+              />
+            </div>
 
             <button
               type="submit"
@@ -212,7 +208,7 @@ export default function MaintenancePage() {
         </div>
       </dialog>
 
-      <div className="bg-base-100 border-0 mt-4">
+      <div className=" border-0 mt-4">
         {drivers.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-40 gap-5">
             {loading ? (
@@ -251,7 +247,12 @@ export default function MaintenancePage() {
                     </div>
                     <div className="flex gap-1">
                       <button
-                        onClick={() => deleteDriver(driver.id)}
+                        onClick={() => {
+                          setDriverToDelete(driver);
+                          document
+                            .getElementById("deleteDriverModal")
+                            .showModal();
+                        }}
                         className="btn btn-ghost btn-square btn-sm text-error"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -264,6 +265,45 @@ export default function MaintenancePage() {
           </div>
         )}
       </div>
+
+      <dialog id="deleteDriverModal" className="modal">
+        <div className="modal-box">
+          <h2 className="text-xl font-bold text-center">Delete Driver</h2>
+
+          <p className="text-center mt-3">
+            Are you sure you want to delete{" "}
+            <span className="font-bold">
+              {driverToDelete?.first_name} {driverToDelete?.last_name}
+            </span>
+            ?
+          </p>
+
+          <div className="modal-action justify-center mt-6">
+            <button
+              className="btn btn-error text-white"
+              onClick={async () => {
+                if (driverToDelete) {
+                  await deleteDriver(driverToDelete.id);
+                }
+                document.getElementById("deleteDriverModal").close();
+                setDriverToDelete(null);
+              }}
+            >
+              Yes, Delete
+            </button>
+
+            <button
+              className="btn btn-ghost"
+              onClick={() => {
+                document.getElementById("deleteDriverModal").close();
+                setDriverToDelete(null);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </dialog>
     </main>
   );
 }

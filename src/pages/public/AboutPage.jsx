@@ -77,7 +77,7 @@ const AboutUs = () => {
   };
 
   return (
-    <div className="bg-white min-h-screen font-sans text-gray-900">
+    <div className=" min-h-screen font-sans text-gray-900">
       {/* Header */}
       <header className="bg-white text-black text-center py-20 px-4 flex flex-col items-center relative overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-b from-black/5 to-transparent pointer-events-none"></div>
@@ -88,7 +88,7 @@ const AboutUs = () => {
             alt="NEA Logo"
           />
         </div>
-        <h1 className="relative z-10 text-5xl font-extrabold mb-4 tracking-tight">
+        <h1 className="relative z-10 text-5xl font-bold uppercase mb-4 tracking-tight">
           About Us
         </h1>
         <p className="relative z-10 text-lg max-w-2xl mx-auto text-black leading-relaxed px-4">

@@ -1,11 +1,9 @@
 import {
   ActivityIcon,
   Car,
-  ClipboardCheck,
   House,
   MessageCircleQuestionMark,
   ScrollText,
-  Settings,
   ChartColumnStacked,
   Users,
 } from "lucide-react";
@@ -19,13 +17,13 @@ export default function Sidebar() {
     return (
       <Link
         to={to}
-        className={`flex items-center gap-2 p-2 rounded-r-lg text-sm transition-all 
+        className={`flex items-center gap-2 p-2 rounded-r-lg text-sm transition-all text-gray-300
           ${
             isActive
-              ? "border-l-4 border-green-600 bg-green-400 "
+              ? "border-l-4 border-green-600 bg-green-700 text-white"
               : "border-l-4 border-transparent"
           }
-          hover:bg-green-400 hover:text-green-900`}
+          hover:bg-green-700 hover:text-white`}
       >
         <Icon size={18} />
         {children}
@@ -34,7 +32,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-green-300 hidden md:flex flex-col shadow-inner ">
+    <aside className="fixed left-0 top-0 h-screen w-64 bg-green-900 hidden md:flex flex-col shadow-inner text-white">
       <div className="px-4 py-3 border-b border-green-300">
         <div className="flex items-center gap-3">
           <img
@@ -48,7 +46,7 @@ export default function Sidebar() {
           />
           <div className="tracking-tight">
             <p className="text-lg font-bold font-rubik">NEA Dashboard</p>
-            <p className="text-xs text-gray-800">
+            <p className="text-xs text-gray-300">
               Transport Operations Services Unit (TOSU)
             </p>
           </div>
@@ -71,7 +69,7 @@ export default function Sidebar() {
 
           <li>
             <details className="group" open>
-              <summary className="flex items-center gap-3 p-2 rounded-r-lg cursor-pointer text-sm hover:bg-green-400 hover:text-green-900 transition-all">
+              <summary className="flex items-center gap-3 p-2 rounded-r-lg cursor-pointer text-sm hover:bg-green-400 text-gray-200 hover:text-green-900 transition-all">
                 Monitoring
               </summary>
               <ul className="menu rounded-box ml-4 p-2 w-full space-y-1">
@@ -96,7 +94,7 @@ export default function Sidebar() {
 
           <li>
             <details className="group" open>
-              <summary className="flex items-center gap-3 p-2 rounded-r-lg cursor-pointer text-sm hover:bg-green-400 hover:text-green-900 transition-all">
+              <summary className="flex items-center gap-3 p-2 rounded-r-lg cursor-pointer text-sm hover:bg-green-400 text-gray-200 hover:text-green-900 transition-all">
                 Maintenance
               </summary>
               <ul className="menu rounded-box ml-4 p-2 w-full space-y-1">
