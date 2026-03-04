@@ -50,6 +50,7 @@ export default function AdminDashboard() {
                 </div>
                 <Clipboard className="h-8 w-12 mr-2 text-highlight" />
               </div>
+              <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
             </div>
             <div className="card bg-base-100 card-md shadow-sm">
               <div className="card-body flex-row justify-between border-highlight border-2 rounded-sm">
@@ -59,6 +60,7 @@ export default function AdminDashboard() {
                 </div>
                 <ClipboardClock className="h-8 w-12 mr-2 text-highlight" />
               </div>
+              <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
             </div>
             {/* <div className="card bg-base-100 card-md shadow-sm">
               <div className="card-body flex-row justify-between border-highlight border-b-2 rounded-sm">
@@ -78,6 +80,7 @@ export default function AdminDashboard() {
               </div>
               <ClipboardCheck className="h-8 w-12 mr-2 text-highlight" />
             </div>
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
         </div>
 
@@ -105,6 +108,7 @@ export default function AdminDashboard() {
             </div>
             <ClipboardCheck className="h-8 w-12 mr-2 text-[#745fc9]" />
           </div>
+          <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
         </div>
         <div className="card bg-base-100 card-md shadow-sm">
           <div className="card-body flex-row justify-between border-[#745fc9] border-2 rounded-sm">
@@ -114,6 +118,7 @@ export default function AdminDashboard() {
             </div>
             <ClipboardCheck className="h-8 w-12 mr-2 text-[#745fc9]" />
           </div>
+          <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
         </div>
         {/* <div className="card bg-base-100 card-md shadow-sm">
           <div className="card-body h-53 border-[#745fc9] border-b-2 rounded-sm">
@@ -136,10 +141,11 @@ export default function AdminDashboard() {
               <p>Jayzen P. Galvez</p>
             </div>
             <img
-              className="h-10 w-auto cursor-pointer"
-              src="https://cdn-icons-png.flaticon.com/512/5005/5005567.png"
+              className="h-12 w-auto cursor-pointer"
+              src="https://cdn-icons-png.flaticon.com/512/4899/4899679.png"
               alt="first"
             />
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
         </div>
         <div className="card bg-base-100 card-md shadow-sm">
@@ -149,10 +155,11 @@ export default function AdminDashboard() {
               <p>Joswe L. Tubio</p>
             </div>
             <img
-              className="h-10 w-auto cursor-pointer"
-              src="https://cdn-icons-png.flaticon.com/512/5005/5005572.png"
+              className="h-12 w-auto cursor-pointer"
+              src="https://cdn-icons-png.flaticon.com/512/4899/4899684.png"
               alt="first"
             />
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
         </div>
         <div className="card bg-base-100 card-md shadow-sm">
@@ -162,84 +169,91 @@ export default function AdminDashboard() {
               <p>Dester O. Golloso</p>
             </div>
             <img
-              className="h-10 w-auto cursor-pointer"
-              src="https://cdn-icons-png.flaticon.com/512/5005/5005579.png"
+              className="h-12 w-auto cursor-pointer"
+              src="https://cdn-icons-png.flaticon.com/512/4899/4899691.png"
               alt="first"
             />
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
         </div>
       </div>
 
-      <h1 className="text-SM font-bold mb-1 mt-10 text-[#E8CF00]">
+      <h1 className="text-SM font-bold mb-1 mt-10 text-[#1B4079]">
         COMPLIANCE MONITORING
       </h1>
       <div className="grid grid-cols-2 md:flex-row gap-5">
         <div className="grid grid-cols-2 md:flex-row gap-5">
           <div className="card bg-base-100 card-md shadow-sm">
-            <div className="card-body flex-row justify-between border-[#d2dc15] border-2 rounded-sm">
+            <div className="card-body flex-row justify-between border-[#1B4079] border-2 rounded-sm">
               <div>
                 <h2 className="card-title">4</h2>
                 <p>Vehicles PMS Overdue</p>
               </div>
-              <ArchiveX className="h-8 w-12 mr-2 text-[#d2dc15]" />
+              <ArchiveX className="h-8 w-12 mr-2 text-[#1B4079]" />
             </div>
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
           <div>
             <div className="card bg-base-100 card-md shadow-sm">
-              <div className="card-body flex-row justify-between border-[#d2dc15] border-2 rounded-sm">
+              <div className="card-body flex-row justify-between border-[#1B4079] border-2 rounded-sm">
                 <div>
                   <h2 className="card-title">16</h2>
                   <p>Vehicle PMS Up-to-Date</p>
                 </div>
-                <Wrench className="h-8 w-12 mr-2 text-[#d2dc15]" />
+                <Wrench className="h-8 w-12 mr-2 text-[#1B4079]" />
               </div>
+              <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
             </div>
           </div>
           <div className="card bg-base-100 card-md shadow-sm">
-            <div className="card-body flex-row justify-between border-[#d2dc15] border-2 rounded-sm">
+            <div className="card-body flex-row justify-between border-[#1B4079] border-2 rounded-sm">
               <div>
                 <h2 className="card-title">9</h2>
                 <p>Vehicles PMS Due Soon</p>
               </div>
-              <TriangleAlert className="h-8 w-12 mr-2 text-[#d2dc15]" />
+              <TriangleAlert className="h-8 w-12 mr-2 text-[#1B4079]" />
             </div>
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
           <div className="card bg-base-100 card-md shadow-sm">
-            <div className="card-body flex-row justify-between border-[#d2dc15] border-2 rounded-sm">
+            <div className="card-body flex-row justify-between border-[#1B4079] border-2 rounded-sm">
               <div>
                 <h2 className="card-title">4</h2>
                 <p>Insurance Expiring Soon</p>
               </div>
-              <BookAlert className="h-8 w-12 mr-2 text-[#d2dc15]" />
+              <BookAlert className="h-8 w-12 mr-2 text-[#1B4079]" />
             </div>
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
           <div className="card bg-base-100 card-md shadow-sm">
-            <div className="card-body flex-row justify-between border-[#d2dc15] border-2 rounded-sm">
+            <div className="card-body flex-row justify-between border-[#1B4079] border-2 rounded-sm">
               <div>
                 <h2 className="card-title">8</h2>
                 <p>Expired Insurances</p>
               </div>
-              <FileX className="h-8 w-12 mr-2 text-[#d2dc15]" />
+              <FileX className="h-8 w-12 mr-2 text-[#1B4079]" />
             </div>
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
           <div className="card bg-base-100 card-md shadow-sm">
-            <div className="card-body flex-row justify-between border-[#d2dc15] border-2 rounded-sm">
+            <div className="card-body flex-row justify-between border-[#1B4079] border-2 rounded-sm">
               <div>
                 <h2 className="card-title">2</h2>
                 <p>Active Insurances</p>
               </div>
-              <FileCheck className="h-8 w-12 mr-2 text-[#d2dc15]" />
+              <FileCheck className="h-8 w-12 mr-2 text-[#1B4079]" />
             </div>
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
         </div>
 
         <div className="card bg-base-100 card-md shadow-sm">
-          <div className="card-body h-53 border-[#d2dc15] border-b-2 rounded-sm">
+          <div className="card-body h-53 border-[#1B4079] border-b-4 rounded-xl">
             <div>
               <h2 className="card-title">Overdue Soon</h2>
               <p>Pie Chart here.</p>
             </div>
-            <OctagonAlert className="h-8 w-12 mr-2 text-[#d2dc15]" />
+            <OctagonAlert className="h-8 w-12 mr-2 text-[#1B4079]" />
           </div>
         </div>
       </div>
