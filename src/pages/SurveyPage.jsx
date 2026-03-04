@@ -77,28 +77,42 @@ export default function SurveyPage() {
     setIsSubmitting(false);
   };
 
-  const RatingGroup = ({ name, title, description }) => (
-    <div className="border rounded-md p-5">
-      <p className="font-medium">{title}</p>
-      <p className="text-sm italic text-gray-500 mt-1">{description}</p>
-      <p className="text-xs italic text-gray-400 mt-1">
-        {`{1 = Poor; 2 = Fair; 3 = Good; 4 = Satisfied; 5 = Excellent}`}
-      </p>
+  const ratingLabels = ["Poor", "Fair", "Good", "Satisfied", "Excellent"];
 
-      <div className="flex gap-8 mt-3">
-        {[1, 2, 3, 4, 5].map((num) => (
-          <label key={num} className="flex flex-col items-center">
-            <input type="radio" value={num} {...register(name)} />
-            <span className="text-sm">{num}</span>
-          </label>
-        ))}
+  const RatingGroup = ({ name, title, description }) => {
+    const [selected, setSelected] = useState(null);
+
+    return (
+      <div className="border rounded-md p-5">
+        <p className="font-medium">{title}</p>
+        <p className="text-sm italic text-gray-500 mt-1">{description}</p>
+
+        <div className="rating mt-3">
+          {[1, 2, 3, 4, 5].map((num) => (
+            <input
+              key={num}
+              type="radio"
+              value={num}
+              {...register(name)}
+              onClick={() => setSelected(num)}
+              className="mask mask-star-2 bg-green-500"
+              aria-label={`${num} star`}
+            />
+          ))}
+        </div>
+
+        {selected && (
+          <p className="text-sm text-gray-700 mt-1 font-medium">
+            {ratingLabels[selected - 1]}
+          </p>
+        )}
+
+        {errors[name] && (
+          <p className="text-red-500 text-sm mt-1">{errors[name].message}</p>
+        )}
       </div>
-
-      {errors[name] && (
-        <p className="text-red-500 text-sm mt-1">{errors[name].message}</p>
-      )}
-    </div>
-  );
+    );
+  };
 
   return (
     <main className="min-h-screen bg-linear-to-b from-emerald-100 to-emerald-200 pb-25 flex justify-center p-2 sm:p-8">

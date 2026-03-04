@@ -1,5 +1,5 @@
 import { FilterIcon, Search, UserRoundX } from "lucide-react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../../supabaseClient";
 import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import debounce from "lodash.debounce";

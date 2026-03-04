@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../../supabaseClient";
 import { parse, format } from "date-fns";
 
 export default function HomePage() {
@@ -77,7 +77,6 @@ export default function HomePage() {
                 <th>Date & Time</th>
                 <th className="">Destination</th>
                 <th>Name</th>
-                <th>Phone</th>
                 <th>Instructions</th>
                 <th className="bg-blue-500">Driver</th>
                 <th className="bg-violet-500">Vehicle</th>
@@ -135,10 +134,6 @@ export default function HomePage() {
                         <span className="text-xs text-gray-500 font-medium">
                           {req.email}
                         </span>
-                      </td>
-
-                      <td className="text-sm">
-                        {req.passenger_contact_number}
                       </td>
 
                       <td className="text-sm">{req.other_instructions}</td>

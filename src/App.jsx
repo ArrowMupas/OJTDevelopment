@@ -5,13 +5,13 @@ import ScrollToTop from "./utils/ScrollToTop";
 import MainLayout from "./layouts/MainLayout";
 import PublicLayout from "./layouts/PublicLayout";
 
-import HomePage from "./pages/HomePage";
-import DashboardPage from "./pages/DashboardPage";
+import HomePage from "./pages/public/HomePage";
+import DashboardPage from "./pages/public/DashboardPage";
 import SurveyPage from "./pages/SurveyPage";
 import ContactPage from "./pages/public/ContactPage";
 import VehiclePage from "./pages/management/Vehicles";
 import TransactionsPage from "./pages/TransactionsPage";
-import InquiryPage from "./pages/InquiryPage";
+import InquiryPage from "./pages/management/InquiryPage";
 import RequestVehiclePage from "./pages/RequestVehiclePage";
 import NotFoundPage from "./pages/NotFoundPage";
 import Drivers from "./pages/management/Drivers";
