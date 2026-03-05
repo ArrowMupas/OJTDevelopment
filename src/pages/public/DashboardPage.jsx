@@ -78,9 +78,9 @@ export default function HomePage() {
                 <th className="">Destination</th>
                 <th>Name</th>
                 <th>Instructions</th>
-                <th className="bg-blue-500">Driver</th>
-                <th className="bg-violet-500">Vehicle</th>
-                <th className="bg-violet-500">Plate</th>
+                <th className="bg-blue-500">Assigned Driver</th>
+                <th className="bg-violet-500">Assigned Vehicle</th>
+                <th className="bg-violet-500">Plate No.</th>
               </tr>
             </thead>
             <tbody>
