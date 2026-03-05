@@ -197,7 +197,7 @@ export default function ContactPage() {
             <strong>
               <MapPin className="h-4 w-4 inline-block mr-2" /> Address:
             </strong>{" "}
-            57 NEA Building, NIA Road, Government Center, Diliman , Quezon City,
+            Basement 1, NEA building #57, NIA Road, Quezon City,
             Philippines, 1001
           </p>
         </div>
