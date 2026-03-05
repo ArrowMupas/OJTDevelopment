@@ -15,6 +15,7 @@ export default function AdminNavbar() {
     "/vehicles": "Vehicle Maintenance",
     "/drivers": "Driver Maintenance",
     "/inquiry": "Inquiry",
+    "/battery": "Vehicle Monitoring",
   };
 
   const pageTitle = pageTitles[location.pathname] || "Admin Panel";

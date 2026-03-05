@@ -24,6 +24,8 @@ import ManageRequestsPage from "./pages/ManageRequestPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import HistoryPage from "./pages/HistoryPage";
 import AboutPage from "./pages/public/AboutPage";
+import Battery from "./pages/Battery";
+import Tires from "./pages/Tires";
 
 function App() {
   return (
@@ -37,6 +39,8 @@ function App() {
           <Route path="/vehicles" element={<VehiclePage />} />
           <Route path="/drivers" element={<Drivers />} />
           <Route path="/drivermonitoring" element={<DriverMonitoringPage />} />
+          <Route path="/battery" element={<Battery />} />
+          <Route path="/tires" element={<Tires />} />
           <Route
             path="/vehiclemonitoring"
             element={<VehicleMonitoringPage />}
