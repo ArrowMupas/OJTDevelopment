@@ -9,21 +9,23 @@ import HomePage from "./pages/public/HomePage";
 import DashboardPage from "./pages/public/DashboardPage";
 import SurveyPage from "./pages/public/SurveyPage";
 import ContactPage from "./pages/public/ContactPage";
-import VehiclePage from "./pages/management/Vehicles";
-import TransactionsPage from "./pages/TransactionsPage";
-import InquiryPage from "./pages/management/InquiryPage";
-import RequestVehiclePage from "./pages/public/RequestVehiclePage";
 import NotFoundPage from "./pages/NotFoundPage";
-import Drivers from "./pages/management/Drivers";
+import AboutPage from "./pages/public/AboutPage";
+import RequestVehiclePage from "./pages/public/RequestVehiclePage";
 import RequestInputPage from "./pages/public/RequestInput";
+
+import VehiclePage from "./pages/management/Vehicles";
+import Drivers from "./pages/management/Drivers";
+import InquiryPage from "./pages/management/InquiryPage";
+import MoreInfoPage from "./pages/MoreInfoPage";
+import ManageRequestsPage from "./pages/management/ManageRequestPage";
+
+import TransactionsPage from "./pages/TransactionsPage";
 import DriverMonitoringPage from "./pages/DriverMonitoringPage";
 import VehicleMonitoringPage from "./pages/VehicleMonitoringPage";
 import VehicleStatusPage from "./pages/VehicleStatusPage";
-import MoreInfoPage from "./pages/MoreInfoPage";
-import ManageRequestsPage from "./pages/management/ManageRequestPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import HistoryPage from "./pages/HistoryPage";
-import AboutPage from "./pages/public/AboutPage";
 import Battery from "./pages/Battery";
 import Tires from "./pages/Tires";
 

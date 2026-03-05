@@ -146,7 +146,7 @@ export default function DriverMonitoringPage() {
                 <th className="text-left px-6 py-3">Vehicle</th>
                 <th className="text-left px-6 py-3">Average</th>
                 <th className="text-left px-6 py-3">Surveys</th>
-                <th className="text-left px-6 py-3">Status</th>
+                <th className="text-left px-6 py-3">Adjectival Rating</th>
               </tr>
             </thead>
             <tbody>

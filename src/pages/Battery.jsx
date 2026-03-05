@@ -114,7 +114,7 @@ export default function Battery() {
             </a>
           </Link>
           <Link to="/battery">
-            <a role="tab" className="tab tab border-b-3 border-black sm w-10">
+            <a role="tab" className="tab border-b-3 border-black sm w-10">
               Battery
             </a>
           </Link>
@@ -170,7 +170,7 @@ export default function Battery() {
                 </div>
               </div>
 
-              <p className="mt-3">Lastest Battery Installation Date:</p>
+              <p className="mt-3">Latest Battery Installation Date:</p>
               <p className="font-semibold">
                 {v.status === "overdue" ? "Not yet recorded" : "2026-01-15"}
               </p>
@@ -221,7 +221,7 @@ export default function Battery() {
               )}
 
               {v.status === "overdue" && v.showBatteryTireForm && (
-                <div className="mt-2 border-1 border-dashed p-3 rounded-sm bg-green-100 space-y-4">
+                <div className="mt-2 border border-dashed p-3 rounded-sm bg-green-100 space-y-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">
                       Battery Type
