@@ -25,8 +25,8 @@ export default function Navbar() {
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-4">
           <img
-            className="h-10 w-auto cursor-pointer"
-            src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/nea-logo.png"
+            className="h-13 w-auto cursor-pointer bg-white rounded-3xl"
+            src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/national_electrification_logo.png"
             alt="Logo"
             onClick={() => (window.location.href = "/")}
           />
