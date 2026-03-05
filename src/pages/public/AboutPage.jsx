@@ -40,9 +40,9 @@ const services = [
       "Our drivers are the heart of our service. We provide them with the training and tools they need to get you to your destination safely and comfortably.",
   },
   {
-    title: "Flexible Travel Timing",
+    title: "Carpooling/Ride Sharing",
     description:
-      "Plans change, and we get that. We offer options for everything from quick errands to long-term assignments that span several days.",
+      "Carpooling allows multiple passengers traveling to the same or nearby destinations to share a single vehicle. This helps reduce the number of trips, save fuel, and make transportation more efficient. ",
   },
 ];
 
@@ -50,7 +50,7 @@ const faqs = [
   {
     question: "How do I request a vehicle?",
     answer:
-      "Simply submit a request form to the TOSU. We recommend booking at least 24-48 hours in advance to ensure a driver and vehicle are available for your schedule.",
+      " Scan the QR code to access the vehicle request form. Fill out the required details and submit your request. We recommend sending your request at least 24–48 hours in advance to ensure a driver and vehicle are available.",
   },
   {
     question: "What types of vehicles are used?",
@@ -60,7 +60,7 @@ const faqs = [
   {
     question: "Can I book for multi-day trips?",
     answer:
-      "Yes. Whether you need a same-day drop-off or a vehicle for 2 to 3 days for provincial assignments, our motorpool is equipped to handle long-duration travel.",
+      "Yes. Whether you need a same-day drop-off or a vehicle for 2 or more for provincial assignments, our motorpool is equipped to handle long-duration travel.",
   },
   {
     question: "How is vehicle safety managed?",
@@ -113,7 +113,7 @@ const AboutUs = () => {
           </p>
           <p className="text-gray-700 text-lg leading-relaxed italic">
             Whether it is a quick same-day trip or an extended assignment
-            requiring two to three days of travel, we ensure every department
+            requiring two or more of travel, we ensure every department
             has the mobility required to fulfill their duties.
           </p>
         </div>
