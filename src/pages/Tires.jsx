@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { AlertTriangle, CheckCircle, History, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function VehicleMonitoringPage() {
+export default function Tires() {
   const navigate = useNavigate();
 
   const [vehicles, setVehicles] = useState([
@@ -86,7 +86,7 @@ export default function VehicleMonitoringPage() {
             <h1 className="text-4xl font-bold">
               Motorpool Compliance Monitoring
             </h1>
-            <p className="text-gray-500">PMS Monitoring</p>
+            <p className="text-gray-500">Tire Monitoring</p>
           </div>
 
           <button
@@ -109,10 +109,7 @@ export default function VehicleMonitoringPage() {
 
         <div role="tablist" className="tabs tabs-border mb-5">
           <Link to="/vehiclemonitoring">
-            <a
-              role="tab"
-              className="tab tab-active border-b-3 border-black sm w-10 "
-            >
+            <a role="tab" className="tab">
               PMS
             </a>
           </Link>
@@ -122,7 +119,7 @@ export default function VehicleMonitoringPage() {
             </a>
           </Link>
           <Link to="/tires">
-            <a role="tab" className="tab">
+            <a role="tab" className="tab tab border-b-3 border-black sm w-10">
               Tires
             </a>
           </Link>
@@ -173,12 +170,12 @@ export default function VehicleMonitoringPage() {
                 </div>
               </div>
 
-              <p className="mt-3">Lastest PMS Date:</p>
+              <p className="mt-3">Lastest Tire Installation Date:</p>
               <p className="font-semibold">
                 {v.status === "overdue" ? "Not yet recorded" : "2026-01-15"}
               </p>
 
-              <p className="mt-3">Next PMS Date:</p>
+              <p className="mt-3">Last Tire Installation Date:</p>
               <p className="font-semibold">
                 {v.status === "overdue" ? "Not yet recorded" : "2026-01-15"}
               </p>
@@ -188,7 +185,9 @@ export default function VehicleMonitoringPage() {
                   v.status === "overdue" ? "text-red-600" : "text-green-600"
                 }`}
               >
-                {v.status === "overdue" ? "PMS OVERDUE" : "PMS Up to Date"}
+                {v.status === "overdue"
+                  ? "REPLACEMENT NEEDED"
+                  : "PMS Up to Date"}
               </p>
 
               {/* BUTTONS  */}
@@ -217,7 +216,7 @@ export default function VehicleMonitoringPage() {
                   onClick={() => toggleBatteryTireForm(v.plate)}
                   className="mt-4 w-full bg-green-600 text-white py-2 rounded-xl"
                 >
-                  Update PMS
+                  Update Tires
                 </button>
               )}
 
@@ -225,7 +224,7 @@ export default function VehicleMonitoringPage() {
                 <div className="mt-2 border-1 border-dashed p-3 rounded-sm bg-green-100 space-y-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">
-                      PMS
+                      Tire Type
                     </label>
                     <input
                       type="text"
@@ -239,25 +238,7 @@ export default function VehicleMonitoringPage() {
 
                   <div>
                     <label className="block text-sm font-medium mb-1">
-                      Actual PMS
-                    </label>
-                    <input
-                      type="text"
-                      value={v.actualPms}
-                      onChange={(e) =>
-                        handleVehicleChange(
-                          v.plate,
-                          "actualPms",
-                          e.target.value,
-                        )
-                      }
-                      className="w-full border rounded-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-[#FAF9F6]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-1">
-                      Date
+                      Installation Date
                     </label>
                     <input
                       type="date"
