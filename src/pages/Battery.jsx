@@ -170,7 +170,7 @@ export default function Battery() {
                 </div>
               </div>
 
-              <p className="mt-3">Lastest Battery Installation Date:</p>
+              <p className="mt-3">Latest Battery Installation Date:</p>
               <p className="font-semibold">
                 {v.status === "overdue" ? "Not yet recorded" : "2026-01-15"}
               </p>
