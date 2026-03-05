@@ -3,8 +3,11 @@ import { Link, useLocation } from "react-router-dom";
 export default function Navbar() {
   const location = useLocation();
 
-  const hiddenNavRoutes = ["/survey", "/request-vehicle"];
-  const hideNavLinks = hiddenNavRoutes.includes(location.pathname);
+  // Check if current path starts with any of these routes
+  const hiddenNavRoutes = ["/survey", "/request-vehicle", "/requestinput"];
+  const hideNavLinks = hiddenNavRoutes.some((route) =>
+    location.pathname.startsWith(route),
+  );
 
   const isDashboardPage = location.pathname === "/dashboard";
 

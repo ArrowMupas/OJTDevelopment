@@ -7,20 +7,20 @@ import PublicLayout from "./layouts/PublicLayout";
 
 import HomePage from "./pages/public/HomePage";
 import DashboardPage from "./pages/public/DashboardPage";
-import SurveyPage from "./pages/SurveyPage";
+import SurveyPage from "./pages/public/SurveyPage";
 import ContactPage from "./pages/public/ContactPage";
 import VehiclePage from "./pages/management/Vehicles";
 import TransactionsPage from "./pages/TransactionsPage";
 import InquiryPage from "./pages/management/InquiryPage";
-import RequestVehiclePage from "./pages/RequestVehiclePage";
+import RequestVehiclePage from "./pages/public/RequestVehiclePage";
 import NotFoundPage from "./pages/NotFoundPage";
 import Drivers from "./pages/management/Drivers";
-import RequestInputPage from "./pages/RequestInput";
+import RequestInputPage from "./pages/public/RequestInput";
 import DriverMonitoringPage from "./pages/DriverMonitoringPage";
 import VehicleMonitoringPage from "./pages/VehicleMonitoringPage";
 import VehicleStatusPage from "./pages/VehicleStatusPage";
 import MoreInfoPage from "./pages/MoreInfoPage";
-import ManageRequestsPage from "./pages/ManageRequestPage";
+import ManageRequestsPage from "./pages/management/ManageRequestPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import HistoryPage from "./pages/HistoryPage";
 import AboutPage from "./pages/public/AboutPage";
@@ -54,7 +54,7 @@ function App() {
         <Route element={<PublicLayout />}>
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/" element={<HomePage />} />
-          <Route path="/requestinput" element={<RequestInputPage />} />
+          <Route path="/requestinput/:id" element={<RequestInputPage />} />
           <Route path="/survey" element={<SurveyPage />} />
           <Route path="/request-vehicle" element={<RequestVehiclePage />} />
           <Route path="/dashboard" element={<DashboardPage />} />

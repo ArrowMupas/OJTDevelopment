@@ -1,10 +1,11 @@
-import { supabase } from "../supabaseClient";
+import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState } from "react";
-import OurInput from "../components/OurInput";
+import OurInput from "../../components/OurInput";
+import { useNavigate } from "react-router-dom";
 
 const vehicleRequestSchema = z.object({
   email: z.email({ message: "Please enter a valid email" }),
@@ -34,6 +35,7 @@ const vehicleRequestSchema = z.object({
 });
 
 export default function TransactionsPage() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -50,28 +52,37 @@ export default function TransactionsPage() {
   const requestVehicle = async (data) => {
     setIsSubmitting(true);
 
-    const { error } = await supabase.from("service_vehicle_requests").insert([
-      {
-        email: data.email,
-        department: data.department,
-        destination: data.destination,
-        departure_time: data.departureTime,
-        departure_date: data.departureDate,
-        purpose: data.purpose,
-        items: data.items === "Others" ? data.itemsOther : data.items,
-        passengers: data.passengers,
-        travel_duration: data.travelDuration,
-        other_instructions: data.otherInstructions,
-        passenger_contact_number: data.passengerContactNumber,
-        requested_by: data.requestedBy,
-      },
-    ]);
+    const { data: insertedData, error } = await supabase
+      .from("service_vehicle_requests")
+      .insert([
+        {
+          email: data.email,
+          department: data.department,
+          destination: data.destination,
+          departure_time: data.departureTime,
+          departure_date: data.departureDate,
+          purpose: data.purpose,
+          items: data.items === "Others" ? data.itemsOther : data.items,
+          passengers: data.passengers,
+          travel_duration: data.travelDuration,
+          other_instructions: data.otherInstructions,
+          passenger_contact_number: data.passengerContactNumber,
+          requested_by: data.requestedBy,
+        },
+      ])
+      .select(); // This returns the inserted record(s)
 
     if (error) {
       toast.error("Failed to request a vehicle. Please try again.");
     } else {
       toast.success("Vehicle request submitted successfully!");
       reset();
+
+      const newRequestId = insertedData[0]?.id;
+
+      if (newRequestId) {
+        navigate(`/requestinput/${newRequestId}`, { replace: true });
+      }
     }
 
     setIsSubmitting(false);
@@ -86,7 +97,7 @@ export default function TransactionsPage() {
         >
           <div className="text-center flex flex-col items-center justify-center gap-2 p-3">
             <img
-              className="w-24 sm:w-28 lg:w-32 h-auto"
+              className="size-20 sm:size-28"
               src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/national_electrification_logo.png"
               alt="NEA Logo"
               onError={(e) => {
@@ -146,31 +157,41 @@ export default function TransactionsPage() {
           <div className="flex flex-col mb-4 space-y-2">
             <legend className="fieldset-legend text-sm">With:</legend>
 
-            <label className="flex flex-col sm:flex-row items-start sm:items-center cursor-pointer w-full">
+            <label className="flex flex-row gap-2 items-start sm:items-center cursor-pointer w-full">
               <input
                 type="radio"
                 value="Baggage"
-                className="h-3 w-3 mt-1 sm:mt-0"
+                className="radio  radio-xs"
                 {...register("items")}
               />
               <span className="ml-0 sm:ml-2 text-sm">Baggage</span>
             </label>
 
-            <label className="flex flex-col sm:flex-row items-start sm:items-center cursor-pointer w-full">
+            <label className="flex flex-row gap-2 items-start sm:items-center cursor-pointer w-full">
               <input
                 type="radio"
                 value="Equipment"
-                className="h-3 w-3 mt-1 sm:mt-0"
+                className="radio  radio-xs"
                 {...register("items")}
               />
               <span className="ml-0 sm:ml-2 text-sm">Equipment</span>
             </label>
 
-            <label className="flex flex-col sm:flex-row items-start sm:items-center cursor-pointer w-full">
+            <label className="flex flex-row gap-2 items-start sm:items-center cursor-pointer w-full">
+              <input
+                type="radio"
+                value="None"
+                className="radio  radio-xs"
+                {...register("items")}
+              />
+              <span className="ml-0 sm:ml-2 text-sm">None</span>
+            </label>
+
+            <label className="flex flex-row gap-2 items-start sm:items-center cursor-pointer w-full">
               <input
                 type="radio"
                 value="Others"
-                className="h-3 w-3 mt-1 sm:mt-0"
+                className="radio  radio-xs"
                 {...register("items")}
               />
               <div className="ml-0 sm:ml-2 w-full sm:w-auto">
