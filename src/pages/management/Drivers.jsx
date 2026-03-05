@@ -6,6 +6,7 @@ import {
   Truck,
   UserPlus,
   UserXIcon,
+  Pencil,
 } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
@@ -65,6 +66,37 @@ export default function MaintenancePage() {
     return () => debouncedSearch.cancel();
   }, [debouncedSearch]);
 
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
+  const uploadFile = async (file) => {
+    try {
+      if (!file) return null;
+
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+      const filePath = `driver-images/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("NEAMotorpoolBucket")
+        .upload(filePath, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const { data: urlData } = supabase.storage
+        .from("NEAMotorpoolBucket")
+        .getPublicUrl(filePath);
+
+      return urlData.publicUrl;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      toast.error("Failed to upload image");
+      return null;
+    }
+  };
+
   const {
     register,
     handleSubmit,
@@ -77,26 +109,103 @@ export default function MaintenancePage() {
 
   const createDriver = async (data) => {
     setIsSubmitting(true);
-    const { error } = await supabase.from("drivers").insert([
-      {
-        first_name: data.firstName,
-        last_name: data.lastName,
-      },
-    ]);
+    setUploading(true);
 
-    if (error) {
-      toast.error("Failed to create driver");
-    } else {
-      toast.success("Driver created successfully!", { position: "top-center" });
-      document.getElementById("driverModal")?.close();
-      reset();
-      fetchDrivers(search);
+    try {
+      // Upload image first if selected
+      let imageUrl = null;
+      if (selectedFile) {
+        imageUrl = await uploadFile(selectedFile);
+        if (!imageUrl) {
+          // If upload failed but we don't want to stop the driver creation
+          // You can choose to either stop or continue without image
+          console.warn("Image upload failed, continuing without image");
+        }
+      }
+
+      // Insert driver with image URL
+      const { error } = await supabase.from("drivers").insert([
+        {
+          first_name: data.firstName,
+          last_name: data.lastName,
+          image_url: imageUrl, // Add this column to your drivers table if not exists
+        },
+      ]);
+
+      if (error) {
+        toast.error("Failed to create driver");
+      } else {
+        toast.success("Driver created successfully!", {
+          position: "top-center",
+        });
+        document.getElementById("driverModal")?.close();
+        reset();
+        setSelectedFile(null); // Clear selected file
+        fetchDrivers(search);
+      }
+    } catch (error) {
+      console.error("Error creating driver:", error);
+      toast.error("An error occurred while creating driver");
+    } finally {
+      setIsSubmitting(false);
+      setUploading(false);
     }
-    setIsSubmitting(false);
+  };
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [driverToEdit, setDriverToEdit] = useState(null);
+
+  const updateDriver = async (data) => {
+    if (!driverToEdit) return;
+
+    setIsSubmitting(true);
+    setUploading(true);
+
+    try {
+      let imageUrl = driverToEdit.image_url;
+
+      if (selectedFile) {
+        imageUrl = await uploadFile(selectedFile);
+      }
+
+      const { error } = await supabase
+        .from("drivers")
+        .update({
+          first_name: data.firstName,
+          last_name: data.lastName,
+          image_url: imageUrl,
+        })
+        .eq("id", driverToEdit.id);
+
+      if (error) {
+        toast.error("Failed to update driver");
+      } else {
+        toast.success("Driver updated successfully!");
+        document.getElementById("driverModal")?.close();
+        reset();
+        setSelectedFile(null);
+        setDriverToEdit(null);
+        setIsEditing(false);
+        fetchDrivers(search);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error updating driver");
+    } finally {
+      setIsSubmitting(false);
+      setUploading(false);
+    }
   };
 
   const [driverToDelete, setDriverToDelete] = useState(null);
   const deleteDriver = async (id) => {
+    const driver = drivers.find((d) => d.id === id);
+    if (driver?.image_url) {
+      // Extract file path from URL and delete
+      const filePath = driver.image_url.split("/").slice(-2).join("/");
+      await supabase.storage.from("NEAMotorpoolBucket").remove([filePath]);
+    }
+
     const { error } = await supabase.from("drivers").delete().eq("id", id);
     if (error) console.error(error);
     else {
@@ -158,17 +267,30 @@ export default function MaintenancePage() {
 
       <dialog id="driverModal" className="modal">
         <div className="modal-box">
-          <h1 className="text-2xl font-bold">Add Driver</h1>
-          <p className="text-gray-600 text-sm mb-7">Create your driver here!</p>
-          <form onSubmit={handleSubmit(createDriver)} method="dialog">
+          <h1 className="text-2xl font-bold">
+            {isEditing ? "Update Driver" : "Add Driver"}
+          </h1>
+          <p className="text-gray-600 text-sm mb-7">
+            {isEditing
+              ? "Edit driver details below."
+              : "Create your driver here!"}
+          </p>
+          <form
+            onSubmit={handleSubmit(isEditing ? updateDriver : createDriver)}
+          >
             <button
               type="button"
               className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-              onClick={() => document.getElementById("driverModal").close()}
+              onClick={() => {
+                document.getElementById("driverModal").close();
+                setSelectedFile(null);
+                setIsEditing(false);
+                setDriverToEdit(null);
+                reset();
+              }}
             >
               ✕
             </button>
-
             <div className="grid md:grid-cols-2 md:gap-6">
               <OurInput
                 label="First Name"
@@ -183,32 +305,43 @@ export default function MaintenancePage() {
                 error={errors.lastName}
               />
             </div>
-
-            <div className="form-control w-full max-w-xs mt-4">
+            <div className="form-control w-full mt-4">
               <label className="label">
-                <span className="label-text">Upload Vehicle Image</span>
+                <span className="label-text">Upload Driver Image</span>
               </label>
               <input
                 type="file"
                 accept="image/*"
                 className="file-input file-input-bordered w-full"
-                onChange={(e) => setFile(e.target.files[0])}
+                onChange={(e) => setSelectedFile(e.target.files[0])}
               />
+              {selectedFile && (
+                <p className="text-sm text-gray-600 mt-2">
+                  Selected: {selectedFile.name}
+                </p>
+              )}
             </div>
-
             <button
               type="submit"
               className="btn btn-lg w-full bg-green-600 text-white hover:bg-highlight mt-4"
-              disabled={isSubmitting}
+              disabled={isSubmitting || uploading}
             >
               <Truck className="size-5 mr-2" />
-              {isSubmitting ? "Creating driver..." : "Create Driver"}
+              {uploading
+                ? "Uploading image..."
+                : isSubmitting
+                  ? isEditing
+                    ? "Updating driver..."
+                    : "Creating driver..."
+                  : isEditing
+                    ? "Update Driver"
+                    : "Create Driver"}
             </button>
           </form>
         </div>
       </dialog>
 
-      <div className=" border-0 mt-4">
+      <div className="border-0 mt-4">
         {drivers.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-40 gap-5">
             {loading ? (
@@ -233,8 +366,16 @@ export default function MaintenancePage() {
                 className="card bg-base-100 shadow border border-base-300"
               >
                 <figure className="px-4 pt-4">
-                  <div className="w-full h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center">
-                    <UserXIcon className="size-12 text-gray-300 rounded-full" />
+                  <div className="w-full h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden">
+                    {driver.image_url ? (
+                      <img
+                        src={driver.image_url}
+                        alt={`${driver.first_name} ${driver.last_name}`}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <UserXIcon className="size-12 text-gray-300" />
+                    )}
                   </div>
                 </figure>
 
@@ -246,6 +387,23 @@ export default function MaintenancePage() {
                       </h2>
                     </div>
                     <div className="flex gap-1">
+                      <button
+                        onClick={() => {
+                          setIsEditing(true);
+                          setDriverToEdit(driver);
+
+                          reset({
+                            firstName: driver.first_name,
+                            lastName: driver.last_name,
+                          });
+
+                          setSelectedFile(null);
+                          document.getElementById("driverModal").showModal();
+                        }}
+                        className="btn btn-ghost btn-square btn-sm text-blue-500"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </button>
                       <button
                         onClick={() => {
                           setDriverToDelete(driver);

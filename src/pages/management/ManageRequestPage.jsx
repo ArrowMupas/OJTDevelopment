@@ -1,5 +1,5 @@
 import { format, parse } from "date-fns";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../../supabaseClient";
 import {
   Clipboard,
   ClipboardCheck,

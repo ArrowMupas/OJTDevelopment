@@ -1,10 +1,10 @@
 export default function HomePage() {
   return (
-    <div className="relative min-h-full bg-white  overflow-hidden">
+    <div className="relative h-180 bg-white  overflow-hidden">
       {/* Background Image Container */}
       <div className="absolute right-0 top-0 w-full lg:w-2/3 h-full">
         <div
-          className="w-full h-full bg-cover bg-center"
+          className="w-full h-full bg-cover bg-center opacity-40 md:opacity-100"
           style={{
             backgroundImage: `url(https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/Neabg.png)`,
           }}
@@ -14,30 +14,25 @@ export default function HomePage() {
       </div>
 
       {/* Content Overlay */}
-      <div className="relative z-10 container px-6 lg:px-12 flex flex-col justify-center min-h-screen">
-        <div className="max-w-xl">
-          {/* Badge */}
-          <div className="inline-block bg-yellow-400 text-white text-xs font-bold px-3 py-1 rounded-full mb-6 uppercase tracking-wider">
-            NEA Motorpool
-          </div>
-
-          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight mb-6">
+      <div className="relative z-10 container px-6 lg:px-12 flex flex-col py-25 min-h-screen">
+        <div className="max-w-xl space-y-7">
+          <h1 className="text-5xl font-bold  tracking-tight uppercase leading-14">
             Transport Operations <br />
             <span className="text-green-600">Services System</span>
           </h1>
 
-          <p className="text-s md:text-s text-slate-600 mb-8 max-w-md">
+          <p className="relative z-10 text-lg max-w-2xl mx-auto  leading-relaxed">
             Submit your request to the Transport Operations Services Unit (TOSU)
             for review and approval.
           </p>
 
           {/* Button */}
-          <div className="flex flex-col items-start">
+          <div className="flex flex-col items-center md:items-start">
             <a
               href="/request-vehicle"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-4 px-10 rounded-xl transition-all shadow-lg active:scale-95 no-underline"
+              className="btn btn-lg bg-green-500 hover:bg-green-4 00 rounded-xl uppercase leading-tight font-bold"
             >
               Request Vehicle
             </a>

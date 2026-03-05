@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import OurInput from "../components/OurInput";
+import OurInput from "../../components/OurInput";
+import { useNavigate } from "react-router-dom";
 
 const satisfactionSurveySchema = z.object({
   email: z.email({ message: "Please enter a valid email" }),
@@ -36,6 +37,7 @@ export default function SurveyPage() {
     "Toyota Innova",
   ];
 
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -119,7 +121,7 @@ export default function SurveyPage() {
       <div className="card w-xl bg-white shadow-lg rounded-3xl p-10 ">
         <div className=" text-center items-center justify-center flex flex-col gap-1 mb-4 ">
           <img
-            className="size-25 "
+            className="size-20 sm:size-28"
             src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/national_electrification_logo.png"
             alt="NEA Logo"
             onError={(e) => {

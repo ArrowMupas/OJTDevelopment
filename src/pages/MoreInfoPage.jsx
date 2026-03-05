@@ -50,15 +50,6 @@ export default function MoreInfoPage() {
   const formattedDate = format(parsedDateTime, "MMM d, yyyy");
   const formattedTime = format(parsedDateTime, "hh:mm a");
 
-  const InfoRow = ({ label, value }) => (
-    <div className="flex justify-between text-sm border-b py-2">
-      <span className="text-gray-500">{label}</span>
-      <span className="font-medium text-gray-800 text-right">
-        {value || "N/A"}
-      </span>
-    </div>
-  );
-
   return (
     <main className="p-5 pb-32">
       <div className="flex gap-2">
