@@ -6,7 +6,6 @@ import {
   ClipboardCheck,
   ClipboardClock,
   ClockArrowDown,
-  Ellipsis,
   FileCheck,
   FileX,
   OctagonAlert,
@@ -50,7 +49,7 @@ export default function AdminDashboard() {
                 </div>
                 <Clipboard className="h-8 w-12 mr-2 text-highlight" />
               </div>
-              <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
+              <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
             </div>
             <div className="card bg-base-100 card-md shadow-sm">
               <div className="card-body flex-row justify-between border-highlight border-2 rounded-sm">
@@ -60,7 +59,7 @@ export default function AdminDashboard() {
                 </div>
                 <ClipboardClock className="h-8 w-12 mr-2 text-highlight" />
               </div>
-              <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
+              <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
             </div>
             {/* <div className="card bg-base-100 card-md shadow-sm">
               <div className="card-body flex-row justify-between border-highlight border-b-2 rounded-sm">
@@ -80,7 +79,7 @@ export default function AdminDashboard() {
               </div>
               <ClipboardCheck className="h-8 w-12 mr-2 text-highlight" />
             </div>
-            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
         </div>
 
@@ -108,7 +107,7 @@ export default function AdminDashboard() {
             </div>
             <ClipboardCheck className="h-8 w-12 mr-2 text-[#745fc9]" />
           </div>
-          <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
+          <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
         </div>
         <div className="card bg-base-100 card-md shadow-sm">
           <div className="card-body flex-row justify-between border-[#745fc9] border-2 rounded-sm">
@@ -118,7 +117,7 @@ export default function AdminDashboard() {
             </div>
             <ClipboardCheck className="h-8 w-12 mr-2 text-[#745fc9]" />
           </div>
-          <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
+          <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
         </div>
         {/* <div className="card bg-base-100 card-md shadow-sm">
           <div className="card-body h-53 border-[#745fc9] border-b-2 rounded-sm">
@@ -145,7 +144,7 @@ export default function AdminDashboard() {
               src="https://cdn-icons-png.flaticon.com/512/4899/4899679.png"
               alt="first"
             />
-            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
         </div>
         <div className="card bg-base-100 card-md shadow-sm">
@@ -159,7 +158,7 @@ export default function AdminDashboard() {
               src="https://cdn-icons-png.flaticon.com/512/4899/4899684.png"
               alt="first"
             />
-            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
         </div>
         <div className="card bg-base-100 card-md shadow-sm">
@@ -173,7 +172,7 @@ export default function AdminDashboard() {
               src="https://cdn-icons-png.flaticon.com/512/4899/4899691.png"
               alt="first"
             />
-            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
         </div>
       </div>
@@ -191,7 +190,7 @@ export default function AdminDashboard() {
               </div>
               <ArchiveX className="h-8 w-12 mr-2 text-[#1B4079]" />
             </div>
-            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
           <div>
             <div className="card bg-base-100 card-md shadow-sm">
@@ -202,7 +201,7 @@ export default function AdminDashboard() {
                 </div>
                 <Wrench className="h-8 w-12 mr-2 text-[#1B4079]" />
               </div>
-              <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
+              <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
             </div>
           </div>
           <div className="card bg-base-100 card-md shadow-sm">
@@ -213,7 +212,7 @@ export default function AdminDashboard() {
               </div>
               <TriangleAlert className="h-8 w-12 mr-2 text-[#1B4079]" />
             </div>
-            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
           <div className="card bg-base-100 card-md shadow-sm">
             <div className="card-body flex-row justify-between border-[#1B4079] border-2 rounded-sm">
@@ -223,7 +222,7 @@ export default function AdminDashboard() {
               </div>
               <BookAlert className="h-8 w-12 mr-2 text-[#1B4079]" />
             </div>
-            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
           <div className="card bg-base-100 card-md shadow-sm">
             <div className="card-body flex-row justify-between border-[#1B4079] border-2 rounded-sm">
@@ -233,7 +232,7 @@ export default function AdminDashboard() {
               </div>
               <FileX className="h-8 w-12 mr-2 text-[#1B4079]" />
             </div>
-            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
           <div className="card bg-base-100 card-md shadow-sm">
             <div className="card-body flex-row justify-between border-[#1B4079] border-2 rounded-sm">
@@ -243,7 +242,7 @@ export default function AdminDashboard() {
               </div>
               <FileCheck className="h-8 w-12 mr-2 text-[#1B4079]" />
             </div>
-            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
         </div>
 
