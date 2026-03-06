@@ -1,4 +1,4 @@
-import { Bell, ChevronDown } from "lucide-react";
+import { Bell, ChevronDown, Menu } from "lucide-react";
 import { useLocation } from "react-router";
 
 export default function AdminNavbar() {
@@ -21,8 +21,17 @@ export default function AdminNavbar() {
   const pageTitle = pageTitles[location.pathname] || "Admin Panel";
 
   return (
-    <header className="sticky top-0 z-40 bg-gray-100  px-5 h-16 shadow-lg  flex items-center justify-between">
-      <h1 className="font-semibold">{pageTitle}</h1>
+    <header className="sticky top-0 z-50 bg-white px-5 h-16 shadow-lg flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <label
+          htmlFor="admin-drawer"
+          className="btn btn-ghost btn-sm lg:hidden"
+        >
+          <Menu className="w-5 h-5" />
+        </label>
+
+        <h1 className="font-semibold">{pageTitle}</h1>
+      </div>
       <div className="flex items-center gap-6">
         <button className="hover:opacity-80 transition">
           <Bell className="w-5 h-5" />

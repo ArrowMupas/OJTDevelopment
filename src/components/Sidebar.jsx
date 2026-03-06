@@ -18,12 +18,12 @@ export default function Sidebar() {
       <Link
         to={to}
         className={`flex items-center gap-2 p-2 rounded-r-lg text-sm transition-all text-gray-300
-          ${
-            isActive
-              ? "border-l-4 border-green-600 bg-green-700 text-white"
-              : "border-l-4 border-transparent"
-          }
-          hover:bg-green-700 hover:text-white`}
+        ${
+          isActive
+            ? "border-l-4 border-green-600 bg-green-700 text-white"
+            : "border-l-4 border-transparent"
+        }
+        hover:bg-green-700 hover:text-white`}
       >
         <Icon size={18} />
         {children}
@@ -32,7 +32,8 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-green-900 hidden md:flex flex-col shadow-inner text-white">
+    <aside className="bg-green-900 min-h-full w-64 flex flex-col shadow-inner text-white">
+      {/* LOGO */}
       <div className="px-4 py-3 border-b border-green-300">
         <div className="flex items-center gap-3">
           <img
@@ -53,13 +54,15 @@ export default function Sidebar() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-1 ">
+      {/* MENU */}
+      <div className="flex-1 overflow-y-auto px-1">
         <ul className="menu w-full space-y-1 font-semibold text-sm">
           <li>
             <MenuLink to="/admindashboard" icon={ChartColumnStacked}>
               Admin Dashboard
             </MenuLink>
           </li>
+
           <li>
             <MenuLink to="/manage-requests" icon={Car}>
               Vehicle Requests
@@ -71,17 +74,20 @@ export default function Sidebar() {
               <summary className="flex items-center gap-3 p-2 rounded-r-lg cursor-pointer text-sm hover:bg-green-400 text-gray-200 hover:text-green-900 transition-all">
                 Monitoring
               </summary>
+
               <ul className="menu rounded-box ml-4 p-2 w-full space-y-1">
                 <li>
                   <MenuLink to="/drivermonitoring" icon={Users}>
                     Driver Monitoring
                   </MenuLink>
                 </li>
+
                 <li>
                   <MenuLink to="/vehiclemonitoring" icon={Car}>
                     Vehicle Monitoring
                   </MenuLink>
                 </li>
+
                 <li>
                   <MenuLink to="/vehiclestatusqueue" icon={ActivityIcon}>
                     Vehicle Status
@@ -96,12 +102,14 @@ export default function Sidebar() {
               <summary className="flex items-center gap-3 p-2 rounded-r-lg cursor-pointer text-sm hover:bg-green-400 text-gray-200 hover:text-green-900 transition-all">
                 Maintenance
               </summary>
+
               <ul className="menu rounded-box ml-4 p-2 w-full space-y-1">
                 <li>
                   <MenuLink to="/vehicles" icon={Car}>
                     Vehicle Maintenance
                   </MenuLink>
                 </li>
+
                 <li>
                   <MenuLink to="/drivers" icon={Users}>
                     List of Drivers

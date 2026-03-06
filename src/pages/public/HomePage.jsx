@@ -2,7 +2,7 @@ export default function HomePage() {
   return (
     <div className="relative h-180 bg-white  overflow-hidden">
       {/* Background Image Container */}
-      <div className="absolute right-0 top-0 w-full lg:w-2/3 h-full">
+      <div className="absolute right-0 top-0 w-full lg:w-4/5 h-full">
         <div
           className="w-full h-full bg-cover bg-center opacity-40 md:opacity-100"
           style={{
@@ -32,14 +32,25 @@ export default function HomePage() {
               href="/request-vehicle"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn btn-lg bg-green-500 hover:bg-green-4 00 rounded-xl uppercase leading-tight font-bold"
+              className="btn btn-lg px-8 bg-green-500 hover:bg-green-400 rounded-xl uppercase leading-tight font-bold text-white text-sm"
             >
               Request Vehicle
             </a>
 
-            <p className="mt-4 text-sm text-slate-400 font-medium italic">
+            <p className="mt-2 text-sm text-slate-400 font-medium italic">
               * (1) One vehicle per request.
             </p>
+          </div>
+
+          <div className="flex flex-col items-center md:items-start">
+            <a
+              href="/survey"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-lg btn-success px-8  rounded-xl uppercase leading-tight font-bold text-white text-sm"
+            >
+              Fill up survey
+            </a>
           </div>
         </div>
       </div>

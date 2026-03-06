@@ -9,6 +9,7 @@ import {
   Pencil,
   Mail,
   Phone,
+  IdCard,
 } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
@@ -22,6 +23,8 @@ import OurInput from "../../components/OurInput";
 const driverSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  email: z.email("Invalid email address"),
+  contact: z.string().min(7, "Contact number must be at least 7 digits"),
 });
 
 export default function MaintenancePage() {
@@ -70,6 +73,7 @@ export default function MaintenancePage() {
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [licenseFile, setLicenseFile] = useState(null);
 
   const uploadFile = async (file) => {
     try {
@@ -83,9 +87,7 @@ export default function MaintenancePage() {
         .from("NEAMotorpoolBucket")
         .upload(filePath, file);
 
-      if (uploadError) {
-        throw uploadError;
-      }
+      if (uploadError) throw uploadError;
 
       const { data: urlData } = supabase.storage
         .from("NEAMotorpoolBucket")
@@ -93,7 +95,6 @@ export default function MaintenancePage() {
 
       return urlData.publicUrl;
     } catch (error) {
-      console.error("Error uploading file:", error);
       toast.error("Failed to upload image");
       return null;
     }
@@ -114,39 +115,32 @@ export default function MaintenancePage() {
     setUploading(true);
 
     try {
-      // Upload image first if selected
-      let imageUrl = null;
-      if (selectedFile) {
-        imageUrl = await uploadFile(selectedFile);
-        if (!imageUrl) {
-          // If upload failed but we don't want to stop the driver creation
-          // You can choose to either stop or continue without image
-          console.warn("Image upload failed, continuing without image");
-        }
-      }
+      const imageUrl = selectedFile ? await uploadFile(selectedFile) : null;
+      const licenseUrl = licenseFile ? await uploadFile(licenseFile) : null;
 
-      // Insert driver with image URL
       const { error } = await supabase.from("drivers").insert([
         {
           first_name: data.firstName,
           last_name: data.lastName,
-          image_url: imageUrl, // Add this column to your drivers table if not exists
+          email: data.email,
+          contact_number: data.contact,
+          image_url: imageUrl,
+          license_url: licenseUrl,
         },
       ]);
 
-      if (error) {
-        toast.error("Failed to create driver");
-      } else {
+      if (error) toast.error("Failed to create driver");
+      else {
         toast.success("Driver created successfully!", {
           position: "top-center",
         });
         document.getElementById("driverModal")?.close();
         reset();
-        setSelectedFile(null); // Clear selected file
+        setSelectedFile(null);
+        setLicenseFile(null);
         fetchDrivers(search);
       }
     } catch (error) {
-      console.error("Error creating driver:", error);
       toast.error("An error occurred while creating driver");
     } finally {
       setIsSubmitting(false);
@@ -164,28 +158,32 @@ export default function MaintenancePage() {
     setUploading(true);
 
     try {
-      let imageUrl = driverToEdit.image_url;
-
-      if (selectedFile) {
-        imageUrl = await uploadFile(selectedFile);
-      }
+      const imageUrl = selectedFile
+        ? await uploadFile(selectedFile)
+        : driverToEdit.image_url;
+      const licenseUrl = licenseFile
+        ? await uploadFile(licenseFile)
+        : driverToEdit.license_url;
 
       const { error } = await supabase
         .from("drivers")
         .update({
           first_name: data.firstName,
           last_name: data.lastName,
+          email: data.email,
+          contact_number: data.contact,
           image_url: imageUrl,
+          license_url: licenseUrl,
         })
         .eq("id", driverToEdit.id);
 
-      if (error) {
-        toast.error("Failed to update driver");
-      } else {
+      if (error) toast.error("Failed to update driver");
+      else {
         toast.success("Driver updated successfully!");
         document.getElementById("driverModal")?.close();
         reset();
         setSelectedFile(null);
+        setLicenseFile(null);
         setDriverToEdit(null);
         setIsEditing(false);
         fetchDrivers(search);
@@ -203,8 +201,11 @@ export default function MaintenancePage() {
   const deleteDriver = async (id) => {
     const driver = drivers.find((d) => d.id === id);
     if (driver?.image_url) {
-      // Extract file path from URL and delete
       const filePath = driver.image_url.split("/").slice(-2).join("/");
+      await supabase.storage.from("NEAMotorpoolBucket").remove([filePath]);
+    }
+    if (driver?.license_url) {
+      const filePath = driver.license_url.split("/").slice(-2).join("/");
       await supabase.storage.from("NEAMotorpoolBucket").remove([filePath]);
     }
 
@@ -216,8 +217,10 @@ export default function MaintenancePage() {
     }
   };
 
+  const [driverToView, setDriverToView] = useState(null);
+
   return (
-    <main className="px-5 py-4 h-full pb-25 ">
+    <main className="px-3 py-4 sm:px-5  h-full pb-25 ">
       <h1 className="text-lg font-bold">Drivers</h1>
       <p className="text-gray-500 text-sm mb-6">
         All the drivers are listed here
@@ -249,7 +252,7 @@ export default function MaintenancePage() {
             </div>
             <ul
               tabIndex="-1"
-              className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+              className="dropdown-content menu bg-base-100 rounded-box w-52 p-2 shadow-sm"
             >
               <li className="rounded-sm focus:bg-highlight">
                 <a className="active:bg-highlight">Ascending</a>
@@ -263,7 +266,14 @@ export default function MaintenancePage() {
 
         <button
           className="btn btn-outline btn-neutral"
-          onClick={() => document.getElementById("driverModal").showModal()}
+          onClick={() => {
+            setIsEditing(false);
+            setDriverToEdit(null);
+            reset({ firstName: "", lastName: "", email: "", contact: "" });
+            setSelectedFile(null);
+            setLicenseFile(null);
+            document.getElementById("driverModal").showModal();
+          }}
         >
           <UserPlus className="h-4 w-6" /> Add New Driver
         </button>
@@ -288,6 +298,7 @@ export default function MaintenancePage() {
               onClick={() => {
                 document.getElementById("driverModal").close();
                 setSelectedFile(null);
+                setLicenseFile(null);
                 setIsEditing(false);
                 setDriverToEdit(null);
                 reset();
@@ -322,9 +333,11 @@ export default function MaintenancePage() {
               register={register}
               error={errors.contact}
             />
-            <div className="form-control w-full mt-6">
+            <div className="form-control w-full mt-3">
               <label className="label">
-                <span className="label-text">Upload Driver Image</span>
+                <span className="fieldset-legend text-sm">
+                  Upload Driver Image
+                </span>
               </label>
               <input
                 type="file"
@@ -339,19 +352,19 @@ export default function MaintenancePage() {
               )}
             </div>
 
-            <div className="form-control w-full mt-6">
+            <div className="form-control w-full mt-4">
               <label className="label">
-                <span className="label-text">Upload Driver License</span>
+                <span className="fieldset-legend text-sm">Upload License</span>
               </label>
               <input
                 type="file"
                 accept="image/*"
                 className="file-input file-input-bordered w-full"
-                onChange={(e) => setSelectedFile(e.target.files[0])}
+                onChange={(e) => setLicenseFile(e.target.files[0])}
               />
-              {selectedFile && (
+              {licenseFile && (
                 <p className="text-sm text-gray-600 mt-2">
-                  Selected: {selectedFile.name}
+                  Selected: {licenseFile.name}
                 </p>
               )}
             </div>
@@ -362,7 +375,7 @@ export default function MaintenancePage() {
             >
               <Truck className="size-5 mr-2" />
               {uploading
-                ? "Uploading image..."
+                ? "Uploading files..."
                 : isSubmitting
                   ? isEditing
                     ? "Updating driver..."
@@ -375,12 +388,38 @@ export default function MaintenancePage() {
         </div>
       </dialog>
 
+      <dialog id="licenseModal" className="modal">
+        <div className="modal-box">
+          <h2 className="text-xl font-bold text-center mb-4">Driver License</h2>
+          {driverToView?.license_url ? (
+            <img
+              src={driverToView.license_url}
+              alt={`${driverToView.first_name} License`}
+              className="w-full max-h-125 object-contain"
+            />
+          ) : (
+            <p className="text-center text-gray-500">No license uploaded.</p>
+          )}
+          <div className="modal-action justify-center">
+            <button
+              className="btn btn-ghost"
+              onClick={() => {
+                document.getElementById("licenseModal").close();
+                setDriverToView(null);
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </dialog>
+
       <div className="border-0 mt-4">
         {drivers.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-40 gap-5">
             {loading ? (
               <>
-                <span className="loading loading-spinner text-success"></span>
+                <span className="loading loading-infinity text-success"></span>
                 <p className="font-bold text-sm">Loading drivers...</p>
               </>
             ) : (
@@ -393,14 +432,11 @@ export default function MaintenancePage() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1 md:gap-5 ">
             {drivers.map((driver) => (
-              <div
-                key={driver.id}
-                className="card bg-base-100 shadow border border-base-300"
-              >
-                <figure className="px-10 pt-6">
-                  <div className="w-full h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden aspect-auto">
+              <div key={driver.id} className="card bg-base-100 shadow ">
+                <figure className="px-8 pt-5">
+                  <div className="w-full h-38 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden aspect-auto">
                     {driver.image_url ? (
                       <img
                         src={driver.image_url}
@@ -413,7 +449,7 @@ export default function MaintenancePage() {
                   </div>
                 </figure>
 
-                <div className="card-body p-5 pt-2">
+                <div className="card-body p-4 pt-2">
                   <div className="flex justify-between items-start">
                     <div>
                       <h2 className="card-title text-sm font-bold">
@@ -422,28 +458,44 @@ export default function MaintenancePage() {
                     </div>
                   </div>
 
-                  <div className="flex gap-2 pl-2 pt-2">
+                  <div className="flex gap-2">
                     <Mail className="size-4 text-green-700" />
-                    <p>{driver.email}</p>
+                    <p className="text-gray-500 text-xs ">{driver.email}</p>
                   </div>
 
-                  <div className="flex gap-2 pl-2">
+                  <div className="flex gap-2">
                     <Phone className="size-4 text-green-700" />
-                    <p>{driver.contact_number || "no number yet."}</p>
+                    <p className="text-gray-500 text-xs ">
+                      {driver.contact_number || "no number yet."}
+                    </p>
                   </div>
                 </div>
-                <div className="flex justify-end gap ml-1 border-t-1 border-black">
+                <div className="flex justify-end gap ml-1 ">
                   <button
                     onClick={() => {
+                      setDriverToView(driver);
+                      document.getElementById("licenseModal").showModal();
+                    }}
+                    className="btn btn-ghost btn-square btn-sm text-yellow-500"
+                  >
+                    <IdCard className="h-4 w-4" />
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // prevent opening license modal
                       setIsEditing(true);
                       setDriverToEdit(driver);
 
                       reset({
                         firstName: driver.first_name,
                         lastName: driver.last_name,
+                        email: driver.email || "",
+                        contact: driver.contact_number || "",
                       });
 
                       setSelectedFile(null);
+                      setLicenseFile(null);
                       document.getElementById("driverModal").showModal();
                     }}
                     className="btn btn-ghost btn-square btn-sm text-blue-500"
@@ -451,7 +503,8 @@ export default function MaintenancePage() {
                     <Pencil className="h-4 w-4" />
                   </button>
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       setDriverToDelete(driver);
                       document.getElementById("deleteDriverModal").showModal();
                     }}
@@ -482,9 +535,7 @@ export default function MaintenancePage() {
             <button
               className="btn btn-error text-white"
               onClick={async () => {
-                if (driverToDelete) {
-                  await deleteDriver(driverToDelete.id);
-                }
+                if (driverToDelete) await deleteDriver(driverToDelete.id);
                 document.getElementById("deleteDriverModal").close();
                 setDriverToDelete(null);
               }}
