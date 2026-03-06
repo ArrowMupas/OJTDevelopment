@@ -13,7 +13,7 @@ export default function AdminNavbar() {
     "/transactions": "Transactions",
     "/survey": "Survey",
     "/vehicles": "Vehicle Maintenance",
-    "/drivers": "Driver Maintenance",
+    "/drivers": "List of Drivers",
     "/inquiry": "Inquiry",
     "/battery": "Vehicle Monitoring",
   };
