@@ -15,17 +15,16 @@ export default function Navbar() {
     { href: "/inquiry", label: "Admin" },
     { href: "/", label: "Home" },
     { href: "/dashboard", label: "Dashboard" },
-    { href: "/survey", label: "Survey" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
   ];
 
   return (
-    <header className="bg-green-600 text-white py-4 px-8 shadow-lg border-b border-gray-500/50 w-full">
+    <header className="bg-green-600 text-white py-4 px-4 sm:px-8 shadow-lg border-b border-gray-500/50 w-full">
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-4">
           <img
-            className="h-13 w-auto cursor-pointer bg-white rounded-3xl"
+            className="h-10 sm:h-12 w-auto cursor-pointer bg-white rounded-full p-0.5"
             src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/national_electrification_logo.png"
             alt="Logo"
             onClick={() => (window.location.href = "/")}
@@ -46,7 +45,7 @@ export default function Navbar() {
         </div>
 
         {!hideNavLinks && (
-          <nav className="flex space-x-4 sm:space-x-6 md:space-x-7">
+          <nav className="flex space-x-3 sm:space-x-5 md:space-x-7">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.href;
               return (

@@ -8,7 +8,7 @@ export default function FormInput({
   name,
 }) {
   return (
-    <div className="relative z-0 w-full mb-4 group">
+    <div className="relative z-0 w-full mb-3 group">
       <fieldset className="fieldset">
         {label2 && <p className="font-syle: italic">{label2}</p>}
         <legend className="fieldset-legend text-sm">{label}</legend>
