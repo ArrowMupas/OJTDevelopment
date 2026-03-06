@@ -7,6 +7,8 @@ import {
   UserPlus,
   UserXIcon,
   Pencil,
+  Mail,
+  Phone,
 } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
@@ -217,7 +219,9 @@ export default function MaintenancePage() {
   return (
     <main className="px-5 py-4 h-full pb-25 ">
       <h1 className="text-lg font-bold">Drivers</h1>
-      <p className="text-gray-500 text-sm mb-6">List of drivers available</p>
+      <p className="text-gray-500 text-sm mb-6">
+        All the drivers are listed here
+      </p>
 
       <div className="gap-3 flex justify-between">
         <div className="flex gap-2">
@@ -305,9 +309,39 @@ export default function MaintenancePage() {
                 error={errors.lastName}
               />
             </div>
-            <div className="form-control w-full mt-4">
+            <OurInput
+              label="Email"
+              name="email"
+              register={register}
+              error={errors.email}
+            />
+
+            <OurInput
+              label="Contact No."
+              name="contact"
+              register={register}
+              error={errors.contact}
+            />
+            <div className="form-control w-full mt-6">
               <label className="label">
                 <span className="label-text">Upload Driver Image</span>
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                className="file-input file-input-bordered w-full"
+                onChange={(e) => setSelectedFile(e.target.files[0])}
+              />
+              {selectedFile && (
+                <p className="text-sm text-gray-600 mt-2">
+                  Selected: {selectedFile.name}
+                </p>
+              )}
+            </div>
+
+            <div className="form-control w-full mt-6">
+              <label className="label">
+                <span className="label-text">Upload Driver License</span>
               </label>
               <input
                 type="file"
@@ -365,13 +399,13 @@ export default function MaintenancePage() {
                 key={driver.id}
                 className="card bg-base-100 shadow border border-base-300"
               >
-                <figure className="px-4 pt-4">
-                  <div className="w-full h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden">
+                <figure className="px-10 pt-6">
+                  <div className="w-full h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden aspect-auto">
                     {driver.image_url ? (
                       <img
                         src={driver.image_url}
                         alt={`${driver.first_name} ${driver.last_name}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover aspect-auto"
                       />
                     ) : (
                       <UserXIcon className="size-12 text-gray-300" />
@@ -382,41 +416,49 @@ export default function MaintenancePage() {
                 <div className="card-body p-5 pt-2">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h2 className="card-title text-lg font-bold">
+                      <h2 className="card-title text-sm font-bold">
                         {driver.first_name} {driver.last_name}
                       </h2>
                     </div>
-                    <div className="flex gap-1">
-                      <button
-                        onClick={() => {
-                          setIsEditing(true);
-                          setDriverToEdit(driver);
-
-                          reset({
-                            firstName: driver.first_name,
-                            lastName: driver.last_name,
-                          });
-
-                          setSelectedFile(null);
-                          document.getElementById("driverModal").showModal();
-                        }}
-                        className="btn btn-ghost btn-square btn-sm text-blue-500"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setDriverToDelete(driver);
-                          document
-                            .getElementById("deleteDriverModal")
-                            .showModal();
-                        }}
-                        className="btn btn-ghost btn-square btn-sm text-error"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
                   </div>
+
+                  <div className="flex gap-2 pl-2 pt-2">
+                    <Mail className="size-4 text-green-700" />
+                    <p>{driver.email}</p>
+                  </div>
+
+                  <div className="flex gap-2 pl-2">
+                    <Phone className="size-4 text-green-700" />
+                    <p>{driver.contact_number || "no number yet."}</p>
+                  </div>
+                </div>
+                <div className="flex justify-end gap ml-1 border-t-1 border-black">
+                  <button
+                    onClick={() => {
+                      setIsEditing(true);
+                      setDriverToEdit(driver);
+
+                      reset({
+                        firstName: driver.first_name,
+                        lastName: driver.last_name,
+                      });
+
+                      setSelectedFile(null);
+                      document.getElementById("driverModal").showModal();
+                    }}
+                    className="btn btn-ghost btn-square btn-sm text-blue-500"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setDriverToDelete(driver);
+                      document.getElementById("deleteDriverModal").showModal();
+                    }}
+                    className="btn btn-ghost btn-square btn-sm text-error"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 </div>
               </div>
             ))}

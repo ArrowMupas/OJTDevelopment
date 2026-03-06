@@ -13,6 +13,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import AboutPage from "./pages/public/AboutPage";
 import RequestVehiclePage from "./pages/public/RequestVehiclePage";
 import RequestInputPage from "./pages/public/RequestInput";
+import SurveyInput from "./pages/public/SurveyInput";
 
 import VehiclePage from "./pages/management/Vehicles";
 import Drivers from "./pages/management/Drivers";
@@ -57,6 +58,8 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/" element={<HomePage />} />
           <Route path="/requestinput/:id" element={<RequestInputPage />} />
+          <Route path="/surveyinput" element={<SurveyInput />} />
+
           <Route path="/survey" element={<SurveyPage />} />
           <Route path="/request-vehicle" element={<RequestVehiclePage />} />
           <Route path="/dashboard" element={<DashboardPage />} />

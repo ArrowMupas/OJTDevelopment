@@ -104,7 +104,7 @@ export default function Sidebar() {
                 </li>
                 <li>
                   <MenuLink to="/drivers" icon={Users}>
-                    Driver Maintenance
+                    List of Drivers
                   </MenuLink>
                 </li>
               </ul>
