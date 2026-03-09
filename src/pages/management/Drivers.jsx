@@ -221,7 +221,10 @@ export default function MaintenancePage() {
 
   return (
     <main className="px-3 py-4 sm:px-5  h-full pb-25 ">
-      <h1 className="text-lg font-bold">Drivers</h1>
+      <h1 className="text-lg font-bold flex items-center gap-2">
+        Drivers
+        <div className="badge badge-outline badge-info">{drivers.length}</div>
+      </h1>
       <p className="text-gray-500 text-sm mb-6">
         All the drivers are listed here
       </p>
@@ -265,7 +268,7 @@ export default function MaintenancePage() {
         </div>
 
         <button
-          className="btn btn-outline btn-neutral"
+          className="btn btn-soft btn-info"
           onClick={() => {
             setIsEditing(false);
             setDriverToEdit(null);
@@ -368,6 +371,7 @@ export default function MaintenancePage() {
                 </p>
               )}
             </div>
+
             <button
               type="submit"
               className="btn btn-lg w-full bg-green-600 text-white hover:bg-highlight mt-4"
@@ -432,10 +436,10 @@ export default function MaintenancePage() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1 md:gap-5 ">
+          <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-1 md:gap-2 ">
             {drivers.map((driver) => (
               <div key={driver.id} className="card bg-base-100 shadow ">
-                <figure className="px-8 pt-5">
+                <figure className="px-7 pt-5">
                   <div className="w-full h-38 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden aspect-auto">
                     {driver.image_url ? (
                       <img
@@ -452,7 +456,7 @@ export default function MaintenancePage() {
                 <div className="card-body p-4 pt-2">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h2 className="card-title text-sm font-bold">
+                      <h2 className="card-title text-sm font-bold truncate">
                         {driver.first_name} {driver.last_name}
                       </h2>
                     </div>

@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import ScrollToTop from "./utils/ScrollToTop";
+import ProtectedRoute from "./utils/ProtectedRoute";
 
 import MainLayout from "./layouts/MainLayout";
 import PublicLayout from "./layouts/PublicLayout";
@@ -29,6 +30,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import HistoryPage from "./pages/HistoryPage";
 import Battery from "./pages/Battery";
 import Tires from "./pages/Tires";
+import LoginPage from "./pages/public/LoginPage";
 
 function App() {
   return (
@@ -36,6 +38,15 @@ function App() {
       <ScrollToTop />
       <Toaster position="bottom-right" />
       <Routes>
+        {/* <Route
+          element={
+            <ProtectedRoute>
+              <MainLayout />
+            </ProtectedRoute>
+          }
+        > 
+       // Uncomment to activate google login (For later)
+        */}
         <Route element={<MainLayout />}>
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/inquiry" element={<InquiryPage />} />
@@ -55,6 +66,7 @@ function App() {
         </Route>
 
         <Route element={<PublicLayout />}>
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/" element={<HomePage />} />
           <Route path="/requestinput/:id" element={<RequestInputPage />} />
