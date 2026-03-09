@@ -12,7 +12,9 @@ export default function Navbar() {
   const isDashboardPage = location.pathname === "/dashboard";
 
   const navLinks = [
-    { href: "/inquiry", label: "Admin" },
+    // Uncomment for real login
+    // { href: "/login", label: "login" },
+    { href: "/admindashboard", label: "Admin" },
     { href: "/", label: "Home" },
     { href: "/dashboard", label: "Dashboard" },
     { href: "/about", label: "About" },

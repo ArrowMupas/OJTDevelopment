@@ -100,7 +100,7 @@ export default function RequestInputPage() {
               {/* PURPOSE */}
               <div className="space-y-1">
                 <p className="text-xs text-gray-500 ">Purpose</p>
-                <p className="text-gray-800 break-words">
+                <p className="text-gray-800 wrap-break-word">
                   {request.purpose || "N/A"}
                 </p>
               </div>
@@ -109,7 +109,7 @@ export default function RequestInputPage() {
               <div className="space-y-1">
                 <p className="text-xs text-gray-500 ">Other Instructions</p>
 
-                <p className="text-gray-800 break-words whitespace-pre-line">
+                <p className="text-gray-800 wrap-break-word whitespace-pre-line">
                   {request.other_instructions || "No additional instructions"}
                 </p>
               </div>
@@ -126,7 +126,7 @@ export default function RequestInputPage() {
 
               <div>
                 <p className="text-xs text-gray-500 ">Passenger(s)</p>
-                <p className="text-gray-800 font-medium break-words">
+                <p className="text-gray-800 font-medium wrap-break-word">
                   {request.passengers || "N/A"}
                 </p>
               </div>
@@ -147,7 +147,7 @@ export default function RequestInputPage() {
 
               <div>
                 <p className="text-xs text-gray-500 ">Held Items</p>
-                <p className="text-gray-800 break-words">
+                <p className="text-gray-800 wrap-break-word">
                   {request.items || "None"}
                 </p>
               </div>

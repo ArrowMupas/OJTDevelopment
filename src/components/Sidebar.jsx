@@ -1,13 +1,14 @@
 import {
   ActivityIcon,
   Car,
-  House,
   MessageCircleQuestionMark,
   ScrollText,
   ChartColumnStacked,
   Users,
+  LogOut,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { supabase } from "../supabaseClient";
 
 export default function Sidebar() {
   const location = useLocation();
@@ -29,6 +30,12 @@ export default function Sidebar() {
         {children}
       </Link>
     );
+  };
+
+  const handleLogout = async () => {
+    // Uncomment for real logout
+    // await supabase.auth.signOut();
+    window.location.href = "/";
   };
 
   return (
@@ -130,13 +137,18 @@ export default function Sidebar() {
               Inquiry
             </MenuLink>
           </li>
-
-          <li>
-            <MenuLink to="/" icon={House}>
-              Home
-            </MenuLink>
-          </li>
         </ul>
+      </div>
+
+      {/* LOGOUT */}
+      <div className="border-t border-green-700 p-3">
+        <button
+          onClick={handleLogout}
+          className="btn btn-ghost w-full flex justify-start hover:text-red-700"
+        >
+          <LogOut size={18} />
+          Logout
+        </button>
       </div>
     </aside>
   );
