@@ -90,8 +90,8 @@ export default function Sidebar() {
                 </li>
 
                 <li>
-                  <MenuLink to="/vehiclemonitoring" icon={Car}>
-                    Vehicle Monitoring
+                  <MenuLink to="/vehicles" icon={Car}>
+                    Insurance
                   </MenuLink>
                 </li>
 
@@ -112,14 +112,14 @@ export default function Sidebar() {
 
               <ul className="menu rounded-box ml-4 p-2 w-full space-y-1">
                 <li>
-                  <MenuLink to="/vehicles" icon={Car}>
+                  <MenuLink to="/vehiclemonitoring" icon={Car}>
                     Vehicle Maintenance
                   </MenuLink>
                 </li>
 
                 <li>
                   <MenuLink to="/drivers" icon={Users}>
-                    List of Drivers
+                    Staff
                   </MenuLink>
                 </li>
               </ul>
