@@ -6,6 +6,7 @@ import {
   ChartColumnStacked,
   Users,
   LogOut,
+  FolderClosed,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { supabase } from "../supabaseClient";
@@ -98,6 +99,12 @@ export default function Sidebar() {
                 <li>
                   <MenuLink to="/vehiclestatusqueue" icon={ActivityIcon}>
                     Vehicle Status
+                  </MenuLink>
+                </li>
+
+                <li>
+                  <MenuLink to="/registration" icon={FolderClosed}>
+                    Vehicle Registration
                   </MenuLink>
                 </li>
               </ul>

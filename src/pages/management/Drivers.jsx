@@ -222,7 +222,7 @@ export default function MaintenancePage() {
   return (
     <main className="px-3 py-4 sm:px-5  h-full pb-25 ">
       <h1 className="text-lg font-bold flex items-center gap-2">
-        Drivers
+        Staff
         <div className="badge badge-outline badge-info">{drivers.length}</div>
       </h1>
       <p className="text-gray-500 text-sm mb-6">
