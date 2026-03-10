@@ -18,6 +18,14 @@ Which is 300 Hours
 
 In progress...
 
+## Views
+
+In progress...
+
+## Triggers
+
+In progress...
+
 ---
 
 ## 🚀 Git Commands (Quick Reference)
