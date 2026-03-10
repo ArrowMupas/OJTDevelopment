@@ -14,6 +14,12 @@ Which is 300 Hours
 - **DaisyUI** - Component library that supports tailwind for ease of UI making
 - **Tailwind** - Utility first design library for faster webside designing
 
+## Supabase Google Auth
+
+In progress...
+
+---
+
 ## 🚀 Git Commands (Quick Reference)
 
 ```bash

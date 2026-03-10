@@ -74,6 +74,7 @@ export default function MaintenancePage() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [licenseFile, setLicenseFile] = useState(null);
+  const [licenseBack, setLicenseBack] = useState(null);
 
   const uploadFile = async (file) => {
     try {
@@ -117,6 +118,7 @@ export default function MaintenancePage() {
     try {
       const imageUrl = selectedFile ? await uploadFile(selectedFile) : null;
       const licenseUrl = licenseFile ? await uploadFile(licenseFile) : null;
+      const licenseBackUrl = licenseBack ? await uploadFile(licenseBack) : null;
 
       const { error } = await supabase.from("drivers").insert([
         {
@@ -126,6 +128,7 @@ export default function MaintenancePage() {
           contact_number: data.contact,
           image_url: imageUrl,
           license_url: licenseUrl,
+          license_back: licenseBackUrl,
         },
       ]);
 
@@ -138,6 +141,7 @@ export default function MaintenancePage() {
         reset();
         setSelectedFile(null);
         setLicenseFile(null);
+        setLicenseBack(null);
         fetchDrivers(search);
       }
     } catch (error) {
@@ -164,6 +168,9 @@ export default function MaintenancePage() {
       const licenseUrl = licenseFile
         ? await uploadFile(licenseFile)
         : driverToEdit.license_url;
+      const licenseBackUrl = licenseBack
+        ? await uploadFile(licenseBack)
+        : driverToEdit.license_back;
 
       const { error } = await supabase
         .from("drivers")
@@ -174,6 +181,7 @@ export default function MaintenancePage() {
           contact_number: data.contact,
           image_url: imageUrl,
           license_url: licenseUrl,
+          license_back: licenseBackUrl,
         })
         .eq("id", driverToEdit.id);
 
@@ -184,6 +192,7 @@ export default function MaintenancePage() {
         reset();
         setSelectedFile(null);
         setLicenseFile(null);
+        setLicenseBack(null);
         setDriverToEdit(null);
         setIsEditing(false);
         fetchDrivers(search);
@@ -206,6 +215,10 @@ export default function MaintenancePage() {
     }
     if (driver?.license_url) {
       const filePath = driver.license_url.split("/").slice(-2).join("/");
+      await supabase.storage.from("NEAMotorpoolBucket").remove([filePath]);
+    }
+    if (driver?.license_back) {
+      const filePath = driver.license_back.split("/").slice(-2).join("/");
       await supabase.storage.from("NEAMotorpoolBucket").remove([filePath]);
     }
 
@@ -275,6 +288,7 @@ export default function MaintenancePage() {
             reset({ firstName: "", lastName: "", email: "", contact: "" });
             setSelectedFile(null);
             setLicenseFile(null);
+            setLicenseBack(null);
             document.getElementById("driverModal").showModal();
           }}
         >
@@ -302,6 +316,7 @@ export default function MaintenancePage() {
                 document.getElementById("driverModal").close();
                 setSelectedFile(null);
                 setLicenseFile(null);
+                setLicenseBack(null);
                 setIsEditing(false);
                 setDriverToEdit(null);
                 reset();
@@ -357,7 +372,9 @@ export default function MaintenancePage() {
 
             <div className="form-control w-full mt-4">
               <label className="label">
-                <span className="fieldset-legend text-sm">Upload License</span>
+                <span className="fieldset-legend text-sm">
+                  Upload License Image
+                </span>
               </label>
               <input
                 type="file"
@@ -368,6 +385,25 @@ export default function MaintenancePage() {
               {licenseFile && (
                 <p className="text-sm text-gray-600 mt-2">
                   Selected: {licenseFile.name}
+                </p>
+              )}
+            </div>
+
+            <div className="form-control w-full mt-4">
+              <label className="label">
+                <span className="fieldset-legend text-sm">
+                  Upload License Back Image
+                </span>
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                className="file-input file-input-bordered w-full"
+                onChange={(e) => setLicenseBack(e.target.files[0])}
+              />
+              {licenseBack && (
+                <p className="text-sm text-gray-600 mt-2">
+                  Selected: {licenseBack.name}
                 </p>
               )}
             </div>
@@ -396,11 +432,18 @@ export default function MaintenancePage() {
         <div className="modal-box">
           <h2 className="text-xl font-bold text-center mb-4">Driver License</h2>
           {driverToView?.license_url ? (
-            <img
-              src={driverToView.license_url}
-              alt={`${driverToView.first_name} License`}
-              className="w-full max-h-125 object-contain"
-            />
+            <div>
+              <img
+                src={driverToView.license_url}
+                alt={`${driverToView.first_name} License`}
+                className="w-full max-h-125 object-contain"
+              />
+              <img
+                src={driverToView.license_back}
+                alt={`${driverToView.first_name} License`}
+                className="w-full max-h-125 object-contain"
+              />
+            </div>
           ) : (
             <p className="text-center text-gray-500">No license uploaded.</p>
           )}
@@ -487,7 +530,7 @@ export default function MaintenancePage() {
 
                   <button
                     onClick={(e) => {
-                      e.stopPropagation(); // prevent opening license modal
+                      e.stopPropagation();
                       setIsEditing(true);
                       setDriverToEdit(driver);
 

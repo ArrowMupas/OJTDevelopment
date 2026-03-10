@@ -54,29 +54,52 @@ export default function Battery() {
   };
 
   return (
-    <main className="px-5 py-4 h-full pb-25">
-      {/* HEADER */}
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-lg font-bold">Motorpool Compliance Monitoring</h1>
-          <p className="text-gray-500 text-sm">Battery Monitoring</p>
+    <main className="px-3 py-4 sm:px-5  h-full pb-25 ">
+      <div className="max-w-7xl mx-auto">
+        {/* HEADER */}
+        <div className="flex justify-between items-center ">
+          <div>
+            <h1 className="text-lg font-bold flex items-center gap-2">
+              Motorpool Compliance Monitoring
+            </h1>
+            <p className="text-gray-500 text-sm mb-6">Battery Monitoring</p>
+          </div>
+
+          <button
+            onClick={() => navigate("/history")}
+            className="bg-green-600 text-white px-5 py-2 rounded-2xl flex items-center gap-2"
+          >
+            <History size={18} /> View History
+          </button>
         </div>
 
-        <button
-          onClick={() => navigate("/history")}
-          className="btn bg-green-600 text-white"
-        >
-          <History className="h-4 w-5" /> View History
-        </button>
-      </div>
-
-      {/* SEARCH */}
-      <div className="mb-6">
-        <label className="input input-neutral w-72">
+        <label className="input input-neutral mb-7">
           <Search className="h-4 w-6" />
-          <input type="search" placeholder="Search by plate number..." />
+          <input
+            type="search"
+            placeholder="Search by plate number..."
+            // value={search}
+            // onChange={(e) => {
+            //   const value = e.target.value;
+            //   setSearch(value);
+            //   debouncedSearch(value);
+            // }}
+          />
         </label>
-      </div>
+
+        <div role="tablist" className="tabs tabs-box mb-6">
+          <Link to="/vehiclemonitoring" className="tab">
+            PMS
+          </Link>
+
+          <Link to="/battery" className="tab tab-active">
+            Battery
+          </Link>
+
+          <Link to="/tires" className="tab ">
+            Tires
+          </Link>
+        </div>
 
       {/* TABS */}
       <div role="tablist" className="tabs tabs-border mb-6">

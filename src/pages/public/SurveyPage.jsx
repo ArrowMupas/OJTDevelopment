@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
@@ -23,19 +23,45 @@ const satisfactionSurveySchema = z.object({
 });
 
 export default function SurveyPage() {
-  const drivers = [
-    "Juan Dela Cruz",
-    "Pedro Santos",
-    "Mark Reyes",
-    "Anthony Garcia",
-  ];
+  const [drivers, setDrivers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const vehicles = [
-    "Toyota Hiace",
-    "Mitsubishi L300",
-    "Isuzu Elf",
-    "Toyota Innova",
-  ];
+  useEffect(() => {
+    async function fetchDrivers() {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("drivers")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+      } else {
+        setDrivers(data);
+      }
+      setLoading(false);
+    }
+    fetchDrivers();
+  }, []);
+
+  const [vehicles, setVehicles] = useState([]);
+  useEffect(() => {
+    async function fetchVehicles() {
+      setLoading(true);
+      const { data: vehicleData, error } = await supabase
+        .from("vehicles")
+        .select("*")
+        .order("name", { ascending: true });
+
+      if (error) {
+        console.error(error);
+      } else {
+        setVehicles(vehicleData);
+      }
+      setLoading(false);
+    }
+    fetchVehicles();
+  }, []);
 
   const navigate = useNavigate();
   const {
@@ -53,27 +79,36 @@ export default function SurveyPage() {
 
     const fullName = `${data.lastName}, ${data.firstName}`;
 
-    const { error } = await supabase.from("passenger_survey").insert([
-      {
-        email: data.email,
-        passenger_name: fullName,
-        travel_date: data.travelDate,
-        driver_name: data.driverName,
-        vehicle: data.vehicle,
-        rating_appearance: data.appearance,
-        rating_behavior: data.behavior,
-        rating_safety: data.safety,
-        rating_vehicle: data.vehicleCondition,
-        rating_ontime: data.onTime,
-        comments: data.comments,
-      },
-    ]);
+    const { data: surveyData, error } = await supabase
+      .from("passenger_survey")
+      .insert([
+        {
+          email: data.email,
+          passenger_name: fullName,
+          travel_date: data.travelDate,
+          driver_name: data.driverName,
+          vehicle: data.vehicle,
+          rating_appearance: data.appearance,
+          rating_behavior: data.behavior,
+          rating_safety: data.safety,
+          rating_vehicle: data.vehicleCondition,
+          rating_ontime: data.onTime,
+          comments: data.comments,
+        },
+      ])
+      .select();
 
     if (error) {
       toast.error("Failed to submit survey");
     } else {
       toast.success("Survey submitted successfully!");
       reset();
+    }
+
+    const newRequestId = surveyData[0]?.id;
+
+    if (newRequestId) {
+      navigate(`/requestinput/${newRequestId}`, { replace: true });
     }
 
     setIsSubmitting(false);
@@ -117,7 +152,7 @@ export default function SurveyPage() {
   };
 
   return (
-    <main className="min-h-screen bg-linear-to-b from-emerald-100 to-emerald-200 pb-25 flex justify-center p-2 sm:p-8">
+    <main className="min-h-screen bg-linear-to-b from-emerald-100 to-emerald-200 sm:pb-25 flex justify-center p-2 sm:p-8">
       <div className="card w-xl bg-white shadow-lg rounded-3xl p-10 ">
         <div className=" text-center items-center justify-center flex flex-col gap-1 mb-4 ">
           <img
@@ -188,7 +223,18 @@ export default function SurveyPage() {
                 Select Driver
               </option>
               {drivers.map((d) => (
-                <option key={d}>{d}</option>
+                <option key={d.id}>
+                  <div className="flex gap-2">
+                    <img
+                      className="size-14"
+                      src={d.image_url}
+                      alt={d.last_name}
+                    />
+                    <p className="">
+                      {d.first_name} {d.last_name}
+                    </p>
+                  </div>
+                </option>
               ))}
             </select>
           </div>
@@ -207,7 +253,7 @@ export default function SurveyPage() {
                 Select Vehicle
               </option>
               {vehicles.map((v) => (
-                <option key={v}>{v}</option>
+                <option key={v.id}>{v.name}</option>
               ))}
             </select>
           </div>
