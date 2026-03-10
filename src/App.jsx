@@ -21,6 +21,7 @@ import Drivers from "./pages/management/Drivers";
 import InquiryPage from "./pages/management/InquiryPage";
 import MoreInfoPage from "./pages/MoreInfoPage";
 import ManageRequestsPage from "./pages/management/ManageRequestPage";
+import Registration from "./pages/management/Registration";
 
 import TransactionsPage from "./pages/TransactionsPage";
 import DriverMonitoringPage from "./pages/DriverMonitoringPage";
@@ -63,6 +64,7 @@ function App() {
           <Route path="/vehiclestatusqueue" element={<VehicleStatusPage />} />
           <Route path="/manage-requests" element={<ManageRequestsPage />} />
           <Route path="/moreinfo/:id" element={<MoreInfoPage />} />
+          <Route path="/registration" element={<Registration />} />
         </Route>
 
         <Route element={<PublicLayout />}>
