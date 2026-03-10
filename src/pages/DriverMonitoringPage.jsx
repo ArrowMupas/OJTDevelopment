@@ -75,160 +75,159 @@ export default function DriverMonitoringPage() {
   ).toFixed(2);
 
   return (
-    <div className="min-h-screen bg-back p-8 font-sans">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold">
-              Driver Performance Monitoring
-            </h1>
-            <p className="text-gray-500">Survey evaluation overview</p>
-          </div>
+    <main className="px-5 py-4 h-full pb-25">
 
-          <div className="relative w-72">
-            <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search driver..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
-            />
-          </div>
-        </div>
+      {/* Header */}
+      <h1 className="text-lg font-bold">Driver Performance Monitoring</h1>
+      <p className="text-gray-500 text-sm mb-6">
+        Survey evaluation overview
+      </p>
 
-        {/* Summary Cards */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white border border-gray-200 p-5 rounded-lg flex items-center justify-between">
+    {/* Search */}
+<div className="mb-6">
+  <label className="input input-neutral w-72">
+    <Search className="h-4 w-6" />
+    <input
+      type="search"
+      placeholder="Search driver..."
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+    />
+  </label>
+</div>
+
+      {/* Summary Cards */}
+      <div className="grid md:grid-cols-4 gap-4 mb-6">
+        <div className="card bg-base-100 shadow border border-base-300">
+          <div className="card-body p-4 flex-row items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500 mb-1">Average Rating</p>
-              <p className="text-2xl font-bold text-gray-800">
-                {overallAverage}
-              </p>
+              <p className="text-xs text-gray-500">Average Rating</p>
+              <p className="text-xl font-bold">{overallAverage}</p>
             </div>
             <Star className="w-6 h-6 text-yellow-400" />
           </div>
+        </div>
 
-          <div className="bg-white border border-gray-200 p-5 rounded-lg flex items-center justify-between">
+        <div className="card bg-base-100 shadow border border-base-300">
+          <div className="card-body p-4 flex-row items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500 mb-1">Total Surveys</p>
-              <p className="text-2xl font-bold text-green-600">3</p>
+              <p className="text-xs text-gray-500">Total Surveys</p>
+              <p className="text-xl font-bold text-green-600">3</p>
             </div>
             <FileChartColumnIncreasing className="w-6 h-6 text-green-600" />
           </div>
+        </div>
 
-          <div className="bg-white border border-gray-200 p-5 rounded-lg flex items-center justify-between">
+        <div className="card bg-base-100 shadow border border-base-300">
+          <div className="card-body p-4 flex-row items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500 mb-1">On-Time Rate</p>
-              <p className="text-2xl font-bold text-yellow-600">95%</p>
+              <p className="text-xs text-gray-500">On-Time Rate</p>
+              <p className="text-xl font-bold text-yellow-600">95%</p>
             </div>
             <Clock className="w-6 h-6 text-yellow-400" />
           </div>
+        </div>
 
-          <div className="bg-white border border-gray-200 p-5 rounded-lg flex items-center justify-between">
+        <div className="card bg-base-100 shadow border border-base-300">
+          <div className="card-body p-4 flex-row items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500 mb-1">Active Drivers</p>
-              <p className="text-2xl font-bold text-gray-800">
-                {drivers.length}
-              </p>
+              <p className="text-xs text-gray-500">Active Drivers</p>
+              <p className="text-xl font-bold">{drivers.length}</p>
             </div>
-            <Car className="w-7 h-7 text-green-600" />
+            <Car className="w-6 h-6 text-green-600" />
           </div>
         </div>
+      </div>
 
-        {/* Driver Table */}
-        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-green-600 text-white uppercase text-xs tracking-wider">
-              <tr>
-                <th className="text-left px-6 py-3">Driver</th>
-                <th className="text-left px-6 py-3">Vehicle</th>
-                <th className="text-left px-6 py-3">Average</th>
-                <th className="text-left px-6 py-3">Surveys</th>
-                <th className="text-left px-6 py-3">Adjectival Rating</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((driver, index) => {
-                const avg = calculateAverage(driver);
+      {/* Driver Table */}
+      <div className="overflow-x-auto border border-base-300 rounded-lg">
+        <table className="table table-zebra text-sm">
+          <thead className="bg-green-600 text-white">
+            <tr>
+              <th>Driver</th>
+              <th>Vehicle</th>
+              <th>Average</th>
+              <th>Surveys</th>
+              <th>Adjectival Rating</th>
+            </tr>
+          </thead>
 
-                return (
-                  <>
-                    <tr
-                      key={index}
-                      className="border-t hover:bg-gray-50 cursor-pointer transition"
-                      onClick={() =>
-                        setSelectedDriver(
-                          selectedDriver === index ? null : index,
-                        )
-                      }
-                    >
-                      <td className="px-6 py-4 font-semibold text-gray-800">
-                        {driver.name}
-                      </td>
-                      <td className="px-6 py-4 text-gray-600">
-                        {driver.vehicle}
-                      </td>
-                      <td className="px-6 py-4">{avg}</td>
-                      <td className="px-6 py-4">{driver.surveys}</td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusStyle(
-                            avg,
-                          )}`}
-                        >
-                          {avg <= 1.2
-                            ? "Excellent"
-                            : avg <= 1.5
-                              ? "Good"
-                              : "Needs Review"}
-                        </span>
+          <tbody>
+            {filtered.map((driver, index) => {
+              const avg = calculateAverage(driver);
+
+              return (
+                <>
+                  <tr
+                    key={index}
+                    className="cursor-pointer"
+                    onClick={() =>
+                      setSelectedDriver(
+                        selectedDriver === index ? null : index,
+                      )
+                    }
+                  >
+                    <td className="font-semibold">{driver.name}</td>
+                    <td>{driver.vehicle}</td>
+                    <td>{avg}</td>
+                    <td>{driver.surveys}</td>
+                    <td>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusStyle(
+                          avg,
+                        )}`}
+                      >
+                        {avg <= 1.2
+                          ? "Excellent"
+                          : avg <= 1.5
+                          ? "Good"
+                          : "Needs Review"}
+                      </span>
+                    </td>
+                  </tr>
+
+                  {/* Expandable Details */}
+                  {selectedDriver === index && (
+                    <tr>
+                      <td colSpan="5">
+                        <div className="grid md:grid-cols-2 gap-6 p-4 text-sm">
+                          <div>
+                            <p>
+                              <strong>Appearance:</strong> {driver.appearance}
+                            </p>
+                            <p>
+                              <strong>Behavior:</strong> {driver.behavior}
+                            </p>
+                            <p>
+                              <strong>Safety Driving:</strong> {driver.safety}
+                            </p>
+                            <p>
+                              <strong>Cleanliness:</strong>{" "}
+                              {driver.cleanliness}
+                            </p>
+                            <p>
+                              <strong>On Time:</strong> {driver.onTime}
+                            </p>
+                          </div>
+
+                          <div>
+                            <strong>Comments:</strong>
+                            <ul className="list-disc ml-5 mt-2">
+                              {driver.comments.map((c, i) => (
+                                <li key={i}>{c}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
                       </td>
                     </tr>
-
-                    {/* Expandable Detail */}
-                    {selectedDriver === index && (
-                      <tr className="bg-gray-50">
-                        <td colSpan="5" className="px-6 py-6">
-                          <div className="grid md:grid-cols-2 gap-6 text-sm text-gray-700">
-                            <div>
-                              <p>
-                                <strong>Appearance:</strong> {driver.appearance}
-                              </p>
-                              <p>
-                                <strong>Behavior:</strong> {driver.behavior}
-                              </p>
-                              <p>
-                                <strong>Safety Driving:</strong> {driver.safety}
-                              </p>
-                              <p>
-                                <strong>Cleanliness:</strong>{" "}
-                                {driver.cleanliness}
-                              </p>
-                              <p>
-                                <strong>On Time:</strong> {driver.onTime}
-                              </p>
-                            </div>
-                            <div>
-                              <strong>Comments:</strong>
-                              <ul className="list-disc ml-5 mt-2">
-                                {driver.comments.map((c, i) => (
-                                  <li key={i}>{c}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                  </>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                  )}
+                </>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
-    </div>
+    </main>
   );
 }

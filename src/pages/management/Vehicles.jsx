@@ -243,7 +243,7 @@ export default function MaintenancePage() {
   return (
     <main className="px-5 py-4 h-full pb-25">
       <h1 className="text-lg font-bold">Vehicles</h1>
-      <p className="text-gray-500 text-sm mb-6">List of vehicles available</p>
+      <p className="text-gray-500 text-sm mb-6">List of vehicles</p>
 
       <div className="gap-3 flex justify-between">
         <div className="flex gap-2">

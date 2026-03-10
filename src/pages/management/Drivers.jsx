@@ -226,7 +226,7 @@ export default function MaintenancePage() {
         <div className="badge badge-outline badge-info">{drivers.length}</div>
       </h1>
       <p className="text-gray-500 text-sm mb-6">
-        All the drivers are listed here
+        All the staff are listed here
       </p>
 
       <div className="gap-3 flex justify-between">
@@ -278,7 +278,7 @@ export default function MaintenancePage() {
             document.getElementById("driverModal").showModal();
           }}
         >
-          <UserPlus className="h-4 w-6" /> Add New Driver
+          <UserPlus className="h-4 w-6" /> Add New Staff
         </button>
       </div>
 
