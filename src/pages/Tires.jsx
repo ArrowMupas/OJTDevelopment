@@ -1,267 +1,269 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { AlertTriangle, CheckCircle, History, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "../supabaseClient";
+
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const tireSchema = z.object({
+  type_tire: z.string().min(1, "Tire type is required"),
+  install_date_tire: z.string().min(1, "Installation date is required"),
+});
 
 export default function Tires() {
   const navigate = useNavigate();
+  const [vehicles, setVehicles] = useState([]);
 
-  const [vehicles, setVehicles] = useState([
-    {
-      plate: "SND 1339",
-      model: "Isuzu Dmax",
-      status: "overdue",
-      showPmsForm: false,
-      showBatteryTireForm: false,
+  const fetchVehicles = async () => {
+    const { data, error } = await supabase
+      .from("vehicles")
+      .select("*")
+      .order("install_date_tire", { ascending: true });
 
-      // NEW PMS INPUT FIELDS
-      pms: "",
-      actualPms: "",
-      pmsDate: "",
-    },
-    {
-      plate: "XYZ 123",
-      model: "Honda Civic",
-      status: "updated",
-      showPmsForm: false,
-      showBatteryTireForm: false,
+    if (error) {
+      console.error(error);
+      return;
+    }
 
-      // NEW PMS INPUT FIELDS
-      pms: "",
-      actualPms: "",
-      pmsDate: "",
-    },
-  ]);
-
-  const togglePmsForm = (plate) => {
-    setVehicles((prev) =>
-      prev.map((v) =>
-        v.plate === plate ? { ...v, showPmsForm: !v.showPmsForm } : v,
-      ),
-    );
+    setVehicles(data);
   };
 
-  const toggleBatteryTireForm = (plate) => {
-    setVehicles((prev) =>
-      prev.map((v) =>
-        v.plate === plate
-          ? { ...v, showBatteryTireForm: !v.showBatteryTireForm }
-          : v,
-      ),
-    );
+  useEffect(() => {
+    fetchVehicles();
+  }, []);
+
+  // Tire expiration logic
+  const getTireStatus = (date) => {
+    if (!date) return "overdue";
+
+    const install = new Date(date);
+    const now = new Date();
+
+    const diffMonths =
+      (now.getFullYear() - install.getFullYear()) * 12 +
+      (now.getMonth() - install.getMonth());
+
+    if (diffMonths >= 36) return "overdue";
+    if (diffMonths >= 32) return "warning";
+
+    return "ok";
   };
 
-  const handleSavePms = (plate) => {
-    setVehicles((prev) =>
-      prev.map((v) => (v.plate === plate ? { ...v, showPmsForm: false } : v)),
-    );
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(tireSchema),
+  });
+
+  const openModal = (vehicle) => {
+    setSelectedVehicle(vehicle);
+
+    reset({
+      type_tire: vehicle.type_tire || "",
+      install_date_tire: vehicle.install_date_tire || "",
+    });
+
+    document.getElementById("tire_modal").showModal();
   };
 
-  const handleSaveBatteryTire = (plate) => {
-    setVehicles((prev) =>
-      prev.map((v) =>
-        v.plate === plate
-          ? {
-              ...v,
-              showBatteryTireForm: false,
-              batteryChecked: false,
-              tiresChecked: false,
-            }
-          : v,
-      ),
-    );
-  };
+  const onSubmit = async (data) => {
+    const { error } = await supabase
+      .from("vehicles")
+      .update({
+        type_tire: data.type_tire,
+        install_date_tire: data.install_date_tire,
+      })
+      .eq("id", selectedVehicle.id);
 
-  const handleVehicleChange = (plate, field, value) => {
-    setVehicles((prev) =>
-      prev.map((v) => (v.plate === plate ? { ...v, [field]: value } : v)),
-    );
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    document.getElementById("tire_modal").close();
+
+    fetchVehicles();
   };
 
   return (
-    <div className="min-h-screen bg-white p-8 font-sans">
+    <main className="px-3 py-4 sm:px-5  h-full pb-25 ">
       <div className="max-w-7xl mx-auto">
         {/* HEADER */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-4xl font-bold">
+            <h1 className="text-lg font-bold flex items-center gap-2">
               Motorpool Compliance Monitoring
             </h1>
-            <p className="text-gray-500">Tire Monitoring</p>
+            <p className="text-gray-500 text-sm mb-6">Tire Monitoring</p>
           </div>
 
           <button
             onClick={() => navigate("/history")}
-            className="bg-green-600 text-white px-5 py-2 rounded-2xl flex items-center gap-2"
+            className="btn btn-success gap-2"
           >
             <History size={18} /> View History
           </button>
         </div>
 
-        {/* SEARCH BAR */}
-        <div className="mb-5 relative w-full md:w-1/3">
-          <Search className="absolute top-2 left-2 w-5 h-5 text-gray-400" />
+        <label className="input input-neutral mb-7">
+          <Search className="h-4 w-6" />
           <input
-            type="text"
-            placeholder="Search by Plate Number..."
-            className="border p-2 pl-9 rounded w-full"
+            type="search"
+            placeholder="Search by plate number..."
+            // value={search}
+            // onChange={(e) => {
+            //   const value = e.target.value;
+            //   setSearch(value);
+            //   debouncedSearch(value);
+            // }}
           />
-        </div>
+        </label>
 
-        <div role="tablist" className="tabs tabs-border mb-5">
-          <Link to="/vehiclemonitoring">
-            <a role="tab" className="tab">
-              PMS
-            </a>
+        {/* TABS */}
+        <div role="tablist" className="tabs tabs-box mb-6">
+          <Link to="/vehiclemonitoring" className="tab">
+            PMS
           </Link>
-          <Link to="/battery">
-            <a role="tab" className="tab">
-              Battery
-            </a>
+
+          <Link to="/battery" className="tab">
+            Battery
           </Link>
-          <Link to="/tires">
-            <a role="tab" className="tab tab border-b-3 border-black sm w-10">
-              Tires
-            </a>
+
+          <Link to="/tires" className="tab tab-active">
+            Tires
           </Link>
         </div>
 
         {/* VEHICLE CARDS */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {vehicles.map((v) => (
-            <div
-              key={v.plate}
-              className={`p-6 rounded-2xl shadow border-2 ${
-                v.status === "overdue"
-                  ? "border-red-400 bg-red-50"
-                  : "border-gray-200 bg-white"
-              }`}
-            >
-              <div className="flex justify-between">
-                <div>
-                  <h2 className="font-bold text-lg">{v.plate}</h2>
-                  <p className="text-xs text-gray-500">{v.model}</p>
-                </div>
+          {vehicles.map((v) => {
+            const status = getTireStatus(v.install_date_tire);
 
-                {v.status === "overdue" ? (
-                  <AlertTriangle className="text-red-600 w-6 h-6" />
-                ) : (
-                  <CheckCircle className="text-green-600 w-6 h-6" />
-                )}
-              </div>
-              <div className="w-full h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center mt-2">
-                <div className="text-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-12 w-12 mx-auto text-green-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
-                    />
-                  </svg>
-                  <p className="text-sm text-violet-600 font-medium mt-1">
-                    Vehicle Image
-                  </p>
-                </div>
-              </div>
-
-              <p className="mt-3">Latest Tire Installation Date:</p>
-              <p className="font-semibold">
-                {v.status === "overdue" ? "Not yet recorded" : "2026-01-15"}
-              </p>
-
-              <p className="mt-3">Last Tire Installation Date:</p>
-              <p className="font-semibold">
-                {v.status === "overdue" ? "Not yet recorded" : "2026-01-15"}
-              </p>
-
-              <p
-                className={`mt-3 mb-4 font-bold ${
-                  v.status === "overdue" ? "text-red-600" : "text-green-600"
+            return (
+              <div
+                key={v.id}
+                className={`card shadow border-2 ${
+                  status === "overdue"
+                    ? "border-error bg-error/10"
+                    : status === "warning"
+                      ? "border-warning bg-warning/10"
+                      : "border-base-200"
                 }`}
               >
-                {v.status === "overdue"
-                  ? "REPLACEMENT NEEDED"
-                  : "PMS Up to Date"}
-              </p>
+                <div className="card-body">
+                  <div className="flex justify-between">
+                    <div>
+                      <h2 className="card-title">{v.plate_number}</h2>
+                      <p className="text-sm opacity-70">{v.name}</p>
+                    </div>
 
-              {/* BUTTONS  */}
-              {/* {v.status === "overdue" && !v.showPmsForm && (
-                <button
-                  onClick={() => togglePmsForm(v.plate)}
-                  className="mt-4 w-full bg-yellow-500 text-white py-2 rounded-2xl"
-                >
-                  Mark PMS Done
-                </button>
-              )}
-
-              {v.status === "overdue" && v.showPmsForm && (
-                <div className="mt-4 bg-white">
-                  <button
-                    onClick={() => handleSavePms(v.plate)}
-                    className="w-full bg-yellow-500 text-white py-2 rounded-xl"
-                  >
-                    Save
-                  </button>
-                </div>
-              )} */}
-
-              {v.status === "overdue" && !v.showBatteryTireForm && (
-                <button
-                  onClick={() => toggleBatteryTireForm(v.plate)}
-                  className="mt-4 w-full bg-green-600 text-white py-2 rounded-xl"
-                >
-                  Update Tires
-                </button>
-              )}
-
-              {v.status === "overdue" && v.showBatteryTireForm && (
-                <div className="mt-2 border-1 border-dashed p-3 rounded-sm bg-green-100 space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">
-                      Tire Type
-                    </label>
-                    <input
-                      type="text"
-                      value={v.pms}
-                      onChange={(e) =>
-                        handleVehicleChange(v.plate, "pms", e.target.value)
-                      }
-                      className="w-full border rounded-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-[#FAF9F6]"
-                    />
+                    {status === "overdue" ? (
+                      <AlertTriangle className="text-error" />
+                    ) : status === "warning" ? (
+                      <AlertTriangle className="text-warning" />
+                    ) : (
+                      <CheckCircle className="text-success" />
+                    )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-1">
-                      Installation Date
-                    </label>
-                    <input
-                      type="date"
-                      value={v.pmsDate}
-                      onChange={(e) =>
-                        handleVehicleChange(v.plate, "pmsDate", e.target.value)
-                      }
-                      className="w-full border rounded-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-[#FAF9F6]"
-                    />
+                    <p className="text-sm">Latest Tire Installation Date</p>
+                    <p className="font-semibold">
+                      {v.install_date_tire || "Not recorded"}
+                    </p>
                   </div>
 
-                  <button
-                    onClick={() => handleSaveBatteryTire(v.plate)}
-                    className="w-full bg-green-600 text-white py-2 rounded-sm"
+                  <p
+                    className={`font-bold ${
+                      status === "overdue"
+                        ? "text-error"
+                        : status === "warning"
+                          ? "text-warning"
+                          : "text-success"
+                    }`}
                   >
-                    Save
-                  </button>
+                    {status === "overdue"
+                      ? "REPLACEMENT NEEDED"
+                      : status === "warning"
+                        ? "NEAR EXPIRATION"
+                        : "TIRES OK"}
+                  </p>
+
+                  {(status === "warning" || status === "overdue") && (
+                    <div className="card-actions">
+                      <button
+                        className="btn btn-success w-full"
+                        onClick={() => openModal(v)}
+                      >
+                        Update Tires
+                      </button>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          ))}
+              </div>
+            );
+          })}
         </div>
       </div>
-    </div>
+      {/* DAISYUI MODAL */}
+      <dialog id="tire_modal" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg mb-4">Update Tire Information</h3>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div>
+              <label className="label">
+                <span className="label-text">Tire Type</span>
+              </label>
+
+              <input
+                {...register("type_tire")}
+                className="input input-bordered w-full"
+              />
+
+              {errors.type_tire && (
+                <p className="text-error text-sm mt-1">
+                  {errors.type_tire.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="label">
+                <span className="label-text">Installation Date</span>
+              </label>
+
+              <input
+                type="date"
+                {...register("install_date_tire")}
+                className="input input-bordered w-full"
+              />
+
+              {errors.install_date_tire && (
+                <p className="text-error text-sm mt-1">
+                  {errors.install_date_tire.message}
+                </p>
+              )}
+            </div>
+
+            <div className="modal-action">
+              <button type="submit" className="btn btn-success">
+                Save
+              </button>
+
+              <form method="dialog">
+                <button className="btn">Cancel</button>
+              </form>
+            </div>
+          </form>
+        </div>
+      </dialog>
+    </main>
   );
 }

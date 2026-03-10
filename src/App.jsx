@@ -70,7 +70,7 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/" element={<HomePage />} />
           <Route path="/requestinput/:id" element={<RequestInputPage />} />
-          <Route path="/surveyinput" element={<SurveyInput />} />
+          <Route path="/surveyinput/:id" element={<SurveyInput />} />
 
           <Route path="/survey" element={<SurveyPage />} />
           <Route path="/request-vehicle" element={<RequestVehiclePage />} />

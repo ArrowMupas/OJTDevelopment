@@ -11,12 +11,14 @@ export default function HomePage() {
     const { data, error } = await supabase
       .from("request_dashboard_view")
       .select("*")
+      .eq("status", "Pending")
       .order("timestamp", { ascending: false });
 
     if (error) {
       console.error("Error fetching requests:", error);
       return [];
     }
+
     return data;
   }
 
@@ -31,43 +33,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <main className=" h-full pb-40">
-      {/* <div className="grid grid-cols-3 md:flex-row gap-5">
-        <div className="card bg-base-100 card-md shadow-sm">
-          <div className="card-body flex-row justify-between border-[#d2dc15] border-b-2 rounded-sm">
-            <div>
-              <h2 className="card-title">{requests.length}</h2>
-              <p>Today's Request</p>
-            </div>
-            <Clipboard className="h-8 w-12 mr-2 text-[#d2dc15]" />
-          </div>
-        </div>
-
-        <div className="card bg-base-100 card-md shadow-sm">
-          <div className="card-body flex-row justify-between border-highlight border-b-2 rounded-sm">
-            <div>
-              <h2 className="card-title">
-                {requests.filter((r) => r.status === "Completed").length}
-              </h2>
-              <p>Completed Request</p>
-            </div>
-            <ClipboardCheck className="h-8 w-12 mr-2 text-highlight" />
-          </div>
-        </div>
-
-        <div className="card bg-base-100 card-md shadow-sm">
-          <div className="card-body flex-row justify-between border-[#745fc9] border-b-2 rounded-sm">
-            <div>
-              <h2 className="card-title">
-                {requests.filter((r) => r.status !== "Completed").length}
-              </h2>
-              <p>Pending Request</p>
-            </div>
-            <ClipboardClock className="h-8 w-12 mr-2 text-[#745fc9]" />
-          </div>
-        </div>
-      </div> */}
-
+    <main className=" min-h-screen pb-40">
       <div className="">
         <div className="overflow-x-auto ">
           <table className="table table-sm lg:table-md xl:table-lg">

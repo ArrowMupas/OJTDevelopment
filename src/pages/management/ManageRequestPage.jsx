@@ -4,8 +4,7 @@ import {
   Clipboard,
   ClipboardCheck,
   ClipboardClock,
-  Ellipsis,
-  Info,
+  SquareArrowRight,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -20,6 +19,7 @@ export default function ManageRequestsPage() {
     const { data, error } = await supabase
       .from("service_vehicle_requests")
       .select("*")
+
       .order("timestamp", { ascending: false });
 
     if (error) {
@@ -66,7 +66,6 @@ export default function ManageRequestsPage() {
     if (error) {
       console.error("Error updating vehicle:", error);
     } else {
-      // Optimistically update UI immediately
       setRequests((prev) =>
         prev.map((req) =>
           req.id === requestId ? { ...req, vehicle_id: vehicleId } : req,
@@ -86,7 +85,6 @@ export default function ManageRequestsPage() {
     if (error) {
       console.error("Error updating driver:", error);
     } else {
-      // Optimistically update UI immediately
       setRequests((prev) =>
         prev.map((req) =>
           req.id === requestId ? { ...req, driver_id: driverId } : req,
@@ -106,7 +104,6 @@ export default function ManageRequestsPage() {
     if (error) {
       console.error("Error updating status:", error);
     } else {
-      // Optimistically update UI immediately
       setRequests((prev) =>
         prev.map((req) =>
           req.id === requestId ? { ...req, status: status } : req,
@@ -279,7 +276,7 @@ export default function ManageRequestsPage() {
                         value={req.status || ""}
                         onChange={(e) => updateStatus(req.id, e.target.value)}
                       >
-                        <option value="" className="text-black">
+                        <option value="Pending" className="text-black">
                           Pending
                         </option>
                         <option value="Completed" className="text-green-500 ">
@@ -295,7 +292,7 @@ export default function ManageRequestsPage() {
                     <td>
                       <Link to={`/moreinfo/${req.id}`}>
                         <button className="btn btn-square">
-                          <Ellipsis className="h-4 w-6" />
+                          <SquareArrowRight className="size-7 text-success" />
                         </button>
                       </Link>
                     </td>

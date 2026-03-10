@@ -78,15 +78,15 @@ export default function VehicleMonitoringPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white p-8 font-sans">
+    <main className="px-3 py-4 sm:px-5  h-full pb-25 ">
       <div className="max-w-7xl mx-auto">
         {/* HEADER */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center ">
           <div>
-            <h1 className="text-4xl font-bold">
+            <h1 className="text-lg font-bold flex items-center gap-2">
               Motorpool Compliance Monitoring
             </h1>
-            <p className="text-gray-500">PMS Monitoring</p>
+            <p className="text-gray-500 text-sm mb-6">PMS Monitoring</p>
           </div>
 
           <button
@@ -97,34 +97,31 @@ export default function VehicleMonitoringPage() {
           </button>
         </div>
 
-        {/* SEARCH BAR */}
-        <div className="mb-5 relative w-full md:w-1/3">
-          <Search className="absolute top-2 left-2 w-5 h-5 text-gray-400" />
+        <label className="input input-neutral mb-7">
+          <Search className="h-4 w-6" />
           <input
-            type="text"
-            placeholder="Search by Plate Number..."
-            className="border p-2 pl-9 rounded w-full"
+            type="search"
+            placeholder="Search by plate number..."
+            // value={search}
+            // onChange={(e) => {
+            //   const value = e.target.value;
+            //   setSearch(value);
+            //   debouncedSearch(value);
+            // }}
           />
-        </div>
+        </label>
 
-        <div role="tablist" className="tabs tabs-border mb-5">
-          <Link to="/vehiclemonitoring">
-            <a
-              role="tab"
-              className="tab tab-active border-b-3 border-black sm w-10 "
-            >
-              PMS
-            </a>
+        <div role="tablist" className="tabs tabs-box mb-6">
+          <Link to="/vehiclemonitoring" className="tab tab-active">
+            PMS
           </Link>
-          <Link to="/battery">
-            <a role="tab" className="tab">
-              Battery
-            </a>
+
+          <Link to="/battery" className="tab ">
+            Battery
           </Link>
-          <Link to="/tires">
-            <a role="tab" className="tab">
-              Tires
-            </a>
+
+          <Link to="/tires" className="tab ">
+            Tires
           </Link>
         </div>
 
@@ -222,7 +219,7 @@ export default function VehicleMonitoringPage() {
               )}
 
               {v.status === "overdue" && v.showBatteryTireForm && (
-                <div className="mt-2 border-1 border-dashed p-3 rounded-sm bg-green-100 space-y-4">
+                <div className="mt-2 border border-dashed p-3 rounded-sm bg-green-100 space-y-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">
                       PMS
@@ -281,6 +278,6 @@ export default function VehicleMonitoringPage() {
           ))}
         </div>
       </div>
-    </div>
+    </main>
   );
 }
