@@ -10,35 +10,19 @@ export default function Battery() {
       plate: "SND 1339",
       model: "Isuzu Dmax",
       status: "overdue",
-      showPmsForm: false,
       showBatteryTireForm: false,
-
-      // NEW PMS INPUT FIELDS
       pms: "",
-      actualPms: "",
       pmsDate: "",
     },
     {
       plate: "XYZ 123",
       model: "Honda Civic",
       status: "updated",
-      showPmsForm: false,
       showBatteryTireForm: false,
-
-      // NEW PMS INPUT FIELDS
       pms: "",
-      actualPms: "",
       pmsDate: "",
     },
   ]);
-
-  const togglePmsForm = (plate) => {
-    setVehicles((prev) =>
-      prev.map((v) =>
-        v.plate === plate ? { ...v, showPmsForm: !v.showPmsForm } : v,
-      ),
-    );
-  };
 
   const toggleBatteryTireForm = (plate) => {
     setVehicles((prev) =>
@@ -50,12 +34,6 @@ export default function Battery() {
     );
   };
 
-  const handleSavePms = (plate) => {
-    setVehicles((prev) =>
-      prev.map((v) => (v.plate === plate ? { ...v, showPmsForm: false } : v)),
-    );
-  };
-
   const handleSaveBatteryTire = (plate) => {
     setVehicles((prev) =>
       prev.map((v) =>
@@ -63,8 +41,6 @@ export default function Battery() {
           ? {
               ...v,
               showBatteryTireForm: false,
-              batteryChecked: false,
-              tiresChecked: false,
             }
           : v,
       ),
@@ -125,17 +101,39 @@ export default function Battery() {
           </Link>
         </div>
 
-        {/* VEHICLE CARDS */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {vehicles.map((v) => (
-            <div
-              key={v.plate}
-              className={`p-6 rounded-2xl shadow border-2 ${
-                v.status === "overdue"
-                  ? "border-red-400 bg-red-50"
-                  : "border-gray-200 bg-white"
-              }`}
-            >
+      {/* TABS */}
+      <div role="tablist" className="tabs tabs-border mb-6">
+        <Link to="/vehiclemonitoring">
+          <a role="tab" className="tab">
+            PMS
+          </a>
+        </Link>
+
+        <Link to="/battery">
+          <a role="tab" className="tab tab-active">
+            Battery
+          </a>
+        </Link>
+
+        <Link to="/tires">
+          <a role="tab" className="tab">
+            Tires
+          </a>
+        </Link>
+      </div>
+
+      {/* VEHICLE CARDS */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {vehicles.map((v) => (
+          <div
+            key={v.plate}
+            className={`card border-2 shadow bg-base-100 ${
+              v.status === "overdue"
+                ? "border-red-400 bg-red-50"
+                : "border-base-300"
+            }`}
+          >
+            <div className="card-body">
               <div className="flex justify-between">
                 <div>
                   <h2 className="font-bold text-lg">{v.plate}</h2>
@@ -148,6 +146,8 @@ export default function Battery() {
                   <CheckCircle className="text-green-600 w-6 h-6" />
                 )}
               </div>
+
+            {/* VEHICLE IMAGE */}
               <div className="w-full h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center mt-2">
                 <div className="text-center">
                   <svg
@@ -164,66 +164,48 @@ export default function Battery() {
                       d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
                     />
                   </svg>
+
                   <p className="text-sm text-violet-600 font-medium mt-1">
                     Vehicle Image
                   </p>
                 </div>
               </div>
 
-              <p className="mt-3">Latest Battery Installation Date:</p>
-              <p className="font-semibold">
+              <p className="mt-1 text-sm">Latest Battery Installation Date:</p>
+              <p className="font-semibold text-sm">
                 {v.status === "overdue" ? "Not yet recorded" : "2026-01-15"}
               </p>
 
-              <p className="mt-3">Last Battery Installation Date:</p>
-              <p className="font-semibold">
+              <p className="mt-1 text-sm">Last Battery Installation Date:</p>
+              <p className="font-semibold text-sm">
                 {v.status === "overdue" ? "Not yet recorded" : "2026-01-15"}
               </p>
 
               <p
-                className={`mt-3 mb-4 font-bold ${
+                className={`mt-3 font-bold ${
                   v.status === "overdue" ? "text-red-600" : "text-green-600"
                 }`}
               >
                 {v.status === "overdue"
                   ? "REPLACEMENT NEEDED"
-                  : "PMS Up to Date"}
+                  : "Battery OK"}
               </p>
 
-              {/* BUTTONS  */}
-              {/* {v.status === "overdue" && !v.showPmsForm && (
-                <button
-                  onClick={() => togglePmsForm(v.plate)}
-                  className="mt-4 w-full bg-yellow-500 text-white py-2 rounded-2xl"
-                >
-                  Mark PMS Done
-                </button>
-              )}
-
-              {v.status === "overdue" && v.showPmsForm && (
-                <div className="mt-4 bg-white">
-                  <button
-                    onClick={() => handleSavePms(v.plate)}
-                    className="w-full bg-yellow-500 text-white py-2 rounded-xl"
-                  >
-                    Save
-                  </button>
-                </div>
-              )} */}
-
+              {/* UPDATE BUTTON */}
               {v.status === "overdue" && !v.showBatteryTireForm && (
                 <button
                   onClick={() => toggleBatteryTireForm(v.plate)}
-                  className="mt-4 w-full bg-green-600 text-white py-2 rounded-xl"
+                  className="btn bg-green-600 text-white mt-4"
                 >
                   Update Battery
                 </button>
               )}
 
+              {/* FORM */}
               {v.status === "overdue" && v.showBatteryTireForm && (
-                <div className="mt-2 border border-dashed p-3 rounded-sm bg-green-100 space-y-4">
+                <div className="mt-3 border border-dashed p-3 rounded bg-green-100 space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1">
+                    <label className="text-sm font-medium">
                       Battery Type
                     </label>
                     <input
@@ -232,12 +214,12 @@ export default function Battery() {
                       onChange={(e) =>
                         handleVehicleChange(v.plate, "pms", e.target.value)
                       }
-                      className="w-full border rounded-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-[#FAF9F6]"
+                      className="input input-bordered w-full mt-1"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-1">
+                    <label className="text-sm font-medium">
                       Installation Date
                     </label>
                     <input
@@ -246,21 +228,21 @@ export default function Battery() {
                       onChange={(e) =>
                         handleVehicleChange(v.plate, "pmsDate", e.target.value)
                       }
-                      className="w-full border rounded-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-[#FAF9F6]"
+                      className="input input-bordered w-full mt-1"
                     />
                   </div>
 
                   <button
                     onClick={() => handleSaveBatteryTire(v.plate)}
-                    className="w-full bg-green-600 text-white py-2 rounded-sm"
+                    className="btn bg-green-600 text-white w-full"
                   >
                     Save
                   </button>
                 </div>
               )}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </main>
   );

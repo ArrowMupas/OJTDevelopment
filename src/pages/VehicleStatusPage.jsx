@@ -1,6 +1,6 @@
-import { 
-  AlertCircle, 
-  CheckCircle2, 
+import {
+  AlertCircle,
+  CheckCircle2,
   Clock,
   Search
 } from "lucide-react";
@@ -22,11 +22,25 @@ export default function InsuranceExpiryQueue() {
     const expiry = new Date(expiryDate);
     const diffDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
 
-    if (diffDays < 0) 
-      return { label: "Expired", color: "bg-red-100 text-red-600", icon: <AlertCircle className="w-5 h-5 text-red-600" /> };
-    if (diffDays <= 15) 
-      return { label: "Expiring Soon", color: "bg-yellow-100 text-yellow-600", icon: <Clock className="w-5 h-5 text-yellow-600" /> };
-    return { label: "Active", color: "bg-green-100 text-green-600", icon: <CheckCircle2 className="w-5 h-5 text-green-600" /> };
+    if (diffDays < 0)
+      return {
+        label: "Expired",
+        color: "bg-red-100 text-red-600",
+        icon: <AlertCircle className="w-4 h-4 text-red-600" />
+      };
+
+    if (diffDays <= 15)
+      return {
+        label: "Expiring Soon",
+        color: "bg-yellow-100 text-yellow-600",
+        icon: <Clock className="w-4 h-4 text-yellow-600" />
+      };
+
+    return {
+      label: "Active",
+      color: "bg-green-100 text-green-600",
+      icon: <CheckCircle2 className="w-4 h-4 text-green-600" />
+    };
   };
 
   const filtered = vehicles.filter(v =>
@@ -39,90 +53,113 @@ export default function InsuranceExpiryQueue() {
   const activeCount = vehicles.filter(v => getStatus(v.expiry).label === "Active").length;
 
   return (
-    <div className="min-h-screen bg-white p-8 font-sans">
-      <div className="max-w-7xl mx-auto">
-        
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold">Insurance Expiry Monitoring</h1>
-            <p className="text-gray-500">Vehicle insurance overview</p>
-          </div>
-          <div className="relative w-72">
-            <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search vehicle..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
-            />
+    <main className="px-5 py-4 h-full pb-25">
+
+      {/* HEADER */}
+      <div className="mb-6">
+        <h1 className="text-lg font-bold">Insurance Expiry Monitoring</h1>
+        <p className="text-gray-500 text-sm">Vehicle insurance overview</p>
+      </div>
+
+      {/* SEARCH */}
+      <div className="mb-6">
+        <label className="input input-neutral w-72">
+          <Search className="h-4 w-6" />
+          <input
+            type="search"
+            placeholder="Search vehicle..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </label>
+      </div>
+
+      {/* SUMMARY CARDS */}
+      <div className="grid md:grid-cols-3 gap-6 mb-6">
+
+        <div className="card bg-base-100 shadow">
+          <div className="card-body flex-row items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="bg-red-100 p-2 rounded-full">
+                <AlertCircle className="w-5 h-5 text-red-600" />
+              </div>
+              <span className="font-bold text-red-600 uppercase text-sm">
+                Expired
+              </span>
+            </div>
+            <span className="text-xl font-bold text-red-600">{expiredCount}</span>
           </div>
         </div>
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-5 rounded-2xl shadow flex items-center justify-between">
+        <div className="card bg-base-100 shadow">
+          <div className="card-body flex-row items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="bg-red-100 p-2 rounded-full">{<AlertCircle className="w-6 h-6 text-red-600" />}</div>
-              <span className="font-bold text-red-600 uppercase">Expired</span>
+              <div className="bg-yellow-100 p-2 rounded-full">
+                <Clock className="w-5 h-5 text-yellow-600" />
+              </div>
+              <span className="font-bold text-yellow-600 uppercase text-sm">
+                Expiring Soon
+              </span>
             </div>
-            <span className="text-2xl font-bold text-red-600">{expiredCount}</span>
-          </div>
-
-          <div className="bg-white p-5 rounded-2xl shadow flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="bg-yellow-100 p-2 rounded-full">{<Clock className="w-6 h-6 text-yellow-600" />}</div>
-              <span className="font-bold text-yellow-600 uppercase">Expiring Soon</span>
-            </div>
-            <span className="text-2xl font-bold text-yellow-600">{urgentCount}</span>
-          </div>
-
-          <div className="bg-white p-5 rounded-2xl shadow flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="bg-green-100 p-2 rounded-full">{<CheckCircle2 className="w-6 h-6 text-green-600" />}</div>
-              <span className="font-bold text-green-600 uppercase">Active</span>
-            </div>
-            <span className="text-2xl font-bold text-green-600">{activeCount}</span>
+            <span className="text-xl font-bold text-yellow-600">{urgentCount}</span>
           </div>
         </div>
 
-        {/* Table */}
-        <div className="bg-white rounded-2xl shadow overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-green-600 text-white uppercase text-xs tracking-wider">
+        <div className="card bg-base-100 shadow">
+          <div className="card-body flex-row items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="bg-green-100 p-2 rounded-full">
+                <CheckCircle2 className="w-5 h-5 text-green-600" />
+              </div>
+              <span className="font-bold text-green-600 uppercase text-sm">
+                Active
+              </span>
+            </div>
+            <span className="text-xl font-bold text-green-600">{activeCount}</span>
+          </div>
+        </div>
+
+      </div>
+
+      {/* TABLE */}
+      <div className="card bg-base-100 shadow">
+        <div className="overflow-x-auto">
+          <table className="table">
+
+            <thead className="bg-green-600 text-white text-xs uppercase">
               <tr>
-                <th className="text-left px-6 py-3">Plate Number</th>
-                <th className="text-left px-6 py-3">Vehicle Model</th>
-                <th className="text-left px-6 py-3">Policy Number</th>
-                <th className="text-left px-6 py-3">Expiry Date</th>
-                <th className="text-left px-6 py-3">Status</th>
+                <th>Plate Number</th>
+                <th>Vehicle Model</th>
+                <th>Policy Number</th>
+                <th>Expiry Date</th>
+                <th>Status</th>
               </tr>
             </thead>
+
             <tbody>
               {filtered.map((v, i) => {
                 const status = getStatus(v.expiry);
                 return (
-                  <tr key={i} className="border-t hover:bg-gray-50 transition">
-                    <td className="px-6 py-4 font-semibold text-gray-800">{v.plate}</td>
-                    <td className="px-6 py-4 text-gray-600">{v.model}</td>
-                    <td className="px-6 py-4 font-mono text-gray-700">{v.policy}</td>
-                    <td className="px-6 py-4 text-gray-600">
-                      {new Date(v.expiry).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${status.color} gap-1`}>
-                        {status.icon} {status.label}
+                  <tr key={i} className="hover">
+                    <td className="font-semibold">{v.plate}</td>
+                    <td>{v.model}</td>
+                    <td className="font-mono">{v.policy}</td>
+                    <td>{new Date(v.expiry).toLocaleDateString()}</td>
+                    <td>
+                      <span className={`badge gap-1 ${status.color}`}>
+                        {status.icon}
+                        {status.label}
                       </span>
                     </td>
                   </tr>
                 );
               })}
             </tbody>
+
           </table>
         </div>
-
       </div>
-    </div>
+
+    </main>
   );
 }
