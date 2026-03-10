@@ -59,51 +59,50 @@ export default function VehicleMonitoringPage() {
 
   return (
     <main className="px-3 py-4 sm:px-5  h-full pb-25 ">
-      <div className="max-w-7xl mx-auto">
-        {/* HEADER */}
-        <div className="flex justify-between items-center ">
-          <div>
-            <h1 className="text-lg font-bold flex items-center gap-2">
-              Motorpool Compliance Monitoring
-            </h1>
-            <p className="text-gray-500 text-sm mb-6">PMS Monitoring</p>
-          </div>
-
-          <button
-            onClick={() => navigate("/history")}
-            className="bg-green-600 text-white px-5 py-2 rounded-2xl flex items-center gap-2"
-          >
-            <History size={18} /> View History
-          </button>
+      {/* HEADER */}
+      <div className="flex justify-between items-center ">
+        <div>
+          <h1 className="text-lg font-bold flex items-center gap-2">
+            Motorpool Compliance Monitoring
+          </h1>
+          <p className="text-gray-500 text-sm mb-6">PMS Monitoring</p>
         </div>
 
-        <label className="input input-neutral mb-7">
-          <Search className="h-4 w-6" />
-          <input
-            type="search"
-            placeholder="Search by plate number..."
-            // value={search}
-            // onChange={(e) => {
-            //   const value = e.target.value;
-            //   setSearch(value);
-            //   debouncedSearch(value);
-            // }}
-          />
-        </label>
+        <button
+          onClick={() => navigate("/history")}
+          className="bg-green-600 text-white px-5 py-2 rounded-2xl flex items-center gap-2"
+        >
+          <History size={18} /> View History
+        </button>
+      </div>
 
-        <div role="tablist" className="tabs tabs-box mb-6">
-          <Link to="/vehiclemonitoring" className="tab tab-active">
-            PMS
-          </Link>
+      <label className="input input-neutral mb-7">
+        <Search className="h-4 w-6" />
+        <input
+          type="search"
+          placeholder="Search by plate number..."
+          // value={search}
+          // onChange={(e) => {
+          //   const value = e.target.value;
+          //   setSearch(value);
+          //   debouncedSearch(value);
+          // }}
+        />
+      </label>
 
-          <Link to="/battery" className="tab ">
-            Battery
-          </Link>
+      <div role="tablist" className="tabs tabs-box mb-6">
+        <Link to="/vehiclemonitoring" className="tab tab-active">
+          PMS
+        </Link>
 
-          <Link to="/tires" className="tab ">
-            Tires
-          </Link>
-        </div>
+        <Link to="/battery" className="tab ">
+          Battery
+        </Link>
+
+        <Link to="/tires" className="tab ">
+          Tires
+        </Link>
+      </div>
 
       {/* TABS */}
       <div role="tablist" className="tabs tabs-border mb-6">

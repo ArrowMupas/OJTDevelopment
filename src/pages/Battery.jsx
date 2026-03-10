@@ -55,51 +55,50 @@ export default function Battery() {
 
   return (
     <main className="px-3 py-4 sm:px-5  h-full pb-25 ">
-      <div className="max-w-7xl mx-auto">
-        {/* HEADER */}
-        <div className="flex justify-between items-center ">
-          <div>
-            <h1 className="text-lg font-bold flex items-center gap-2">
-              Motorpool Compliance Monitoring
-            </h1>
-            <p className="text-gray-500 text-sm mb-6">Battery Monitoring</p>
-          </div>
-
-          <button
-            onClick={() => navigate("/history")}
-            className="bg-green-600 text-white px-5 py-2 rounded-2xl flex items-center gap-2"
-          >
-            <History size={18} /> View History
-          </button>
+      {/* HEADER */}
+      <div className="flex justify-between items-center ">
+        <div>
+          <h1 className="text-lg font-bold flex items-center gap-2">
+            Motorpool Compliance Monitoring
+          </h1>
+          <p className="text-gray-500 text-sm mb-6">Battery Monitoring</p>
         </div>
 
-        <label className="input input-neutral mb-7">
-          <Search className="h-4 w-6" />
-          <input
-            type="search"
-            placeholder="Search by plate number..."
-            // value={search}
-            // onChange={(e) => {
-            //   const value = e.target.value;
-            //   setSearch(value);
-            //   debouncedSearch(value);
-            // }}
-          />
-        </label>
+        <button
+          onClick={() => navigate("/history")}
+          className="bg-green-600 text-white px-5 py-2 rounded-2xl flex items-center gap-2"
+        >
+          <History size={18} /> View History
+        </button>
+      </div>
 
-        <div role="tablist" className="tabs tabs-box mb-6">
-          <Link to="/vehiclemonitoring" className="tab">
-            PMS
-          </Link>
+      <label className="input input-neutral mb-7">
+        <Search className="h-4 w-6" />
+        <input
+          type="search"
+          placeholder="Search by plate number..."
+          // value={search}
+          // onChange={(e) => {
+          //   const value = e.target.value;
+          //   setSearch(value);
+          //   debouncedSearch(value);
+          // }}
+        />
+      </label>
 
-          <Link to="/battery" className="tab tab-active">
-            Battery
-          </Link>
+      <div role="tablist" className="tabs tabs-box mb-6">
+        <Link to="/vehiclemonitoring" className="tab">
+          PMS
+        </Link>
 
-          <Link to="/tires" className="tab ">
-            Tires
-          </Link>
-        </div>
+        <Link to="/battery" className="tab tab-active">
+          Battery
+        </Link>
+
+        <Link to="/tires" className="tab ">
+          Tires
+        </Link>
+      </div>
 
       {/* TABS */}
       <div role="tablist" className="tabs tabs-border mb-6">
@@ -147,7 +146,7 @@ export default function Battery() {
                 )}
               </div>
 
-            {/* VEHICLE IMAGE */}
+              {/* VEHICLE IMAGE */}
               <div className="w-full h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center mt-2">
                 <div className="text-center">
                   <svg
@@ -186,9 +185,7 @@ export default function Battery() {
                   v.status === "overdue" ? "text-red-600" : "text-green-600"
                 }`}
               >
-                {v.status === "overdue"
-                  ? "REPLACEMENT NEEDED"
-                  : "Battery OK"}
+                {v.status === "overdue" ? "REPLACEMENT NEEDED" : "Battery OK"}
               </p>
 
               {/* UPDATE BUTTON */}
@@ -205,9 +202,7 @@ export default function Battery() {
               {v.status === "overdue" && v.showBatteryTireForm && (
                 <div className="mt-3 border border-dashed p-3 rounded bg-green-100 space-y-4">
                   <div>
-                    <label className="text-sm font-medium">
-                      Battery Type
-                    </label>
+                    <label className="text-sm font-medium">Battery Type</label>
                     <input
                       type="text"
                       value={v.pms}
