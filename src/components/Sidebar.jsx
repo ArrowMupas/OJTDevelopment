@@ -44,15 +44,20 @@ export default function Sidebar() {
       {/* LOGO */}
       <div className="px-4 py-3 border-b border-green-300">
         <div className="flex items-center gap-3">
-          <img
-            className="h-15 object-contain bg-white rounded-4xl"
-            src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/national_electrification_logo.png"
-            alt="NEA Logo"
-            onError={(e) => {
-              e.currentTarget.src =
-                "https://8upload.com/display/68d52d9e15810/logo-alas1.jpg.php";
-            }}
-          />
+          <div
+            className="h-15 aspect-square bg-white rounded-full p-1 flex items-center justify-center cursor-pointer"
+            onClick={() => (window.location.href = "/")}
+          >
+            <img
+              className="w-full h-full object-contain"
+              src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/national_electrification_logo.png"
+              alt="NEA Logo"
+              onError={(e) => {
+                e.currentTarget.src =
+                  "https://8upload.com/display/68d52d9e15810/logo-alas1.jpg.php";
+              }}
+            />
+          </div>
           <div className="tracking-tight">
             <p className="text-lg font-bold font-rubik">NEA Dashboard</p>
             <p className="text-xs text-gray-300">

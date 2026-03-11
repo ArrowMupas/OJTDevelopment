@@ -12,7 +12,7 @@ export default function AdminNavbar() {
     "/vehiclestatusqueue": "Vehicle Status",
     "/transactions": "Transactions",
     "/survey": "Survey",
-    "/vehicles": "Vehicle Insurance",
+    "/vehicles": "Vehicles",
     "/registration": "Vehicle Registration",
     "/drivers": "Transport Operations Services Unit (Staff)",
     "/inquiry": "Inquiry",

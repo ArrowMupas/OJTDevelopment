@@ -4,13 +4,13 @@ export default function HomePage() {
   return (
     <div className="relative h-150 bg-linear-to-r from-slate-100 to-gray-100 overflow-hidden">
       <motion.div
-        className="absolute right-0 top-0 w-full lg:w-4/5 h-full"
+        className="absolute right-0 top-0 w-full md:w-4/5 h-full"
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1.2 }}
       >
         <div
-          className="w-full h-full bg-cover bg-center opacity-40 md:opacity-100"
+          className="w-full h-full bg-cover bg-center opacity-40 md:opacity-100 sm:opacity-70"
           style={{
             backgroundImage: `url(https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/Neabg.png)`,
           }}
@@ -23,42 +23,39 @@ export default function HomePage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, ease: "easeOut", delay: 0.7 }}
-        className="relative z-10 container px-6 lg:px-12 flex flex-col py-20 min-h-screen"
+        className="relative z-10 container px-5 lg:px-10 flex flex-col py-10 sm:py-20 h-full"
       >
-        <div className="max-w-xl space-y-7">
-          <div className="badge badge-warning">
-            National Electrification Administration
+        <div className="flex flex-col gap-10 md:justify-between h-full max-w-xl">
+          <div className="space-y-4">
+            <h1 className="text-5xl font-bold tracking-tight uppercase text-green-800">
+              Transport <br /> Operations
+              <div className="flex flex-col justify-start">
+                <span className="">Services </span>
+                <span className="text-rotate text-5xl ">
+                  <span className="justify-items-start">
+                    <span className="text-green-500">System</span>
+                    <span className="text-lime-600">Website</span>
+                    <span className="text-emerald-700">Unit </span>
+                  </span>
+                </span>
+              </div>
+            </h1>
+            <p className="text-sm sm:text-lg max-w-xs text-gray-700 leading-tight">
+              Submit your request to the Transport Operations Services Unit
+              (TOSU) for review and approval.
+            </p>
           </div>
 
-          <h1 className="text-5xl font-bold tracking-tight uppercase">
-            Transport Operations
-            <div className="flex flex-col md:flex-row sm:gap-4 justify-start">
-              <span className="">Services </span>
-              <span className="text-rotate text-5xl ">
-                <span className="justify-items-start">
-                  <span className="text-green-500">System</span>
-                  <span className="text-lime-600">Website</span>
-                  <span className="text-emerald-700">Unit </span>
-                </span>
-              </span>
-            </div>
-          </h1>
-
-          <p className="relative z-10 text-lg max-w-md leading-relaxed">
-            Submit your request to the Transport Operations Services Unit (TOSU)
-            for review and approval.
-          </p>
-
-          <div className="flex flex-col items-center md:items-start space-y-3">
+          <div className="flex flex-col items-start space-y-4">
             <a
               href="/request-vehicle"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn btn-lg px-8 bg-green-500 hover:bg-green-400 rounded-xl uppercase leading-tight font-bold text-white text-sm"
+              className="btn btn-lg btn-success bg-green-400 rounded-xl uppercase font-bold text-white text-sm px-7"
             >
-              Request Vehicle
+              Make a Vehicle Request
             </a>
-            <p className="text-sm text-slate-400 font-medium italic mt-1">
+            <p className="text-sm text-gray-500 font-medium italic">
               * (1) One vehicle per request.
             </p>
 

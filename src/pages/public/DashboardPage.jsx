@@ -110,7 +110,7 @@ export default function HomePage() {
                       <td className="bg-violet-50">{req.vehicle_name}</td>
                       <td className="bg-violet-50">
                         {req.plate_number && (
-                          <div className="badge badge-dash badge-primary">
+                          <div className="badge badge-dash badge-primary text-base lg:text-lg">
                             {req.plate_number}
                           </div>
                         )}
