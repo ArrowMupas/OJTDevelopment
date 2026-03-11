@@ -6,6 +6,8 @@ import {
   Truck,
   Van,
   Pencil,
+  Newspaper,
+  NewspaperIcon,
 } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
@@ -16,6 +18,7 @@ import { useEffect, useState, useMemo } from "react";
 import { format } from "date-fns";
 import debounce from "lodash.debounce";
 import OurInput from "../../components/OurInput";
+import { Link } from "react-router-dom";
 
 const vehicleSchema = z
   .object({
@@ -245,7 +248,7 @@ export default function RegistrationPage() {
 
   return (
     <main className="px-5 py-4 h-full pb-25">
-      <h1 className="text-lg font-bold">Vehicle Registration</h1>
+      <h1 className="text-lg font-bold">Vehicles</h1>
       <p className="text-gray-500 text-sm mb-6">List of registered vehicles</p>
 
       <div className="gap-3 flex justify-between">
@@ -275,18 +278,26 @@ export default function RegistrationPage() {
           </div>
         </div>
 
-        <button
-          className="btn btn-outline btn-neutral"
-          onClick={() => {
-            setIsEditing(false);
-            setVehicleToEdit(null);
-            reset({});
-            setSelectedFile(null);
-            document.getElementById("vehicleModal").showModal();
-          }}
-        >
-          <Van className="h-4 w-6" /> Add Registration
-        </button>
+        <div>
+          <Link to="/vehicles">
+            <button className="btn btn-outline btn-neutral mr-3 hover:bg-green-600 hover:text-white hover:border-green-600 transition-all">
+              <NewspaperIcon className="h-4 w-6" /> View Insurance
+            </button>
+          </Link>
+
+          <button
+            className="btn btn-outline btn-neutral"
+            onClick={() => {
+              setIsEditing(false);
+              setVehicleToEdit(null);
+              reset({});
+              setSelectedFile(null);
+              document.getElementById("vehicleModal").showModal();
+            }}
+          >
+            <Van className="h-4 w-6" /> Add Registration
+          </button>
+        </div>
       </div>
 
       {/* MODAL FORM */}
@@ -445,13 +456,13 @@ export default function RegistrationPage() {
 
                     <div className="divider"></div>
 
-                    <p>
+                    {/* <p>
                       <b>Payment Valid Until:</b>{" "}
                       {vehicle.payment_valid_until || "N/A"}
-                    </p>
+                    </p> */}
 
                     <p>
-                      <b>Renewal Date:</b>{" "}
+                      <b>Period Duration:</b>{" "}
                       {vehicle.renewal_from && vehicle.renewal_to
                         ? `${format(
                             new Date(vehicle.renewal_from),

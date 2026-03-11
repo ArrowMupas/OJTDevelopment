@@ -92,19 +92,13 @@ export default function Sidebar() {
 
                 <li>
                   <MenuLink to="/vehicles" icon={Car}>
-                    Insurance
+                    Vehicle Compliance
                   </MenuLink>
                 </li>
 
                 <li>
                   <MenuLink to="/vehiclestatusqueue" icon={ActivityIcon}>
                     Vehicle Status
-                  </MenuLink>
-                </li>
-
-                <li>
-                  <MenuLink to="/registration" icon={FolderClosed}>
-                    Vehicle Registration
                   </MenuLink>
                 </li>
               </ul>
