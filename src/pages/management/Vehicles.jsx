@@ -6,6 +6,7 @@ import {
   Truck,
   Van,
   Pencil,
+  Newspaper,
 } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
@@ -16,6 +17,7 @@ import { useEffect, useState, useMemo } from "react";
 import { format } from "date-fns";
 import debounce from "lodash.debounce";
 import OurInput from "../../components/OurInput";
+import { Link } from "react-router-dom";
 
 const vehicleSchema = z
   .object({
@@ -283,18 +285,26 @@ export default function MaintenancePage() {
           </div>
         </div>
 
-        <button
-          className="btn btn-outline btn-neutral"
-          onClick={() => {
-            setIsEditing(false);
-            setVehicleToEdit(null);
-            reset({});
-            setSelectedFile(null);
-            document.getElementById("vehicleModal").showModal();
-          }}
-        >
-          <Van className="h-4 w-6" /> Add New Vehicle
-        </button>
+        <div>
+          <Link to="/registration">
+            <button className="btn btn-outline btn-neutral mr-3 hover:bg-green-600 hover:text-white hover:border-green-600 transition-all">
+              <Newspaper className="h-4 w-6" /> View Registration
+            </button>
+          </Link>
+
+          <button
+            className="btn btn-outline btn-neutral"
+            onClick={() => {
+              setIsEditing(false);
+              setVehicleToEdit(null);
+              reset({});
+              setSelectedFile(null);
+              document.getElementById("vehicleModal").showModal();
+            }}
+          >
+            <Van className="h-4 w-6" /> Add New Vehicle
+          </button>
+        </div>
       </div>
 
       <dialog id="vehicleModal" className="modal">
