@@ -100,7 +100,7 @@ const AboutUs = () => {
 
       {/* Our Purpose Section */}
       <section className="max-w-5xl mx-auto py-20 px-6">
-        <div className="border-l-4 border-green-700 pl-6">
+        <div className="pl-6">
           <h2 className="text-3xl font-bold text-gray-900 mb-6 uppercase tracking-wide">
             Our Purpose
           </h2>
@@ -113,8 +113,8 @@ const AboutUs = () => {
           </p>
           <p className="text-gray-700 text-lg leading-relaxed italic">
             Whether it is a quick same-day trip or an extended assignment
-            requiring two or more of travel, we ensure every department
-            has the mobility required to fulfill their duties.
+            requiring two or more of travel, we ensure every department has the
+            mobility required to fulfill their duties.
           </p>
         </div>
       </section>

@@ -12,7 +12,7 @@ html {
   font-family: "Inter";
   src:
     url("/fonts/Inter_24pt-Regular.woff2") format("woff2"),
-    url("/fonts/Inter_24pt--Regular.ttf") format("truetype");
+    url("/fonts/Inter_24pt-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -28,10 +28,19 @@ html {
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Bolda";
+  src: url("/fonts/Inter_24pt-Bold.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --font-*: initial;
   --font-sans: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-rubik: Rubik, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-bolda: Bolda, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
   --color-highlight: #349c2a;
   --color-back: #f8fafc;

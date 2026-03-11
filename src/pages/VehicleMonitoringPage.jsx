@@ -104,27 +104,6 @@ export default function VehicleMonitoringPage() {
         </Link>
       </div>
 
-      {/* TABS */}
-      <div role="tablist" className="tabs tabs-border mb-6">
-        <Link to="/vehiclemonitoring">
-          <a role="tab" className="tab tab-active">
-            PMS
-          </a>
-        </Link>
-
-        <Link to="/battery">
-          <a role="tab" className="tab">
-            Battery
-          </a>
-        </Link>
-
-        <Link to="/tires">
-          <a role="tab" className="tab">
-            Tires
-          </a>
-        </Link>
-      </div>
-
       {/* VEHICLE CARDS */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {vehicles.map((v) => (

@@ -6,7 +6,6 @@ import {
   Truck,
   Van,
   Pencil,
-  Newspaper,
 } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
@@ -17,7 +16,7 @@ import { useEffect, useState, useMemo } from "react";
 import { format } from "date-fns";
 import debounce from "lodash.debounce";
 import OurInput from "../../components/OurInput";
-import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 const vehicleSchema = z
   .object({
@@ -56,7 +55,7 @@ export default function MaintenancePage() {
     let query = supabase
       .from("vehicles")
       .select("*")
-      .order("name", { ascending: true });
+      .order("period_to", { ascending: true });
 
     if (searchTerm) {
       query = query.or(
@@ -242,10 +241,32 @@ export default function MaintenancePage() {
     }
   };
 
+  const [swap, setSwap] = useState(true);
+
   return (
     <main className="px-5 py-4 h-full pb-25">
-      <h1 className="text-lg font-bold">Vehicles</h1>
-      <p className="text-gray-500 text-sm mb-6">List of vehicles</p>
+      <div className="flex gap-2 justify-between mb-6 items-center">
+        <div className="w-70">
+          <h1 className="text-lg font-bold">
+            {swap ? "Vehicle Insurance" : "Vehicle Registration"}
+          </h1>
+          <p className="text-gray-500 text-sm">
+            {swap
+              ? "View the insurance of vehicles"
+              : "View the current registration of Vehicles"}
+          </p>
+        </div>
+        <div className="tooltip tooltip-left" data-tip="Toggle Vehicle View">
+          <div>
+            <input
+              type="checkbox"
+              className="toggle toggle-xl my-auto border-green-600 bg-green-500 checked:border-emerald-500 checked:bg-emerald-400 checked:text-emerald-800"
+              checked={swap}
+              onChange={() => setSwap((prev) => !prev)}
+            />
+          </div>
+        </div>
+      </div>
 
       <div className="gap-3 flex justify-between">
         <div className="flex gap-2">
@@ -285,13 +306,7 @@ export default function MaintenancePage() {
           </div>
         </div>
 
-        <div>
-          <Link to="/registration">
-            <button className="btn btn-outline btn-neutral mr-3 hover:bg-green-600 hover:text-white hover:border-green-600 transition-all">
-              <Newspaper className="h-4 w-6" /> View Registration
-            </button>
-          </Link>
-
+        <div className="flex gap-2">
           <button
             className="btn btn-outline btn-neutral"
             onClick={() => {
@@ -460,7 +475,7 @@ export default function MaintenancePage() {
         </div>
       </dialog>
 
-      <div className="border-0 mt-4">
+      <div className="mt-4">
         {vehicles.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-40 gap-5">
             {loading ? (
@@ -478,135 +493,238 @@ export default function MaintenancePage() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {vehicles.map((vehicle) => (
-              <div
-                key={vehicle.id}
-                className="card bg-base-100 shadow border border-base-300"
-              >
-                <figure className="px-4 pt-4">
-                  <div className="w-full h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden">
-                    {vehicle.image_url ? (
-                      <img
-                        src={vehicle.image_url}
-                        alt={vehicle.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <Van className="size-12 text-gray-300" />
-                    )}
-                  </div>
-                </figure>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+            {vehicles.map((vehicle) => {
+              const today = new Date();
+              const periodTo = vehicle.period_to
+                ? new Date(vehicle.period_to)
+                : null;
 
-                <div className="card-body p-5 pt-2">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h2 className="card-title text-lg font-bold">
-                        {vehicle.name}
-                      </h2>
-                      <div className="badge badge-dash badge-primary text-sm mt-1">
+              let status = "valid"; // default
+
+              if (periodTo) {
+                const diffDays = Math.ceil(
+                  (periodTo - today) / (1000 * 60 * 60 * 24),
+                );
+
+                if (diffDays < 0) {
+                  status = "expired";
+                } else if (diffDays <= 90) {
+                  status = "warning";
+                }
+              }
+
+              return (
+                <div
+                  key={vehicle.id}
+                  className="card bg-base-100 shadow border border-base-300 relative"
+                >
+                  {status === "warning" && (
+                    <div className="badge badge-warning text-xs  absolute top-1 right-1">
+                      About to expire
+                    </div>
+                  )}
+                  {status === "expired" && (
+                    <div className="badge badge-error text-xs  absolute top-1 right-1">
+                      Insurance Expired
+                    </div>
+                  )}
+
+                  <figure className="px-4 pt-4">
+                    <div className="w-full h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden">
+                      {vehicle.image_url ? (
+                        <img
+                          src={vehicle.image_url}
+                          alt={vehicle.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <Van className="size-12 text-gray-300" />
+                      )}
+                    </div>
+                  </figure>
+                  <div className="card-body p-5 pt-2">
+                    <div className="flex justify-between items-start mt-2">
+                      <h2 className="text-base font-bold">{vehicle.name}</h2>
+                      <div className="badge badge-dash badge-primary text-xs">
                         {vehicle.plate_number}
                       </div>
                     </div>
-                    <div className="flex gap-1">
-                      <button
-                        onClick={() => {
-                          setIsEditing(true);
-                          setVehicleToEdit(vehicle);
+                    <div className="divider my-0.5"></div>
 
-                          reset({
-                            vehicleName: vehicle.name,
-                            plateNumber: vehicle.plate_number,
-                            policyID: vehicle.policy_id,
-                            policyNumber: vehicle.policy_number,
-                            requiredCovered: vehicle.required_covered,
-                            issueDate: vehicle.issue_date,
-                            periodFrom: vehicle.period_from,
-                            periodTo: vehicle.period_to,
-                          });
-
-                          setSelectedFile(null);
-                          document.getElementById("vehicleModal").showModal();
-                        }}
-                        className="btn btn-ghost btn-square btn-sm text-blue-500"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setVehicleToDelete(vehicle);
-                          document
-                            .getElementById("deleteVehicleModal")
-                            .showModal();
-                        }}
-                        className="btn btn-ghost btn-square btn-sm text-error"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="divider my-1"></div>
-
-                  <div className="space-y-2">
-                    <div>
-                      <span className="text-gray-500 text-xs">Policy ID</span>
-                      <p className="font-medium text-sm">
-                        {vehicle.policy_id || "N/A"}
-                      </p>
-                    </div>
-
-                    <div>
-                      <span className="text-gray-500 text-xs">Policy No.</span>
-                      <p className="font-medium text-sm">
-                        {vehicle.policy_number || "N/A"}
-                      </p>
-                    </div>
-
-                    <div>
-                      <span className="text-gray-500 text-xs">Issue Date</span>
-                      <p className="text-sm">
-                        {vehicle.issue_date
-                          ? format(new Date(vehicle.issue_date), "MMM. d, yyyy")
-                          : "N/A"}
-                      </p>
-                    </div>
-
-                    <div>
-                      <span className="text-gray-500 text-xs">
-                        Period Covered
-                      </span>
-                      <p className="text-sm">
-                        {vehicle.period_from && vehicle.period_to ? (
-                          <>
-                            {format(
-                              new Date(vehicle.period_from),
-                              "MMM. d, yyyy",
-                            )}
-                            {" - "}
-                            {format(
-                              new Date(vehicle.period_to),
-                              "MMM. d, yyyy",
-                            )}
-                          </>
+                    <div className="space-y-2  relative">
+                      <AnimatePresence mode="wait">
+                        {swap ? (
+                          <motion.div
+                            key="insurance"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.25 }}
+                            className="space-y-2"
+                          >
+                            <div>
+                              <span className="text-gray-500 text-xs">
+                                Policy ID
+                              </span>
+                              <p className="font-medium text-sm">
+                                {vehicle.policy_id || "N/A"}
+                              </p>
+                            </div>
+                            <div>
+                              <span className="text-gray-500 text-xs">
+                                Policy No.
+                              </span>
+                              <p className="font-medium text-sm">
+                                {vehicle.policy_number || "N/A"}
+                              </p>
+                            </div>
+                            <div>
+                              <span className="text-gray-500 text-xs">
+                                Issue Date
+                              </span>
+                              <p className="text-sm">
+                                {vehicle.issue_date
+                                  ? format(
+                                      new Date(vehicle.issue_date),
+                                      "MMM. d, yyyy",
+                                    )
+                                  : "N/A"}
+                              </p>
+                            </div>
+                            <div>
+                              <span className="text-gray-500 text-xs">
+                                Required Covered
+                              </span>
+                              <p className="text-sm font-medium">
+                                {vehicle.required_covered}
+                              </p>
+                            </div>
+                            <div>
+                              <span className="text-gray-500 text-xs">
+                                Period Covered
+                              </span>
+                              <p
+                                className={`text-sm ${
+                                  status === "expired"
+                                    ? "text-error font-semibold"
+                                    : status === "warning"
+                                      ? "text-warning font-semibold"
+                                      : ""
+                                }`}
+                              >
+                                {vehicle.period_from && vehicle.period_to ? (
+                                  <div className="flex flex-col">
+                                    <div>
+                                      {format(
+                                        new Date(vehicle.period_from),
+                                        "MMM. d, yyyy",
+                                      )}
+                                      {" - "}
+                                      {format(
+                                        new Date(vehicle.period_to),
+                                        "MMM. d, yyyy",
+                                      )}
+                                    </div>
+                                  </div>
+                                ) : (
+                                  "N/A"
+                                )}
+                              </p>
+                            </div>
+                          </motion.div>
                         ) : (
-                          "N/A"
+                          <motion.div
+                            key="vehicle"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.25 }}
+                            className="space-y-2"
+                          >
+                            <div>
+                              <span className="text-gray-500 text-xs">
+                                Engine No.
+                              </span>
+                              <p className="font-medium text-sm">
+                                vehicle.engine_number
+                              </p>
+                            </div>
+                            <div>
+                              <span className="text-gray-500 text-xs">
+                                Chassis No.
+                              </span>
+                              <p className="font-medium text-sm">
+                                vehicle.chassis_number
+                              </p>
+                            </div>
+                            <div>
+                              <span className="text-gray-500 text-xs">
+                                File No.
+                              </span>
+                              <p className="font-medium text-sm">
+                                vehicle.file_number
+                              </p>
+                            </div>
+                            <div>
+                              <span className="text-gray-500 text-xs">
+                                Year Model
+                              </span>
+                              <p className="font-medium text-sm">
+                                vehicle.year_model
+                              </p>
+                            </div>
+                            <div>
+                              <span className="text-gray-500 text-xs">
+                                Period Duration
+                              </span>
+                              <p className="font-medium text-sm">
+                                vehicle.period_duration
+                              </p>
+                            </div>
+                          </motion.div>
                         )}
-                      </p>
-                    </div>
+                      </AnimatePresence>
 
-                    <div>
-                      <span className="text-gray-500 text-xs">
-                        Required Covered
-                      </span>
-                      <p className="text-sm font-medium">
-                        {vehicle.required_covered}
-                      </p>
+                      <div className="flex justify-end">
+                        <button
+                          onClick={() => {
+                            setIsEditing(true);
+                            setVehicleToEdit(vehicle);
+                            reset({
+                              vehicleName: vehicle.name,
+                              plateNumber: vehicle.plate_number,
+                              policyID: vehicle.policy_id,
+                              policyNumber: vehicle.policy_number,
+                              requiredCovered: vehicle.required_covered,
+                              issueDate: vehicle.issue_date,
+                              periodFrom: vehicle.period_from,
+                              periodTo: vehicle.period_to,
+                            });
+                            setSelectedFile(null);
+                            document.getElementById("vehicleModal").showModal();
+                          }}
+                          className="btn btn-ghost btn-square btn-sm text-blue-500"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setVehicleToDelete(vehicle);
+                            document
+                              .getElementById("deleteVehicleModal")
+                              .showModal();
+                          }}
+                          className="btn btn-ghost btn-square btn-sm text-error"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
