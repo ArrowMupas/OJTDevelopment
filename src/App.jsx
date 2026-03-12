@@ -65,6 +65,7 @@ function App() {
           <Route path="/manage-requests" element={<ManageRequestsPage />} />
           <Route path="/moreinfo/:id" element={<MoreInfoPage />} />
           <Route path="/registration" element={<Registration />} />
+          <Route path="/history" element={<HistoryPage />} />
         </Route>
 
         <Route element={<PublicLayout />}>
@@ -77,7 +78,6 @@ function App() {
           <Route path="/survey" element={<SurveyPage />} />
           <Route path="/request-vehicle" element={<RequestVehiclePage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/history" element={<HistoryPage />} />
           <Route path="/about" element={<AboutPage />} />
         </Route>
 

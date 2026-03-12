@@ -62,7 +62,7 @@ export default function AdminNavbar() {
               <a>Settings</a>
             </li>
             <li>
-              <a className="text-red-500">Logout</a>
+              <a className="text-error">Logout</a>
             </li>
           </ul>
         </div>

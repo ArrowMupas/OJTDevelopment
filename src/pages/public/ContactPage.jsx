@@ -79,10 +79,10 @@ export default function ContactPage() {
                   placeholder="First Name"
                   // Register the input of user (for exampple "firstName") with react-hook-form using the "register" function
                   {...register("firstName")}
-                  className={`input w-full ${errors.firstName ? "border-red-500" : ""}`}
+                  className={`input w-full ${errors.firstName ? "input-error" : ""}`}
                 />
                 {errors.firstName && (
-                  <p className="text-red-500 text-sm mt-1">
+                  <p className="text-error text-sm mt-1">
                     {errors.firstName.message}
                   </p>
                 )}
@@ -96,10 +96,10 @@ export default function ContactPage() {
                   type="text"
                   placeholder="Last Name"
                   {...register("lastName")}
-                  className={`input w-full ${errors.lastName ? "border-red-500" : ""}`}
+                  className={`input w-full ${errors.lastName ? "input-error" : ""}`}
                 />
                 {errors.lastName && (
-                  <p className="text-red-500 text-sm mt-1 ">
+                  <p className="text-error text-sm mt-1 ">
                     {errors.lastName.message}
                   </p>
                 )}
@@ -114,10 +114,10 @@ export default function ContactPage() {
                 type="email"
                 placeholder="Email"
                 {...register("email")}
-                className={`input w-full ${errors.email ? "border-red-500" : ""}`}
+                className={`input w-full ${errors.email ? "input-error" : ""}`}
               />
               {errors.email && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="text-error text-sm mt-1">
                   {errors.email.message}
                 </p>
               )}
@@ -131,10 +131,10 @@ export default function ContactPage() {
                 type="text"
                 placeholder="Phone Number"
                 {...register("phone")}
-                className={`input w-full ${errors.phone ? "border-red-500" : ""}`}
+                className={`input w-full ${errors.phone ? "input-error" : ""}`}
               />
               {errors.phone && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="text-error text-sm mt-1">
                   {errors.phone.message}
                 </p>
               )}
@@ -147,10 +147,10 @@ export default function ContactPage() {
               <textarea
                 placeholder="Your Message"
                 {...register("message")}
-                className={`textarea w-full h-40 ${errors.message ? "border-red-500" : ""}`}
+                className={`textarea w-full h-40 ${errors.message ? "input-error" : ""}`}
               />
               {errors.message && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="text-error text-sm mt-1">
                   {errors.message.message}
                 </p>
               )}
@@ -197,8 +197,8 @@ export default function ContactPage() {
             <strong>
               <MapPin className="h-4 w-4 inline-block mr-2" /> Address:
             </strong>{" "}
-            Basement 1, NEA building #57, NIA Road, Quezon City,
-            Philippines, 1001
+            Basement 1, NEA building #57, NIA Road, Quezon City, Philippines,
+            1001
           </p>
         </div>
       </div>

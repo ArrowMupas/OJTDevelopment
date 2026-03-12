@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { AlertTriangle, CheckCircle, History, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -70,7 +70,7 @@ export default function VehicleMonitoringPage() {
 
         <button
           onClick={() => navigate("/history")}
-          className="bg-green-600 text-white px-5 py-2 rounded-2xl flex items-center gap-2"
+          className="btn bg-green-500 hover:bg-green-400 text-white"
         >
           <History size={18} /> View History
         </button>
@@ -108,7 +108,7 @@ export default function VehicleMonitoringPage() {
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {vehicles.map((v) => (
           <div
-            key={v.plate}
+            key={v.id}
             className={`card border-2 shadow bg-base-100 ${
               v.status === "overdue"
                 ? "border-red-400 bg-red-50"

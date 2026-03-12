@@ -1,13 +1,9 @@
 import { format, parse } from "date-fns";
 import { supabase } from "../../supabaseClient";
-import {
-  Clipboard,
-  ClipboardCheck,
-  ClipboardClock,
-  SquareArrowRight,
-} from "lucide-react";
+import { Clipboard, ClipboardCheck, ClipboardClock, Info } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import Tippy from "@tippyjs/react";
+import "tippy.js/themes/light.css";
 
 export default function ManageRequestsPage() {
   const [drivers, setDrivers] = useState([]);
@@ -271,7 +267,7 @@ export default function ManageRequestsPage() {
                           req.status === "Completed"
                             ? " text-green-500 select-success"
                             : req.status === "Cancelled" &&
-                              "select-error  text-red-500 "
+                              "select-error  text-error "
                         }`}
                         value={req.status || ""}
                         onChange={(e) => updateStatus(req.id, e.target.value)}
@@ -282,19 +278,29 @@ export default function ManageRequestsPage() {
                         <option value="Completed" className="text-green-500 ">
                           Completed
                         </option>
-                        <option value="Cancelled" className="text-red-500">
+                        <option value="Cancelled" className="text-error">
                           Cancelled
                         </option>
                       </select>
                     </td>
 
-                    {/* ACTION */}
                     <td>
-                      <Link to={`/moreinfo/${req.id}`}>
-                        <button className="btn btn-square">
-                          <SquareArrowRight className="size-7 text-success" />
-                        </button>
-                      </Link>
+                      <Tippy
+                        interactive
+                        placement="left"
+                        theme="light"
+                        content={
+                          <div className="p-3 w-64 ">
+                            <h3 className="font-bold">Instructions</h3>
+                            <p>{req.other_instructions || "None"}</p>
+
+                            <h3 className="font-bold mt-2">Items</h3>
+                            <p>{req.items || "None"}</p>
+                          </div>
+                        }
+                      >
+                        <Info className="size-5" />
+                      </Tippy>
                     </td>
                   </tr>
                 );

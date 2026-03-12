@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AlertTriangle, CheckCircle, History, Search } from "lucide-react";
+import { AlertTriangle, CheckCircle, History, Search, Van } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 
@@ -141,14 +141,14 @@ export default function Tires() {
         </div>
 
         {/* VEHICLE CARDS */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           {vehicles.map((v) => {
             const status = getTireStatus(v.install_date_tire);
 
             return (
               <div
                 key={v.id}
-                className={`card shadow border-2 ${
+                className={`card shadow-sm border-2 ${
                   status === "overdue"
                     ? "border-error bg-error/10"
                     : status === "warning"
@@ -157,10 +157,23 @@ export default function Tires() {
                 }`}
               >
                 <div className="card-body">
+                  <div className="w-full h-25 sm:h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden">
+                    {v.image_url ? (
+                      <img
+                        src={v.image_url}
+                        alt={v.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <Van className="size-12 text-gray-300" />
+                    )}
+                  </div>
                   <div className="flex justify-between">
                     <div>
-                      <h2 className="card-title">{v.plate_number}</h2>
-                      <p className="text-sm opacity-70">{v.name}</p>
+                      <p className="text-base font-bold">{v.name}</p>
+                      <div className="badge badge-primary badge-dash">
+                        {v.plate_number}
+                      </div>
                     </div>
 
                     {status === "overdue" ? (
