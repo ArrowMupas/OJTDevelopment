@@ -36,6 +36,12 @@ const vehicleSchema = z
     issueDate: z.string().min(1, "Issue date is required"),
     periodFrom: z.string().min(1, "Period from is required"),
     periodTo: z.string().min(1, "Period to is required"),
+    engineNumber: z.string().optional(),
+    chassisNumber: z.string().optional(),
+    fileNumber: z.string().optional(),
+    yearModel: z.string().min(1, "Year Model is required"),
+    periodDuration: z.string().min(1, "Period Duration is required"),
+    periodDurationTo: z.string().min(1, "Period Duration To is required"),
   })
   .refine((data) => new Date(data.periodTo) >= new Date(data.periodFrom), {
     message: "Period To must be after Period From",
@@ -150,6 +156,12 @@ export default function MaintenancePage() {
           period_from: data.periodFrom,
           period_to: data.periodTo,
           image_url: imageUrl,
+          engine_number: data.engineNumber,
+          chassis_number: data.chassisNumber,
+          file_number: data.fileNumber,
+          year_model: data.yearModel,
+          period_duration: data.periodDuration,
+          period_duration_to: data.periodDurationTo,
         },
       ]);
 
@@ -201,6 +213,12 @@ export default function MaintenancePage() {
           period_from: data.periodFrom,
           period_to: data.periodTo,
           image_url: imageUrl,
+          engine_number: data.engineNumber,
+          chassis_number: data.chassisNumber,
+          file_number: data.fileNumber,
+          year_model: data.yearModel,
+          period_duration: data.periodDuration,
+          period_duration_to: data.periodDurationTo,
         })
         .eq("id", vehicleToEdit.id);
 
@@ -349,115 +367,214 @@ export default function MaintenancePage() {
               ✕
             </button>
 
-            <div className="grid md:grid-cols-2 md:gap-6">
-              <OurInput
-                label="Vehicle Name"
-                name="vehicleName"
-                register={register}
-                error={errors.vehicleName}
-              />
-              <OurInput
-                label="Plate Number"
-                name="plateNumber"
-                register={register}
-                error={errors.plateNumber}
-              />
-            </div>
+            <div className="mb-6">
+              <h3 className="font-semibold text-sm text-gray-500 mb-3">
+                Vehicle Information
+              </h3>
 
-            <div className="grid md:grid-cols-2 md:gap-6 mt-4">
-              <OurInput
-                label="Policy ID"
-                name="policyID"
-                register={register}
-                error={errors.policyID}
-              />
-              <OurInput
-                label="Policy Number"
-                name="policyNumber"
-                register={register}
-                error={errors.policyNumber}
-              />
-            </div>
-
-            <div className="mt-4">
-              <OurInput
-                label="Required Covered"
-                name="requiredCovered"
-                register={register}
-                error={errors.requiredCovered}
-              />
-            </div>
-
-            <div className="grid md:grid-cols-3 md:gap-6 mt-4">
-              <div className="form-control w-full">
-                <label className="label">
-                  <span className="label-text">Issue Date</span>
-                </label>
-                <input
-                  type="date"
-                  className={`input input-bordered w-full ${errors.issueDate ? "input-error" : ""}`}
-                  {...register("issueDate")}
+              <div className="grid md:grid-cols-2 gap-5">
+                <OurInput
+                  label="Vehicle Name"
+                  name="vehicleName"
+                  register={register}
+                  error={errors.vehicleName}
                 />
-                {errors.issueDate && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.issueDate.message}
-                  </p>
-                )}
-              </div>
 
-              <div className="form-control w-full">
-                <label className="label">
-                  <span className="label-text">Period From</span>
-                </label>
-                <input
-                  type="date"
-                  className={`input input-bordered w-full ${errors.periodFrom ? "input-error" : ""}`}
-                  {...register("periodFrom")}
+                <OurInput
+                  label="Plate Number"
+                  name="plateNumber"
+                  register={register}
+                  error={errors.plateNumber}
                 />
-                {errors.periodFrom && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.periodFrom.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="form-control w-full">
-                <label className="label">
-                  <span className="label-text">Period To</span>
-                </label>
-                <input
-                  type="date"
-                  className={`input input-bordered w-full ${errors.periodTo ? "input-error" : ""}`}
-                  {...register("periodTo")}
-                />
-                {errors.periodTo && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.periodTo.message}
-                  </p>
-                )}
               </div>
             </div>
 
-            <div className="form-control w-full mt-4">
-              <label className="label">
-                <span className="label-text">Upload Vehicle Image</span>
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                className="file-input file-input-bordered w-full"
-                onChange={(e) => setSelectedFile(e.target.files[0])}
-              />
-              {selectedFile && (
-                <p className="text-sm text-gray-600 mt-2">
-                  Selected: {selectedFile.name}
-                </p>
-              )}
+            <div className="divider my-2"></div>
+
+            <div className="mb-6">
+              <h3 className="font-semibold text-sm text-gray-500 mb-3">
+                Insurance Details
+              </h3>
+
+              <div className="grid md:grid-cols-2 gap-5">
+                <OurInput
+                  label="Policy ID"
+                  name="policyID"
+                  register={register}
+                  error={errors.policyID}
+                />
+
+                <OurInput
+                  label="Policy Number"
+                  name="policyNumber"
+                  register={register}
+                  error={errors.policyNumber}
+                />
+              </div>
+
+              <div className="mt-4">
+                <OurInput
+                  label="Required Covered"
+                  name="requiredCovered"
+                  register={register}
+                  error={errors.requiredCovered}
+                />
+              </div>
+            </div>
+
+            <div className="divider my-2"></div>
+
+            <div className="mb-6">
+              <h3 className="font-semibold text-sm text-gray-500 mb-3">
+                Vehicle Registration
+              </h3>
+
+              <div className="grid md:grid-cols-2 gap-5">
+                <OurInput
+                  label="Engine Number"
+                  name="engineNumber"
+                  register={register}
+                  error={errors.engineNumber}
+                />
+
+                <OurInput
+                  label="Chassis Number"
+                  name="chassisNumber"
+                  register={register}
+                  error={errors.chassisNumber}
+                />
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-5 mt-4">
+                <OurInput
+                  label="File Number"
+                  name="fileNumber"
+                  register={register}
+                  error={errors.fileNumber}
+                />
+
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text">Year Model</span>
+                  </label>
+                  <input
+                    type="date"
+                    className={`input input-bordered w-full ${errors.yearModel ? "input-error" : ""}`}
+                    {...register("yearModel")}
+                  />
+                  {errors.yearModel && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.yearModel.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text">Period Duration</span>
+                  </label>
+                  <input
+                    type="date"
+                    className={`input input-bordered w-full ${errors.periodDuration ? "input-error" : ""}`}
+                    {...register("periodDuration")}
+                  />
+                  {errors.periodDuration && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.periodDuration.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text">Period Duration To</span>
+                  </label>
+                  <input
+                    type="date"
+                    className={`input input-bordered w-full ${errors.periodDurationTo ? "input-error" : ""}`}
+                    {...register("periodDurationTo")}
+                  />
+                  {errors.periodDurationTo && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.periodDurationTo.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="divider my-2"></div>
+
+            <div className="mb-6">
+              <h3 className="font-semibold text-sm text-gray-500 mb-3">
+                Insurance Period
+              </h3>
+
+              <div className="grid md:grid-cols-3 gap-5">
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text">Issue Date</span>
+                  </label>
+                  <input
+                    type="date"
+                    className={`input input-bordered w-full ${errors.issueDate ? "input-error" : ""}`}
+                    {...register("issueDate")}
+                  />
+                </div>
+
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text">Period From</span>
+                  </label>
+                  <input
+                    type="date"
+                    className={`input input-bordered w-full ${errors.periodFrom ? "input-error" : ""}`}
+                    {...register("periodFrom")}
+                  />
+                </div>
+
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text">Period To</span>
+                  </label>
+                  <input
+                    type="date"
+                    className={`input input-bordered w-full ${errors.periodTo ? "input-error" : ""}`}
+                    {...register("periodTo")}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="divider my-2"></div>
+
+            {/* IMAGE */}
+            <div className="mb-6">
+              <h3 className="font-semibold text-sm text-gray-500 mb-3">
+                Vehicle Image
+              </h3>
+
+              <div className="form-control w-full">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="file-input file-input-bordered w-full"
+                  onChange={(e) => setSelectedFile(e.target.files[0])}
+                />
+
+                {selectedFile && (
+                  <p className="text-sm text-gray-600 mt-2">
+                    Selected: {selectedFile.name}
+                  </p>
+                )}
+              </div>
             </div>
 
             <button
               type="submit"
-              className="btn btn-lg w-full bg-green-600 text-white hover:bg-highlight mt-4"
+              className="btn btn-lg w-full bg-green-600 text-white hover:bg-highlight"
               disabled={isSubmitting || uploading}
             >
               <Truck className="size-5 mr-2" />
@@ -647,7 +764,7 @@ export default function MaintenancePage() {
                                 Engine No.
                               </span>
                               <p className="font-medium text-sm">
-                                vehicle.engine_number
+                                {vehicle.engine_number || "N/A"}
                               </p>
                             </div>
                             <div>
@@ -655,7 +772,7 @@ export default function MaintenancePage() {
                                 Chassis No.
                               </span>
                               <p className="font-medium text-sm">
-                                vehicle.chassis_number
+                                {vehicle.chassis_number || "N/A"}
                               </p>
                             </div>
                             <div>
@@ -663,7 +780,7 @@ export default function MaintenancePage() {
                                 File No.
                               </span>
                               <p className="font-medium text-sm">
-                                vehicle.file_number
+                                {vehicle.file_number || "N/A"}
                               </p>
                             </div>
                             <div>
@@ -671,7 +788,7 @@ export default function MaintenancePage() {
                                 Year Model
                               </span>
                               <p className="font-medium text-sm">
-                                vehicle.year_model
+                                {vehicle.year_model || "N/A"}
                               </p>
                             </div>
                             <div>
@@ -679,7 +796,8 @@ export default function MaintenancePage() {
                                 Period Duration
                               </span>
                               <p className="font-medium text-sm">
-                                vehicle.period_duration
+                                {vehicle.period_duration || "N/A"} -
+                                {vehicle.period_duration_to || "N/A"}
                               </p>
                             </div>
                           </motion.div>
@@ -700,6 +818,12 @@ export default function MaintenancePage() {
                               issueDate: vehicle.issue_date,
                               periodFrom: vehicle.period_from,
                               periodTo: vehicle.period_to,
+                              engineNumber: vehicle.engine_number,
+                              chassisNumber: vehicle.chassis_number,
+                              fileNumber: vehicle.file_number,
+                              yearModel: vehicle.year_model,
+                              periodDuration: vehicle.period_duration,
+                              periodDurationTo: vehicle.period_duration_to,
                             });
                             setSelectedFile(null);
                             document.getElementById("vehicleModal").showModal();
