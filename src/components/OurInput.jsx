@@ -18,7 +18,7 @@ export default function FormInput({
           placeholder={placeholder}
           {...register(name)}
         />
-        {error && <p className="text-red-500 text-sm mt-1">{error.message}</p>}
+        {error && <p className="text-error text-sm mt-1">{error.message}</p>}
       </fieldset>
     </div>
   );

@@ -20,6 +20,7 @@ import { useEffect, useState, useMemo } from "react";
 import debounce from "lodash.debounce";
 import OurInput from "../../components/OurInput";
 
+// Driver schema for input validation
 const driverSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
@@ -28,32 +29,39 @@ const driverSchema = z.object({
 });
 
 export default function MaintenancePage() {
+  // Driver fetch states
   const [drivers, setDrivers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
+  // Driver fetch with searching
   const fetchDrivers = async (searchTerm = "") => {
+    // Start loading
     setLoading(true);
 
+    // Query supabase
     let query = supabase
       .from("drivers")
       .select("*")
       .order("first_name", { ascending: true });
 
+    // If searching only fetch ones matching the search
     if (searchTerm) {
       query = query.or(
         `first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%`,
       );
     }
 
+    // Get data and save it to state or error if there's error
     const { data, error } = await query;
-
     if (error) console.error(error);
     else setDrivers(data);
 
+    // End loading
     setLoading(false);
   };
 
+  // The fetching of data is delayed while user is still typing on search
   const debouncedSearch = useMemo(
     () =>
       debounce((value) => {
@@ -63,10 +71,12 @@ export default function MaintenancePage() {
     [],
   );
 
+  // Fetch the drivers at page load
   useEffect(() => {
     fetchDrivers();
   }, []);
 
+  // Cleanup of debounce
   useEffect(() => {
     return () => debouncedSearch.cancel();
   }, [debouncedSearch]);

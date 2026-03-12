@@ -262,7 +262,7 @@ export default function MaintenancePage() {
   const [swap, setSwap] = useState(true);
 
   return (
-    <main className="px-5 py-4 h-full pb-25">
+    <main className="px-3 py-4 sm:px-5  h-full pb-25 ">
       <div className="flex gap-2 justify-between mb-6 items-center">
         <div className="w-70">
           <h1 className="text-lg font-bold">
@@ -285,10 +285,9 @@ export default function MaintenancePage() {
           </div>
         </div>
       </div>
-
-      <div className="gap-3 flex justify-between">
+      <div className="gap-3 flex flex-col sm:flex-row justify-between">
         <div className="flex gap-2">
-          <label className="input input-neutral">
+          <label className="input input-neutral w-full">
             <Search className="h-4 w-6" />
             <input
               type="search"
@@ -324,9 +323,9 @@ export default function MaintenancePage() {
           </div>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 ">
           <button
-            className="btn btn-outline btn-neutral"
+            className="btn btn-outline btn-neutral w-full"
             onClick={() => {
               setIsEditing(false);
               setVehicleToEdit(null);
@@ -339,7 +338,6 @@ export default function MaintenancePage() {
           </button>
         </div>
       </div>
-
       <dialog id="vehicleModal" className="modal">
         <div className="modal-box max-w-3xl">
           <h1 className="text-2xl font-bold">
@@ -463,7 +461,7 @@ export default function MaintenancePage() {
                     {...register("yearModel")}
                   />
                   {errors.yearModel && (
-                    <p className="text-red-500 text-sm mt-1">
+                    <p className="text-error text-sm mt-1">
                       {errors.yearModel.message}
                     </p>
                   )}
@@ -479,7 +477,7 @@ export default function MaintenancePage() {
                     {...register("periodDuration")}
                   />
                   {errors.periodDuration && (
-                    <p className="text-red-500 text-sm mt-1">
+                    <p className="text-error text-sm mt-1">
                       {errors.periodDuration.message}
                     </p>
                   )}
@@ -497,7 +495,7 @@ export default function MaintenancePage() {
                     {...register("periodDurationTo")}
                   />
                   {errors.periodDurationTo && (
-                    <p className="text-red-500 text-sm mt-1">
+                    <p className="text-error text-sm mt-1">
                       {errors.periodDurationTo.message}
                     </p>
                   )}
@@ -610,7 +608,7 @@ export default function MaintenancePage() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-0.5 sm:gap-2">
             {vehicles.map((vehicle) => {
               const today = new Date();
               const periodTo = vehicle.period_to
@@ -648,7 +646,7 @@ export default function MaintenancePage() {
                   )}
 
                   <figure className="px-4 pt-4">
-                    <div className="w-full h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden">
+                    <div className="w-full h-25 sm:h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden">
                       {vehicle.image_url ? (
                         <img
                           src={vehicle.image_url}
@@ -661,13 +659,14 @@ export default function MaintenancePage() {
                     </div>
                   </figure>
                   <div className="card-body p-5 pt-2">
-                    <div className="flex justify-between items-start mt-2">
-                      <h2 className="text-base font-bold">{vehicle.name}</h2>
-                      <div className="badge badge-dash badge-primary text-xs">
+                    <div className="flex flex-col sm:flex-row justify-between items-start mt-0 sm:mt-2">
+                      <h2 className="text-sm sm:text-base font-bold">
+                        {vehicle.name}
+                      </h2>
+                      <div className="badge badge-dash badge-primary badge-xs sm:badge-sm text-xs">
                         {vehicle.plate_number}
                       </div>
                     </div>
-                    <div className="divider my-0.5"></div>
 
                     <div className="space-y-2  relative">
                       <AnimatePresence mode="wait">
@@ -678,13 +677,13 @@ export default function MaintenancePage() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
                             transition={{ duration: 0.25 }}
-                            className="space-y-2"
+                            className="space-y-1 sm:space-y-2"
                           >
                             <div>
                               <span className="text-gray-500 text-xs">
                                 Policy ID
                               </span>
-                              <p className="font-medium text-sm">
+                              <p className="text-xs sm:text-sm">
                                 {vehicle.policy_id || "N/A"}
                               </p>
                             </div>
@@ -692,7 +691,7 @@ export default function MaintenancePage() {
                               <span className="text-gray-500 text-xs">
                                 Policy No.
                               </span>
-                              <p className="font-medium text-sm">
+                              <p className="text-xs sm:text-sm">
                                 {vehicle.policy_number || "N/A"}
                               </p>
                             </div>
@@ -713,7 +712,7 @@ export default function MaintenancePage() {
                               <span className="text-gray-500 text-xs">
                                 Required Covered
                               </span>
-                              <p className="text-sm font-medium">
+                              <p className="text-sm ">
                                 {vehicle.required_covered}
                               </p>
                             </div>
@@ -757,13 +756,13 @@ export default function MaintenancePage() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
                             transition={{ duration: 0.25 }}
-                            className="space-y-2"
+                            className="space-y-1 sm:space-y-2"
                           >
                             <div>
                               <span className="text-gray-500 text-xs">
                                 Engine No.
                               </span>
-                              <p className="font-medium text-sm">
+                              <p className="text-xs sm:text-sm">
                                 {vehicle.engine_number || "N/A"}
                               </p>
                             </div>
@@ -771,7 +770,7 @@ export default function MaintenancePage() {
                               <span className="text-gray-500 text-xs">
                                 Chassis No.
                               </span>
-                              <p className="font-medium text-sm">
+                              <p className="text-xs sm:text-sm">
                                 {vehicle.chassis_number || "N/A"}
                               </p>
                             </div>
@@ -779,7 +778,7 @@ export default function MaintenancePage() {
                               <span className="text-gray-500 text-xs">
                                 File No.
                               </span>
-                              <p className="font-medium text-sm">
+                              <p className="text-xs sm:text-sm">
                                 {vehicle.file_number || "N/A"}
                               </p>
                             </div>
@@ -787,7 +786,7 @@ export default function MaintenancePage() {
                               <span className="text-gray-500 text-xs">
                                 Year Model
                               </span>
-                              <p className="font-medium text-sm">
+                              <p className=" text-sm">
                                 {vehicle.year_model || "N/A"}
                               </p>
                             </div>
@@ -795,7 +794,7 @@ export default function MaintenancePage() {
                               <span className="text-gray-500 text-xs">
                                 Period Duration
                               </span>
-                              <p className="font-medium text-sm">
+                              <p className=" text-sm">
                                 {vehicle.period_duration || "N/A"} -
                                 {vehicle.period_duration_to || "N/A"}
                               </p>
@@ -852,7 +851,6 @@ export default function MaintenancePage() {
           </div>
         )}
       </div>
-
       <dialog id="deleteVehicleModal" className="modal">
         <div className="modal-box">
           <h2 className="text-xl font-bold text-center">Delete Vehicle</h2>
