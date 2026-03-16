@@ -97,7 +97,7 @@ export default function Sidebar() {
 
                 <li>
                   <MenuLink to="/vehicles" icon={Car}>
-                    Vehicle Compliance
+                    Insurance & Registration
                   </MenuLink>
                 </li>
 

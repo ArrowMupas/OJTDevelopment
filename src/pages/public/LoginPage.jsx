@@ -1,24 +1,42 @@
 import { supabase } from "../../supabaseClient";
+import { useState } from "react";
 
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  // Google login
   const loginWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: {
-        redirectTo: "http://localhost:5173/admindashboard",
-      },
+      options: { redirectTo: "http://localhost:5173/admindashboard" },
     });
 
+    if (error) console.error("Login error:", error.message);
+  };
+
+  // Email/password login
+  const loginWithEmail = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     if (error) {
-      console.error("Login error:", error.message);
+      setErrorMsg(error.message);
     }
+    setLoading(false);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="card card-body max-w-xl p-10 flex flex-col justify-center items-center gap-8 bg-green-500 text-white">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 via-white to-green-200">
+      <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-6 flex flex-col items-center gap-4">
+        {/* Logo */}
         <div
-          className="w-30  aspect-square bg-white rounded-full p-1 flex items-center justify-center cursor-pointer"
+          className="w-20 h-20 bg-green-100 rounded-full p-2 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-300"
           onClick={() => (window.location.href = "/")}
         >
           <img
@@ -27,24 +45,30 @@ export default function Login() {
             alt="Logo"
           />
         </div>
-        <h2 className="font-bold tracking-tight uppercase text-2xl text-center ">
+
+        {/* Heading */}
+        <h2 className="text-center text-xl sm:text-xl font-extrabold text-green-800 leading-tight">
           Transport Operations Services Unit
           <br />
-          National Electrification Administration
+          <span className="text-green-600 text-lg sm:text-sm">
+            Motorpool
+          </span>
         </h2>
+
+        {/* Google Login */}
         <button
-          className="btn bg-white text-black border-[#e5e5e5]"
           onClick={loginWithGoogle}
+          className="w-full flex items-center justify-center gap-3 px-6 py-3 rounded-xl bg-white text-gray-900 font-semibold shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200"
         >
           <svg
             aria-label="Google logo"
-            width="16"
-            height="16"
+            width="20"
+            height="20"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 512 512"
           >
             <g>
-              <path d="m0 0H512V512H0" fill="#fff"></path>
+              <path d="M0 0H512V512H0" fill="#fff"></path>
               <path
                 fill="#34a853"
                 d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341"
@@ -65,6 +89,56 @@ export default function Login() {
           </svg>
           Login with Google
         </button>
+
+        {/* Divider */}
+        <div className="flex items-center w-full gap-4">
+          <hr className="flex-1 border-gray-300" />
+          <span className="text-gray-400 text-sm uppercase">or</span>
+          <hr className="flex-1 border-gray-300" />
+        </div>
+
+        {/* Email / Password Login */}
+        <form
+          onSubmit={loginWithEmail}
+          className="w-full flex flex-col gap-4"
+        >
+         
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-green-600 text-white font-semibold py-3 rounded-xl hover:bg-green-700 transition-colors duration-300"
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+
+        {/* Signup */}
+        <p className="text-gray-500 text-sm text-center mt-2">
+          Don't have an account?{" "}
+          <a href="/signup" className="text-green-600 font-semibold hover:underline">
+            Sign up
+          </a>
+        </p>
+
+        <p className="text-xs text-gray-400 mt-2 text-center">
+          By logging in, you agree to our Terms and Privacy Policy.
+        </p>
       </div>
     </div>
   );
