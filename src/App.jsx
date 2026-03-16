@@ -15,6 +15,7 @@ import AboutPage from "./pages/public/AboutPage";
 import RequestVehiclePage from "./pages/public/RequestVehiclePage";
 import RequestInputPage from "./pages/public/RequestInput";
 import SurveyInput from "./pages/public/SurveyInput";
+import CompleteRequest from "./pages/management/CompleteRequest";
 
 import VehiclePage from "./pages/management/Vehicles";
 import Drivers from "./pages/management/Drivers";
@@ -66,6 +67,7 @@ function App() {
           <Route path="/moreinfo/:id" element={<MoreInfoPage />} />
           <Route path="/registration" element={<Registration />} />
           <Route path="/history" element={<HistoryPage />} />
+          <Route path="/completerequest" element={<CompleteRequest />} />
         </Route>
 
         <Route element={<PublicLayout />}>
