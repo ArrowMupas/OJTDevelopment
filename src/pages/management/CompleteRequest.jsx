@@ -129,14 +129,14 @@ export default function CompleteRequest() {
         </div>
       </div>
 
-      <h2 className=" font-semibold mt-12 text-gray-700">
+      <h2 className=" font-semibold  text-gray-700">
         List of Completed Request
         <div className="badge badge-dash badge-primary badge-xs sm:badge-sm text-xs ml-2">
           Total: 21
         </div>
       </h2>
 
-      <div className="bg-white mt-4">
+      <div className="bg-white mt-2">
         <div className="overflow-x-auto  rounded-lg">
           <table className="table ">
             <thead className="bg-green-500 text-white">

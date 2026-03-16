@@ -291,7 +291,7 @@ export default function MaintenancePage() {
         </div>
 
         <button
-          className="btn btn-soft btn-info"
+          className="btn  btn-info text-white font-bold"
           onClick={() => {
             setIsEditing(false);
             setDriverToEdit(null);

@@ -6,47 +6,19 @@ import {
   Truck,
   Van,
   Pencil,
+  ClipboardClock,
+  ClipboardX,
 } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useEffect, useState, useMemo } from "react";
 import { format } from "date-fns";
 import debounce from "lodash.debounce";
 import OurInput from "../../components/OurInput";
 import { motion, AnimatePresence } from "framer-motion";
-
-const vehicleSchema = z
-  .object({
-    vehicleName: z
-      .string()
-      .min(2, "Vehicle name must be at least 2 characters"),
-    plateNumber: z
-      .string()
-      .min(2, "Plate number must be at least 2 characters"),
-    policyNumber: z
-      .string()
-      .min(2, "Policy number must be at least 2 characters"),
-    policyID: z.string().min(2, "Policy ID must be at least 2 characters"),
-    requiredCovered: z
-      .string()
-      .min(2, "Required covered must be at least 2 characters"),
-    issueDate: z.string().min(1, "Issue date is required"),
-    periodFrom: z.string().min(1, "Period from is required"),
-    periodTo: z.string().min(1, "Period to is required"),
-    engineNumber: z.string().optional(),
-    chassisNumber: z.string().optional(),
-    fileNumber: z.string().optional(),
-    yearModel: z.string().min(1, "Year Model is required"),
-    periodDuration: z.string().min(1, "Period Duration is required"),
-    periodDurationTo: z.string().min(1, "Period Duration To is required"),
-  })
-  .refine((data) => new Date(data.periodTo) >= new Date(data.periodFrom), {
-    message: "Period To must be after Period From",
-    path: ["periodTo"],
-  });
+import { vehicleSchema } from "../../schemas/vehicleSchema";
 
 export default function MaintenancePage() {
   const [vehicles, setVehicles] = useState([]);
@@ -54,14 +26,17 @@ export default function MaintenancePage() {
   const [search, setSearch] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [swap, setSwap] = useState(true);
 
   const fetchVehicles = async (searchTerm = "") => {
     setLoading(true);
 
+    const orderColumn = swap ? "period_to" : "period_duration_to";
+
     let query = supabase
       .from("vehicles")
       .select("*")
-      .order("period_to", { ascending: true });
+      .order(orderColumn, { ascending: true });
 
     if (searchTerm) {
       query = query.or(
@@ -88,11 +63,65 @@ export default function MaintenancePage() {
 
   useEffect(() => {
     fetchVehicles();
-  }, []);
+  }, [swap]);
 
   useEffect(() => {
     return () => debouncedSearch.cancel();
   }, [debouncedSearch]);
+
+  const { stats, vehiclesWithStatus } = useMemo(() => {
+    const today = new Date();
+
+    let insuranceExpired = 0;
+    let insuranceExpiring = 0;
+    let registrationExpired = 0;
+    let registrationExpiring = 0;
+
+    const enrichedVehicles = (vehicles || []).map((v) => {
+      const periodTo = v.period_to ? new Date(v.period_to) : null;
+      const periodDurationTo = v.period_duration_to
+        ? new Date(v.period_duration_to)
+        : null;
+
+      let status = "valid";
+      if (periodTo) {
+        const diff = Math.ceil((periodTo - today) / (1000 * 60 * 60 * 24));
+        if (diff < 0) {
+          status = "expired";
+          insuranceExpired++;
+        } else if (diff <= 90) {
+          status = "warning";
+          insuranceExpiring++;
+        }
+      }
+
+      let status2 = "valid";
+      if (periodDurationTo) {
+        const diff = Math.ceil(
+          (periodDurationTo - today) / (1000 * 60 * 60 * 24),
+        );
+        if (diff < 0) {
+          status2 = "expired";
+          registrationExpired++;
+        } else if (diff <= 90) {
+          status2 = "warning";
+          registrationExpiring++;
+        }
+      }
+
+      return { ...v, status, status2 };
+    });
+
+    return {
+      stats: {
+        insuranceExpired,
+        insuranceExpiring,
+        registrationExpired,
+        registrationExpiring,
+      },
+      vehiclesWithStatus: enrichedVehicles,
+    };
+  }, [vehicles]);
 
   const uploadFile = async (file) => {
     try {
@@ -258,12 +287,9 @@ export default function MaintenancePage() {
       toast.success("Vehicle deleted successfully!");
     }
   };
-
-  const [swap, setSwap] = useState(true);
-
   return (
-    <main className="px-3 py-4 sm:px-5  h-full pb-25 ">
-      <div className="flex gap-2 justify-between mb-6 items-center">
+    <main className="px-3 py-4 sm:px-5  h-full pb-25 space-y-7">
+      <div className="flex gap-2 justify-between items-center">
         <div className="w-70">
           <h1 className="text-lg font-bold">
             {swap ? "Vehicle Insurance" : "Vehicle Registration"}
@@ -274,70 +300,115 @@ export default function MaintenancePage() {
               : "View the current registration of Vehicles"}
           </p>
         </div>
-        <div className="tooltip tooltip-left" data-tip="Toggle Vehicle View">
-          <div>
-            <input
-              type="checkbox"
-              className="toggle toggle-xl my-auto border-green-600 bg-green-500 checked:border-emerald-500 checked:bg-emerald-400 checked:text-emerald-800"
-              checked={swap}
-              onChange={() => setSwap((prev) => !prev)}
-            />
-          </div>
-        </div>
-      </div>
-      <div className="gap-3 flex flex-col sm:flex-row justify-between">
-        <div className="flex gap-2">
-          <label className="input input-neutral w-full">
-            <Search className="h-4 w-6" />
-            <input
-              type="search"
-              placeholder="Search vehicles..."
-              value={search}
-              onChange={(e) => {
-                const value = e.target.value;
-                setSearch(value);
-                debouncedSearch(value);
-              }}
-            />
-          </label>
 
-          <div className="dropdown">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn bg-green-600 text-white"
-            >
-              <FilterIcon className="h-4 w-6" /> Filter
+        <div className="flex gap-2 items-center">
+          <div className="tooltip tooltip-left" data-tip="Toggle Vehicle View">
+            <div>
+              <input
+                type="checkbox"
+                className="toggle toggle-xl my-auto border-violet-600 bg-violet-500 checked:border-indigo-500 checked:bg-indigo-400 checked:text-indigo-800"
+                checked={swap}
+                onChange={() => setSwap((prev) => !prev)}
+              />
             </div>
-            <ul
-              tabIndex="-1"
-              className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+          </div>
+
+          <div className="flex gap-2">
+            <label className="input input-neutral w-full">
+              <Search className="h-4 w-6" />
+              <input
+                type="search"
+                placeholder="Search vehicles..."
+                value={search}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSearch(value);
+                  debouncedSearch(value);
+                }}
+              />
+            </label>
+
+            <div className="dropdown">
+              <div
+                tabIndex={0}
+                role="button"
+                className="btn bg-green-600 text-white"
+              >
+                <FilterIcon className="h-4 w-6" /> Filter
+              </div>
+              <ul
+                tabIndex="-1"
+                className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+              >
+                <li className="rounded-sm focus:bg-highlight">
+                  <a className="active:bg-highlight">Ascending</a>
+                </li>
+                <li>
+                  <a className="active:bg-highlight">Descending</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="flex gap-2 ">
+            <button
+              className="btn  btn-primary w-full"
+              onClick={() => {
+                setIsEditing(false);
+                setVehicleToEdit(null);
+                reset({});
+                setSelectedFile(null);
+                document.getElementById("vehicleModal").showModal();
+              }}
             >
-              <li className="rounded-sm focus:bg-highlight">
-                <a className="active:bg-highlight">Ascending</a>
-              </li>
-              <li>
-                <a className="active:bg-highlight">Descending</a>
-              </li>
-            </ul>
+              <Van className="h-4 w-6" /> Add New Vehicle
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 w-full">
+        <div className="stat bg-base-100 shadow rounded-md">
+          <div className="stat-figure">
+            <ClipboardClock className="h-8 w-12 text-yellow-500" />
+          </div>
+          <div className="stat-title">Insurance Expiring</div>
+          <div className="stat-value text-yellow-500">
+            {stats.insuranceExpiring}
           </div>
         </div>
 
-        <div className="flex gap-2 ">
-          <button
-            className="btn btn-outline btn-neutral w-full"
-            onClick={() => {
-              setIsEditing(false);
-              setVehicleToEdit(null);
-              reset({});
-              setSelectedFile(null);
-              document.getElementById("vehicleModal").showModal();
-            }}
-          >
-            <Van className="h-4 w-6" /> Add New Vehicle
-          </button>
+        <div className="stat bg-base-100 shadow rounded-md">
+          <div className="stat-figure">
+            <ClipboardX className="h-8 w-12 text-red-500" />
+          </div>
+          <div className="stat-title">Insurance Expired</div>
+          <div className="stat-value text-red-500">
+            {stats.insuranceExpired}
+          </div>
+        </div>
+
+        <div className="stat bg-base-100 shadow rounded-md">
+          <div className="stat-figure">
+            <ClipboardClock className="h-8 w-12 text-yellow-500" />
+          </div>
+          <div className="stat-title">Registration Expiring</div>
+          <div className="stat-value text-yellow-500">
+            {stats.registrationExpiring}
+          </div>
+        </div>
+
+        <div className="stat bg-base-100 shadow rounded-md">
+          <div className="stat-figure">
+            <ClipboardX className="h-8 w-12 text-red-500" />
+          </div>
+          <div className="stat-title">Registration Expired</div>
+          <div className="stat-value text-red-500">
+            {stats.registrationExpired}
+          </div>
         </div>
       </div>
+
       <dialog id="vehicleModal" className="modal">
         <div className="modal-box max-w-3xl">
           <h1 className="text-2xl font-bold">
@@ -576,21 +647,19 @@ export default function MaintenancePage() {
               disabled={isSubmitting || uploading}
             >
               <Truck className="size-5 mr-2" />
-              {uploading
-                ? "Uploading image..."
-                : isSubmitting
-                  ? isEditing
-                    ? "Updating vehicle..."
-                    : "Creating vehicle..."
-                  : isEditing
-                    ? "Update Vehicle"
-                    : "Create Vehicle"}
+              {isSubmitting
+                ? isEditing
+                  ? "Updating vehicle..."
+                  : "Creating vehicle..."
+                : isEditing
+                  ? "Update Vehicle"
+                  : "Create Vehicle"}
             </button>
           </form>
         </div>
       </dialog>
 
-      <div className="mt-4">
+      <div className="">
         {vehicles.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-40 gap-5">
             {loading ? (
@@ -609,44 +678,37 @@ export default function MaintenancePage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-0.5 sm:gap-2">
-            {vehicles.map((vehicle) => {
-              const today = new Date();
-              const periodTo = vehicle.period_to
-                ? new Date(vehicle.period_to)
-                : null;
-
-              let status = "valid"; // default
-
-              if (periodTo) {
-                const diffDays = Math.ceil(
-                  (periodTo - today) / (1000 * 60 * 60 * 24),
-                );
-
-                if (diffDays < 0) {
-                  status = "expired";
-                } else if (diffDays <= 90) {
-                  status = "warning";
-                }
-              }
-
+            {vehiclesWithStatus.map((vehicle) => {
               return (
                 <div
                   key={vehicle.id}
                   className="card bg-base-100 shadow border border-base-300 relative"
                 >
-                  {status === "warning" && (
-                    <div className="badge badge-warning text-xs  absolute top-1 right-1">
-                      About to expire
-                    </div>
-                  )}
-                  {status === "expired" && (
-                    <div className="badge badge-error text-xs  absolute top-1 right-1">
-                      Insurance Expired
-                    </div>
-                  )}
+                  <div className="absolute top-1 right-1 flex flex-col gap-1 items-end ">
+                    {vehicle.status === "warning" && (
+                      <div className="badge badge-sm badge-warning text-xs">
+                        Insurance expiring
+                      </div>
+                    )}
+                    {vehicle.status === "expired" && (
+                      <div className="badge badge-sm badge-error text-xs">
+                        Insurance expired
+                      </div>
+                    )}
+                    {vehicle.status2 === "warning" && (
+                      <div className="badge badge-sm badge-warning text-xs">
+                        Registration expiring
+                      </div>
+                    )}
+                    {vehicle.status2 === "expired" && (
+                      <div className="badge badge-sm badge-error text-xs">
+                        Registration expired
+                      </div>
+                    )}
+                  </div>
 
                   <figure className="px-4 pt-4">
-                    <div className="w-full h-25 sm:h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden">
+                    <div className="w-full h-25 sm:h-32 bg-linear-to-r from-violet-100 to-violet-200 rounded-xl flex items-center justify-center overflow-hidden">
                       {vehicle.image_url ? (
                         <img
                           src={vehicle.image_url}
@@ -654,7 +716,7 @@ export default function MaintenancePage() {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <Van className="size-12 text-gray-300" />
+                        <Van className="size-12 text-gray-500" />
                       )}
                     </div>
                   </figure>
@@ -722,9 +784,9 @@ export default function MaintenancePage() {
                               </span>
                               <p
                                 className={`text-sm ${
-                                  status === "expired"
+                                  vehicle.status === "expired"
                                     ? "text-error font-semibold"
-                                    : status === "warning"
+                                    : vehicle.status === "warning"
                                       ? "text-warning font-semibold"
                                       : ""
                                 }`}
@@ -787,16 +849,33 @@ export default function MaintenancePage() {
                                 Year Model
                               </span>
                               <p className=" text-sm">
-                                {vehicle.year_model || "N/A"}
+                                {vehicle.year_model
+                                  ? format(new Date(vehicle.year_model), "yyyy")
+                                  : "N/A"}
                               </p>
                             </div>
                             <div>
                               <span className="text-gray-500 text-xs">
                                 Period Duration
                               </span>
-                              <p className=" text-sm">
-                                {vehicle.period_duration || "N/A"} -
-                                {vehicle.period_duration_to || "N/A"}
+                              <p
+                                className={`text-sm ${
+                                  vehicle.status2 === "expired"
+                                    ? "text-error font-semibold"
+                                    : vehicle.status2 === "warning"
+                                      ? "text-warning font-semibold"
+                                      : ""
+                                }`}
+                              >
+                                {format(
+                                  new Date(vehicle.period_duration),
+                                  "MMM. d, yyyy",
+                                )}
+                                {" - "}
+                                {format(
+                                  new Date(vehicle.period_duration),
+                                  "MMM. d, yyyy",
+                                )}
                               </p>
                             </div>
                           </motion.div>
@@ -851,6 +930,7 @@ export default function MaintenancePage() {
           </div>
         )}
       </div>
+
       <dialog id="deleteVehicleModal" className="modal">
         <div className="modal-box">
           <h2 className="text-xl font-bold text-center">Delete Vehicle</h2>

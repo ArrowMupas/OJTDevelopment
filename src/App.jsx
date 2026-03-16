@@ -38,7 +38,21 @@ function App() {
   return (
     <>
       <ScrollToTop />
-      <Toaster position="bottom-right" />
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        toastOptions={{
+          style: {
+            fontWeight: "bold",
+            fontSize: "16px",
+            padding: "16px 24px",
+            borderRadius: "12px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
+            textAlign: "center",
+          },
+          duration: 5000,
+        }}
+      />
       <Routes>
         {/* <Route
           element={
