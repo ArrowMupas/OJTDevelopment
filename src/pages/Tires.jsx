@@ -232,7 +232,7 @@ export default function Tires() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <label className="label">
-                <span className="label-text">Tire Type</span>
+                <span className="label-text">Tire Size</span>
               </label>
 
               <input
