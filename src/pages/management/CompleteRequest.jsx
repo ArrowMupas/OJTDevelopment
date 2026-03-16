@@ -1,12 +1,12 @@
 import { format, parse } from "date-fns";
 import { supabase } from "../../supabaseClient";
-import { Clipboard, ClipboardCheck, ClipboardClock, Info } from "lucide-react";
+import { ArrowLeft, Info } from "lucide-react";
 import { useEffect, useState } from "react";
 import Tippy from "@tippyjs/react";
 import "tippy.js/themes/light.css";
 import { Link } from "react-router-dom";
 
-export default function ManageRequestsPage() {
+export default function CompleteRequest() {
   const [drivers, setDrivers] = useState([]);
   const [vehicles, setVehicles] = useState([]);
   const [requests, setRequests] = useState([]);
@@ -16,7 +16,7 @@ export default function ManageRequestsPage() {
     const { data, error } = await supabase
       .from("service_vehicle_requests")
       .select("*")
-
+      .eq("status", "Completed")
       .order("timestamp", { ascending: false });
 
     if (error) {
@@ -113,58 +113,28 @@ export default function ManageRequestsPage() {
 
   return (
     <main className="px-5 py-4 pb-40 h-full ">
-      <h1 className="text-lg font-bold ">Manage Request</h1>
-      <p className="text-gray-500 text-sm mb-6">
-        View and manage all service requests here.
-      </p>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 w-full">
-        <div className="stat bg-base-100 shadow rounded-md">
-          <div className="stat-figure">
-            <Clipboard className="h-8 w-12 text-[#d2dc15]" />
-          </div>
-          <div className="stat-title">Today's Request</div>
-          <div className="stat-value text-[#d2dc15]">21</div>
-          <div className="stat-desc">New requests for today</div>
-        </div>
-
-        <div className="stat bg-base-100 shadow rounded-md">
-          <div className="stat-figure">
-            <ClipboardCheck className="h-8 w-12 text-highlight" />
-          </div>
-          <div className="stat-title">Completed Request</div>
-          <div className="stat-value text-highlight">4</div>
-          <Link to={"/completerequest"}>
-            {/* <div className="stat-title text-white bg-green-500 rounded-b-xs w-36 text-center">
-              View Completed Request
-            </div> */}
-            <div className="stat-title">Click to view:</div>
-            <div className="stat-title text-green-500 hover:underline hover:text-green-600">
-              All Completed Request
-            </div>
+      <div className="flex gap-2">
+        <div className="flex items-center gap-5 mb-6">
+          <Link to={"/manage-requests"}>
+            <button className="btn btn-square btn-warning btn-dash h-12">
+              <ArrowLeft size={20} />
+            </button>
           </Link>
         </div>
-
-        <div className="stat bg-base-100 shadow rounded-md">
-          <div className="stat-figure">
-            <ClipboardClock className="h-8 w-12 text-[#745fc9]" />
-          </div>
-          <div className="stat-title">Pending Request</div>
-          <div className="stat-value text-[#745fc9]">19</div>
-          <div className="stat-desc">Requests still pending</div>
-        </div>
-
-        <div className="stat bg-base-100 shadow rounded-md">
-          <div className="stat-figure">
-            <ClipboardClock className="h-8 w-12 text-[#745fc9]" />
-          </div>
-          <div className="stat-title">Another Pending</div>
-          <div className="stat-value text-[#745fc9]">19</div>
-          <div className="stat-desc">Something else</div>
+        <div>
+          <h1 className="text-lg font-bold ">Completed Requests</h1>
+          <p className="text-gray-500 mb-8 text-sm">
+            View all completed vehicle request here.
+          </p>
         </div>
       </div>
 
-      <h2 className=" font-semibold mt-12 text-gray-700">List of Request</h2>
+      <h2 className=" font-semibold mt-12 text-gray-700">
+        List of Completed Request
+        <div className="badge badge-dash badge-primary badge-xs sm:badge-sm text-xs ml-2">
+          Total: 21
+        </div>
+      </h2>
 
       <div className="bg-white mt-4">
         <div className="overflow-x-auto  rounded-lg">
