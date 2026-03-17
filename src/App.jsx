@@ -6,33 +6,35 @@ import ProtectedRoute from "./utils/ProtectedRoute";
 import MainLayout from "./layouts/MainLayout";
 import PublicLayout from "./layouts/PublicLayout";
 
+// Public
 import HomePage from "./pages/public/HomePage";
 import DashboardPage from "./pages/public/DashboardPage";
 import SurveyPage from "./pages/public/SurveyPage";
 import ContactPage from "./pages/public/ContactPage";
-import NotFoundPage from "./pages/NotFoundPage";
+import NotFoundPage from "./pages/public/NotFoundPage";
 import AboutPage from "./pages/public/AboutPage";
 import RequestVehiclePage from "./pages/public/RequestVehiclePage";
 import RequestInputPage from "./pages/public/RequestInput";
 import SurveyInput from "./pages/public/SurveyInput";
 import CompleteRequest from "./pages/management/CompleteRequest";
+import LoginPage from "./pages/public/LoginPage";
 
-import VehiclePage from "./pages/management/Vehicles";
+// Management
+import AdminDashboard from "./pages/AdminDashboard";
 import Drivers from "./pages/management/Drivers";
 import InquiryPage from "./pages/management/InquiryPage";
-import MoreInfoPage from "./pages/MoreInfoPage";
 import ManageRequestsPage from "./pages/management/ManageRequestPage";
-import Registration from "./pages/management/Registration";
+
+// Vehicles
+import VehiclePage from "./pages/vehicles/Vehicles";
+import HistoryPage from "./pages/vehicles/HistoryPage";
+import Battery from "./pages/vehicles/Battery";
+import Tires from "./pages/vehicles/Tires";
+import VehicleMonitoringPage from "./pages/vehicles/VehicleMonitoringPage";
 
 import TransactionsPage from "./pages/TransactionsPage";
 import DriverMonitoringPage from "./pages/DriverMonitoringPage";
-import VehicleMonitoringPage from "./pages/VehicleMonitoringPage";
 import VehicleStatusPage from "./pages/VehicleStatusPage";
-import AdminDashboard from "./pages/AdminDashboard";
-import HistoryPage from "./pages/HistoryPage";
-import Battery from "./pages/Battery";
-import Tires from "./pages/Tires";
-import LoginPage from "./pages/public/LoginPage";
 import TrackingPage from "./pages/TrackingPage";
 
 function App() {
@@ -79,8 +81,6 @@ function App() {
           <Route path="/admindashboard" element={<AdminDashboard />} />
           <Route path="/vehiclestatusqueue" element={<VehicleStatusPage />} />
           <Route path="/manage-requests" element={<ManageRequestsPage />} />
-          <Route path="/moreinfo/:id" element={<MoreInfoPage />} />
-          <Route path="/registration" element={<Registration />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/completerequest" element={<CompleteRequest />} />
         </Route>
@@ -96,7 +96,7 @@ function App() {
           <Route path="/request-vehicle" element={<RequestVehiclePage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/about" element={<AboutPage />} />
-          <Route path= "/track" element={<TrackingPage />} />
+          <Route path="/track" element={<TrackingPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

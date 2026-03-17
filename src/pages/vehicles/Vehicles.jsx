@@ -38,10 +38,22 @@ export default function MaintenancePage() {
       .select("*")
       .order(orderColumn, { ascending: true });
 
+    const searchColumns = [
+      "name",
+      "plate_number",
+      "policy_number",
+      "policy_id",
+      "engine_number",
+      "chassis_number",
+      "file_number",
+    ];
+
     if (searchTerm) {
-      query = query.or(
-        `name.ilike.%${searchTerm}%,plate_number.ilike.%${searchTerm}%,policy_number.ilike.%${searchTerm}%`,
+      let orQueryParts = searchColumns.map(
+        (field) => `${field}.ilike.%${searchTerm}%`,
       );
+
+      query = query.or(orQueryParts.join(","));
     }
 
     const { data, error } = await query;
@@ -301,73 +313,70 @@ export default function MaintenancePage() {
           </p>
         </div>
 
-        <div className="flex gap-2 items-center">
-          <div className="tooltip tooltip-left" data-tip="Toggle Vehicle View">
-            <div>
-              <input
-                type="checkbox"
-                className="toggle toggle-xl my-auto border-violet-600 bg-violet-500 checked:border-indigo-500 checked:bg-indigo-400 checked:text-indigo-800"
-                checked={swap}
-                onChange={() => setSwap((prev) => !prev)}
-              />
-            </div>
-          </div>
+        <button
+          className="btn btn-primary flex gap-2"
+          onClick={() => {
+            setIsEditing(false);
+            setVehicleToEdit(null);
+            reset({});
+            setSelectedFile(null);
+            document.getElementById("vehicleModal").showModal();
+          }}
+        >
+          <Van className="h-4 w-6" /> Add New Vehicle
+        </button>
+      </div>
 
-          <div className="flex gap-2">
-            <label className="input input-neutral w-full">
-              <Search className="h-4 w-6" />
-              <input
-                type="search"
-                placeholder="Search vehicles..."
-                value={search}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setSearch(value);
-                  debouncedSearch(value);
-                }}
-              />
-            </label>
-
-            <div className="dropdown">
-              <div
-                tabIndex={0}
-                role="button"
-                className="btn bg-green-600 text-white"
-              >
-                <FilterIcon className="h-4 w-6" /> Filter
-              </div>
-              <ul
-                tabIndex="-1"
-                className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
-              >
-                <li className="rounded-sm focus:bg-highlight">
-                  <a className="active:bg-highlight">Ascending</a>
-                </li>
-                <li>
-                  <a className="active:bg-highlight">Descending</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="flex gap-2 ">
-            <button
-              className="btn  btn-primary w-full"
-              onClick={() => {
-                setIsEditing(false);
-                setVehicleToEdit(null);
-                reset({});
-                setSelectedFile(null);
-                document.getElementById("vehicleModal").showModal();
+      <div className="flex sm:justify-between gap-2 items-center">
+        <div className="flex gap-2 w-full">
+          <label className="input input-neutral w-full sm:w-auto">
+            <Search className="h-4 w-6" />
+            <input
+              type="search"
+              placeholder="Search vehicles..."
+              value={search}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearch(value);
+                debouncedSearch(value);
               }}
+            />
+          </label>
+          <div className="dropdown">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn bg-green-600 text-white"
             >
-              <Van className="h-4 w-6" /> Add New Vehicle
-            </button>
+              <FilterIcon className="h-4 w-6" /> Filter
+            </div>
+            <ul
+              tabIndex="-1"
+              className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+            >
+              <li className="rounded-sm focus:bg-highlight">
+                <a className="active:bg-highlight">Ascending</a>
+              </li>
+              <li>
+                <a className="active:bg-highlight">Descending</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="tooltip tooltip-left" data-tip="Toggle Vehicle View">
+          <div>
+            <input
+              type="checkbox"
+              className="toggle toggle-xl my-auto border-violet-600 bg-violet-500 checked:border-indigo-500 checked:bg-indigo-400 checked:text-indigo-800"
+              checked={swap}
+              onChange={() => setSwap((prev) => !prev)}
+            />
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 w-full">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-2 w-full">
         <div className="stat bg-base-100 shadow rounded-md">
           <div className="stat-figure">
             <ClipboardClock className="h-8 w-12 text-yellow-500" />

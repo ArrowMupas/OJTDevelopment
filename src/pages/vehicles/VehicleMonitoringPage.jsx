@@ -1,22 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  AlertTriangle,
-  CheckCircle,
-  ClipboardClock,
-  ClipboardX,
-  FilterIcon,
-  History,
-  Search,
-  Van,
-} from "lucide-react";
+import { AlertTriangle, CheckCircle, Van } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../../supabaseClient";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
 import debounce from "lodash.debounce";
+import HeaderMonitoring from "../../components/HeaderMonitoring";
 
 const pmsSchema = z.object({
   pms_date: z.string().min(1, "Date is required"),
@@ -78,8 +70,8 @@ export default function VehicleMonitoringPage() {
       (now.getFullYear() - install.getFullYear()) * 12 +
       (now.getMonth() - install.getMonth());
 
-    if (diffMonths >= 12) return "overdue";
-    if (diffMonths >= 11) return "warning";
+    if (diffMonths >= 6) return "overdue";
+    if (diffMonths >= 5) return "warning";
 
     return "ok";
   };
@@ -101,7 +93,7 @@ export default function VehicleMonitoringPage() {
     if (!date) return null;
 
     const lastPms = new Date(date);
-    lastPms.setFullYear(lastPms.getFullYear() + 1);
+    lastPms.setMonth(lastPms.getMonth() + 6);
 
     return lastPms;
   };
@@ -146,93 +138,17 @@ export default function VehicleMonitoringPage() {
   };
 
   return (
-    <main className="px-3 py-4 sm:px-5 h-full pb-25 space-y-7">
-      {/* HEADER */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-lg font-bold flex items-center gap-2">
-            PMS Monitoring
-          </h1>
-          <p className="text-gray-500 text-sm">PMS Monitoring</p>
-        </div>
-
-        <button
-          onClick={() => navigate("/history")}
-          className="btn btn-accent text-white gap-2"
-        >
-          <History size={18} /> View History
-        </button>
-      </div>
-
-      <div className="flex flex-col sm:flex-row sm:justify-between ">
-        <div className="flex flex-col gap-2">
-          <div className="flex gap-2">
-            <label className="input input-neutral w-full">
-              <Search className="h-4 w-6" />
-              <input
-                type="search"
-                placeholder="Search by plate number..."
-                value={search}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setSearch(value);
-                  debouncedSearch(value);
-                }}
-              />
-            </label>
-            <div className="dropdown">
-              <div
-                tabIndex={0}
-                role="button"
-                className="btn bg-green-600 text-white"
-              >
-                <FilterIcon className="h-4 w-6" /> Filter
-              </div>
-              <ul
-                tabIndex="-1"
-                className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
-              >
-                <li className="rounded-sm focus:bg-highlight">
-                  <a className="active:bg-highlight">Ascending</a>
-                </li>
-                <li>
-                  <a className="active:bg-highlight">Descending</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div role="tablist" className="tabs tabs-box">
-            <Link to="/vehiclemonitoring" className="tab tab-active">
-              PMS
-            </Link>
-            <Link to="/battery" className="tab">
-              Battery
-            </Link>
-            <Link to="/tires" className="tab">
-              Tires
-            </Link>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="stat bg-base-100 shadow rounded-md">
-            <div className="stat-figure">
-              <ClipboardClock className="h-8 w-12 text-yellow-500" />
-            </div>
-            <div className="stat-title">PMS Due Soon</div>
-            <div className="stat-value text-yellow-500">{pmsStats.warning}</div>
-          </div>
-
-          <div className="stat bg-base-100 shadow rounded-md">
-            <div className="stat-figure">
-              <ClipboardX className="h-8 w-12 text-red-500" />
-            </div>
-            <div className="stat-title">PMS Overdue</div>
-            <div className="stat-value text-red-500">{pmsStats.overdue}</div>
-          </div>
-        </div>
-      </div>
+    <main className="px-3 py-4 sm:px-5 h-full pb-25 space-y-5">
+      <HeaderMonitoring
+        title="PMS Monitoring"
+        description="PMS is updated every 6 months"
+        search={search}
+        setSearch={setSearch}
+        debouncedSearch={debouncedSearch}
+        activeTab="pms"
+        dueSoon={pmsStats.warning}
+        overdue={pmsStats.overdue}
+      />
 
       {/* VEHICLE CARDS */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1 sm:gap-2">
@@ -258,7 +174,10 @@ export default function VehicleMonitoringPage() {
           };
 
           return (
-            <div key={v.id} className="card bg-base-100 shadow-sm relative">
+            <div
+              key={v.id}
+              className="card bg-base-100 shadow-sm relative hover:ring-2 hover:ring-indigo-400 transition-all"
+            >
               <div
                 className={`absolute top-1 right-1 ${statusBadge.color} badge badge-sm`}
               >
@@ -266,7 +185,7 @@ export default function VehicleMonitoringPage() {
               </div>
 
               <div className="card-body p-4">
-                <div className="w-full h-25 sm:h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden">
+                <div className="w-full h-25 sm:h-32 bg-indigo-100 rounded-xl flex items-center justify-center overflow-hidden">
                   {v.image_url ? (
                     <img
                       src={v.image_url}
@@ -328,7 +247,7 @@ export default function VehicleMonitoringPage() {
 
                 <div className="card-actions mt-2">
                   <button
-                    className="btn btn-success w-full"
+                    className="btn btn-success w-full text-white"
                     onClick={() => openModal(v)}
                   >
                     Update PMS
@@ -343,7 +262,12 @@ export default function VehicleMonitoringPage() {
       {/* DAISYUI MODAL */}
       <dialog id="pms_modal" className="modal">
         <div className="modal-box">
-          <h3 className="font-bold text-lg mb-4">Update PMS Information</h3>
+          <div className="mb-4">
+            <h3 className="font-bold text-lg">Update PMS Information</h3>
+            <p className="text-gray-500 text-sm">
+              Insert the updated PMS information
+            </p>
+          </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
