@@ -33,6 +33,7 @@ import HistoryPage from "./pages/HistoryPage";
 import Battery from "./pages/Battery";
 import Tires from "./pages/Tires";
 import LoginPage from "./pages/public/LoginPage";
+import TrackingPage from "./pages/TrackingPage";
 
 function App() {
   return (
@@ -95,6 +96,7 @@ function App() {
           <Route path="/request-vehicle" element={<RequestVehiclePage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path= "/track" element={<TrackingPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
