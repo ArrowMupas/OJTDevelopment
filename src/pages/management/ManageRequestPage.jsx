@@ -16,7 +16,7 @@ export default function ManageRequestsPage() {
     const { data, error } = await supabase
       .from("service_vehicle_requests")
       .select("*")
-
+      .eq("status", "Pending")
       .order("timestamp", { ascending: false });
 
     if (error) {

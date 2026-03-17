@@ -16,7 +16,7 @@ export default function CompleteRequest() {
     const { data, error } = await supabase
       .from("service_vehicle_requests")
       .select("*")
-      .eq("status", "Completed")
+      .neq("status", "Pending")
       .order("timestamp", { ascending: false });
 
     if (error) {

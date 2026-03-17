@@ -7,11 +7,10 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // Google login
   const loginWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: "http://localhost:5173/admindashboard" },
+      options: { redirectTo: `${window.location.origin}/admindashboard` },
     });
 
     if (error) console.error("Login error:", error.message);
@@ -32,11 +31,11 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 via-white to-green-200">
-      <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-6 flex flex-col items-center gap-4">
+    <div className="min-h-full flex items-center justify-center bg-linear-to-br from-emerald-100 via-green-100 to-green-200 py-4 sm:py-14">
+      <div className="max-w-md w-full card bg-base-100 rounded-3xl shadow-sm p-7 flex flex-col items-center gap-4">
         {/* Logo */}
         <div
-          className="w-20 h-20 bg-green-100 rounded-full p-2 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-300"
+          className="size-25 bg-green-100 rounded-full p-2 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-300"
           onClick={() => (window.location.href = "/")}
         >
           <img
@@ -47,18 +46,17 @@ export default function Login() {
         </div>
 
         {/* Heading */}
-        <h2 className="text-center text-xl sm:text-xl font-extrabold text-green-800 leading-tight">
+        <h2 className="text-center text-xl sm:text-3xl font-bold text-green-800  ">
           Transport Operations Services Unit
-          <br />
-          <span className="text-green-600 text-lg sm:text-sm">
-            Motorpool
-          </span>
         </h2>
+        <span className="text-green-600 text-lg sm:text-sm font-semibold">
+          Motorpool
+        </span>
 
         {/* Google Login */}
         <button
           onClick={loginWithGoogle}
-          className="w-full flex items-center justify-center gap-3 px-6 py-3 rounded-xl bg-white text-gray-900 font-semibold shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200"
+          className="w-full flex items-center justify-center gap-3 text-sm py-3 rounded uppercase font-bold shadow-sm hover:bg-gray-100 transition-all duration-300 border border-gray-300"
         >
           <svg
             aria-label="Google logo"
@@ -98,11 +96,7 @@ export default function Login() {
         </div>
 
         {/* Email / Password Login */}
-        <form
-          onSubmit={loginWithEmail}
-          className="w-full flex flex-col gap-4"
-        >
-         
+        <form onSubmit={loginWithEmail} className="w-full flex flex-col gap-4">
           <input
             type="email"
             placeholder="Email"
@@ -131,7 +125,10 @@ export default function Login() {
         {/* Signup */}
         <p className="text-gray-500 text-sm text-center mt-2">
           Don't have an account?{" "}
-          <a href="/signup" className="text-green-600 font-semibold hover:underline">
+          <a
+            href="/signup"
+            className="text-green-600 font-semibold hover:underline"
+          >
             Sign up
           </a>
         </p>

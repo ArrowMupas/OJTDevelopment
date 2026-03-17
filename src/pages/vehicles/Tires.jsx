@@ -1,22 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  AlertTriangle,
-  CheckCircle,
-  ClipboardClock,
-  ClipboardX,
-  FilterIcon,
-  History,
-  Search,
-  Van,
-} from "lucide-react";
+import { AlertTriangle, CheckCircle, Van } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../../supabaseClient";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
 import debounce from "lodash.debounce";
+import HeaderMonitoring from "../../components/HeaderMonitoring";
 
 const tireSchema = z.object({
   type_tire: z.string().min(1, "Tire type is required"),
@@ -80,7 +72,7 @@ export default function Tires() {
       (now.getMonth() - install.getMonth());
 
     if (diffMonths >= 36) return "overdue";
-    if (diffMonths >= 32) return "warning";
+    if (diffMonths >= 35) return "warning";
 
     return "ok";
   };
@@ -150,95 +142,17 @@ export default function Tires() {
   };
 
   return (
-    <main className="px-3 py-4 sm:px-5 h-full pb-25 space-y-7">
-      {/* HEADER */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-lg font-bold flex items-center gap-2">
-            Tires Monitoring
-          </h1>
-          <p className="text-gray-500 text-sm">Tire Monitoring</p>
-        </div>
-
-        <button
-          onClick={() => navigate("/history")}
-          className="btn btn-accent text-white gap-2"
-        >
-          <History size={18} /> View History
-        </button>
-      </div>
-
-      <div className="flex flex-col sm:flex-row sm:justify-between ">
-        <div className="flex flex-col gap-2 ">
-          <div className="flex gap-2">
-            <label className="input input-neutral w-full">
-              <Search className="h-4 w-6" />
-              <input
-                type="search"
-                placeholder="Search by plate number..."
-                value={search}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setSearch(value);
-                  debouncedSearch(value);
-                }}
-              />
-            </label>
-            <div className="dropdown">
-              <div
-                tabIndex={0}
-                role="button"
-                className="btn bg-green-600 text-white"
-              >
-                <FilterIcon className="h-4 w-6" /> Filter
-              </div>
-              <ul
-                tabIndex="-1"
-                className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
-              >
-                <li className="rounded-sm focus:bg-highlight">
-                  <a className="active:bg-highlight">Ascending</a>
-                </li>
-                <li>
-                  <a className="active:bg-highlight">Descending</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div role="tablist" className="tabs tabs-box">
-            <Link to="/vehiclemonitoring" className="tab">
-              PMS
-            </Link>
-            <Link to="/battery" className="tab ">
-              Battery
-            </Link>
-            <Link to="/tires" className="tab tab-active">
-              Tires
-            </Link>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4 ">
-          <div className="stat bg-base-100 shadow rounded-md">
-            <div className="stat-figure">
-              <ClipboardClock className="h-8 w-12 text-yellow-500" />
-            </div>
-            <div className="stat-title">Tire expiring</div>
-            <div className="stat-value text-yellow-500">
-              {tireStats.warning}
-            </div>
-          </div>
-
-          <div className="stat bg-base-100 shadow rounded-md">
-            <div className="stat-figure">
-              <ClipboardX className="h-8 w-12 text-red-500" />
-            </div>
-            <div className="stat-title">Tire Overdue</div>
-            <div className="stat-value text-red-500">{tireStats.overdue}</div>
-          </div>
-        </div>
-      </div>
+    <main className="px-3 py-4 sm:px-5 h-full pb-25 space-y-5">
+      <HeaderMonitoring
+        title="Tire Monitoring"
+        description="Tire is replaced every 3 years"
+        search={search}
+        setSearch={setSearch}
+        debouncedSearch={debouncedSearch}
+        activeTab="tires"
+        dueSoon={tireStats.warning}
+        overdue={tireStats.overdue}
+      />
 
       {/* VEHICLE CARDS */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1 sm:gap-2">
@@ -264,7 +178,10 @@ export default function Tires() {
           };
 
           return (
-            <div key={v.id} className="card bg-base-100 shadow-sm relative">
+            <div
+              key={v.id}
+              className="card bg-base-100 shadow-sm relative hover:ring-2 hover:ring-indigo-400 transition-all "
+            >
               <div
                 className={`absolute top-1 right-1 ${statusBadge.color} badge badge-sm`}
               >
@@ -272,7 +189,7 @@ export default function Tires() {
               </div>
 
               <div className="card-body p-4">
-                <div className="w-full h-25 sm:h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden">
+                <div className="w-full h-25 sm:h-32 bg-indigo-100 rounded-xl flex items-center justify-center overflow-hidden">
                   {v.image_url ? (
                     <img
                       src={v.image_url}
@@ -301,6 +218,11 @@ export default function Tires() {
                   ) : (
                     <CheckCircle className="text-success" />
                   )}
+                </div>
+
+                <div className="mt-2">
+                  <p className="text-xs text-gray-500">Tire Type</p>
+                  <p className="font-semibold">{v.type_tire || "N/A"}</p>
                 </div>
 
                 <div className="mt-2">
@@ -338,7 +260,7 @@ export default function Tires() {
 
                 <div className="card-actions mt-2">
                   <button
-                    className="btn btn-success w-full"
+                    className="btn btn-success w-full text-white"
                     onClick={() => openModal(v)}
                   >
                     Update Tires
@@ -352,8 +274,12 @@ export default function Tires() {
       {/* DAISYUI MODAL */}
       <dialog id="tire_modal" className="modal">
         <div className="modal-box">
-          <h3 className="font-bold text-lg mb-4">Update Tire Information</h3>
-
+          <div className="mb-4">
+            <h3 className="font-bold text-lg">Update Tire Information</h3>
+            <p className="text-gray-500 text-sm">
+              Insert the updated tire information
+            </p>
+          </div>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <label className="label">

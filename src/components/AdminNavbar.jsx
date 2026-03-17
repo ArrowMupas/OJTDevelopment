@@ -8,7 +8,6 @@ export default function AdminNavbar() {
     "/dashboard": "Dashboard",
     "/manage-requests": "Manage Requests",
     "/drivermonitoring": "Driver Monitoring",
-    "/vehiclemonitoring": "Vehicle Maintenance",
     "/vehiclestatusqueue": "Vehicle Status",
     "/transactions": "Transactions",
     "/survey": "Survey",
@@ -16,15 +15,17 @@ export default function AdminNavbar() {
     "/registration": "Vehicle Registration",
     "/drivers": "Transport Operations Services Unit (Staff)",
     "/inquiry": "Inquiry",
+    "/vehiclemonitoring": "Vehicle Monitoring",
     "/battery": "Vehicle Monitoring",
     "/tires": "Vehicle Monitoring",
+    "/history": "Vehicle Changes History",
     "/completerequest": "Completed Requests",
   };
 
   const pageTitle = pageTitles[location.pathname] || "Admin Panel";
 
   return (
-    <header className="sticky top-0 z-50 bg-white px-5 h-16 shadow-lg flex items-center justify-between">
+    <header className="sticky top-0 z-10 bg-white px-5 h-16 shadow-lg flex items-center justify-between">
       <div className="flex items-center gap-3">
         <label
           htmlFor="admin-drawer"
