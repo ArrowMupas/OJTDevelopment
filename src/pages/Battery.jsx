@@ -1,223 +1,404 @@
-import React, { useState } from "react";
-import { AlertTriangle, CheckCircle, History, Search } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  AlertTriangle,
+  CheckCircle,
+  ClipboardClock,
+  ClipboardX,
+  FilterIcon,
+  History,
+  Search,
+  Van,
+} from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "../supabaseClient";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
+import { format } from "date-fns";
+import debounce from "lodash.debounce";
+
+const batterySchema = z.object({
+  type_battery: z.string().min(1, "Battery type is required"),
+  install_date_battery: z.string().min(1, "Installation date is required"),
+});
 
 export default function Battery() {
   const navigate = useNavigate();
+  const [vehicles, setVehicles] = useState([]);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  const [vehicles, setVehicles] = useState([
-    {
-      plate: "SND 1339",
-      model: "Isuzu Dmax",
-      status: "overdue",
-      showBatteryTireForm: false,
-      pms: "",
-      pmsDate: "",
-    },
-    {
-      plate: "XYZ 123",
-      model: "Honda Civic",
-      status: "updated",
-      showBatteryTireForm: false,
-      pms: "",
-      pmsDate: "",
-    },
-  ]);
+  const fetchVehicles = async (searchTerm = "") => {
+    setLoading(true);
 
-  const toggleBatteryTireForm = (plate) => {
-    setVehicles((prev) =>
-      prev.map((v) =>
-        v.plate === plate
-          ? { ...v, showBatteryTireForm: !v.showBatteryTireForm }
-          : v,
-      ),
-    );
+    let query = supabase
+      .from("vehicles")
+      .select("*")
+      .order("install_date_battery", { ascending: true, nullsFirst: true });
+
+    if (searchTerm) {
+      query = query.or(
+        `name.ilike.%${searchTerm}%,plate_number.ilike.%${searchTerm}%,policy_number.ilike.%${searchTerm}%`,
+      );
+    }
+
+    const { data, error } = await query;
+
+    if (error) console.error(error);
+    else setVehicles(data);
+
+    setLoading(false);
   };
 
-  const handleSaveBatteryTire = (plate) => {
-    setVehicles((prev) =>
-      prev.map((v) =>
-        v.plate === plate
-          ? {
-              ...v,
-              showBatteryTireForm: false,
-            }
-          : v,
-      ),
-    );
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((value) => {
+        if (!value) fetchVehicles("");
+        else fetchVehicles(value);
+      }, 400),
+    [],
+  );
+
+  useEffect(() => {
+    fetchVehicles();
+  }, []);
+
+  useEffect(() => {
+    return () => debouncedSearch.cancel();
+  }, [debouncedSearch]);
+
+  const getBatteryStatus = (date) => {
+    if (!date) return "overdue";
+
+    const install = new Date(date);
+    const now = new Date();
+
+    const diffMonths =
+      (now.getFullYear() - install.getFullYear()) * 12 +
+      (now.getMonth() - install.getMonth());
+
+    if (diffMonths >= 36) return "overdue";
+    if (diffMonths >= 32) return "warning";
+
+    return "ok";
   };
 
-  const handleVehicleChange = (plate, field, value) => {
-    setVehicles((prev) =>
-      prev.map((v) => (v.plate === plate ? { ...v, [field]: value } : v)),
-    );
+  const batteryStats = vehicles.reduce(
+    (acc, v) => {
+      const status = getBatteryStatus(v.install_date_battery);
+
+      if (!v.install_date_battery) acc.notRecorded += 1;
+      if (status === "warning") acc.warning += 1;
+      if (status === "overdue") acc.overdue += 1;
+
+      return acc;
+    },
+    { notRecorded: 0, warning: 0, overdue: 0 },
+  );
+
+  const getNextBatteryChange = (date) => {
+    if (!date) return null;
+
+    const install = new Date(date);
+    install.setFullYear(install.getFullYear() + 3);
+
+    return install;
+  };
+
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(batterySchema),
+  });
+
+  const openModal = (vehicle) => {
+    setSelectedVehicle(vehicle);
+
+    reset({
+      type_battery: vehicle.type_battery || "",
+      install_date_battery: vehicle.install_date_battery || "",
+    });
+
+    document.getElementById("battery_modal").showModal();
+  };
+
+  const onSubmit = async (data) => {
+    const { error } = await supabase
+      .from("vehicles")
+      .update({
+        type_battery: data.type_battery,
+        install_date_battery: data.install_date_battery,
+      })
+      .eq("id", selectedVehicle.id);
+
+    if (error) {
+      console.error(error);
+      toast.error("Failed to update battery info!");
+      return;
+    }
+
+    document.getElementById("battery_modal").close();
+    fetchVehicles();
+    toast.success(`Battery info updated for ${selectedVehicle.name}`);
   };
 
   return (
-    <main className="px-3 py-4 sm:px-5  h-full pb-25 ">
+    <main className="px-3 py-4 sm:px-5 h-full pb-25 space-y-7">
       {/* HEADER */}
-      <div className="flex justify-between items-center ">
+      <div className="flex justify-between items-center">
         <div>
           <h1 className="text-lg font-bold flex items-center gap-2">
-            Motorpool Compliance Monitoring
+            Battery Monitoring
           </h1>
-          <p className="text-gray-500 text-sm mb-6">Battery Monitoring</p>
+          <p className="text-gray-500 text-sm">Battery Monitoring</p>
         </div>
 
         <button
           onClick={() => navigate("/history")}
-          className="bg-green-600 text-white px-5 py-2 rounded-2xl flex items-center gap-2"
+          className="btn btn-accent text-white gap-2"
         >
           <History size={18} /> View History
         </button>
       </div>
 
-      <label className="input input-neutral mb-7">
-        <Search className="h-4 w-6" />
-        <input
-          type="search"
-          placeholder="Search by plate number..."
-          // value={search}
-          // onChange={(e) => {
-          //   const value = e.target.value;
-          //   setSearch(value);
-          //   debouncedSearch(value);
-          // }}
-        />
-      </label>
+      <div className="flex flex-col sm:flex-row sm:justify-between ">
+        <div className="flex flex-col gap-2 ">
+          <div className="flex gap-2">
+            <label className="input input-neutral w-full">
+              <Search className="h-4 w-6" />
+              <input
+                type="search"
+                placeholder="Search by plate number..."
+                value={search}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSearch(value);
+                  debouncedSearch(value);
+                }}
+              />
+            </label>
+            <div className="dropdown">
+              <div
+                tabIndex={0}
+                role="button"
+                className="btn bg-green-600 text-white"
+              >
+                <FilterIcon className="h-4 w-6" /> Filter
+              </div>
+              <ul
+                tabIndex="-1"
+                className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+              >
+                <li className="rounded-sm focus:bg-highlight">
+                  <a className="active:bg-highlight">Ascending</a>
+                </li>
+                <li>
+                  <a className="active:bg-highlight">Descending</a>
+                </li>
+              </ul>
+            </div>
+          </div>
 
-      <div role="tablist" className="tabs tabs-box mb-6">
-        <Link to="/vehiclemonitoring" className="tab">
-          PMS
-        </Link>
+          <div role="tablist" className="tabs tabs-box">
+            <Link to="/vehiclemonitoring" className="tab">
+              PMS
+            </Link>
+            <Link to="/battery" className="tab tab-active">
+              Battery
+            </Link>
+            <Link to="/tires" className="tab">
+              Tires
+            </Link>
+          </div>
+        </div>
 
-        <Link to="/battery" className="tab tab-active">
-          Battery
-        </Link>
+        <div className="grid grid-cols-2 gap-4 ">
+          <div className="stat bg-base-100 shadow rounded-md">
+            <div className="stat-figure">
+              <ClipboardClock className="h-8 w-12 text-yellow-500" />
+            </div>
+            <div className="stat-title">Battery expiring</div>
+            <div className="stat-value text-yellow-500">
+              {batteryStats.warning}
+            </div>
+          </div>
 
-        <Link to="/tires" className="tab ">
-          Tires
-        </Link>
+          <div className="stat bg-base-100 shadow rounded-md">
+            <div className="stat-figure">
+              <ClipboardX className="h-8 w-12 text-red-500" />
+            </div>
+            <div className="stat-title">Battery Overdue</div>
+            <div className="stat-value text-red-500">
+              {batteryStats.overdue}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* VEHICLE CARDS */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {vehicles.map((v) => (
-          <div
-            key={v.plate}
-            className={`card border-2 shadow bg-base-100 ${
-              v.status === "overdue"
-                ? "border-red-400 bg-red-50"
-                : "border-base-300"
-            }`}
-          >
-            <div className="card-body">
-              <div className="flex justify-between">
-                <div>
-                  <h2 className="font-bold text-lg">{v.plate}</h2>
-                  <p className="text-xs text-gray-500">{v.model}</p>
-                </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1 sm:gap-2">
+        {vehicles.map((v) => {
+          const status = getBatteryStatus(v.install_date_battery);
+          const nextChange = getNextBatteryChange(v.install_date_battery);
 
-                {v.status === "overdue" ? (
-                  <AlertTriangle className="text-red-600 w-6 h-6" />
-                ) : (
-                  <CheckCircle className="text-green-600 w-6 h-6" />
-                )}
+          const statusBadge = {
+            text: !v.install_date_battery
+              ? "NOT RECORDED"
+              : status === "overdue"
+                ? "REPLACEMENT NEEDED"
+                : status === "warning"
+                  ? "NEAR EXPIRATION"
+                  : "BATTERY OK",
+            color: !v.install_date_battery
+              ? "badge-neutral"
+              : status === "overdue"
+                ? "badge-error"
+                : status === "warning"
+                  ? "badge-warning"
+                  : "badge-success",
+          };
+
+          return (
+            <div key={v.id} className="card bg-base-100 shadow-sm relative">
+              <div
+                className={`absolute top-1 right-1 ${statusBadge.color} badge badge-sm`}
+              >
+                {statusBadge.text}
               </div>
 
-              {/* VEHICLE IMAGE */}
-              <div className="w-full h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center mt-2">
-                <div className="text-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-12 w-12 mx-auto text-green-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+              <div className="card-body p-4">
+                <div className="w-full h-25 sm:h-32 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden">
+                  {v.image_url ? (
+                    <img
+                      src={v.image_url}
+                      alt={v.name}
+                      className="w-full h-full object-cover"
                     />
-                  </svg>
+                  ) : (
+                    <Van className="size-12 text-gray-300" />
+                  )}
+                </div>
 
-                  <p className="text-sm text-violet-600 font-medium mt-1">
-                    Vehicle Image
+                <div className="flex justify-between">
+                  <div>
+                    <p className="text-sm font-bold">{v.name}</p>
+                    <div className="badge badge-primary badge-dash badge-sm">
+                      {v.plate_number}
+                    </div>
+                  </div>
+
+                  {!v.install_date_battery ? (
+                    <AlertTriangle className="text-gray-400" />
+                  ) : status === "overdue" ? (
+                    <AlertTriangle className="text-error" />
+                  ) : status === "warning" ? (
+                    <AlertTriangle className="text-warning" />
+                  ) : (
+                    <CheckCircle className="text-success" />
+                  )}
+                </div>
+
+                <div className="mt-2">
+                  <p className="text-xs text-gray-500">
+                    Latest Battery Installation Date
+                  </p>
+                  <p className="font-semibold">
+                    {v.install_date_battery
+                      ? format(new Date(v.install_date_battery), "MMM. d, yyyy")
+                      : "N/A"}
                   </p>
                 </div>
-              </div>
 
-              <p className="mt-1 text-sm">Latest Battery Installation Date:</p>
-              <p className="font-semibold text-sm">
-                {v.status === "overdue" ? "Not yet recorded" : "2026-01-15"}
-              </p>
+                <div className="mt-2">
+                  <p className="text-xs text-gray-500">
+                    Next Battery Replacement Schedule
+                  </p>
 
-              <p className="mt-1 text-sm">Last Battery Installation Date:</p>
-              <p className="font-semibold text-sm">
-                {v.status === "overdue" ? "Not yet recorded" : "2026-01-15"}
-              </p>
+                  {nextChange ? (
+                    <p
+                      className={`font-semibold ${
+                        status === "overdue"
+                          ? "text-error"
+                          : status === "warning"
+                            ? "text-warning"
+                            : "text-success"
+                      }`}
+                    >
+                      {format(new Date(nextChange), "MMM. d, yyyy")}
+                    </p>
+                  ) : (
+                    <p className="font-semibold">N/A</p>
+                  )}
+                </div>
 
-              <p
-                className={`mt-3 font-bold ${
-                  v.status === "overdue" ? "text-red-600" : "text-green-600"
-                }`}
-              >
-                {v.status === "overdue" ? "REPLACEMENT NEEDED" : "Battery OK"}
-              </p>
-
-              {/* UPDATE BUTTON */}
-              {v.status === "overdue" && !v.showBatteryTireForm && (
-                <button
-                  onClick={() => toggleBatteryTireForm(v.plate)}
-                  className="btn bg-green-600 text-white mt-4"
-                >
-                  Update Battery
-                </button>
-              )}
-
-              {/* FORM */}
-              {v.status === "overdue" && v.showBatteryTireForm && (
-                <div className="mt-3 border border-dashed p-3 rounded bg-green-100 space-y-4">
-                  <div>
-                    <label className="text-sm font-medium">Battery Type</label>
-                    <input
-                      type="text"
-                      value={v.pms}
-                      onChange={(e) =>
-                        handleVehicleChange(v.plate, "pms", e.target.value)
-                      }
-                      className="input input-bordered w-full mt-1"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium">
-                      Installation Date
-                    </label>
-                    <input
-                      type="date"
-                      value={v.pmsDate}
-                      onChange={(e) =>
-                        handleVehicleChange(v.plate, "pmsDate", e.target.value)
-                      }
-                      className="input input-bordered w-full mt-1"
-                    />
-                  </div>
-
+                <div className="card-actions mt-2">
                   <button
-                    onClick={() => handleSaveBatteryTire(v.plate)}
-                    className="btn bg-green-600 text-white w-full"
+                    className="btn btn-success w-full"
+                    onClick={() => openModal(v)}
                   >
-                    Save
+                    Update Battery
                   </button>
                 </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* DAISYUI MODAL */}
+      <dialog id="battery_modal" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg mb-4">Update Battery Information</h3>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div>
+              <label className="label">
+                <span className="label-text">Battery Type</span>
+              </label>
+              <input
+                {...register("type_battery")}
+                className="input input-bordered w-full"
+              />
+              {errors.type_battery && (
+                <p className="text-error text-sm mt-1">
+                  {errors.type_battery.message}
+                </p>
               )}
             </div>
-          </div>
-        ))}
-      </div>
+
+            <div>
+              <label className="label">
+                <span className="label-text">Installation Date</span>
+              </label>
+              <input
+                type="date"
+                {...register("install_date_battery")}
+                className="input input-bordered w-full"
+              />
+              {errors.install_date_battery && (
+                <p className="text-error text-sm mt-1">
+                  {errors.install_date_battery.message}
+                </p>
+              )}
+            </div>
+
+            <div className="modal-action">
+              <button type="submit" className="btn btn-success">
+                Save
+              </button>
+
+              <form method="dialog">
+                <button className="btn">Cancel</button>
+              </form>
+            </div>
+          </form>
+        </div>
+      </dialog>
     </main>
   );
 }

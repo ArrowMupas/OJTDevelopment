@@ -15,6 +15,7 @@ import AboutPage from "./pages/public/AboutPage";
 import RequestVehiclePage from "./pages/public/RequestVehiclePage";
 import RequestInputPage from "./pages/public/RequestInput";
 import SurveyInput from "./pages/public/SurveyInput";
+import CompleteRequest from "./pages/management/CompleteRequest";
 
 import VehiclePage from "./pages/management/Vehicles";
 import Drivers from "./pages/management/Drivers";
@@ -37,7 +38,21 @@ function App() {
   return (
     <>
       <ScrollToTop />
-      <Toaster position="bottom-right" />
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        toastOptions={{
+          style: {
+            fontWeight: "bold",
+            fontSize: "16px",
+            padding: "16px 24px",
+            borderRadius: "12px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
+            textAlign: "center",
+          },
+          duration: 5000,
+        }}
+      />
       <Routes>
         {/* <Route
           element={
@@ -66,6 +81,7 @@ function App() {
           <Route path="/moreinfo/:id" element={<MoreInfoPage />} />
           <Route path="/registration" element={<Registration />} />
           <Route path="/history" element={<HistoryPage />} />
+          <Route path="/completerequest" element={<CompleteRequest />} />
         </Route>
 
         <Route element={<PublicLayout />}>
