@@ -7,6 +7,7 @@ import {
   Users,
   LogOut,
   FolderClosed,
+  MapPin,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { supabase } from "../supabaseClient";
@@ -106,6 +107,11 @@ export default function Sidebar() {
                     Vehicle Status
                   </MenuLink>
                 </li>
+                 <li>
+                  <MenuLink to="/track" icon={MapPin}>
+                    PMS Tracking
+                  </MenuLink>
+                </li>
               </ul>
             </details>
           </li>
@@ -128,6 +134,8 @@ export default function Sidebar() {
                     Staff
                   </MenuLink>
                 </li>
+                
+
               </ul>
             </details>
           </li>
@@ -142,6 +150,9 @@ export default function Sidebar() {
             <MenuLink to="/inquiry" icon={MessageCircleQuestionMark}>
               Inquiry
             </MenuLink>
+          </li>
+          <li>
+           
           </li>
         </ul>
       </div>
