@@ -13,33 +13,83 @@ import {
   Wrench,
 } from "lucide-react";
 
+import { Line, Bar, Pie, Doughnut } from "react-chartjs-2";
+
 export default function AdminDashboard() {
+  const labels = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "June",
+    "July",
+    "Aug",
+    "Sept",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const lineData = {
+    labels,
+    datasets: [
+      {
+        label: "Completed",
+        data: [80, 55, 70, 90, 80, 55, 70, 45, 25, 30, 70, 90],
+        borderColor: "#30694B",
+        backgroundColor: "#30694B",
+        pointBackgroundColor: "#30694B",
+        tension: 0.4,
+        fill: true,
+      },
+      {
+        label: "Pending",
+        data: [20, 35, 20, 33, 65, 90, 30, 60, 80, 90, 70, 20],
+        borderColor: "#62BD69",
+        backgroundColor: "#62BD69",
+        pointBackgroundColor: "#62BD69",
+        tension: 0.4,
+        fill: true,
+      },
+    ],
+  };
+
+  const doughnutData = {
+    labels: [
+      "PMS Overdue",
+      "PMS Due Soon",
+      "PMS Up-to-Date",
+      "Expired Insurance",
+      "Active Insurance",
+      "Insurance Expiring Soon",
+    ],
+    datasets: [
+      {
+        data: [4, 9, 16, 8, 2, 4],
+        backgroundColor: [
+          "#003A6B",
+          "#1B5886",
+          "#3776A1",
+          "#5293BB",
+          "#6EB1D6",
+          "#89CFF1",
+        ],
+        borderWidth: 0,
+      },
+    ],
+  };
+
   return (
     <main className="px-5 py-4 pb-40 h-full">
       <h1 className="text-lg font-bold ">Admin Dashboard</h1>
       <p className="text-gray-500 text-sm mb-6">Overall view of system data.</p>
 
-      <div className="grid grid-cols-1 md:flex-row gap-5">
-        <div className="card bg-base-100 card-md shadow-sm">
-          <div className="">
-            <div className="card bg-base-100 card-md shadow-sm">
-              <div className="card-body h-53 border-[#745fc9] border-b-2 rounded-sm">
-                <div>
-                  <h2 className="card-title">Graphs/Chart Here</h2>
-                  <p>Insert Chart here.</p>
-                </div>
-                <ChartSpline className="h-8 w-12 mr-2 text-[#745fc9]" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <h1 className="text-SM font-bold mb-1 mt-8 text-green-700">
         VEHICLE REQUESTS
       </h1>
       <div className="grid grid-cols-2 md:flex-row gap-5">
-        <div className="card bg-base-100 card-md">
+        <div className="card card-md">
           <div className="grid grid-cols-2 md:flex-row gap-5">
             <div className="card bg-base-100 card-md shadow-sm">
               <div className="card-body flex-row justify-between border-highlight border-2 rounded-sm">
@@ -54,13 +104,14 @@ export default function AdminDashboard() {
             <div className="card bg-base-100 card-md shadow-sm">
               <div className="card-body flex-row justify-between border-highlight border-2 rounded-sm">
                 <div>
-                  <h2 className="card-title">4</h2>
-                  <p>Pending Request</p>
+                  <h2 className="card-title">34</h2>
+                  <p>Total Monthly Request</p>
                 </div>
                 <ClipboardClock className="h-8 w-12 mr-2 text-highlight" />
               </div>
               <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
             </div>
+
             {/* <div className="card bg-base-100 card-md shadow-sm">
               <div className="card-body flex-row justify-between border-highlight border-b-2 rounded-sm">
                 <div>
@@ -72,27 +123,32 @@ export default function AdminDashboard() {
             </div> */}
           </div>
           <div className="card bg-base-100 card-md shadow-sm mt-5">
-            <div className="card-body flex-row justify-between border-highlight border-2 rounded-sm">
+            <div className="card-body flex-row justify-between border-[#30694B] border-2 rounded-sm">
               <div>
                 <h2 className="card-title">7</h2>
                 <p>Completed Request </p>
               </div>
-              <ClipboardCheck className="h-8 w-12 mr-2 text-highlight" />
+              <ClipboardCheck className="h-8 w-12 mr-2 text-[#30694B]" />
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
+          </div>
+
+          <div className="card mt-4">
+            <div className="card-body flex-row justify-between border-[#30694B] border-2 rounded-sm">
+              <div>
+                <h2 className="card-title">14</h2>
+                <p>Pending Request</p>
+              </div>
+              <ClipboardClock className="h-8 w-12 mr-2 text-[#30694B]" />
             </div>
             <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
         </div>
 
-        <div className="">
-          <div className="card bg-base-100 card-md shadow-sm">
-            <div className="card-body h-53 border-highlight border-b-2 rounded-sm">
-              <div>
-                <h2 className="card-title">Chart/Graph Here</h2>
-                <p>Insert Chart here for Vehicle Request</p>
-              </div>
-              <ClockArrowDown className="h-8 w-12 mr-2 text-highlight" />
-            </div>
-          </div>
+        {/* Line Chart */}
+        <div className="card bg-base-100 shadow-xl p-6">
+          <h2 className="text-xl font-bold mb-4">Request Chart</h2>
+          <Line data={lineData} />
         </div>
       </div>
       <h1 className="text-SM font-bold mb-1 text-[#745fc9] mt-10">
@@ -192,17 +248,15 @@ export default function AdminDashboard() {
             </div>
             <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
-          <div>
-            <div className="card bg-base-100 card-md shadow-sm">
-              <div className="card-body flex-row justify-between border-[#1B4079] border-2 rounded-sm">
-                <div>
-                  <h2 className="card-title">16</h2>
-                  <p>Vehicle PMS Up-to-Date</p>
-                </div>
-                <Wrench className="h-8 w-12 mr-2 text-[#1B4079]" />
+          <div className="card bg-base-100 card-md shadow-sm">
+            <div className="card-body flex-row justify-between border-[#1B4079] border-2 rounded-sm">
+              <div>
+                <h2 className="card-title">16</h2>
+                <p>Vehicles PMS Up-to-Date</p>
               </div>
-              <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
+              <Wrench className="h-8 w-12 mr-2 text-[#1B4079]" />
             </div>
+            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
           <div className="card bg-base-100 card-md shadow-sm">
             <div className="card-body flex-row justify-between border-[#1B4079] border-2 rounded-sm">
@@ -245,14 +299,13 @@ export default function AdminDashboard() {
             <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#5828B0] via-[#4B83BD] to-[#3DDDCA] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
         </div>
-
-        <div className="card bg-base-100 card-md shadow-sm">
-          <div className="card-body h-53 border-[#1B4079] border-b-4 rounded-xl">
-            <div>
-              <h2 className="card-title">Overdue Soon</h2>
-              <p>Pie Chart here.</p>
-            </div>
-            <OctagonAlert className="h-8 w-12 mr-2 text-[#1B4079]" />
+        <div className="flex w-full justify-center bg-base-100 shadow-xl rounded-sm border-2 border-[#1B4079]">
+          {/* Doughnut Chart */}
+          <div className="card bg-base-100 p-5 w-100">
+            <h2 className="text-xl font-bold mb-4 justify-center text-center">
+              Compliance Chart
+            </h2>
+            <Doughnut data={doughnutData} />
           </div>
         </div>
       </div>
