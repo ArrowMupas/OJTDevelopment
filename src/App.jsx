@@ -38,6 +38,8 @@ import DriverMonitoringPage from "./pages/DriverMonitoringPage";
 import VehicleStatusPage from "./pages/VehicleStatusPage";
 import TrackingPage from "./pages/TrackingPage";
 
+import TrackingRelease from "./pages/TrackingRelease";
+
 function App() {
   return (
     <>
@@ -102,6 +104,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/track" element={<TrackingPage />} />
+          <Route path="/track-release" element={<TrackingRelease />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

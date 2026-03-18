@@ -114,10 +114,8 @@ export default function AdminDashboard() {
             </div>
             <div className="absolute inset-0 bg-linear-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 hover:opacity-30 transition duration-300 rounded-sm"></div>
           </div>
-
-          {/* Card 3 */}
-          <div className="card bg-base-100 card-md shadow-sm relative">
-            <div className="card-body flex flex-col justify-between border-[#30694B] border-2 rounded-sm">
+          <div className="card bg-base-100 card-md shadow-sm mt-6">
+            <div className="card-body flex-row justify-between border-[#30694B] border-2 rounded-sm">
               <div>
                 <p>Completed Request</p>
                 <h2 className="card-title">7</h2>
@@ -127,9 +125,8 @@ export default function AdminDashboard() {
             <div className="absolute inset-0 bg-linear-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 hover:opacity-30 transition duration-300 rounded-sm"></div>
           </div>
 
-          {/* Card 4 */}
-          <div className="card bg-base-100 card-md shadow-sm relative">
-            <div className="card-body flex flex-col justify-between border-[#30694B] border-2 rounded-sm">
+          <div className="card mt-6">
+            <div className="card-body flex-row justify-between border-[#30694B] border-2 rounded-sm">
               <div>
                 <p>Pending Request</p>
                 <h2 className="card-title">14</h2>
@@ -140,8 +137,8 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* RIGHT: Chart (less wide now) */}
-        <div className="card bg-base-100 shadow-xl p-6">
+        {/* Line Chart */}
+        <div className="card bg-base-100 shadow-xl p-6 border-2 border-highlight rounded-sm">
           <h2 className="text-xl font-bold mb-4">Request Chart</h2>
           <Line data={lineData} />
         </div>
