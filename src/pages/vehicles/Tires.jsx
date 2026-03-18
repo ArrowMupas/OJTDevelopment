@@ -27,6 +27,7 @@ export default function Tires() {
     let query = supabase
       .from("vehicles")
       .select("*")
+      .eq("operational", true)
       .order("install_date_tire", { ascending: true, nullsFirst: true });
 
     if (searchTerm) {

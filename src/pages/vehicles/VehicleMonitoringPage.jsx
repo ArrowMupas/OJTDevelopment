@@ -27,6 +27,7 @@ export default function VehicleMonitoringPage() {
     let query = supabase
       .from("vehicles")
       .select("*")
+      .eq("operational", true)
       .order("pms_date", { ascending: true, nullsFirst: true });
 
     if (searchTerm) {

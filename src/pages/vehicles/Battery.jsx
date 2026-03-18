@@ -27,6 +27,7 @@ export default function Battery() {
     let query = supabase
       .from("vehicles")
       .select("*")
+      .eq("operational", true)
       .order("install_date_battery", { ascending: true, nullsFirst: true });
 
     const alwaysFields = ["name", "plate_number"];

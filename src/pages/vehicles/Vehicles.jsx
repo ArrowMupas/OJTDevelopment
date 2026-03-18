@@ -9,7 +9,6 @@ import {
   ClipboardClock,
   ClipboardX,
   Activity,
-  Plus,
 } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
@@ -37,10 +36,9 @@ export default function MaintenancePage() {
     const orderColumn = swap ? "period_to" : "period_duration_to";
 
     let query = supabase
-      .from("vehicles")
+      .from("vehicles_with_first_number")
       .select("*")
-      .eq("operational", true)
-      .order(orderColumn, { ascending: true });
+      .order("first_number", { ascending: true });
 
     const searchColumns = [
       "name",
@@ -716,7 +714,7 @@ export default function MaintenancePage() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-0.5 sm:gap-2">
+          <div className="grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-0.5 sm:gap-2">
             {vehiclesWithStatus.map((vehicle) => {
               return (
                 <div
@@ -747,7 +745,7 @@ export default function MaintenancePage() {
                   </div>
 
                   <figure className="px-4 pt-4">
-                    <div className="w-full h-25 sm:h-32 bg-linear-to-r from-violet-100 to-violet-200 rounded-xl flex items-center justify-center overflow-hidden">
+                    <div className="w-full h-25 sm:h-64 bg-linear-to-r from-violet-100 to-violet-200 rounded-xl flex items-center justify-center overflow-hidden">
                       {vehicle.image_url ? (
                         <img
                           src={vehicle.image_url}
@@ -764,7 +762,7 @@ export default function MaintenancePage() {
                       <h2 className="text-sm sm:text-base font-bold">
                         {vehicle.name}
                       </h2>
-                      <div className="badge badge-dash badge-primary badge-xs sm:badge-sm text-xs">
+                      <div className="badge badge-dash badge-primary badge-xs sm:badge-sm text-xs truncate">
                         {vehicle.plate_number}
                       </div>
                     </div>
