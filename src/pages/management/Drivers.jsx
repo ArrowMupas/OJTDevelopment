@@ -10,6 +10,7 @@ import {
   Mail,
   Phone,
   IdCard,
+  CaptionsOff,
 } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
@@ -19,6 +20,7 @@ import { z } from "zod";
 import { useEffect, useState, useMemo } from "react";
 import debounce from "lodash.debounce";
 import OurInput from "../../components/OurInput";
+import { ReactImageMagnifier } from "react-image-magnify-lib";
 
 // Driver schema for input validation
 const driverSchema = z.object({
@@ -440,34 +442,49 @@ export default function MaintenancePage() {
 
       <dialog id="licenseModal" className="modal">
         <div className="modal-box">
-          <h2 className="text-xl font-bold text-center mb-4">Driver License</h2>
+          <div className="mb-4 ">
+            <h2 className="text-lg font-bold">Drivers License</h2>
+            <p className="text-gray-500 text-sm">
+              Hover on the image to magnify
+            </p>
+          </div>
+          <button
+            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            onClick={() => {
+              document.getElementById("licenseModal").close();
+              setDriverToView(null);
+            }}
+          >
+            ✕
+          </button>
           {driverToView?.license_url ? (
-            <div>
-              <img
-                src={driverToView.license_url}
-                alt={`${driverToView.first_name} License`}
-                className="w-full max-h-125 object-contain"
+            <div className="space-y-2 overflow-hidden p-2">
+              <ReactImageMagnifier
+                smallImageSrc={driverToView.license_url}
+                largeImageSrc={driverToView.license_url} // Use high-res if available
+                magnifierHeight={200}
+                magnifierWidth={200}
+                zoomLevel={3}
+                alt="Driver License"
               />
-              <img
-                src={driverToView.license_back}
-                alt={`${driverToView.first_name} License`}
-                className="w-full max-h-125 object-contain"
+
+              <ReactImageMagnifier
+                smallImageSrc={driverToView.license_back}
+                largeImageSrc={driverToView.license_back} // Use high-res if available
+                magnifierHeight={200}
+                magnifierWidth={200}
+                zoomLevel={3}
+                alt="Driver Back"
               />
             </div>
           ) : (
-            <p className="text-center text-gray-500">No license uploaded.</p>
+            <div className="p-4  flex justify-center items-center flex-col">
+              <CaptionsOff className="size-8 text-error" />
+              <p className="text-center text-gray-500 text-sm">
+                No license uploaded yet.
+              </p>
+            </div>
           )}
-          <div className="modal-action justify-center">
-            <button
-              className="btn btn-ghost"
-              onClick={() => {
-                document.getElementById("licenseModal").close();
-                setDriverToView(null);
-              }}
-            >
-              Close
-            </button>
-          </div>
         </div>
       </dialog>
 

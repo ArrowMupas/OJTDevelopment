@@ -78,33 +78,21 @@ const AboutUs = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.6 }}
-      className="min-h-screen font-sans text-gray-900"
-    >
+    <div className="min-h-screen font-sans text-gray-900">
       {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: -40 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="bg-white text-black text-center py-20 px-4 flex flex-col items-center relative overflow-hidden"
+        transition={{ duration: 1, ease: "easeOut" }}
+        className=" text-black text-center py-20 px-4 flex flex-col items-center relative overflow-hidden"
       >
-        <div className="absolute inset-0 bg-linear-to-b from-black/5 to-transparent pointer-events-none"></div>
-
-        <motion.div
-          initial={{ scale: 0.8 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="relative z-10 bg-white p-3 rounded-full mb-6 shadow-2xl"
-        >
+        <div className="relative z-10 bg-white p-3 rounded-full mb-6 shadow-2xl">
           <img
             className="w-30 h-30 object-contain"
             src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/national_electrification_logo.png"
             alt="NEA Logo"
           />
-        </motion.div>
+        </div>
 
         <h1 className="relative z-10 text-5xl font-bold uppercase mb-4 tracking-tight">
           About Us
@@ -287,7 +275,7 @@ const AboutUs = () => {
           </p>
         </div>
       </motion.footer>
-    </motion.div>
+    </div>
   );
 };
 

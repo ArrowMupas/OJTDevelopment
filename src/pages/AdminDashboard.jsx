@@ -88,64 +88,59 @@ export default function AdminDashboard() {
       <h1 className="text-SM font-bold mb-1 mt-8 text-green-700">
         VEHICLE REQUESTS
       </h1>
-      <div className="grid grid-cols-2 md:flex-row gap-5">
-        <div className="card card-md">
-          <div className="grid grid-cols-2 md:flex-row gap-5">
-            <div className="card bg-base-100 card-md shadow-sm">
-              <div className="card-body flex-row justify-between border-highlight border-2 rounded-sm">
-                <div>
-                  <h2 className="card-title">19</h2>
-                  <p>Today's Request</p>
-                </div>
-                <Clipboard className="h-8 w-12 mr-2 text-highlight" />
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
-            </div>
-            <div className="card bg-base-100 card-md shadow-sm">
-              <div className="card-body flex-row justify-between border-highlight border-2 rounded-sm">
-                <div>
-                  <h2 className="card-title">34</h2>
-                  <p>Total Monthly Request</p>
-                </div>
-                <ClipboardClock className="h-8 w-12 mr-2 text-highlight" />
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
-            </div>
-
-            {/* <div className="card bg-base-100 card-md shadow-sm">
-              <div className="card-body flex-row justify-between border-highlight border-b-2 rounded-sm">
-                <div>
-                  <h2 className="card-title">19</h2>
-                  <p>Pending Request</p>
-                </div>
-                <ClipboardClock className="h-8 w-12 mr-2 text-highlight" />
-              </div>
-            </div> */}
-          </div>
-          <div className="card bg-base-100 card-md shadow-sm mt-5">
-            <div className="card-body flex-row justify-between border-[#30694B] border-2 rounded-sm">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* LEFT: Stats */}
+        <div className="grid grid-cols-2 gap-5">
+          {/* Card 1 */}
+          <div className="card bg-base-100 card-md shadow-sm relative">
+            <div className="card-body flex flex-col justify-between border-highlight border-2 rounded-sm">
               <div>
+                <p>Today's Request</p>
+                <h2 className="card-title">19</h2>
+              </div>
+              <Clipboard className="h-8 w-12 text-highlight self-end" />
+            </div>
+            <div className="absolute inset-0 bg-linear-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 hover:opacity-30 transition duration-300 rounded-sm"></div>
+          </div>
+
+          {/* Card 2 */}
+          <div className="card bg-base-100 card-md shadow-sm relative">
+            <div className="card-body flex flex-col justify-between border-highlight border-2 rounded-sm">
+              <div>
+                <p>Total Monthly Request</p>
+                <h2 className="card-title">34</h2>
+              </div>
+              <ClipboardClock className="h-8 w-12 text-highlight self-end" />
+            </div>
+            <div className="absolute inset-0 bg-linear-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 hover:opacity-30 transition duration-300 rounded-sm"></div>
+          </div>
+
+          {/* Card 3 */}
+          <div className="card bg-base-100 card-md shadow-sm relative">
+            <div className="card-body flex flex-col justify-between border-[#30694B] border-2 rounded-sm">
+              <div>
+                <p>Completed Request</p>
                 <h2 className="card-title">7</h2>
-                <p>Completed Request </p>
               </div>
-              <ClipboardCheck className="h-8 w-12 mr-2 text-[#30694B]" />
+              <ClipboardCheck className="h-8 w-12 text-[#30694B] self-end" />
             </div>
-            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
+            <div className="absolute inset-0 bg-linear-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 hover:opacity-30 transition duration-300 rounded-sm"></div>
           </div>
 
-          <div className="card mt-4">
-            <div className="card-body flex-row justify-between border-[#30694B] border-2 rounded-sm">
+          {/* Card 4 */}
+          <div className="card bg-base-100 card-md shadow-sm relative">
+            <div className="card-body flex flex-col justify-between border-[#30694B] border-2 rounded-sm">
               <div>
-                <h2 className="card-title">14</h2>
                 <p>Pending Request</p>
+                <h2 className="card-title">14</h2>
               </div>
-              <ClipboardClock className="h-8 w-12 mr-2 text-[#30694B]" />
+              <ClipboardClock className="h-8 w-12 text-[#30694B] self-end" />
             </div>
-            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
+            <div className="absolute inset-0 bg-linear-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 hover:opacity-30 transition duration-300 rounded-sm"></div>
           </div>
         </div>
 
-        {/* Line Chart */}
+        {/* RIGHT: Chart (less wide now) */}
         <div className="card bg-base-100 shadow-xl p-6">
           <h2 className="text-xl font-bold mb-4">Request Chart</h2>
           <Line data={lineData} />
