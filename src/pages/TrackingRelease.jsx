@@ -16,35 +16,35 @@ const initialCars = [
     plate: "TA477B",
     name: "Toyota Vios",
     personnel: ["Maintenance 1", "Maintenance 2"],
-    step: 3,
+    step: 5,
   },
   {
     id: 2,
     plate: "XI943A",
     name: "Honda Civic",
     personnel: ["Maintenance 1", "Maintenance 2"],
-    step: 2,
+    step: 5,
   },
   {
     id: 3,
     plate: "EE657B",
     name: "Mitsubishi Mirage",
     personnel: ["Maintenance 1", "Maintenance 2"],
-    step: 1,
+    step: 5,
   },
   {
     id: 4,
     plate: "NIA9436",
     name: "Ford Ranger",
     personnel: ["Maintenance 1", "Maintenance 2"],
-    step: 0,
+    step: 5,
   },
   {
     id: 5,
     plate: "ZIE0093",
     name: "Toyota Hilux",
     personnel: ["Maintenance 1", "Maintenance 2"],
-    step: 0,
+    step: 5,
   },
 ];
 
@@ -63,19 +63,19 @@ export default function TrackingPage() {
     <div className="min-h-screen bg-gray-100 p-6">
       <h1 className="text-2xl font-bold text-center mb-6">PMS Tracking</h1>
 
-      <div className="card-body flex-row justify-between bg-green-500 border-green-500 border-2 rounded-sm shadow-md mb-3 p-4">
+      <div className="card-body flex-row justify-between bg-[#30694B] border-[#30694B] border-2 rounded-sm shadow-md mb-3 p-4">
         <h2 className="card-title text-white">
-          <ClockFading className="h-8 w-12 mr-2 text-white" />
-          Ongoing Tracking
+          <ClockCheck className="h-8 w-12 mr-2 text-white" />
+          For Release
         </h2>
         <div className="tooltip tooltip-left" data-tip="Toggle Vehicle View">
           <div>
             <input
               type="checkbox"
-              className="toggle toggle-xl my-auto border-[#30694B] bg-[#30694B] checked:border-[#30694B] checked:bg-[#30694B] checked:text-[#30694B]"
+              className="toggle toggle-xl my-auto border-green-500 bg-green-500 checked:border-[#30694B] checked:bg-[#30694B] checked:text-[#30694B]"
               onChange={(e) => {
                 if (e.target.checked) {
-                  navigate("/track-release");
+                  navigate("/track");
                 }
               }}
             />
@@ -103,14 +103,14 @@ export default function TrackingPage() {
               >
                 <div
                   className={`w-6 h-6 rounded-full mb-1 ${
-                    index <= car.step ? "bg-green-500" : "bg-gray-300"
+                    index <= car.step ? "bg-[#30694B]" : "bg-gray-300"
                   }`}
                 ></div>
                 <span className="text-xs text-center">{label}</span>
               </div>
             ))}
           </div>
-          <div className="mt-4 text-sm text-gray-700 ">
+          <div className="mt-3 text-sm text-gray-700">
             <p className="font-semibold">Assigned Personnel:</p>
             <ul className="list-disc list-inside">
               {car.personnel.map((person, index) => (

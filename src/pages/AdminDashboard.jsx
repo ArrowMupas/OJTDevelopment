@@ -122,7 +122,7 @@ export default function AdminDashboard() {
               </div>
             </div> */}
           </div>
-          <div className="card bg-base-100 card-md shadow-sm mt-5">
+          <div className="card bg-base-100 card-md shadow-sm mt-6">
             <div className="card-body flex-row justify-between border-[#30694B] border-2 rounded-sm">
               <div>
                 <h2 className="card-title">7</h2>
@@ -133,7 +133,7 @@ export default function AdminDashboard() {
             <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-linear-to-r from-[#85CF3C] via-[#C2DE46] to-[#FFED4F] opacity-0 transition duration-300 ease-in-out hover:opacity-30 rounded-sm"></div>
           </div>
 
-          <div className="card mt-4">
+          <div className="card mt-6">
             <div className="card-body flex-row justify-between border-[#30694B] border-2 rounded-sm">
               <div>
                 <h2 className="card-title">14</h2>
@@ -146,7 +146,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Line Chart */}
-        <div className="card bg-base-100 shadow-xl p-6">
+        <div className="card bg-base-100 shadow-xl p-6 border-2 border-highlight rounded-sm">
           <h2 className="text-xl font-bold mb-4">Request Chart</h2>
           <Line data={lineData} />
         </div>
