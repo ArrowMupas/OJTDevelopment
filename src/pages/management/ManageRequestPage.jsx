@@ -118,7 +118,7 @@ export default function ManageRequestsPage() {
         View and manage all service requests here.
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 w-full">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full">
         <div className="stat bg-base-100 shadow rounded-md">
           <div className="stat-figure">
             <Clipboard className="h-8 w-12 text-[#d2dc15]" />
@@ -168,7 +168,7 @@ export default function ManageRequestsPage() {
 
       <div className="bg-white mt-4">
         <div className="overflow-x-auto  rounded-lg">
-          <table className="table ">
+          <table className="table table-sm lg:table-md ">
             <thead className="bg-green-500 text-white">
               <tr>
                 <th>Department</th>

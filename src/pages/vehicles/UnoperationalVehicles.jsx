@@ -9,7 +9,7 @@ import {
   ClipboardClock,
   ClipboardX,
   Activity,
-  Plus,
+  ArrowLeft,
 } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
@@ -21,26 +21,25 @@ import debounce from "lodash.debounce";
 import OurInput from "../../components/OurInput";
 import { motion, AnimatePresence } from "framer-motion";
 import { vehicleSchema } from "../../schemas/vehicleSchema";
-import { Link } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-export default function MaintenancePage() {
+export default function UnoperationalVehicles() {
+  const navigate = useNavigate();
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const [swap, setSwap] = useState(true);
 
   const fetchVehicles = async (searchTerm = "") => {
     setLoading(true);
 
-    const orderColumn = swap ? "period_to" : "period_duration_to";
-
     let query = supabase
       .from("vehicles")
       .select("*")
-      .eq("operational", true)
-      .order(orderColumn, { ascending: true });
+      .eq("operational", false)
+      .order("period_to", { ascending: true });
 
     const searchColumns = [
       "name",
@@ -79,7 +78,7 @@ export default function MaintenancePage() {
 
   useEffect(() => {
     fetchVehicles();
-  }, [swap]);
+  }, []);
 
   useEffect(() => {
     return () => debouncedSearch.cancel();
@@ -177,59 +176,6 @@ export default function MaintenancePage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const createVehicle = async (data) => {
-    setIsSubmitting(true);
-    setUploading(true);
-
-    try {
-      let imageUrl = null;
-      if (selectedFile) {
-        imageUrl = await uploadFile(selectedFile);
-        if (!imageUrl) {
-          console.warn("Image upload failed, continuing without image");
-        }
-      }
-
-      const { error } = await supabase.from("vehicles").insert([
-        {
-          name: data.vehicleName,
-          plate_number: data.plateNumber,
-          policy_number: data.policyNumber,
-          policy_id: data.policyID,
-          required_covered: data.requiredCovered,
-          issue_date: data.issueDate,
-          period_from: data.periodFrom,
-          period_to: data.periodTo,
-          image_url: imageUrl,
-          engine_number: data.engineNumber,
-          chassis_number: data.chassisNumber,
-          file_number: data.fileNumber,
-          year_model: data.yearModel,
-          period_duration: data.periodDuration,
-          period_duration_to: data.periodDurationTo,
-        },
-      ]);
-
-      if (error) {
-        toast.error("Failed to create vehicle: " + error.message);
-      } else {
-        toast.success("Vehicle created successfully!", {
-          position: "top-center",
-        });
-        document.getElementById("vehicleModal")?.close();
-        reset();
-        setSelectedFile(null);
-        fetchVehicles(search);
-      }
-    } catch (error) {
-      console.error("Error creating vehicle:", error);
-      toast.error("An error occurred while creating vehicle");
-    } finally {
-      setIsSubmitting(false);
-      setUploading(false);
-    }
-  };
-
   const [isEditing, setIsEditing] = useState(false);
   const [vehicleToEdit, setVehicleToEdit] = useState(null);
 
@@ -321,46 +267,25 @@ export default function MaintenancePage() {
 
   return (
     <main className="px-3 py-4 sm:px-5  h-full pb-25 space-y-7">
-      <div className="flex gap-2 justify-between items-center">
-        <div className="w-70">
-          <h1 className="text-lg font-bold">
-            {swap ? "Vehicle Insurance" : "Vehicle Registration"}
-          </h1>
-          <p className="text-gray-500 text-sm">
-            {swap
-              ? "View the insurance of vehicles"
-              : "View the current registration of Vehicles"}
-          </p>
-        </div>
-
-        <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
+        <div className=" flex gap-2">
           <button
-            className="btn btn-primary flex gap-2"
-            onClick={() => {
-              setIsEditing(false);
-              setVehicleToEdit(null);
-              reset({});
-              setSelectedFile(null);
-              document.getElementById("vehicleModal").showModal();
-            }}
+            onClick={() => navigate(-1)}
+            className="btn btn-square btn-warning btn-dash h-auto  "
           >
-            <Van className="h-4 w-6" />
-            <span className="hidden sm:inline">Add New Vehicle</span>
+            <ArrowLeft size={20} />
           </button>
-
-          <Link to="/vehicles-unoperational">
-            <button className="btn btn-error flex gap-2 text-white">
-              <Activity className="h-4 w-6" />
-              <span className="hidden sm:inline">Unoperational Vehicles</span>
-            </button>
-          </Link>
+          <div>
+            <h1 className="text-lg font-bold">Unoperational Vehicles</h1>
+            <p className="text-gray-500 text-sm">
+              View the unoperational vehicles available in the system
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div className="flex sm:justify-between gap-2 items-center">
-        <div className="flex gap-2 w-full">
-          <label className="input input-neutral w-full sm:w-auto">
-            <Search className="h-4 w-6" />
+        <div className="flex  gap-2 w-full sm:w-auto">
+          <label className="input input-neutral flex items-center w-full ">
+            <Search className="h-4 w-6 mr-1" />
             <input
               type="search"
               placeholder="Search vehicles..."
@@ -370,13 +295,15 @@ export default function MaintenancePage() {
                 setSearch(value);
                 debouncedSearch(value);
               }}
+              className="w-full sm:w-auto"
             />
           </label>
+
           <div className="dropdown">
             <div
               tabIndex={0}
               role="button"
-              className="btn bg-green-600 text-white"
+              className="btn bg-green-600 text-white flex items-center gap-1"
             >
               <FilterIcon className="h-4 w-6" /> Filter
             </div>
@@ -391,17 +318,6 @@ export default function MaintenancePage() {
                 <a className="active:bg-highlight">Descending</a>
               </li>
             </ul>
-          </div>
-        </div>
-
-        <div className="tooltip tooltip-left" data-tip="Toggle Vehicle View">
-          <div>
-            <input
-              type="checkbox"
-              className="toggle toggle-xl my-auto border-violet-600 bg-violet-500 checked:border-indigo-500 checked:bg-indigo-400 checked:text-indigo-800"
-              checked={swap}
-              onChange={() => setSwap((prev) => !prev)}
-            />
           </div>
         </div>
       </div>
@@ -450,17 +366,11 @@ export default function MaintenancePage() {
 
       <dialog id="vehicleModal" className="modal">
         <div className="modal-box max-w-3xl">
-          <h1 className="text-2xl font-bold">
-            {isEditing ? "Update Vehicle" : "Add Vehicle"}
-          </h1>
+          <h1 className="text-2xl font-bold">Update Vehicle</h1>
           <p className="text-gray-600 text-sm mb-7">
-            {isEditing
-              ? "Edit vehicle details below."
-              : "Create your vehicle here!"}
+            Edit vehicle details below.
           </p>
-          <form
-            onSubmit={handleSubmit(isEditing ? updateVehicle : createVehicle)}
-          >
+          <form onSubmit={handleSubmit(updateVehicle)}>
             <button
               type="button"
               className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
@@ -686,13 +596,7 @@ export default function MaintenancePage() {
               disabled={isSubmitting || uploading}
             >
               <Truck className="size-5 mr-2" />
-              {isSubmitting
-                ? isEditing
-                  ? "Updating vehicle..."
-                  : "Creating vehicle..."
-                : isEditing
-                  ? "Update Vehicle"
-                  : "Create Vehicle"}
+              {isSubmitting ? "Updating vehicle..." : "Update Vehicle"}
             </button>
           </form>
         </div>
@@ -770,156 +674,136 @@ export default function MaintenancePage() {
                     </div>
 
                     <div className="space-y-2  relative">
-                      <AnimatePresence mode="wait">
-                        {swap ? (
-                          <motion.div
-                            key="insurance"
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.25 }}
-                            className="space-y-1 sm:space-y-2"
-                          >
-                            <div>
-                              <span className="text-gray-500 text-xs">
-                                Policy ID
-                              </span>
-                              <p className="text-xs sm:text-sm">
-                                {vehicle.policy_id || "N/A"}
-                              </p>
-                            </div>
-                            <div>
-                              <span className="text-gray-500 text-xs">
-                                Policy No.
-                              </span>
-                              <p className="text-xs sm:text-sm">
-                                {vehicle.policy_number || "N/A"}
-                              </p>
-                            </div>
-                            <div>
-                              <span className="text-gray-500 text-xs">
-                                Issue Date
-                              </span>
-                              <p className="text-sm">
-                                {vehicle.issue_date
-                                  ? format(
-                                      new Date(vehicle.issue_date),
-                                      "MMM. d, yyyy",
-                                    )
-                                  : "N/A"}
-                              </p>
-                            </div>
-                            <div>
-                              <span className="text-gray-500 text-xs">
-                                Required Covered
-                              </span>
-                              <p className="text-sm ">
-                                {vehicle.required_covered}
-                              </p>
-                            </div>
-                            <div>
-                              <span className="text-gray-500 text-xs">
-                                Period Covered
-                              </span>
-                              <p
-                                className={`text-sm ${
-                                  vehicle.status === "expired"
-                                    ? "text-error font-semibold"
-                                    : vehicle.status === "warning"
-                                      ? "text-warning font-semibold"
-                                      : ""
-                                }`}
-                              >
-                                {vehicle.period_from && vehicle.period_to ? (
-                                  <div className="flex flex-col">
-                                    <div>
-                                      {format(
-                                        new Date(vehicle.period_from),
-                                        "MMM. d, yyyy",
-                                      )}
-                                      {" - "}
-                                      {format(
-                                        new Date(vehicle.period_to),
-                                        "MMM. d, yyyy",
-                                      )}
-                                    </div>
-                                  </div>
-                                ) : (
-                                  "N/A"
-                                )}
-                              </p>
-                            </div>
-                          </motion.div>
-                        ) : (
-                          <motion.div
-                            key="vehicle"
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.25 }}
-                            className="space-y-1 sm:space-y-2"
-                          >
-                            <div>
-                              <span className="text-gray-500 text-xs">
-                                Engine No.
-                              </span>
-                              <p className="text-xs sm:text-sm">
-                                {vehicle.engine_number || "N/A"}
-                              </p>
-                            </div>
-                            <div>
-                              <span className="text-gray-500 text-xs">
-                                Chassis No.
-                              </span>
-                              <p className="text-xs sm:text-sm">
-                                {vehicle.chassis_number || "N/A"}
-                              </p>
-                            </div>
-                            <div>
-                              <span className="text-gray-500 text-xs">
-                                File No.
-                              </span>
-                              <p className="text-xs sm:text-sm">
-                                {vehicle.file_number || "N/A"}
-                              </p>
-                            </div>
-                            <div>
-                              <span className="text-gray-500 text-xs">
-                                Year Model
-                              </span>
-                              <p className=" text-sm">
-                                {vehicle.year_model
-                                  ? format(new Date(vehicle.year_model), "yyyy")
-                                  : "N/A"}
-                              </p>
-                            </div>
-                            <div>
-                              <span className="text-gray-500 text-xs">
-                                Period Duration
-                              </span>
-                              <p
-                                className={`text-sm ${
-                                  vehicle.status2 === "expired"
-                                    ? "text-error font-semibold"
-                                    : vehicle.status2 === "warning"
-                                      ? "text-warning font-semibold"
-                                      : ""
-                                }`}
-                              >
-                                {format(
-                                  new Date(vehicle.period_duration),
+                      <div className="space-y-1 sm:space-y-2">
+                        <div>
+                          <span className="text-gray-500 text-xs">
+                            Policy ID
+                          </span>
+                          <p className="text-xs sm:text-sm">
+                            {vehicle.policy_id || "N/A"}
+                          </p>
+                        </div>
+                        <div>
+                          <span className="text-gray-500 text-xs">
+                            Policy No.
+                          </span>
+                          <p className="text-xs sm:text-sm">
+                            {vehicle.policy_number || "N/A"}
+                          </p>
+                        </div>
+                        <div>
+                          <span className="text-gray-500 text-xs">
+                            Issue Date
+                          </span>
+                          <p className="text-sm">
+                            {vehicle.issue_date
+                              ? format(
+                                  new Date(vehicle.issue_date),
                                   "MMM. d, yyyy",
-                                )}
-                                {" - "}
-                                {format(
-                                  new Date(vehicle.period_duration),
-                                  "MMM. d, yyyy",
-                                )}
-                              </p>
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                                )
+                              : "N/A"}
+                          </p>
+                        </div>
+                        <div>
+                          <span className="text-gray-500 text-xs">
+                            Required Covered
+                          </span>
+                          <p className="text-sm ">{vehicle.required_covered}</p>
+                        </div>
+                        <div>
+                          <span className="text-gray-500 text-xs">
+                            Period Covered
+                          </span>
+                          <p
+                            className={`text-sm ${
+                              vehicle.status === "expired"
+                                ? "text-error font-semibold"
+                                : vehicle.status === "warning"
+                                  ? "text-warning font-semibold"
+                                  : ""
+                            }`}
+                          >
+                            {vehicle.period_from && vehicle.period_to ? (
+                              <div className="flex flex-col">
+                                <div>
+                                  {format(
+                                    new Date(vehicle.period_from),
+                                    "MMM. d, yyyy",
+                                  )}
+                                  {" - "}
+                                  {format(
+                                    new Date(vehicle.period_to),
+                                    "MMM. d, yyyy",
+                                  )}
+                                </div>
+                              </div>
+                            ) : (
+                              "N/A"
+                            )}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <span className="text-gray-500 text-xs">
+                          Engine No.
+                        </span>
+                        <p className="text-xs sm:text-sm">
+                          {vehicle.engine_number || "N/A"}
+                        </p>
+                      </div>
+
+                      <div>
+                        <span className="text-gray-500 text-xs">
+                          Chassis No.
+                        </span>
+                        <p className="text-xs sm:text-sm">
+                          {vehicle.chassis_number || "N/A"}
+                        </p>
+                      </div>
+
+                      <div>
+                        <span className="text-gray-500 text-xs">File No.</span>
+                        <p className="text-xs sm:text-sm">
+                          {vehicle.file_number || "N/A"}
+                        </p>
+                      </div>
+
+                      <div>
+                        <span className="text-gray-500 text-xs">
+                          Year Model
+                        </span>
+                        <p className=" text-sm">
+                          {vehicle.year_model
+                            ? format(new Date(vehicle.year_model), "yyyy")
+                            : "N/A"}
+                        </p>
+                      </div>
+
+                      <div>
+                        <span className="text-gray-500 text-xs">
+                          Period Duration
+                        </span>
+                        <p
+                          className={`text-sm ${
+                            vehicle.status2 === "expired"
+                              ? "text-error font-semibold"
+                              : vehicle.status2 === "warning"
+                                ? "text-warning font-semibold"
+                                : ""
+                          }`}
+                        >
+                          {format(
+                            new Date(vehicle.period_duration),
+                            "MMM. d, yyyy",
+                          )}
+                          {" - "}
+                          {format(
+                            new Date(vehicle.period_duration),
+                            "MMM. d, yyyy",
+                          )}
+                        </p>
+                      </div>
 
                       <div className="flex justify-end">
                         <button
