@@ -1,23 +1,53 @@
 import { format, parse } from "date-fns";
 import { supabase } from "../../supabaseClient";
-import { Clipboard, ClipboardCheck, ClipboardClock, Info } from "lucide-react";
-import { useEffect, useState } from "react";
+import {
+  Clipboard,
+  ClipboardCheck,
+  ClipboardClock,
+  Info,
+  Search,
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import Tippy from "@tippyjs/react";
 import "tippy.js/themes/light.css";
 import { Link } from "react-router-dom";
+import debounce from "lodash.debounce";
 
 export default function ManageRequestsPage() {
   const [drivers, setDrivers] = useState([]);
   const [vehicles, setVehicles] = useState([]);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
-  async function fetchRequests() {
-    const { data, error } = await supabase
+  async function fetchRequests(searchTerm = "") {
+    let query = supabase
       .from("service_vehicle_requests")
       .select("*")
       .eq("status", "Pending")
       .order("timestamp", { ascending: false });
+
+    const searchColumns = [
+      "department",
+      "email",
+      "destination",
+      "purpose",
+      "items",
+      "passengers",
+      "other_instructions",
+      "passenger_contact_number",
+      "requested_by",
+    ];
+
+    if (searchTerm) {
+      let orQueryParts = searchColumns.map(
+        (field) => `${field}.ilike.%${searchTerm}%`,
+      );
+
+      query = query.or(orQueryParts.join(","));
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error("Requests error:", error);
@@ -53,6 +83,21 @@ export default function ManageRequestsPage() {
 
     fetchAllData();
   }, []);
+
+  const debouncedSearch = useMemo(
+    () =>
+      debounce(async (value) => {
+        const data = await fetchRequests(value);
+        setRequests(data);
+      }, 400),
+    [],
+  );
+
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
 
   async function updateAssignedVehicle(requestId, vehicleId) {
     const { error } = await supabase
@@ -112,11 +157,13 @@ export default function ManageRequestsPage() {
   }
 
   return (
-    <main className="px-5 py-4 pb-40 h-full ">
-      <h1 className="text-lg font-bold ">Manage Request</h1>
-      <p className="text-gray-500 text-sm mb-6">
-        View and manage all service requests here.
-      </p>
+    <main className="px-5 py-4 pb-40 h-full space-y-7 ">
+      <div>
+        <h1 className="text-lg font-bold ">Manage Request</h1>
+        <p className="text-gray-500 text-sm">
+          View and manage all service requests here.
+        </p>
+      </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full">
         <div className="stat bg-base-100 shadow rounded-md">
@@ -125,7 +172,6 @@ export default function ManageRequestsPage() {
           </div>
           <div className="stat-title">Today's Request</div>
           <div className="stat-value text-[#d2dc15]">21</div>
-          <div className="stat-desc">New requests for today</div>
         </div>
 
         <div className="stat bg-base-100 shadow rounded-md">
@@ -134,15 +180,6 @@ export default function ManageRequestsPage() {
           </div>
           <div className="stat-title">Completed Request</div>
           <div className="stat-value text-highlight">4</div>
-          <Link to={"/completerequest"}>
-            {/* <div className="stat-title text-white bg-green-500 rounded-b-xs w-36 text-center">
-              View Completed Request
-            </div> */}
-            <div className="stat-title">Click to view:</div>
-            <div className="stat-title text-green-500 hover:underline hover:text-green-600">
-              All Completed Request
-            </div>
-          </Link>
         </div>
 
         <div className="stat bg-base-100 shadow rounded-md">
@@ -151,7 +188,6 @@ export default function ManageRequestsPage() {
           </div>
           <div className="stat-title">Pending Request</div>
           <div className="stat-value text-[#745fc9]">19</div>
-          <div className="stat-desc">Requests still pending</div>
         </div>
 
         <div className="stat bg-base-100 shadow rounded-md">
@@ -160,13 +196,39 @@ export default function ManageRequestsPage() {
           </div>
           <div className="stat-title">Another Pending</div>
           <div className="stat-value text-[#745fc9]">19</div>
-          <div className="stat-desc">Something else</div>
         </div>
       </div>
 
-      <h2 className=" font-semibold mt-12 text-gray-700">List of Request</h2>
+      <div className="flex justify-between gap-2">
+        <label className="input input-neutral">
+          <Search className="h-4 w-6" />
+          <input
+            type="search"
+            placeholder="Search vehicle requests"
+            value={search}
+            list="departments"
+            onChange={(e) => {
+              const value = e.target.value;
+              setSearch(value);
+              debouncedSearch(value);
+            }}
+          />
+          <datalist id="departments">
+            <option value="TOSU"></option>
+            <option value="DOH"></option>
+            <option value="HRAD"></option>
+            <option value="ACCOUNTING"></option>
+            <option value="NEA"></option>
+          </datalist>
+        </label>
+        <Link to={"/completerequest"}>
+          <button className="btn btn-success text-white">
+            <span className="hidden sm:inline">View </span>Completed Requests
+          </button>
+        </Link>
+      </div>
 
-      <div className="bg-white mt-4">
+      <div className="bg-white">
         <div className="overflow-x-auto  rounded-lg">
           <table className="table table-sm lg:table-md ">
             <thead className="bg-green-500 text-white">
@@ -192,11 +254,6 @@ export default function ManageRequestsPage() {
                   new Date(),
                 );
 
-                const formattedDateTime = format(
-                  parsedDateTime,
-                  "MMM. d, yyyy hh:mm a",
-                );
-
                 return (
                   <tr key={req.id} className="hover:bg-green-50">
                     <th className="uppercase">{req.department}</th>
@@ -215,11 +272,11 @@ export default function ManageRequestsPage() {
 
                     <td className="">
                       <span className="text-sm">
-                        {format(formattedDateTime, "MMM. d, yyyy")}
+                        {format(parsedDateTime, "MMM. d, yyyy")}
                       </span>
                       <br />
                       <span className="text-xs ">
-                        {format(formattedDateTime, "hh:mm a")}
+                        {format(parsedDateTime, "hh:mm a")}
                       </span>
                     </td>
 

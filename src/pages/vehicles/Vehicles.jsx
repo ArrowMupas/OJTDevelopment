@@ -205,6 +205,8 @@ export default function MaintenancePage() {
           year_model: data.yearModel,
           period_duration: data.periodDuration,
           period_duration_to: data.periodDurationTo,
+          acquisition_date: data.acquisitionDate,
+          acquisition_cost: data.acquisitionCost,
         },
       ]);
 
@@ -262,6 +264,8 @@ export default function MaintenancePage() {
           year_model: data.yearModel,
           period_duration: data.periodDuration,
           period_duration_to: data.periodDurationTo,
+          acquisition_date: data.acquisitionDate,
+          acquisition_cost: data.acquisitionCost,
         })
         .eq("id", vehicleToEdit.id);
 
@@ -392,14 +396,16 @@ export default function MaintenancePage() {
           </div>
         </div>
 
-        <div className="tooltip tooltip-left" data-tip="Toggle Vehicle View">
-          <div>
-            <input
-              type="checkbox"
-              className="toggle toggle-xl my-auto border-violet-600 bg-violet-500 checked:border-indigo-500 checked:bg-indigo-400 checked:text-indigo-800"
-              checked={swap}
-              onChange={() => setSwap((prev) => !prev)}
-            />
+        <div className="fab">
+          <div className="tooltip tooltip-left" data-tip="Toggle Vehicle View">
+            <div>
+              <input
+                type="checkbox"
+                className="toggle toggle-xl my-auto border-violet-600 bg-violet-500 checked:border-indigo-500 checked:bg-indigo-400 checked:text-indigo-800"
+                checked={swap}
+                onChange={() => setSwap((prev) => !prev)}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -494,31 +500,24 @@ export default function MaintenancePage() {
                 />
               </div>
 
-        <div className="grid md:grid-cols-2 gap-5 mt-4">
-          <OurInput
-            label="Acquisition Date"
-            name="acquisitionDate"
-            type="date"
-            register={register}
-            error={errors.acquisitionDate}
-          />
+              <div className="grid md:grid-cols-2 gap-5 mt-4">
+                <OurInput
+                  label="Acquisition Date"
+                  name="acquisitionDate"
+                  type="date"
+                  register={register}
+                  error={errors.acquisitionDate}
+                />
 
-          <OurInput
-            label="Acquisition Cost"
-            name="acquisitionCost"
-            type="number"
-            register={register}
-            error={errors.acquisitionCost}
-          />
-        </div>
-      </div>
-
-
-            
-
-
-            
-            
+                <OurInput
+                  label="Acquisition Cost"
+                  name="acquisitionCost"
+                  type="number"
+                  register={register}
+                  error={errors.acquisitionCost}
+                />
+              </div>
+            </div>
 
             <div className="divider my-2"></div>
 
@@ -551,8 +550,6 @@ export default function MaintenancePage() {
                   error={errors.requiredCovered}
                 />
               </div>
-            
-
             </div>
 
             <div className="divider my-2"></div>
@@ -645,41 +642,39 @@ export default function MaintenancePage() {
                   )}
                 </div>
 
-              <div className="divider my-2"></div>
+                <div className="divider my-2"></div>
 
-            <div className="mb-6">
-              <h3 className="font-semibold text-sm text-gray-500 mb-3">
-                Valid Period
-              </h3>
+                <div className="mb-6">
+                  <h3 className="font-semibold text-sm text-gray-500 mb-3">
+                    Valid Period
+                  </h3>
 
-              <div className="grid md:grid-cols-3 gap-5">
-                <div className="form-control w-full">
-                  <label className="label">
-                    <span className="label-text">From</span>
-                  </label>
-                  <input
-                    type="date"
-                    className={`input input-bordered w-full ${errors.periodFrom ? "input-error" : ""}`}
-                    {...register("periodFrom")}
-                  />
-                </div>
+                  <div className="grid md:grid-cols-3 gap-5">
+                    <div className="form-control w-full">
+                      <label className="label">
+                        <span className="label-text">From</span>
+                      </label>
+                      <input
+                        type="date"
+                        className={`input input-bordered w-full ${errors.periodFrom ? "input-error" : ""}`}
+                        {...register("periodFrom")}
+                      />
+                    </div>
 
-                <div className="form-control w-full">
-                  <label className="label">
-                    <span className="label-text">To</span>
-                  </label>
-                  <input
-                    type="date"
-                    className={`input input-bordered w-full ${errors.periodTo ? "input-error" : ""}`}
-                    {...register("periodTo")}
-                  />
+                    <div className="form-control w-full">
+                      <label className="label">
+                        <span className="label-text">To</span>
+                      </label>
+                      <input
+                        type="date"
+                        className={`input input-bordered w-full ${errors.periodTo ? "input-error" : ""}`}
+                        {...register("periodTo")}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-            </div>
-            </div>
-
-            
 
             <div className="divider my-2"></div>
 
@@ -777,7 +772,7 @@ export default function MaintenancePage() {
                         <img
                           src={vehicle.image_url}
                           alt={vehicle.name}
-                          className="h-full w-full object-cover object-fill"
+                          className="h-full w-full object-cover"
                         />
                       ) : (
                         <Van className="size-12 text-gray-500" />
@@ -839,7 +834,7 @@ export default function MaintenancePage() {
                                 Required Covered
                               </span>
                               <p className="text-sm ">
-                                {vehicle.required_covered}
+                                {vehicle.required_covered || "N/A"}
                               </p>
                             </div>
                             <div>
@@ -918,6 +913,7 @@ export default function MaintenancePage() {
                                   : "N/A"}
                               </p>
                             </div>
+
                             <div>
                               <span className="text-gray-500 text-xs">
                                 Period Duration
@@ -966,6 +962,14 @@ export default function MaintenancePage() {
                               yearModel: vehicle.year_model,
                               periodDuration: vehicle.period_duration,
                               periodDurationTo: vehicle.period_duration_to,
+                              acquisitionDate: vehicle.acquisition_date
+                                ? format(
+                                    new Date(vehicle.acquisition_date),
+                                    "yyyy-MM-dd",
+                                  )
+                                : "",
+
+                              acquisitionCost: vehicle.acquisition_cost ?? "",
                             });
                             setSelectedFile(null);
                             document.getElementById("vehicleModal").showModal();

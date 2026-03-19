@@ -37,6 +37,12 @@ export const vehicleSchema = z
     periodDuration: z.string().min(1, "Period Duration is required"),
 
     periodDurationTo: z.string().min(1, "Period Duration To is required"),
+
+    acquisitionDate: z.string().min(1, "Acquisition date is required"),
+
+    acquisitionCost: z.coerce
+      .number()
+      .min(0, "Acquisition cost must be positive"),
   })
   .refine((data) => new Date(data.periodTo) >= new Date(data.periodFrom), {
     message: "Period To must be after Period From",

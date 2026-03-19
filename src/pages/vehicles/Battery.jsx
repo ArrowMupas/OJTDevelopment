@@ -9,6 +9,10 @@ import toast from "react-hot-toast";
 import { format } from "date-fns";
 import debounce from "lodash.debounce";
 import HeaderMonitoring from "../../components/HeaderMonitoring";
+import {
+  getStatusByMonths,
+  getNextDateByMonths,
+} from "../../helpers/statusHelper";
 
 const batterySchema = z.object({
   type_battery: z.string().min(1, "Battery type is required"),
@@ -73,43 +77,19 @@ export default function Battery() {
     return () => debouncedSearch.cancel();
   }, [debouncedSearch]);
 
-  const getBatteryStatus = (date) => {
-    if (!date) return "overdue";
-
-    const install = new Date(date);
-    const now = new Date();
-
-    const diffMonths =
-      (now.getFullYear() - install.getFullYear()) * 12 +
-      (now.getMonth() - install.getMonth());
-
-    if (diffMonths >= 12) return "overdue";
-    if (diffMonths >= 11) return "warning";
-
-    return "ok";
-  };
-
   const batteryStats = vehicles.reduce(
     (acc, v) => {
-      const status = getBatteryStatus(v.install_date_battery);
+      const status = getStatusByMonths(v.install_date_battery, 10, 11, 12);
 
       if (!v.install_date_battery) acc.notRecorded += 1;
       if (status === "warning") acc.warning += 1;
+      if (status === "dueSoon") acc.dueSoon += 1;
       if (status === "overdue") acc.overdue += 1;
 
       return acc;
     },
-    { notRecorded: 0, warning: 0, overdue: 0 },
+    { notRecorded: 0, warning: 0, overdue: 0, dueSoon: 0 },
   );
-
-  const getNextBatteryChange = (date) => {
-    if (!date) return null;
-
-    const install = new Date(date);
-    install.setFullYear(install.getFullYear() + 1);
-
-    return install;
-  };
 
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const {
@@ -161,31 +141,37 @@ export default function Battery() {
         setSearch={setSearch}
         debouncedSearch={debouncedSearch}
         activeTab="battery"
-        dueSoon={batteryStats.warning}
+        warning={batteryStats.warning}
+        dueSoon={batteryStats.dueSoon}
         overdue={batteryStats.overdue}
       />
 
       {/* VEHICLE CARDS */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1 sm:gap-2">
         {vehicles.map((v) => {
-          const status = getBatteryStatus(v.install_date_battery);
-          const nextChange = getNextBatteryChange(v.install_date_battery);
+          const status = getStatusByMonths(v.install_date_battery, 10, 11, 12);
+          const nextChange = getNextDateByMonths(v.install_date_battery, 12);
 
           const statusBadge = {
             text: !v.install_date_battery
               ? "NOT RECORDED"
               : status === "overdue"
                 ? "REPLACEMENT NEEDED"
-                : status === "warning"
+                : status === "dueSoon"
                   ? "NEAR EXPIRATION"
-                  : "BATTERY OK",
+                  : status === "warning"
+                    ? "WARNING"
+                    : "BATTERY OK",
+
             color: !v.install_date_battery
               ? "badge-neutral"
               : status === "overdue"
-                ? "badge-error"
-                : status === "warning"
-                  ? "badge-warning"
-                  : "badge-success",
+                ? "badge-error font-bold"
+                : status === "dueSoon"
+                  ? "badge-secondary"
+                  : status === "warning"
+                    ? "badge-warning"
+                    : "badge-success",
           };
 
           return (
@@ -224,6 +210,8 @@ export default function Battery() {
                     <AlertTriangle className="text-gray-400" />
                   ) : status === "overdue" ? (
                     <AlertTriangle className="text-error" />
+                  ) : status === "dueSoon" ? (
+                    <AlertTriangle className="text-secondary" />
                   ) : status === "warning" ? (
                     <AlertTriangle className="text-warning" />
                   ) : (
@@ -257,9 +245,11 @@ export default function Battery() {
                       className={`font-semibold ${
                         status === "overdue"
                           ? "text-error"
-                          : status === "warning"
-                            ? "text-warning"
-                            : "text-success"
+                          : status === "dueSoon"
+                            ? "text-secondary"
+                            : status === "warning"
+                              ? "text-warning"
+                              : "text-success"
                       }`}
                     >
                       {format(new Date(nextChange), "MMM. d, yyyy")}
