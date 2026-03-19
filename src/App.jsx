@@ -31,6 +31,7 @@ import HistoryPage from "./pages/vehicles/HistoryPage";
 import Battery from "./pages/vehicles/Battery";
 import Tires from "./pages/vehicles/Tires";
 import VehicleMonitoringPage from "./pages/vehicles/VehicleMonitoringPage";
+import UnoperationalVehicles from "./pages/vehicles/UnoperationalVehicles";
 
 import TransactionsPage from "./pages/TransactionsPage";
 import DriverMonitoringPage from "./pages/DriverMonitoringPage";
@@ -72,6 +73,10 @@ function App() {
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/inquiry" element={<InquiryPage />} />
           <Route path="/vehicles" element={<VehiclePage />} />
+          <Route
+            path="/vehicles-unoperational"
+            element={<UnoperationalVehicles />}
+          />
           <Route path="/drivers" element={<Drivers />} />
           <Route path="/drivermonitoring" element={<DriverMonitoringPage />} />
           <Route path="/battery" element={<Battery />} />
