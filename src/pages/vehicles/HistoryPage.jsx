@@ -110,8 +110,8 @@ export default function HistoryPage() {
       </div>
 
       {/* Search and Filter (UI only) */}
-      <div className="flex flex-col md:flex-row md:items-center md:gap-4 ">
-        <label className="input input-neutral">
+      <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 ">
+        <label className="input input-neutral w-auto">
           <Search className="h-4 w-6" />
           <input
             type="search"
@@ -121,34 +121,31 @@ export default function HistoryPage() {
           />
         </label>
 
-        <form className="flex gap-2 flex-wrap">
+        <form className="flex flex-wrap gap-2 w-full sm:w-fit">
           {["tire", "battery", "pms"].map((type) => (
             <input
               key={type}
               type="checkbox"
-              className={`btn  ${
+              className={`btn flex-1  ${
                 selectedTypes.includes(type) ? "btn-success" : ""
               }`}
               aria-label={type.toUpperCase()}
               checked={selectedTypes.includes(type)}
               onChange={(e) => {
                 let newSelection;
-
                 if (e.target.checked) {
                   newSelection = [...selectedTypes, type];
                 } else {
                   newSelection = selectedTypes.filter((t) => t !== type);
                 }
-
                 setSelectedTypes(newSelection);
               }}
             />
           ))}
-
           <input
             type="button"
             value="All"
-            className="btn btn-outline"
+            className="btn btn-outline flex-1"
             onClick={() => {
               const all = ["tire", "battery", "pms"];
               setSelectedTypes(all);

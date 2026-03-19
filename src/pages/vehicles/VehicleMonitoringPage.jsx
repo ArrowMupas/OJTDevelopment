@@ -9,6 +9,10 @@ import toast from "react-hot-toast";
 import { format } from "date-fns";
 import debounce from "lodash.debounce";
 import HeaderMonitoring from "../../components/HeaderMonitoring";
+import {
+  getStatusByMonths,
+  getNextDateByMonths,
+} from "../../helpers/statusHelper";
 
 const pmsSchema = z.object({
   pms_date: z.string().min(1, "Date is required"),
@@ -61,43 +65,19 @@ export default function VehicleMonitoringPage() {
     return () => debouncedSearch.cancel();
   }, [debouncedSearch]);
 
-  const getPmsStatus = (date) => {
-    if (!date) return "overdue";
-
-    const install = new Date(date);
-    const now = new Date();
-
-    const diffMonths =
-      (now.getFullYear() - install.getFullYear()) * 12 +
-      (now.getMonth() - install.getMonth());
-
-    if (diffMonths >= 6) return "overdue";
-    if (diffMonths >= 5) return "warning";
-
-    return "ok";
-  };
-
   const pmsStats = vehicles.reduce(
     (acc, v) => {
-      const status = getPmsStatus(v.pms_date);
+      const status = getStatusByMonths(v.pms_date, 4, 5, 6);
 
       if (!v.pms_date) acc.notRecorded += 1;
       if (status === "warning") acc.warning += 1;
+      if (status === "dueSoon") acc.dueSoon += 1;
       if (status === "overdue") acc.overdue += 1;
 
       return acc;
     },
-    { notRecorded: 0, warning: 0, overdue: 0 },
+    { notRecorded: 0, warning: 0, overdue: 0, dueSoon: 0 },
   );
-
-  const getNextPmsDate = (date) => {
-    if (!date) return null;
-
-    const lastPms = new Date(date);
-    lastPms.setMonth(lastPms.getMonth() + 6);
-
-    return lastPms;
-  };
 
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const {
@@ -147,31 +127,36 @@ export default function VehicleMonitoringPage() {
         setSearch={setSearch}
         debouncedSearch={debouncedSearch}
         activeTab="pms"
-        dueSoon={pmsStats.warning}
+        warning={pmsStats.warning}
+        dueSoon={pmsStats.dueSoon}
         overdue={pmsStats.overdue}
       />
 
       {/* VEHICLE CARDS */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1 sm:gap-2">
         {vehicles.map((v) => {
-          const status = getPmsStatus(v.pms_date);
-          const nextPms = getNextPmsDate(v.pms_date);
+          const status = getStatusByMonths(v.pms_date, 4, 5, 6);
+          const nextPms = getNextDateByMonths(v.pms_date, 6);
 
           const statusBadge = {
             text: !v.pms_date
               ? "NOT RECORDED"
               : status === "overdue"
-                ? "PMS OVERDUE"
-                : status === "warning"
+                ? "REPLACEMENT NEEDED"
+                : status === "dueSoon"
                   ? "NEAR EXPIRATION"
-                  : "PMS OK",
+                  : status === "warning"
+                    ? "WARNING"
+                    : "PMS OK",
             color: !v.pms_date
               ? "badge-neutral"
               : status === "overdue"
-                ? "badge-error"
-                : status === "warning"
-                  ? "badge-warning"
-                  : "badge-success",
+                ? "badge-error font-bold"
+                : status === "dueSoon"
+                  ? "badge-secondary"
+                  : status === "warning"
+                    ? "badge-warning"
+                    : "badge-success",
           };
 
           return (
@@ -210,6 +195,8 @@ export default function VehicleMonitoringPage() {
                     <AlertTriangle className="text-gray-400" />
                   ) : status === "overdue" ? (
                     <AlertTriangle className="text-error" />
+                  ) : status === "dueSoon" ? (
+                    <AlertTriangle className="text-secondary" />
                   ) : status === "warning" ? (
                     <AlertTriangle className="text-warning" />
                   ) : (
@@ -234,9 +221,11 @@ export default function VehicleMonitoringPage() {
                       className={`font-semibold ${
                         status === "overdue"
                           ? "text-error"
-                          : status === "warning"
-                            ? "text-warning"
-                            : "text-success"
+                          : status === "dueSoon"
+                            ? "text-secondary"
+                            : status === "warning"
+                              ? "text-warning"
+                              : "text-success"
                       }`}
                     >
                       {format(new Date(nextPms), "MMM. d, yyyy")}

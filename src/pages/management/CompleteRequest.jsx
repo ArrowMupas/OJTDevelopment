@@ -1,23 +1,47 @@
 import { format, parse } from "date-fns";
 import { supabase } from "../../supabaseClient";
-import { ArrowLeft, Info } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ArrowLeft, Info, Search } from "lucide-react";
+import { useEffect, useState, useMemo } from "react";
 import Tippy from "@tippyjs/react";
 import "tippy.js/themes/light.css";
 import { Link } from "react-router-dom";
+import debounce from "lodash.debounce";
 
 export default function CompleteRequest() {
   const [drivers, setDrivers] = useState([]);
   const [vehicles, setVehicles] = useState([]);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
-  async function fetchRequests() {
-    const { data, error } = await supabase
+  async function fetchRequests(searchTerm = "") {
+    let query = supabase
       .from("service_vehicle_requests")
       .select("*")
       .neq("status", "Pending")
       .order("timestamp", { ascending: false });
+
+    const searchColumns = [
+      "department",
+      "email",
+      "destination",
+      "purpose",
+      "items",
+      "passengers",
+      "other_instructions",
+      "passenger_contact_number",
+      "requested_by",
+    ];
+
+    if (searchTerm) {
+      let orQueryParts = searchColumns.map(
+        (field) => `${field}.ilike.%${searchTerm}%`,
+      );
+
+      query = query.or(orQueryParts.join(","));
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error("Requests error:", error);
@@ -53,6 +77,21 @@ export default function CompleteRequest() {
 
     fetchAllData();
   }, []);
+
+  const debouncedSearch = useMemo(
+    () =>
+      debounce(async (value) => {
+        const data = await fetchRequests(value);
+        setRequests(data);
+      }, 400),
+    [],
+  );
+
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
 
   async function updateAssignedVehicle(requestId, vehicleId) {
     const { error } = await supabase
@@ -129,15 +168,39 @@ export default function CompleteRequest() {
         </div>
       </div>
 
-      <h2 className=" font-semibold  text-gray-700">
-        List of Completed Request
-        <div className="badge badge-dash badge-primary badge-xs sm:badge-sm text-xs ml-2">
-          Total: 21
-        </div>
-      </h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="font-semibold text-gray-700">
+          List of Completed Request
+          <div className="badge badge-dash badge-primary badge-xs sm:badge-sm text-xs ml-2">
+            Total: {requests.length}
+          </div>
+        </h2>
+
+        <label className="input input-neutral">
+          <Search className="h-4 w-6" />
+          <input
+            type="search"
+            placeholder="Search completed requests"
+            value={search}
+            list="departments"
+            onChange={(e) => {
+              const value = e.target.value;
+              setSearch(value);
+              debouncedSearch(value);
+            }}
+          />
+          <datalist id="departments">
+            <option value="TOSU"></option>
+            <option value="DOH"></option>
+            <option value="HRAD"></option>
+            <option value="ACCOUNTING"></option>
+            <option value="NEA"></option>
+          </datalist>
+        </label>
+      </div>
 
       <div className="bg-white mt-2">
-        <div className="overflow-x-auto  rounded-lg">
+        <div className="overflow-x-auto rounded-lg">
           <table className="table ">
             <thead className="bg-green-500 text-white">
               <tr>
@@ -152,140 +215,142 @@ export default function CompleteRequest() {
               </tr>
             </thead>
             <tbody>
-              {requests.map((req) => {
-                const date = req.departure_date;
-                const time = req.departure_time;
+              {loading ? (
+                <tr>
+                  <td colSpan="8" className="text-center py-8">
+                    <span className="loading loading-spinner loading-md"></span>
+                  </td>
+                </tr>
+              ) : requests.length === 0 ? (
+                <tr>
+                  <td colSpan="8" className="text-center py-8 text-gray-500">
+                    No completed requests found
+                  </td>
+                </tr>
+              ) : (
+                requests.map((req) => {
+                  const date = req.departure_date;
+                  const time = req.departure_time;
 
-                const parsedDateTime = parse(
-                  `${date} ${time}`,
-                  "yyyy-MM-dd HH:mm:ss",
-                  new Date(),
-                );
+                  const parsedDateTime = parse(
+                    `${date} ${time}`,
+                    "yyyy-MM-dd HH:mm:ss",
+                    new Date(),
+                  );
 
-                const formattedDateTime = format(
-                  parsedDateTime,
-                  "MMM. d, yyyy hh:mm a",
-                );
+                  return (
+                    <tr key={req.id} className="hover:bg-green-50">
+                      <th className="uppercase">{req.department}</th>
 
-                return (
-                  <tr key={req.id} className="hover:bg-green-50">
-                    <th className="uppercase">{req.department}</th>
+                      <td className="">
+                        <span className="font-bold capitalize">
+                          {req.passengers}
+                        </span>
+                        <br />
+                        <span className="text-xs font-medium">
+                          {req.passenger_contact_number}
+                        </span>
+                      </td>
 
-                    <td className="">
-                      <span className="font-bold capitalize">
-                        {req.passengers}
-                      </span>
-                      <br />
-                      <span className="text-xs  font-medium">
-                        {req.passenger_contact_number}
-                      </span>
-                    </td>
+                      <td className="capitalize">{req.destination}</td>
 
-                    <td className="capitalize">{req.destination}</td>
+                      <td className="">
+                        <span className="text-sm">
+                          {format(parsedDateTime, "MMM. d, yyyy")}
+                        </span>
+                        <br />
+                        <span className="text-xs">
+                          {format(parsedDateTime, "hh:mm a")}
+                        </span>
+                      </td>
 
-                    <td className="">
-                      <span className="text-sm">
-                        {format(formattedDateTime, "MMM. d, yyyy")}
-                      </span>
-                      <br />
-                      <span className="text-xs ">
-                        {format(formattedDateTime, "hh:mm a")}
-                      </span>
-                    </td>
-
-                    {/* DRIVER SELECT */}
-                    <td>
-                      <select
-                        className="select "
-                        value={req.driver_id || ""}
-                        onChange={(e) =>
-                          updateAssignedDriver(req.id, Number(e.target.value))
-                        }
-                      >
-                        <option value="">Unassigned</option>
-
-                        {drivers.map((driver) => (
-                          <option key={driver.id} value={driver.id}>
-                            {driver.first_name} {driver.last_name}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-
-                    {/* VEHICLE SELECT */}
-                    <td>
-                      <div className="flex flex-col gap-2">
+                      {/* DRIVER SELECT */}
+                      <td>
                         <select
-                          className="select "
-                          value={req.vehicle_id || ""}
+                          className="select"
+                          value={req.driver_id || ""}
                           onChange={(e) =>
-                            updateAssignedVehicle(
-                              req.id,
-                              Number(e.target.value),
-                            )
+                            updateAssignedDriver(req.id, Number(e.target.value))
                           }
                         >
                           <option value="">Unassigned</option>
-                          {vehicles.map((vehicle) => (
-                            <option key={vehicle.id} value={vehicle.id}>
-                              {vehicle.name}
+                          {drivers.map((driver) => (
+                            <option key={driver.id} value={driver.id}>
+                              {driver.first_name} {driver.last_name}
                             </option>
                           ))}
                         </select>
-                        {/* <div className="badge badge-dash badge-primary">
-                          {vehicles.find((v) => v.id === req.vehicle_id)
-                            ?.plate_number ?? "N/A"}
-                        </div> */}
-                      </div>
-                    </td>
+                      </td>
 
-                    {/* STATUS */}
-                    <td>
-                      <select
-                        className={`select  ${
-                          req.status === "Completed"
-                            ? " text-green-500 select-success"
-                            : req.status === "Cancelled" &&
-                              "select-error  text-error "
-                        }`}
-                        value={req.status || ""}
-                        onChange={(e) => updateStatus(req.id, e.target.value)}
-                      >
-                        <option value="Pending" className="text-black">
-                          Pending
-                        </option>
-                        <option value="Completed" className="text-green-500 ">
-                          Completed
-                        </option>
-                        <option value="Cancelled" className="text-error">
-                          Cancelled
-                        </option>
-                      </select>
-                    </td>
+                      {/* VEHICLE SELECT */}
+                      <td>
+                        <div className="flex flex-col gap-2">
+                          <select
+                            className="select"
+                            value={req.vehicle_id || ""}
+                            onChange={(e) =>
+                              updateAssignedVehicle(
+                                req.id,
+                                Number(e.target.value),
+                              )
+                            }
+                          >
+                            <option value="">Unassigned</option>
+                            {vehicles.map((vehicle) => (
+                              <option key={vehicle.id} value={vehicle.id}>
+                                {vehicle.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </td>
 
-                    <td>
-                      <Tippy
-                        interactive
-                        placement="left"
-                        theme="light"
-                        content={
-                          <div className="p-3 w-64 ">
-                            <h3 className="font-bold">Instructions</h3>
-                            <p>{req.other_instructions || "None"}</p>
+                      {/* STATUS */}
+                      <td>
+                        <select
+                          className={`select ${
+                            req.status === "Completed"
+                              ? "text-green-500 select-success"
+                              : req.status === "Cancelled" &&
+                                "select-error text-error"
+                          }`}
+                          value={req.status || ""}
+                          onChange={(e) => updateStatus(req.id, e.target.value)}
+                        >
+                          <option value="Pending" className="text-black">
+                            Pending
+                          </option>
+                          <option value="Completed" className="text-green-500">
+                            Completed
+                          </option>
+                          <option value="Cancelled" className="text-error">
+                            Cancelled
+                          </option>
+                        </select>
+                      </td>
 
-                            <h3 className="font-bold mt-2">Items</h3>
-                            <p>{req.items || "None"}</p>
-                          </div>
-                        }
-                      >
-                        <Info className="size-5" />
-                      </Tippy>
-                    </td>
-                  </tr>
-                );
-              })}
+                      <td>
+                        <Tippy
+                          interactive
+                          placement="left"
+                          theme="light"
+                          content={
+                            <div className="p-3 w-64">
+                              <h3 className="font-bold">Instructions</h3>
+                              <p>{req.other_instructions || "None"}</p>
+                              <h3 className="font-bold mt-2">Items</h3>
+                              <p>{req.items || "None"}</p>
+                            </div>
+                          }
+                        >
+                          <Info className="size-5" />
+                        </Tippy>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
-            <tfoot></tfoot>
           </table>
         </div>
       </div>

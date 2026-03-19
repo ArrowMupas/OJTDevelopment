@@ -9,6 +9,10 @@ import toast from "react-hot-toast";
 import { format } from "date-fns";
 import debounce from "lodash.debounce";
 import HeaderMonitoring from "../../components/HeaderMonitoring";
+import {
+  getStatusByMonths,
+  getNextDateByMonths,
+} from "../../helpers/statusHelper";
 
 const tireSchema = z.object({
   type_tire: z.string().min(1, "Tire type is required"),
@@ -61,44 +65,19 @@ export default function Tires() {
     return () => debouncedSearch.cancel();
   }, [debouncedSearch]);
 
-  // Tire expiration logic
-  const getTireStatus = (date) => {
-    if (!date) return "overdue";
-
-    const install = new Date(date);
-    const now = new Date();
-
-    const diffMonths =
-      (now.getFullYear() - install.getFullYear()) * 12 +
-      (now.getMonth() - install.getMonth());
-
-    if (diffMonths >= 36) return "overdue";
-    if (diffMonths >= 35) return "warning";
-
-    return "ok";
-  };
-
   const tireStats = vehicles.reduce(
     (acc, v) => {
-      const status = getTireStatus(v.install_date_tire);
+      const status = getStatusByMonths(v.install_date_tire, 34, 35, 36);
 
       if (!v.install_date_tire) acc.notRecorded += 1;
       if (status === "warning") acc.warning += 1;
+      if (status === "dueSoon") acc.dueSoon += 1;
       if (status === "overdue") acc.overdue += 1;
 
       return acc;
     },
-    { notRecorded: 0, warning: 0, overdue: 0 },
+    { notRecorded: 0, warning: 0, overdue: 0, dueSoon: 0 },
   );
-
-  const getNextTireChange = (date) => {
-    if (!date) return null;
-
-    const install = new Date(date);
-    install.setFullYear(install.getFullYear() + 3);
-
-    return install;
-  };
 
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const {
@@ -151,31 +130,37 @@ export default function Tires() {
         setSearch={setSearch}
         debouncedSearch={debouncedSearch}
         activeTab="tires"
-        dueSoon={tireStats.warning}
+        warning={tireStats.warning}
+        dueSoon={tireStats.dueSoon}
         overdue={tireStats.overdue}
       />
 
       {/* VEHICLE CARDS */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1 sm:gap-2">
         {vehicles.map((v) => {
-          const status = getTireStatus(v.install_date_tire);
-          const nextChange = getNextTireChange(v.install_date_tire);
+          const status = getStatusByMonths(v.install_date_tire, 34, 35, 36);
+          const nextChange = getNextDateByMonths(v.install_date_tire, 36);
 
           const statusBadge = {
             text: !v.install_date_tire
               ? "NOT RECORDED"
               : status === "overdue"
                 ? "REPLACEMENT NEEDED"
-                : status === "warning"
+                : status === "dueSoon"
                   ? "NEAR EXPIRATION"
-                  : "TIRES OK",
+                  : status === "warning"
+                    ? "WARNING"
+                    : "TIRES OK",
+
             color: !v.install_date_tire
-              ? "badge-neutral" // or badge-info if you want attention
+              ? "badge-neutral"
               : status === "overdue"
-                ? "badge-error"
-                : status === "warning"
-                  ? "badge-warning"
-                  : "badge-success",
+                ? "badge-error font-bold"
+                : status === "dueSoon"
+                  ? "badge-secondary"
+                  : status === "warning"
+                    ? "badge-warning"
+                    : "badge-success",
           };
 
           return (
@@ -214,6 +199,8 @@ export default function Tires() {
                     <AlertTriangle className="text-gray-400" /> // or badge-info color
                   ) : status === "overdue" ? (
                     <AlertTriangle className="text-error" />
+                  ) : status === "dueSoon" ? (
+                    <AlertTriangle className="text-secondary" />
                   ) : status === "warning" ? (
                     <AlertTriangle className="text-warning" />
                   ) : (
@@ -247,9 +234,11 @@ export default function Tires() {
                       className={`font-semibold ${
                         status === "overdue"
                           ? "text-error"
-                          : status === "warning"
-                            ? "text-warning"
-                            : "text-success"
+                          : status === "dueSoon"
+                            ? "text-secondary"
+                            : status === "warning"
+                              ? "text-warning"
+                              : "text-success"
                       }`}
                     >
                       {format(new Date(nextChange), "MMM. d, yyyy")}
