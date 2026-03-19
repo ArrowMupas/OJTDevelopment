@@ -493,7 +493,32 @@ export default function MaintenancePage() {
                   error={errors.plateNumber}
                 />
               </div>
-            </div>
+
+        <div className="grid md:grid-cols-2 gap-5 mt-4">
+          <OurInput
+            label="Acquisition Date"
+            name="acquisitionDate"
+            type="date"
+            register={register}
+            error={errors.acquisitionDate}
+          />
+
+          <OurInput
+            label="Acquisition Cost"
+            name="acquisitionCost"
+            type="number"
+            register={register}
+            error={errors.acquisitionCost}
+          />
+        </div>
+      </div>
+
+
+            
+
+
+            
+            
 
             <div className="divider my-2"></div>
 
@@ -526,89 +551,8 @@ export default function MaintenancePage() {
                   error={errors.requiredCovered}
                 />
               </div>
-            </div>
+            
 
-            <div className="divider my-2"></div>
-
-            <div className="mb-6">
-              <h3 className="font-semibold text-sm text-gray-500 mb-3">
-                Vehicle Registration
-              </h3>
-
-              <div className="grid md:grid-cols-2 gap-5">
-                <OurInput
-                  label="Engine Number"
-                  name="engineNumber"
-                  register={register}
-                  error={errors.engineNumber}
-                />
-
-                <OurInput
-                  label="Chassis Number"
-                  name="chassisNumber"
-                  register={register}
-                  error={errors.chassisNumber}
-                />
-              </div>
-
-              <div className="grid md:grid-cols-3 gap-5 mt-4">
-                <OurInput
-                  label="File Number"
-                  name="fileNumber"
-                  register={register}
-                  error={errors.fileNumber}
-                />
-
-                <div className="form-control w-full">
-                  <label className="label">
-                    <span className="label-text">Year Model</span>
-                  </label>
-                  <input
-                    type="date"
-                    className={`input input-bordered w-full ${errors.yearModel ? "input-error" : ""}`}
-                    {...register("yearModel")}
-                  />
-                  {errors.yearModel && (
-                    <p className="text-error text-sm mt-1">
-                      {errors.yearModel.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="form-control w-full">
-                  <label className="label">
-                    <span className="label-text">Period Duration</span>
-                  </label>
-                  <input
-                    type="date"
-                    className={`input input-bordered w-full ${errors.periodDuration ? "input-error" : ""}`}
-                    {...register("periodDuration")}
-                  />
-                  {errors.periodDuration && (
-                    <p className="text-error text-sm mt-1">
-                      {errors.periodDuration.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <div className="form-control w-full">
-                  <label className="label">
-                    <span className="label-text">Period Duration To</span>
-                  </label>
-                  <input
-                    type="date"
-                    className={`input input-bordered w-full ${errors.periodDurationTo ? "input-error" : ""}`}
-                    {...register("periodDurationTo")}
-                  />
-                  {errors.periodDurationTo && (
-                    <p className="text-error text-sm mt-1">
-                      {errors.periodDurationTo.message}
-                    </p>
-                  )}
-                </div>
-              </div>
             </div>
 
             <div className="divider my-2"></div>
@@ -653,6 +597,89 @@ export default function MaintenancePage() {
                 </div>
               </div>
             </div>
+
+            <div className="divider my-2"></div>
+
+            <div className="mb-6">
+              <h3 className="font-semibold text-sm text-gray-500 mb-3">
+                Vehicle Registration
+              </h3>
+
+              <div className="grid md:grid-cols-2 gap-5">
+                <OurInput
+                  label="Engine Number"
+                  name="engineNumber"
+                  register={register}
+                  error={errors.engineNumber}
+                />
+
+                <OurInput
+                  label="Chassis Number"
+                  name="chassisNumber"
+                  register={register}
+                  error={errors.chassisNumber}
+                />
+              </div>
+
+              <div className="grid md:grid-cols-1 gap-5 mt-4">
+                <OurInput
+                  label="File Number"
+                  name="fileNumber"
+                  register={register}
+                  error={errors.fileNumber}
+                />
+
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text">Year Model</span>
+                  </label>
+                  <input
+                    type="date"
+                    className={`input input-bordered w-full ${errors.yearModel ? "input-error" : ""}`}
+                    {...register("yearModel")}
+                  />
+                  {errors.yearModel && (
+                    <p className="text-error text-sm mt-1">
+                      {errors.yearModel.message}
+                    </p>
+                  )}
+                </div>
+
+              <div className="divider my-2"></div>
+
+            <div className="mb-6">
+              <h3 className="font-semibold text-sm text-gray-500 mb-3">
+                Valid Period
+              </h3>
+
+              <div className="grid md:grid-cols-3 gap-5">
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text">From</span>
+                  </label>
+                  <input
+                    type="date"
+                    className={`input input-bordered w-full ${errors.periodFrom ? "input-error" : ""}`}
+                    {...register("periodFrom")}
+                  />
+                </div>
+
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text">To</span>
+                  </label>
+                  <input
+                    type="date"
+                    className={`input input-bordered w-full ${errors.periodTo ? "input-error" : ""}`}
+                    {...register("periodTo")}
+                  />
+                </div>
+              </div>
+            </div>
+            </div>
+            </div>
+
+            
 
             <div className="divider my-2"></div>
 
@@ -745,12 +772,12 @@ export default function MaintenancePage() {
                   </div>
 
                   <figure className="px-4 pt-4">
-                    <div className="w-full h-25 sm:h-64 bg-linear-to-r from-violet-100 to-violet-200 rounded-xl flex items-center justify-center overflow-hidden">
+                    <div className="w-50 h-10 sm:h-45 bg-linear-to-r from-violet-100 to-violet-200 rounded-xl flex items-center justify-center overflow-hidden">
                       {vehicle.image_url ? (
                         <img
                           src={vehicle.image_url}
                           alt={vehicle.name}
-                          className="w-full h-full object-cover"
+                          className="h-full w-full object-cover object-fill"
                         />
                       ) : (
                         <Van className="size-12 text-gray-500" />
@@ -910,7 +937,7 @@ export default function MaintenancePage() {
                                 )}
                                 {" - "}
                                 {format(
-                                  new Date(vehicle.period_duration),
+                                  new Date(vehicle.period_duration_to),
                                   "MMM. d, yyyy",
                                 )}
                               </p>
