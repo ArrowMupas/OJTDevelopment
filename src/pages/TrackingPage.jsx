@@ -4,10 +4,10 @@ import { useNavigate } from "react-router-dom";
 
 const steps = [
   "Inspection",
-  "For Repair",
   "Job Order",
-  "Spare Parts Installed",
-  "For Release",
+  "Spare Parts Complete",
+  "On-Going Repair",
+  "Accomplished | For Release",
 ];
 
 const initialCars = [
@@ -110,7 +110,7 @@ export default function TrackingPage() {
               </div>
             ))}
           </div>
-          <div className="mt-4 text-sm text-gray-700 ">
+          <div className="mt-5 text-sm text-gray-700 ">
             <p className="font-semibold">Assigned Personnel:</p>
             <ul className="list-disc list-inside">
               {car.personnel.map((person, index) => (

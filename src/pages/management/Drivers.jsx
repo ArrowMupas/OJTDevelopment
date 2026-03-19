@@ -10,6 +10,12 @@ import {
   Mail,
   Phone,
   IdCard,
+  ClipboardClock,
+  ClipboardX,
+  CircleStar,
+  Scroll,
+  ClockCheck,
+  Users,
 } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
@@ -306,6 +312,40 @@ export default function MaintenancePage() {
         </button>
       </div>
 
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-2 w-full mt-4">
+        <div className="stat bg-base-100 shadow rounded-md">
+          <div className="stat-figure">
+            <CircleStar className="h-8 w-12 text-yellow-500" />
+          </div>
+          <div className="stat-title">Average Rating</div>
+          <div className="stat-value text-yellow-500">1.6</div>
+        </div>
+
+        <div className="stat bg-base-100 shadow rounded-md">
+          <div className="stat-figure">
+            <Scroll className="h-8 w-12 text-green-600" />
+          </div>
+          <div className="stat-title">Total Survey</div>
+          <div className="stat-value text-green-600">10</div>
+        </div>
+
+        <div className="stat bg-base-100 shadow rounded-md">
+          <div className="stat-figure">
+            <ClockCheck className="h-8 w-12 text-yellow-600" />
+          </div>
+          <div className="stat-title">On-Time Rate</div>
+          <div className="stat-value text-yellow-600">94%</div>
+        </div>
+
+        <div className="stat bg-base-100 shadow rounded-md">
+          <div className="stat-figure">
+            <Users className="h-8 w-12 text-green-600" />
+          </div>
+          <div className="stat-title">Active Drivers</div>
+          <div className="stat-value text-green-600">11</div>
+        </div>
+      </div>
+
       <dialog id="driverModal" className="modal">
         <div className="modal-box">
           <h1 className="text-2xl font-bold">
@@ -493,7 +533,17 @@ export default function MaintenancePage() {
             {drivers.map((driver) => (
               <div key={driver.id} className="card bg-base-100 shadow ">
                 <figure className="px-7 pt-5">
-                  <div className="w-full h-38 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden aspect-auto">
+                  <div className="">
+                    <p className="text-sm pr-1 text-gray-600">
+                      Rating: <span className="bg-amber-200 ">1.00</span>
+                    </p>
+
+                    <p className="text-sm pr-1 text-gray-600">
+                      Adjectival:{" "}
+                      <span className="bg-green-200 text-black">Excellent</span>
+                    </p>
+                  </div>
+                  <div className="w-full h-38 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden border-1 shadow-xl border-gray-200 aspect-auto">
                     {driver.image_url ? (
                       <img
                         src={driver.image_url}
@@ -512,6 +562,7 @@ export default function MaintenancePage() {
                       <h2 className="card-title text-sm font-bold truncate">
                         {driver.first_name} {driver.last_name}
                       </h2>
+                      <p className="capitalize">{driver.designation}</p>
                     </div>
                   </div>
 
