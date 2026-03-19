@@ -273,7 +273,15 @@ export default function MaintenancePage() {
                 setSearch(value);
                 debouncedSearch(value);
               }}
+              list="browsers"
             />
+            <datalist id="browsers">
+              <option value="Chrome"></option>
+              <option value="Firefox"></option>
+              <option value="Safari"></option>
+              <option value="Opera"></option>
+              <option value="Edge"></option>
+            </datalist>
           </label>
 
           <div className="dropdown">
@@ -351,12 +359,12 @@ export default function MaintenancePage() {
       <dialog id="driverModal" className="modal">
         <div className="modal-box">
           <h1 className="text-2xl font-bold">
-            {isEditing ? "Update Driver" : "Add Driver"}
+            {isEditing ? "Update Driver" : "Add Staff"}
           </h1>
           <p className="text-gray-600 text-sm mb-7">
             {isEditing
               ? "Edit driver details below."
-              : "Create your driver here!"}
+              : "Create your staff here!"}
           </p>
           <form
             onSubmit={handleSubmit(isEditing ? updateDriver : createDriver)}
@@ -406,7 +414,7 @@ export default function MaintenancePage() {
             <div className="form-control w-full mt-3">
               <label className="label">
                 <span className="fieldset-legend text-sm">
-                  Upload Driver Image
+                  Upload Staff Image
                 </span>
               </label>
               <input
