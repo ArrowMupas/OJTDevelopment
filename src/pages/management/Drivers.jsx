@@ -10,8 +10,6 @@ import {
   Mail,
   Phone,
   IdCard,
-  ClipboardClock,
-  ClipboardX,
   CircleStar,
   Scroll,
   ClockCheck,
@@ -32,6 +30,7 @@ import { ReactImageMagnifier } from "react-image-magnify-lib";
 const driverSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  designation: z.string().min(2, "Designation must be at least 2 characters"),
   email: z.email("Invalid email address"),
   contact: z.string().min(7, "Contact number must be at least 7 digits"),
 });
@@ -142,6 +141,7 @@ export default function MaintenancePage() {
         {
           first_name: data.firstName,
           last_name: data.lastName,
+          designation: data.designation,
           email: data.email,
           contact_number: data.contact,
           image_url: imageUrl,
@@ -195,6 +195,7 @@ export default function MaintenancePage() {
         .update({
           first_name: data.firstName,
           last_name: data.lastName,
+          designation: data.designation,
           email: data.email,
           contact_number: data.contact,
           image_url: imageUrl,
@@ -251,14 +252,14 @@ export default function MaintenancePage() {
   const [driverToView, setDriverToView] = useState(null);
 
   return (
-    <main className="px-3 py-4 sm:px-5  h-full pb-25 ">
-      <h1 className="text-lg font-bold flex items-center gap-2">
-        Staff
-        <div className="badge badge-outline badge-info">{drivers.length}</div>
-      </h1>
-      <p className="text-gray-500 text-sm mb-6">
-        All the staff are listed here
-      </p>
+    <main className="px-3 py-4 sm:px-5  h-full pb-25 space-y-7">
+      <div>
+        <h1 className="text-lg font-bold flex items-center gap-2">
+          Staff
+          <div className="badge badge-outline badge-info">{drivers.length}</div>
+        </h1>
+        <p className="text-gray-500 text-sm">All the staff are listed here</p>
+      </div>
 
       <div className="gap-3 flex justify-between">
         <div className="flex gap-2">
@@ -273,18 +274,10 @@ export default function MaintenancePage() {
                 setSearch(value);
                 debouncedSearch(value);
               }}
-              list="browsers"
             />
-            <datalist id="browsers">
-              <option value="Chrome"></option>
-              <option value="Firefox"></option>
-              <option value="Safari"></option>
-              <option value="Opera"></option>
-              <option value="Edge"></option>
-            </datalist>
           </label>
 
-          <div className="dropdown">
+          {/* <div className="dropdown">
             <div
               tabIndex={0}
               role="button"
@@ -303,7 +296,7 @@ export default function MaintenancePage() {
                 <a className="active:bg-highlight">Descending</a>
               </li>
             </ul>
-          </div>
+          </div> */}
         </div>
 
         <button
@@ -322,7 +315,7 @@ export default function MaintenancePage() {
         </button>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-2 w-full mt-4">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-2 w-full ">
         <div className="stat bg-base-100 shadow rounded-md">
           <div className="stat-figure">
             <CircleStar className="h-8 w-12 text-yellow-500" />
@@ -361,7 +354,7 @@ export default function MaintenancePage() {
           <h1 className="text-2xl font-bold">
             {isEditing ? "Update Driver" : "Add Staff"}
           </h1>
-          <p className="text-gray-600 text-sm mb-7">
+          <p className="text-gray-600 text-sm">
             {isEditing
               ? "Edit driver details below."
               : "Create your staff here!"}
@@ -384,7 +377,7 @@ export default function MaintenancePage() {
             >
               ✕
             </button>
-            <div className="grid md:grid-cols-2 md:gap-6">
+            <div className="grid md:grid-cols-2 md:gap-4">
               <OurInput
                 label="First Name"
                 name="firstName"
@@ -399,6 +392,13 @@ export default function MaintenancePage() {
               />
             </div>
             <OurInput
+              label="Designation"
+              name="designation"
+              register={register}
+              error={errors.designation}
+            />
+
+            <OurInput
               label="Email"
               name="email"
               register={register}
@@ -411,78 +411,64 @@ export default function MaintenancePage() {
               register={register}
               error={errors.contact}
             />
-            <div className="form-control w-full mt-3">
-              <label className="label">
-                <span className="fieldset-legend text-sm">
-                  Upload Staff Image
-                </span>
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                className="file-input file-input-bordered w-full"
-                onChange={(e) => setSelectedFile(e.target.files[0])}
-              />
-              {selectedFile && (
-                <p className="text-sm text-gray-600 mt-2">
-                  Selected: {selectedFile.name}
-                </p>
-              )}
-            </div>
 
-            <div className="form-control w-full mt-4">
-              <label className="label">
-                <span className="fieldset-legend text-sm">
-                  Upload License Image
-                </span>
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                className="file-input file-input-bordered w-full"
-                onChange={(e) => setLicenseFile(e.target.files[0])}
-              />
-              {licenseFile && (
-                <p className="text-sm text-gray-600 mt-2">
-                  Selected: {licenseFile.name}
-                </p>
-              )}
-            </div>
+            <div className="space-y-4">
+              <div className="form-control w-full ">
+                <label className="label">
+                  <span className="fieldset-legend text-sm">
+                    Upload Staff Image
+                  </span>
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="file-input file-input-bordered w-full text-xs"
+                  onChange={(e) => setSelectedFile(e.target.files[0])}
+                />
+              </div>
 
-            <div className="form-control w-full mt-4">
-              <label className="label">
-                <span className="fieldset-legend text-sm">
-                  Upload License Back Image
-                </span>
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                className="file-input file-input-bordered w-full"
-                onChange={(e) => setLicenseBack(e.target.files[0])}
-              />
-              {licenseBack && (
-                <p className="text-sm text-gray-600 mt-2">
-                  Selected: {licenseBack.name}
-                </p>
-              )}
+              <div className="form-control w-full ">
+                <label className="label">
+                  <span className="fieldset-legend text-sm">
+                    Upload License Image
+                  </span>
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="file-input file-input-bordered w-full text-xs"
+                  onChange={(e) => setLicenseFile(e.target.files[0])}
+                />
+              </div>
+
+              <div className="form-control w-full ">
+                <label className="label">
+                  <span className="fieldset-legend text-sm">
+                    Upload License Back Image
+                  </span>
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="file-input file-input-bordered w-full text-xs"
+                  onChange={(e) => setLicenseBack(e.target.files[0])}
+                />
+              </div>
             </div>
 
             <button
               type="submit"
-              className="btn btn-lg w-full bg-green-600 text-white hover:bg-highlight mt-4"
+              className="btn btn-lg w-full bg-green-600 text-white hover:bg-highlight mt-4 "
               disabled={isSubmitting || uploading}
             >
               <Truck className="size-5 mr-2" />
-              {uploading
-                ? "Uploading files..."
-                : isSubmitting
-                  ? isEditing
-                    ? "Updating driver..."
-                    : "Creating driver..."
-                  : isEditing
-                    ? "Update Driver"
-                    : "Create Driver"}
+              {isSubmitting
+                ? isEditing
+                  ? "Updating driver..."
+                  : "Creating driver..."
+                : isEditing
+                  ? "Update Driver"
+                  : "Create Driver"}
             </button>
           </form>
         </div>
@@ -490,7 +476,7 @@ export default function MaintenancePage() {
 
       <dialog id="licenseModal" className="modal">
         <div className="modal-box">
-          <div className="mb-4 ">
+          <div className="">
             <h2 className="text-lg font-bold">Drivers License</h2>
             <p className="text-gray-500 text-sm">
               Hover on the image to magnify
@@ -536,7 +522,7 @@ export default function MaintenancePage() {
         </div>
       </dialog>
 
-      <div className="border-0 mt-4">
+      <div className="border-0 ">
         {drivers.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-40 gap-5">
             {loading ? (
@@ -557,18 +543,8 @@ export default function MaintenancePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-1 md:gap-2 ">
             {drivers.map((driver) => (
               <div key={driver.id} className="card bg-base-100 shadow ">
-                <figure className="px-7 pt-5">
-                  <div className="">
-                    <p className="text-sm pr-1 text-gray-600">
-                      Rating: <span className="bg-amber-200 ">1.00</span>
-                    </p>
-
-                    <p className="text-sm pr-1 text-gray-600">
-                      Adjectival:{" "}
-                      <span className="bg-green-200 text-black">Excellent</span>
-                    </p>
-                  </div>
-                  <div className="w-full h-38 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden border-1 shadow-xl border-gray-200 aspect-auto">
+                <figure className="px-4 pt-5">
+                  <div className="w-full h-38 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden   aspect-auto">
                     {driver.image_url ? (
                       <img
                         src={driver.image_url}
@@ -623,6 +599,7 @@ export default function MaintenancePage() {
                       reset({
                         firstName: driver.first_name,
                         lastName: driver.last_name,
+                        designation: driver.designation,
                         email: driver.email || "",
                         contact: driver.contact_number || "",
                       });

@@ -6,6 +6,7 @@ import {
   ClipboardClock,
   Info,
   Search,
+  Loader2,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import Tippy from "@tippyjs/react";
@@ -229,7 +230,7 @@ export default function ManageRequestsPage() {
       </div>
 
       <div className="bg-white">
-        <div className="overflow-x-auto  rounded-lg">
+        <div className="overflow-x-auto rounded-lg">
           <table className="table table-sm lg:table-md ">
             <thead className="bg-green-500 text-white">
               <tr>
@@ -244,133 +245,156 @@ export default function ManageRequestsPage() {
               </tr>
             </thead>
             <tbody>
-              {requests.map((req) => {
-                const date = req.departure_date;
-                const time = req.departure_time;
+              {loading ? (
+                <tr>
+                  <td colSpan="8" className="text-center py-12">
+                    <div className="flex flex-col items-center justify-center gap-3">
+                      <span className="loading loading-infinity loading-xl"></span>
+                      <p className="text-gray-500">Loading requests...</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : requests.length === 0 ? (
+                <tr>
+                  <td colSpan="8" className="text-center py-12">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Search className="h-12 w-12 text-gray-400" />
+                      <p className="text-gray-500 text-lg font-medium">
+                        No requests found
+                      </p>
+                      <p className="text-gray-400 text-sm">
+                        {search
+                          ? "Try a different search term"
+                          : "No pending requests available"}
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                requests.map((req) => {
+                  const date = req.departure_date;
+                  const time = req.departure_time;
 
-                const parsedDateTime = parse(
-                  `${date} ${time}`,
-                  "yyyy-MM-dd HH:mm:ss",
-                  new Date(),
-                );
+                  const parsedDateTime = parse(
+                    `${date} ${time}`,
+                    "yyyy-MM-dd HH:mm:ss",
+                    new Date(),
+                  );
 
-                return (
-                  <tr key={req.id} className="hover:bg-green-50">
-                    <th className="uppercase">{req.department}</th>
+                  return (
+                    <tr key={req.id} className="hover:bg-green-50">
+                      <th className="uppercase">{req.department}</th>
 
-                    <td className="">
-                      <span className="font-bold capitalize">
-                        {req.passengers}
-                      </span>
-                      <br />
-                      <span className="text-xs  font-medium">
-                        {req.passenger_contact_number}
-                      </span>
-                    </td>
+                      <td className="">
+                        <span className="font-bold capitalize">
+                          {req.passengers}
+                        </span>
+                        <br />
+                        <span className="text-xs font-medium">
+                          {req.passenger_contact_number}
+                        </span>
+                      </td>
 
-                    <td className="capitalize">{req.destination}</td>
+                      <td className="capitalize">{req.destination}</td>
 
-                    <td className="">
-                      <span className="text-sm">
-                        {format(parsedDateTime, "MMM. d, yyyy")}
-                      </span>
-                      <br />
-                      <span className="text-xs ">
-                        {format(parsedDateTime, "hh:mm a")}
-                      </span>
-                    </td>
+                      <td className="">
+                        <span className="text-sm">
+                          {format(parsedDateTime, "MMM. d, yyyy")}
+                        </span>
+                        <br />
+                        <span className="text-xs ">
+                          {format(parsedDateTime, "hh:mm a")}
+                        </span>
+                      </td>
 
-                    {/* DRIVER SELECT */}
-                    <td>
-                      <select
-                        className="select "
-                        value={req.driver_id || ""}
-                        onChange={(e) =>
-                          updateAssignedDriver(req.id, Number(e.target.value))
-                        }
-                      >
-                        <option value="">Unassigned</option>
-
-                        {drivers.map((driver) => (
-                          <option key={driver.id} value={driver.id}>
-                            {driver.first_name} {driver.last_name}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-
-                    {/* VEHICLE SELECT */}
-                    <td>
-                      <div className="flex flex-col gap-2">
+                      {/* DRIVER SELECT */}
+                      <td>
                         <select
                           className="select "
-                          value={req.vehicle_id || ""}
+                          value={req.driver_id || ""}
                           onChange={(e) =>
-                            updateAssignedVehicle(
-                              req.id,
-                              Number(e.target.value),
-                            )
+                            updateAssignedDriver(req.id, Number(e.target.value))
                           }
                         >
                           <option value="">Unassigned</option>
-                          {vehicles.map((vehicle) => (
-                            <option key={vehicle.id} value={vehicle.id}>
-                              {vehicle.name}
+
+                          {drivers.map((driver) => (
+                            <option key={driver.id} value={driver.id}>
+                              {driver.first_name} {driver.last_name}
                             </option>
                           ))}
                         </select>
-                        {/* <div className="badge badge-dash badge-primary">
-                          {vehicles.find((v) => v.id === req.vehicle_id)
-                            ?.plate_number ?? "N/A"}
-                        </div> */}
-                      </div>
-                    </td>
+                      </td>
 
-                    {/* STATUS */}
-                    <td>
-                      <select
-                        className={`select  ${
-                          req.status === "Completed"
-                            ? " text-green-500 select-success"
-                            : req.status === "Cancelled" &&
-                              "select-error  text-error "
-                        }`}
-                        value={req.status || ""}
-                        onChange={(e) => updateStatus(req.id, e.target.value)}
-                      >
-                        <option value="Pending" className="text-black">
-                          Pending
-                        </option>
-                        <option value="Completed" className="text-green-500 ">
-                          Completed
-                        </option>
-                        <option value="Cancelled" className="text-error">
-                          Cancelled
-                        </option>
-                      </select>
-                    </td>
+                      {/* VEHICLE SELECT */}
+                      <td>
+                        <div className="flex flex-col gap-2">
+                          <select
+                            className="select "
+                            value={req.vehicle_id || ""}
+                            onChange={(e) =>
+                              updateAssignedVehicle(
+                                req.id,
+                                Number(e.target.value),
+                              )
+                            }
+                          >
+                            <option value="">Unassigned</option>
+                            {vehicles.map((vehicle) => (
+                              <option key={vehicle.id} value={vehicle.id}>
+                                {vehicle.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </td>
 
-                    <td>
-                      <Tippy
-                        interactive
-                        placement="left"
-                        theme="light"
-                        content={
-                          <div className="p-3 w-64 ">
-                            <h3 className="font-bold">Instructions</h3>
-                            <p>{req.other_instructions || "None"}</p>
+                      {/* STATUS */}
+                      <td>
+                        <select
+                          className={`select ${
+                            req.status === "Completed"
+                              ? " text-green-500 select-success"
+                              : req.status === "Cancelled" &&
+                                "select-error text-error"
+                          }`}
+                          value={req.status || ""}
+                          onChange={(e) => updateStatus(req.id, e.target.value)}
+                        >
+                          <option value="Pending" className="text-black">
+                            Pending
+                          </option>
+                          <option value="Completed" className="text-green-500">
+                            Completed
+                          </option>
+                          <option value="Cancelled" className="text-error">
+                            Cancelled
+                          </option>
+                        </select>
+                      </td>
 
-                            <h3 className="font-bold mt-2">Items</h3>
-                            <p>{req.items || "None"}</p>
-                          </div>
-                        }
-                      >
-                        <Info className="size-5" />
-                      </Tippy>
-                    </td>
-                  </tr>
-                );
-              })}
+                      <td>
+                        <Tippy
+                          interactive
+                          placement="left"
+                          theme="light"
+                          content={
+                            <div className="p-3 w-64">
+                              <h3 className="font-bold">Instructions</h3>
+                              <p>{req.other_instructions || "None"}</p>
+
+                              <h3 className="font-bold mt-2">Items</h3>
+                              <p>{req.items || "None"}</p>
+                            </div>
+                          }
+                        >
+                          <Info className="size-5 cursor-pointer" />
+                        </Tippy>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
             <tfoot></tfoot>
           </table>
