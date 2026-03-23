@@ -20,6 +20,7 @@ export default function AdminNavbar() {
     "/tires": "Vehicle Monitoring",
     "/history": "Vehicle Changes History",
     "/completerequest": "Completed Requests",
+    "/track": "PMS Tracking",
   };
 
   const pageTitle = pageTitles[location.pathname] || "Admin Panel";

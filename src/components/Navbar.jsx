@@ -17,6 +17,7 @@ export default function Navbar() {
     { href: "/admindashboard", label: "Admin" },
     { href: "/", label: "Home" },
     { href: "/dashboard", label: "Dashboard" },
+    { href: "/public-track", label: "Track PMS" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
   ];

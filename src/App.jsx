@@ -18,6 +18,10 @@ import RequestInputPage from "./pages/public/RequestInput";
 import SurveyInput from "./pages/public/SurveyInput";
 import CompleteRequest from "./pages/management/CompleteRequest";
 import LoginPage from "./pages/public/LoginPage";
+import TrackingPage from "./pages/TrackingPage";
+import PublicTrackPage from "./pages/PublicTrackPage";
+import PublicTrackRelease from "./pages/PublicTrackRelease";
+import TrackingRelease from "./pages/TrackingRelease";
 
 // Management
 import AdminDashboard from "./pages/AdminDashboard";
@@ -36,9 +40,6 @@ import UnoperationalVehicles from "./pages/vehicles/UnoperationalVehicles";
 import TransactionsPage from "./pages/TransactionsPage";
 import DriverMonitoringPage from "./pages/DriverMonitoringPage";
 import VehicleStatusPage from "./pages/VehicleStatusPage";
-import TrackingPage from "./pages/TrackingPage";
-
-import TrackingRelease from "./pages/TrackingRelease";
 
 function App() {
   return (
@@ -85,6 +86,8 @@ function App() {
             path="/vehiclemonitoring"
             element={<VehicleMonitoringPage />}
           />
+          <Route path="/track" element={<TrackingPage />} />
+          <Route path="/track-release" element={<TrackingRelease />} />
           <Route path="/admindashboard" element={<AdminDashboard />} />
           <Route path="/vehiclestatusqueue" element={<VehicleStatusPage />} />
           <Route path="/manage-requests" element={<ManageRequestsPage />} />
@@ -103,8 +106,11 @@ function App() {
           <Route path="/request-vehicle" element={<RequestVehiclePage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/about" element={<AboutPage />} />
-          <Route path="/track" element={<TrackingPage />} />
-          <Route path="/track-release" element={<TrackingRelease />} />
+          <Route path="/public-track" element={<PublicTrackPage />} />
+          <Route
+            path="/public-track-release"
+            element={<PublicTrackRelease />}
+          />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
