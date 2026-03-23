@@ -175,12 +175,12 @@ export default function Tires() {
               </div>
 
               <div className="card-body p-4">
-                <div className="w-full h-25 sm:h-32 bg-indigo-100 rounded-xl flex items-center justify-center overflow-hidden">
+                <div className="w-full h-10 sm:h-32 bg-indigo-100 rounded-xl flex items-center justify-center overflow-hidden">
                   {v.image_url ? (
                     <img
                       src={v.image_url}
                       alt={v.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover object-fill"
                     />
                   ) : (
                     <Van className="size-12 text-gray-300" />
