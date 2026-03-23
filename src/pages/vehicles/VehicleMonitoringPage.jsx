@@ -171,7 +171,7 @@ export default function VehicleMonitoringPage() {
               </div>
 
               <div className="card-body p-4">
-                <div className="w-full h-80 sm:h-32 bg-indigo-100 rounded-xl flex items-center justify-center overflow-hidden">
+                <div className="w-full h-10 sm:h-32 bg-indigo-100 rounded-xl flex items-center justify-center overflow-hidden">
                   {v.image_url ? (
                     <img
                       src={v.image_url}

@@ -651,12 +651,12 @@ export default function UnoperationalVehicles() {
                   </div>
 
                   <figure className="px-4 pt-4">
-                    <div className="w-full h-25 sm:h-32 bg-linear-to-r from-violet-100 to-violet-200 rounded-xl flex items-center justify-center overflow-hidden">
+                    <div className="w-full h-80 sm:h-45 bg-linear-to-r from-violet-100 to-violet-200 rounded-xl flex items-center justify-center overflow-hidden">
                       {vehicle.image_url ? (
                         <img
                           src={vehicle.image_url}
                           alt={vehicle.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover object-fill"
                         />
                       ) : (
                         <Van className="size-12 text-gray-500" />
