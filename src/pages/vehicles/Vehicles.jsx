@@ -767,15 +767,15 @@ export default function MaintenancePage() {
                   </div>
 
                   <figure className="px-4 pt-4">
-                    <div className="w-50 h-10 sm:h-45 bg-linear-to-r from-violet-100 to-violet-200 rounded-xl flex items-center justify-center overflow-hidden">
+                    <div className="w-full h-80 sm:h-42 bg-indigo-100 rounded-xl flex items-center justify-center overflow-hidden">
                       {vehicle.image_url ? (
                         <img
                           src={vehicle.image_url}
                           alt={vehicle.name}
-                          className="h-full w-full object-cover"
+                          className="w-full h-full object-cover object-fill"
                         />
                       ) : (
-                        <Van className="size-12 text-gray-500" />
+                        <Van className="size-12 text-gray-300" />
                       )}
                     </div>
                   </figure>

@@ -1,4 +1,10 @@
-import { CheckCheck, ClockCheck, ClockFading } from "lucide-react";
+import {
+  Check,
+  CheckCheck,
+  ClockCheck,
+  ClockFading,
+  SquareCheckBig,
+} from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -48,7 +54,7 @@ const initialCars = [
   },
 ];
 
-export default function TrackingPage() {
+export default function PublicTrackRelease() {
   const [cars, setCars] = useState(initialCars);
   const navigate = useNavigate();
 
@@ -75,7 +81,7 @@ export default function TrackingPage() {
               className="toggle toggle-xl my-auto border-green-500 bg-green-500 checked:border-[#30694B] checked:bg-[#30694B] checked:text-[#30694B]"
               onChange={(e) => {
                 if (e.target.checked) {
-                  navigate("/track");
+                  navigate("/public-track");
                 }
               }}
             />
