@@ -340,6 +340,8 @@ export default function CompleteRequest() {
                               <p>{req.other_instructions || "None"}</p>
                               <h3 className="font-bold mt-2">Items</h3>
                               <p>{req.items || "None"}</p>
+                              <h3 className="font-bold mt-2">Has surveyed</h3>
+                              <p>Not Yet</p>
                             </div>
                           }
                         >

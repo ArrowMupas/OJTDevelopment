@@ -2,13 +2,14 @@ export default function FormInput({
   label,
   label2,
   type = "text",
+  step,
   placeholder = "Type here",
   register,
   error,
   name,
 }) {
   return (
-    <div className="relative z-0 w-full mb-3 group">
+    <div className="relative z-0 w-full group">
       <fieldset className="fieldset">
         {label2 && <p className="font-syle: italic">{label2}</p>}
         <legend className="fieldset-legend text-sm">{label}</legend>
@@ -17,6 +18,7 @@ export default function FormInput({
           className={`input w-full  ${error ? "input-error" : ""}`}
           placeholder={placeholder}
           {...register(name)}
+          step={step}
         />
         {error && <p className="text-error text-sm mt-1">{error.message}</p>}
       </fieldset>
