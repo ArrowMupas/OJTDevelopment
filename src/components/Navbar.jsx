@@ -20,6 +20,7 @@ export default function Navbar() {
     { href: "/public-track", label: "Track PMS" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
+    { href: "/public-staff", label: "Staff" },
   ];
 
   return (

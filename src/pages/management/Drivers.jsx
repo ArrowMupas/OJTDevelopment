@@ -1,20 +1,12 @@
 import {
   BeanOff,
-  FilterIcon,
   Search,
-  Trash2,
   Truck,
   UserPlus,
-  UserXIcon,
-  Pencil,
-  Mail,
-  Phone,
-  IdCard,
   CircleStar,
   Scroll,
   ClockCheck,
   Users,
-  CaptionsOff,
 } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
@@ -24,7 +16,8 @@ import { z } from "zod";
 import { useEffect, useState, useMemo } from "react";
 import debounce from "lodash.debounce";
 import OurInput from "../../components/OurInput";
-import { ReactImageMagnifier } from "react-image-magnify-lib";
+import CardDriver from "../../components/CardDriver";
+import ModalLicense from "../../components/ModalLicense";
 
 // Driver schema for input validation
 const driverSchema = z.object({
@@ -251,6 +244,29 @@ export default function MaintenancePage() {
 
   const [driverToView, setDriverToView] = useState(null);
 
+  const specialDesignations = [
+    "Transport Operations Services Chief",
+    "Sr. Auto Mechanic",
+    "Data Transport",
+    "Maintenance",
+    "Driver Mechanic A",
+  ];
+
+  const { specialDrivers, regularDrivers } = useMemo(() => {
+    const special = [];
+    const regular = [];
+
+    drivers.forEach((driver) => {
+      if (specialDesignations.includes(driver.designation)) {
+        special.push(driver);
+      } else {
+        regular.push(driver);
+      }
+    });
+
+    return { specialDrivers: special, regularDrivers: regular };
+  }, [drivers]);
+
   return (
     <main className="px-3 py-4 sm:px-5  h-full pb-25 space-y-7">
       <div>
@@ -352,11 +368,11 @@ export default function MaintenancePage() {
       <dialog id="driverModal" className="modal">
         <div className="modal-box">
           <h1 className="text-2xl font-bold">
-            {isEditing ? "Update Driver" : "Add Staff"}
+            {isEditing ? "Update Staff" : "Add Staff"}
           </h1>
           <p className="text-gray-600 text-sm">
             {isEditing
-              ? "Edit driver details below."
+              ? "Edit Staff details below."
               : "Create your staff here!"}
           </p>
           <form
@@ -467,60 +483,61 @@ export default function MaintenancePage() {
                   ? "Updating driver..."
                   : "Creating driver..."
                 : isEditing
-                  ? "Update Driver"
-                  : "Create Driver"}
+                  ? "Update Staff"
+                  : "Create Staff"}
             </button>
           </form>
         </div>
       </dialog>
 
-      <dialog id="licenseModal" className="modal">
-        <div className="modal-box">
-          <div className="">
-            <h2 className="text-lg font-bold">Drivers License</h2>
-            <p className="text-gray-500 text-sm">
-              Hover on the image to magnify
-            </p>
-          </div>
-          <button
-            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-            onClick={() => {
-              document.getElementById("licenseModal").close();
-              setDriverToView(null);
-            }}
-          >
-            ✕
-          </button>
-          {driverToView?.license_url ? (
-            <div className="space-y-2 overflow-hidden p-2">
-              <ReactImageMagnifier
-                smallImageSrc={driverToView.license_url}
-                largeImageSrc={driverToView.license_url} // Use high-res if available
-                magnifierHeight={200}
-                magnifierWidth={200}
-                zoomLevel={3}
-                alt="Driver License"
-              />
+      <ModalLicense
+        licenseFront={driverToView?.license_url}
+        licenseBack={driverToView?.license_back}
+        onClose={() => {
+          setDriverToView(null);
+          document.getElementById("licenseModal")?.close();
+        }}
+      />
 
-              <ReactImageMagnifier
-                smallImageSrc={driverToView.license_back}
-                largeImageSrc={driverToView.license_back} // Use high-res if available
-                magnifierHeight={200}
-                magnifierWidth={200}
-                zoomLevel={3}
-                alt="Driver Back"
+      {specialDrivers.length > 0 && (
+        <div className="space-y-2">
+          <h2 className="text-md font-bold text-green-700">⭐ Key Personnel</h2>
+
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {specialDrivers.map((driver) => (
+              <CardDriver
+                key={driver.id}
+                driver={driver}
+                highlight={true}
+                onView={(driver) => {
+                  setDriverToView(driver);
+                  document.getElementById("licenseModal").showModal();
+                }}
+                onEdit={(driver) => {
+                  setIsEditing(true);
+                  setDriverToEdit(driver);
+
+                  reset({
+                    firstName: driver.first_name,
+                    lastName: driver.last_name,
+                    designation: driver.designation,
+                    email: driver.email || "",
+                    contact: driver.contact_number || "",
+                  });
+
+                  setSelectedFile(null);
+                  setLicenseFile(null);
+                  document.getElementById("driverModal").showModal();
+                }}
+                onDelete={(driver) => {
+                  setDriverToDelete(driver);
+                  document.getElementById("deleteDriverModal").showModal();
+                }}
               />
-            </div>
-          ) : (
-            <div className="p-4  flex justify-center items-center flex-col">
-              <CaptionsOff className="size-8 text-error" />
-              <p className="text-center text-gray-500 text-sm">
-                No license uploaded yet.
-              </p>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
-      </dialog>
+      )}
 
       <div className="border-0 ">
         {drivers.length === 0 ? (
@@ -541,89 +558,35 @@ export default function MaintenancePage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-1 md:gap-2 ">
-            {drivers.map((driver) => (
-              <div key={driver.id} className="card bg-base-100 shadow ">
-                <figure className="px-4 pt-5">
-                  <div className="w-full h-38 bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden   aspect-auto">
-                    {driver.image_url ? (
-                      <img
-                        src={driver.image_url}
-                        alt={`${driver.first_name} ${driver.last_name}`}
-                        className="w-full h-full object-cover aspect-auto"
-                      />
-                    ) : (
-                      <UserXIcon className="size-12 text-gray-300" />
-                    )}
-                  </div>
-                </figure>
+            {regularDrivers.map((driver) => (
+              <CardDriver
+                key={driver.id}
+                driver={driver}
+                onView={(driver) => {
+                  setDriverToView(driver);
+                  document.getElementById("licenseModal").showModal();
+                }}
+                onEdit={(driver) => {
+                  setIsEditing(true);
+                  setDriverToEdit(driver);
 
-                <div className="card-body p-4 pt-2">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h2 className="card-title text-sm font-bold truncate">
-                        {driver.first_name} {driver.last_name}
-                      </h2>
-                      <p className="capitalize">{driver.designation}</p>
-                    </div>
-                  </div>
+                  reset({
+                    firstName: driver.first_name,
+                    lastName: driver.last_name,
+                    designation: driver.designation,
+                    email: driver.email || "",
+                    contact: driver.contact_number || "",
+                  });
 
-                  <div className="flex gap-2">
-                    <Mail className="size-4 text-green-700" />
-                    <p className="text-gray-500 text-xs ">{driver.email}</p>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Phone className="size-4 text-green-700" />
-                    <p className="text-gray-500 text-xs ">
-                      {driver.contact_number || "no number yet."}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex justify-end gap ml-1 ">
-                  <button
-                    onClick={() => {
-                      setDriverToView(driver);
-                      document.getElementById("licenseModal").showModal();
-                    }}
-                    className="btn btn-ghost btn-square btn-sm text-yellow-500"
-                  >
-                    <IdCard className="h-4 w-4" />
-                  </button>
-
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsEditing(true);
-                      setDriverToEdit(driver);
-
-                      reset({
-                        firstName: driver.first_name,
-                        lastName: driver.last_name,
-                        designation: driver.designation,
-                        email: driver.email || "",
-                        contact: driver.contact_number || "",
-                      });
-
-                      setSelectedFile(null);
-                      setLicenseFile(null);
-                      document.getElementById("driverModal").showModal();
-                    }}
-                    className="btn btn-ghost btn-square btn-sm text-blue-500"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setDriverToDelete(driver);
-                      document.getElementById("deleteDriverModal").showModal();
-                    }}
-                    className="btn btn-ghost btn-square btn-sm text-error"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
+                  setSelectedFile(null);
+                  setLicenseFile(null);
+                  document.getElementById("driverModal").showModal();
+                }}
+                onDelete={(driver) => {
+                  setDriverToDelete(driver);
+                  document.getElementById("deleteDriverModal").showModal();
+                }}
+              />
             ))}
           </div>
         )}
