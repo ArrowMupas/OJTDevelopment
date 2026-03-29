@@ -22,6 +22,7 @@ import TrackingPage from "./pages/TrackingPage";
 import PublicTrackPage from "./pages/PublicTrackPage";
 import PublicTrackRelease from "./pages/PublicTrackRelease";
 import TrackingRelease from "./pages/TrackingRelease";
+import StaffPage from "./pages/public/StaffPage";
 
 // Management
 import AdminDashboard from "./pages/AdminDashboard";
@@ -107,6 +108,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/public-track" element={<PublicTrackPage />} />
+          <Route path="/public-staff" element={<StaffPage />} />
           <Route
             path="/public-track-release"
             element={<PublicTrackRelease />}

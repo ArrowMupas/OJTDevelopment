@@ -547,6 +547,8 @@ export default function MaintenancePage() {
                   name="requiredCovered"
                   register={register}
                   error={errors.requiredCovered}
+                  list="requiredCoveredOptions"
+                  options={["Comprehensive", "TPL", "Comprehensive & TPL"]}
                 />
               </div>
             </div>
