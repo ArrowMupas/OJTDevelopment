@@ -34,9 +34,13 @@ export default function CardDriver({
       <div className="card-body p-4 pt-2">
         <div>
           <h2
-            className={`card-title text-sm font-bold truncate ${highlight ? "text-white" : ""}`}
+            className={`card-title text-sm font-bold truncate capitalize ${highlight ? "text-white" : ""}`}
           >
-            {driver.first_name} {driver.last_name}
+            {driver.first_name}
+            {driver.middle_initial && (
+              <span>{driver.middle_initial}.</span>
+            )}{" "}
+            {driver.last_name}
           </h2>
           <p
             className={`capitalize text-sm ${highlight ? "text-gray-200" : ""}`}

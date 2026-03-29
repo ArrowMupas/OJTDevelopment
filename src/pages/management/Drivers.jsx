@@ -23,6 +23,10 @@ import ModalLicense from "../../components/ModalLicense";
 const driverSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  middleInitial: z
+    .string()
+    .min(1, "Middle initial must be at least 1 character")
+    .optional(),
   designation: z.string().min(2, "Designation must be at least 2 characters"),
   email: z.email("Invalid email address"),
   contact: z.string().min(7, "Contact number must be at least 7 digits"),
@@ -134,6 +138,7 @@ export default function MaintenancePage() {
         {
           first_name: data.firstName,
           last_name: data.lastName,
+          middle_initial: data.middleInitial,
           designation: data.designation,
           email: data.email,
           contact_number: data.contact,
@@ -143,9 +148,9 @@ export default function MaintenancePage() {
         },
       ]);
 
-      if (error) toast.error("Failed to create driver");
+      if (error) toast.error("Failed to create staff");
       else {
-        toast.success("Driver created successfully!", {
+        toast.success(`${data.designation} created successfully!`, {
           position: "top-center",
         });
         document.getElementById("driverModal")?.close();
@@ -156,7 +161,7 @@ export default function MaintenancePage() {
         fetchDrivers(search);
       }
     } catch (error) {
-      toast.error("An error occurred while creating driver");
+      toast.error("An error occurred while creating staff");
     } finally {
       setIsSubmitting(false);
       setUploading(false);
@@ -188,6 +193,7 @@ export default function MaintenancePage() {
         .update({
           first_name: data.firstName,
           last_name: data.lastName,
+          middle_initial: data.middleInitial,
           designation: data.designation,
           email: data.email,
           contact_number: data.contact,
@@ -197,9 +203,9 @@ export default function MaintenancePage() {
         })
         .eq("id", driverToEdit.id);
 
-      if (error) toast.error("Failed to update driver");
+      if (error) toast.error("Failed to update staff");
       else {
-        toast.success("Driver updated successfully!");
+        toast.success(`staff updated successfully!`);
         document.getElementById("driverModal")?.close();
         reset();
         setSelectedFile(null);
@@ -211,7 +217,7 @@ export default function MaintenancePage() {
       }
     } catch (error) {
       console.error(error);
-      toast.error("Error updating driver");
+      toast.error("Error updating staff");
     } finally {
       setIsSubmitting(false);
       setUploading(false);
@@ -238,7 +244,7 @@ export default function MaintenancePage() {
     if (error) console.error(error);
     else {
       setDrivers((prev) => prev.filter((d) => d.id !== id));
-      toast.success("Driver deleted successfully!");
+      toast.success("Staff deleted successfully!");
     }
   };
 
@@ -320,7 +326,13 @@ export default function MaintenancePage() {
           onClick={() => {
             setIsEditing(false);
             setDriverToEdit(null);
-            reset({ firstName: "", lastName: "", email: "", contact: "" });
+            reset({
+              firstName: "",
+              lastName: "",
+              middleInitial: "",
+              email: "",
+              contact: "",
+            });
             setSelectedFile(null);
             setLicenseFile(null);
             setLicenseBack(null);
@@ -393,25 +405,50 @@ export default function MaintenancePage() {
             >
               ✕
             </button>
-            <div className="grid md:grid-cols-2 md:gap-4">
-              <OurInput
-                label="First Name"
-                name="firstName"
-                register={register}
-                error={errors.firstName}
-              />
-              <OurInput
-                label="Last Name"
-                name="lastName"
-                register={register}
-                error={errors.lastName}
-              />
+            <div className="grid grid-cols-5 gap-4">
+              <div className="col-span-2">
+                <OurInput
+                  label="First Name"
+                  name="firstName"
+                  register={register}
+                  error={errors.firstName}
+                />
+              </div>
+
+              <div className="col-span-1">
+                <OurInput
+                  label="Middle Initial"
+                  name="middleInitial"
+                  placeholder="Type"
+                  register={register}
+                  error={errors.middleInitial}
+                />
+              </div>
+
+              <div className="col-span-2">
+                <OurInput
+                  label="Last Name"
+                  name="lastName"
+                  register={register}
+                  error={errors.lastName}
+                />
+              </div>
             </div>
+
             <OurInput
               label="Designation"
               name="designation"
               register={register}
               error={errors.designation}
+              list="designations"
+              options={[
+                "Transport Operations Services Chief",
+                "Sr. Auto Mechanic",
+                "Data Transport",
+                "Maintenance",
+                "Driver Mechanic A",
+                "Driver Mechanic B",
+              ]}
             />
 
             <OurInput
@@ -520,6 +557,7 @@ export default function MaintenancePage() {
                   reset({
                     firstName: driver.first_name,
                     lastName: driver.last_name,
+                    middleInitial: driver.middle_initial,
                     designation: driver.designation,
                     email: driver.email || "",
                     contact: driver.contact_number || "",
@@ -573,6 +611,7 @@ export default function MaintenancePage() {
                   reset({
                     firstName: driver.first_name,
                     lastName: driver.last_name,
+                    middleInitial: driver.middle_initial,
                     designation: driver.designation,
                     email: driver.email || "",
                     contact: driver.contact_number || "",
