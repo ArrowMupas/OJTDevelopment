@@ -335,12 +335,10 @@ export default function UnoperationalVehicles() {
 
         <div className="stat bg-base-100 shadow rounded-md">
           <div className="stat-figure">
-            <ClipboardX className="h-8 w-12 text-red-500" />
+            <ClipboardX className="h-8 w-12 text-error" />
           </div>
           <div className="stat-title">Insurance Expired</div>
-          <div className="stat-value text-red-500">
-            {stats.insuranceExpired}
-          </div>
+          <div className="stat-value text-error">{stats.insuranceExpired}</div>
         </div>
 
         <div className="stat bg-base-100 shadow rounded-md">
@@ -355,10 +353,10 @@ export default function UnoperationalVehicles() {
 
         <div className="stat bg-base-100 shadow rounded-md">
           <div className="stat-figure">
-            <ClipboardX className="h-8 w-12 text-red-500" />
+            <ClipboardX className="h-8 w-12 text-error" />
           </div>
           <div className="stat-title">Registration Expired</div>
-          <div className="stat-value text-red-500">
+          <div className="stat-value text-error">
             {stats.registrationExpired}
           </div>
         </div>
@@ -612,8 +610,8 @@ export default function UnoperationalVehicles() {
               </>
             ) : (
               <>
-                <BeanOff className="size-12 text-red-300" />
-                <p className="font-bold text-sm text-red-300">
+                <BeanOff className="size-12 text-error" />
+                <p className="font-bold text-sm text-error">
                   No vehicles found
                 </p>
               </>

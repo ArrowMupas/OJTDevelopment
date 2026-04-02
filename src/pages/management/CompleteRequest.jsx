@@ -151,9 +151,9 @@ export default function CompleteRequest() {
   }
 
   return (
-    <main className="px-5 py-4 pb-40 h-full ">
+    <main className="h-full px-5 py-4 pb-40">
       <div className="flex gap-2">
-        <div className="flex items-center gap-5 mb-6">
+        <div className="mb-6 flex items-center gap-5">
           <Link to={"/manage-requests"}>
             <button className="btn btn-square btn-warning btn-dash h-12">
               <ArrowLeft size={20} />
@@ -161,17 +161,17 @@ export default function CompleteRequest() {
           </Link>
         </div>
         <div>
-          <h1 className="text-lg font-bold ">Completed Requests</h1>
-          <p className="text-gray-500 mb-8 text-sm">
+          <h1 className="text-lg font-bold">Completed Requests</h1>
+          <p className="mb-8 text-sm text-gray-500">
             View all completed vehicle request here.
           </p>
         </div>
       </div>
 
-      <div className="flex justify-between items-center mb-4">
+      <div className="mb-4 flex items-center justify-between">
         <h2 className="font-semibold text-gray-700">
           List of Completed Request
-          <div className="badge badge-dash badge-primary badge-xs sm:badge-sm text-xs ml-2">
+          <div className="badge badge-dash badge-primary badge-xs sm:badge-sm ml-2 text-xs">
             Total: {requests.length}
           </div>
         </h2>
@@ -199,9 +199,9 @@ export default function CompleteRequest() {
         </label>
       </div>
 
-      <div className="bg-white mt-2">
+      <div className="mt-2 bg-white">
         <div className="overflow-x-auto rounded-lg">
-          <table className="table ">
+          <table className="table">
             <thead className="bg-green-500 text-white">
               <tr>
                 <th>Department</th>
@@ -217,13 +217,13 @@ export default function CompleteRequest() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="8" className="text-center py-8">
+                  <td colSpan="8" className="py-8 text-center">
                     <span className="loading loading-spinner loading-md"></span>
                   </td>
                 </tr>
               ) : requests.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="text-center py-8 text-gray-500">
+                  <td colSpan="8" className="py-8 text-center text-gray-500">
                     No completed requests found
                   </td>
                 </tr>
@@ -310,7 +310,7 @@ export default function CompleteRequest() {
                         <select
                           className={`select ${
                             req.status === "Completed"
-                              ? "text-green-500 select-success"
+                              ? "select-success text-green-500"
                               : req.status === "Cancelled" &&
                                 "select-error text-error"
                           }`}
@@ -335,13 +335,13 @@ export default function CompleteRequest() {
                           placement="left"
                           theme="light"
                           content={
-                            <div className="p-3 w-64">
+                            <div className="w-64 p-3">
                               <h3 className="font-bold">Instructions</h3>
                               <p>{req.other_instructions || "None"}</p>
-                              <h3 className="font-bold mt-2">Items</h3>
+                              <h3 className="mt-2 font-bold">Items</h3>
                               <p>{req.items || "None"}</p>
-                              <h3 className="font-bold mt-2">Has surveyed</h3>
-                              <p>Not Yet</p>
+                              <h3 className="mt-2 font-bold">Has surveyed</h3>
+                              <p>{req.is_surveyed ? "Yes" : "Not Yet"}</p>
                             </div>
                           }
                         >
@@ -353,6 +353,13 @@ export default function CompleteRequest() {
                 })
               )}
             </tbody>
+            <tfoot className="bg-green-400 font-medium">
+              <tr>
+                <td colSpan="8" className="py-5 text-center text-white">
+                  Total Requests: {requests.length}
+                </td>
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>

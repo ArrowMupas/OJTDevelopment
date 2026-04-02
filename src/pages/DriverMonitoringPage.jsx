@@ -60,7 +60,7 @@ export default function DriverMonitoringPage() {
   const getStatusStyle = (avg) => {
     if (avg <= 1.2) return "text-green-600 bg-green-100";
     if (avg <= 1.5) return "text-yellow-600 bg-yellow-100";
-    return "text-red-600 bg-red-100";
+    return "text-error bg-red-100";
   };
 
   const filtered = drivers.filter(
@@ -75,73 +75,70 @@ export default function DriverMonitoringPage() {
   ).toFixed(2);
 
   return (
-    <main className="px-5 py-4 h-full pb-25">
-
+    <main className="h-full px-5 py-4 pb-25">
       {/* Header */}
       <h1 className="text-lg font-bold">Driver Performance Monitoring</h1>
-      <p className="text-gray-500 text-sm mb-6">
-        Survey evaluation overview
-      </p>
+      <p className="mb-6 text-sm text-gray-500">Survey evaluation overview</p>
 
-    {/* Search */}
-<div className="mb-6">
-  <label className="input input-neutral w-72">
-    <Search className="h-4 w-6" />
-    <input
-      type="search"
-      placeholder="Search driver..."
-      value={search}
-      onChange={(e) => setSearch(e.target.value)}
-    />
-  </label>
-</div>
+      {/* Search */}
+      <div className="mb-6">
+        <label className="input input-neutral w-72">
+          <Search className="h-4 w-6" />
+          <input
+            type="search"
+            placeholder="Search driver..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </label>
+      </div>
 
       {/* Summary Cards */}
-      <div className="grid md:grid-cols-4 gap-4 mb-6">
-        <div className="card bg-base-100 shadow border border-base-300">
-          <div className="card-body p-4 flex-row items-center justify-between">
+      <div className="mb-6 grid gap-4 md:grid-cols-4">
+        <div className="card bg-base-100 border-base-300 border shadow">
+          <div className="card-body flex-row items-center justify-between p-4">
             <div>
               <p className="text-xs text-gray-500">Average Rating</p>
               <p className="text-xl font-bold">{overallAverage}</p>
             </div>
-            <Star className="w-6 h-6 text-yellow-400" />
+            <Star className="h-6 w-6 text-yellow-400" />
           </div>
         </div>
 
-        <div className="card bg-base-100 shadow border border-base-300">
-          <div className="card-body p-4 flex-row items-center justify-between">
+        <div className="card bg-base-100 border-base-300 border shadow">
+          <div className="card-body flex-row items-center justify-between p-4">
             <div>
               <p className="text-xs text-gray-500">Total Surveys</p>
               <p className="text-xl font-bold text-green-600">3</p>
             </div>
-            <FileChartColumnIncreasing className="w-6 h-6 text-green-600" />
+            <FileChartColumnIncreasing className="h-6 w-6 text-green-600" />
           </div>
         </div>
 
-        <div className="card bg-base-100 shadow border border-base-300">
-          <div className="card-body p-4 flex-row items-center justify-between">
+        <div className="card bg-base-100 border-base-300 border shadow">
+          <div className="card-body flex-row items-center justify-between p-4">
             <div>
               <p className="text-xs text-gray-500">On-Time Rate</p>
               <p className="text-xl font-bold text-yellow-600">95%</p>
             </div>
-            <Clock className="w-6 h-6 text-yellow-400" />
+            <Clock className="h-6 w-6 text-yellow-400" />
           </div>
         </div>
 
-        <div className="card bg-base-100 shadow border border-base-300">
-          <div className="card-body p-4 flex-row items-center justify-between">
+        <div className="card bg-base-100 border-base-300 border shadow">
+          <div className="card-body flex-row items-center justify-between p-4">
             <div>
               <p className="text-xs text-gray-500">Active Drivers</p>
               <p className="text-xl font-bold">{drivers.length}</p>
             </div>
-            <Car className="w-6 h-6 text-green-600" />
+            <Car className="h-6 w-6 text-green-600" />
           </div>
         </div>
       </div>
 
       {/* Driver Table */}
-      <div className="overflow-x-auto border border-base-300 rounded-lg">
-        <table className="table table-zebra text-sm">
+      <div className="border-base-300 overflow-x-auto rounded-lg border">
+        <table className="table-zebra table text-sm">
           <thead className="bg-green-600 text-white">
             <tr>
               <th>Driver</th>
@@ -162,9 +159,7 @@ export default function DriverMonitoringPage() {
                     key={index}
                     className="cursor-pointer"
                     onClick={() =>
-                      setSelectedDriver(
-                        selectedDriver === index ? null : index,
-                      )
+                      setSelectedDriver(selectedDriver === index ? null : index)
                     }
                   >
                     <td className="font-semibold">{driver.name}</td>
@@ -173,15 +168,15 @@ export default function DriverMonitoringPage() {
                     <td>{driver.surveys}</td>
                     <td>
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusStyle(
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${getStatusStyle(
                           avg,
                         )}`}
                       >
                         {avg <= 1.2
                           ? "Excellent"
                           : avg <= 1.5
-                          ? "Good"
-                          : "Needs Review"}
+                            ? "Good"
+                            : "Needs Review"}
                       </span>
                     </td>
                   </tr>
@@ -190,7 +185,7 @@ export default function DriverMonitoringPage() {
                   {selectedDriver === index && (
                     <tr>
                       <td colSpan="5">
-                        <div className="grid md:grid-cols-2 gap-6 p-4 text-sm">
+                        <div className="grid gap-6 p-4 text-sm md:grid-cols-2">
                           <div>
                             <p>
                               <strong>Appearance:</strong> {driver.appearance}
@@ -202,8 +197,7 @@ export default function DriverMonitoringPage() {
                               <strong>Safety Driving:</strong> {driver.safety}
                             </p>
                             <p>
-                              <strong>Cleanliness:</strong>{" "}
-                              {driver.cleanliness}
+                              <strong>Cleanliness:</strong> {driver.cleanliness}
                             </p>
                             <p>
                               <strong>On Time:</strong> {driver.onTime}
@@ -212,7 +206,7 @@ export default function DriverMonitoringPage() {
 
                           <div>
                             <strong>Comments:</strong>
-                            <ul className="list-disc ml-5 mt-2">
+                            <ul className="mt-2 ml-5 list-disc">
                               {driver.comments.map((c, i) => (
                                 <li key={i}>{c}</li>
                               ))}

@@ -158,16 +158,16 @@ export default function ManageRequestsPage() {
   }
 
   return (
-    <main className="px-5 py-4 pb-40 h-full space-y-7 ">
+    <main className="h-full space-y-7 px-5 py-4 pb-40">
       <div>
-        <h1 className="text-lg font-bold ">Manage Request</h1>
-        <p className="text-gray-500 text-sm">
+        <h1 className="text-lg font-bold">Manage Request</h1>
+        <p className="text-sm text-gray-500">
           View and manage all service requests here.
         </p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full">
-        <div className="stat bg-base-100 shadow rounded-md">
+      <div className="grid w-full grid-cols-2 gap-2 md:grid-cols-4">
+        <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
             <Clipboard className="h-8 w-12 text-[#d2dc15]" />
           </div>
@@ -175,15 +175,15 @@ export default function ManageRequestsPage() {
           <div className="stat-value text-[#d2dc15]">21</div>
         </div>
 
-        <div className="stat bg-base-100 shadow rounded-md">
+        <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
-            <ClipboardCheck className="h-8 w-12 text-highlight" />
+            <ClipboardCheck className="text-highlight h-8 w-12" />
           </div>
           <div className="stat-title">Completed Request</div>
           <div className="stat-value text-highlight">4</div>
         </div>
 
-        <div className="stat bg-base-100 shadow rounded-md">
+        <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
             <ClipboardClock className="h-8 w-12 text-[#745fc9]" />
           </div>
@@ -191,7 +191,7 @@ export default function ManageRequestsPage() {
           <div className="stat-value text-[#745fc9]">19</div>
         </div>
 
-        <div className="stat bg-base-100 shadow rounded-md">
+        <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
             <ClipboardClock className="h-8 w-12 text-[#745fc9]" />
           </div>
@@ -231,7 +231,7 @@ export default function ManageRequestsPage() {
 
       <div className="bg-white">
         <div className="overflow-x-auto rounded-lg">
-          <table className="table table-sm lg:table-md ">
+          <table className="table-sm lg:table-md table">
             <thead className="bg-green-500 text-white">
               <tr>
                 <th>Department</th>
@@ -247,7 +247,7 @@ export default function ManageRequestsPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="8" className="text-center py-12">
+                  <td colSpan="8" className="py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
                       <span className="loading loading-infinity loading-xl"></span>
                       <p className="text-gray-500">Loading requests...</p>
@@ -256,13 +256,13 @@ export default function ManageRequestsPage() {
                 </tr>
               ) : requests.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="text-center py-12">
+                  <td colSpan="8" className="py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-2">
                       <Search className="h-12 w-12 text-gray-400" />
-                      <p className="text-gray-500 text-lg font-medium">
+                      <p className="text-lg font-medium text-gray-500">
                         No requests found
                       </p>
-                      <p className="text-gray-400 text-sm">
+                      <p className="text-sm text-gray-400">
                         {search
                           ? "Try a different search term"
                           : "No pending requests available"}
@@ -302,7 +302,7 @@ export default function ManageRequestsPage() {
                           {format(parsedDateTime, "MMM. d, yyyy")}
                         </span>
                         <br />
-                        <span className="text-xs ">
+                        <span className="text-xs">
                           {format(parsedDateTime, "hh:mm a")}
                         </span>
                       </td>
@@ -310,7 +310,7 @@ export default function ManageRequestsPage() {
                       {/* DRIVER SELECT */}
                       <td>
                         <select
-                          className="select "
+                          className="select"
                           value={req.driver_id || ""}
                           onChange={(e) =>
                             updateAssignedDriver(req.id, Number(e.target.value))
@@ -330,7 +330,7 @@ export default function ManageRequestsPage() {
                       <td>
                         <div className="flex flex-col gap-2">
                           <select
-                            className="select "
+                            className="select"
                             value={req.vehicle_id || ""}
                             onChange={(e) =>
                               updateAssignedVehicle(
@@ -354,7 +354,7 @@ export default function ManageRequestsPage() {
                         <select
                           className={`select ${
                             req.status === "Completed"
-                              ? " text-green-500 select-success"
+                              ? " select-success text-green-500"
                               : req.status === "Cancelled" &&
                                 "select-error text-error"
                           }`}
@@ -379,12 +379,15 @@ export default function ManageRequestsPage() {
                           placement="left"
                           theme="light"
                           content={
-                            <div className="p-3 w-64">
+                            <div className="w-64 p-3">
                               <h3 className="font-bold">Instructions</h3>
                               <p>{req.other_instructions || "None"}</p>
 
-                              <h3 className="font-bold mt-2">Items</h3>
+                              <h3 className="mt-2 font-bold">Items</h3>
                               <p>{req.items || "None"}</p>
+
+                              <h3 className="mt-2 font-bold">Has surveyed</h3>
+                              <p>{req.is_surveyed ? "Yes" : "Not Yet"}</p>
                             </div>
                           }
                         >
@@ -396,7 +399,13 @@ export default function ManageRequestsPage() {
                 })
               )}
             </tbody>
-            <tfoot></tfoot>
+            <tfoot className="bg-green-400 font-medium">
+              <tr>
+                <td colSpan="8" className="py-5 text-center text-white">
+                  Total Requests: {requests.length}
+                </td>
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>

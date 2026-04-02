@@ -89,13 +89,13 @@ export default function TransactionsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-linear-to-b from-lime-100 to-green-200 pb-25 flex justify-center p-2 sm:p-8 ">
-      <div className="card w-full max-w-xl bg-white shadow-lg rounded-3xl p-7">
+    <main className="flex min-h-screen justify-center bg-linear-to-b from-lime-100 to-green-200 p-2 pb-25 sm:p-8">
+      <div className="card w-full max-w-xl rounded-3xl bg-white p-7 shadow-lg">
         <form
           onSubmit={handleSubmit(requestVehicle)}
-          className="card-body border-2 border-green-600 border-dashed rounded-lg p-5 sm:p-7 flex flex-col gap-4"
+          className="card-body flex flex-col gap-4 rounded-lg border-2 border-dashed border-green-600 p-5 sm:p-7"
         >
-          <div className="text-center flex flex-col items-center justify-center gap-2 p-3">
+          <div className="flex flex-col items-center justify-center gap-2 p-3 text-center">
             <img
               className="size-20 sm:size-28"
               src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/national_electrification_logo.png"
@@ -105,10 +105,10 @@ export default function TransactionsPage() {
                   "https://8upload.com/display/33ff4ec683a6b52a/nea-logo.png.php";
               }}
             />
-            <h1 className="text-3xl font-bold text-green-700 tracking-tight uppercase">
+            <h1 className="text-3xl font-bold tracking-tight text-green-700 uppercase">
               Request a Service Vehicle
             </h1>
-            <p className="text-gray-500 text-sm">
+            <p className="text-sm text-gray-500">
               Fill up the form to request a vehicle for your official use.
             </p>
           </div>
@@ -154,51 +154,51 @@ export default function TransactionsPage() {
           />
 
           {/* RADIO GROUP */}
-          <div className="flex flex-col mb-4 space-y-2">
+          <div className="mb-4 flex flex-col space-y-2">
             <legend className="fieldset-legend text-sm">With:</legend>
 
-            <label className="flex flex-row gap-2 items-start sm:items-center cursor-pointer w-full">
+            <label className="flex w-full cursor-pointer flex-row items-start gap-2 sm:items-center">
               <input
                 type="radio"
                 value="Baggage"
-                className="radio  radio-xs"
+                className="radio radio-xs"
                 {...register("items")}
               />
-              <span className="ml-0 sm:ml-2 text-sm">Baggage</span>
+              <span className="ml-0 text-sm sm:ml-2">Baggage</span>
             </label>
 
-            <label className="flex flex-row gap-2 items-start sm:items-center cursor-pointer w-full">
+            <label className="flex w-full cursor-pointer flex-row items-start gap-2 sm:items-center">
               <input
                 type="radio"
                 value="Equipment"
-                className="radio  radio-xs"
+                className="radio radio-xs"
                 {...register("items")}
               />
-              <span className="ml-0 sm:ml-2 text-sm">Equipment</span>
+              <span className="ml-0 text-sm sm:ml-2">Equipment</span>
             </label>
 
-            <label className="flex flex-row gap-2 items-start sm:items-center cursor-pointer w-full">
+            <label className="flex w-full cursor-pointer flex-row items-start gap-2 sm:items-center">
               <input
                 type="radio"
                 value="None"
-                className="radio  radio-xs"
+                className="radio radio-xs"
                 {...register("items")}
               />
-              <span className="ml-0 sm:ml-2 text-sm">None</span>
+              <span className="ml-0 text-sm sm:ml-2">None</span>
             </label>
 
-            <label className="flex flex-row gap-2 items-start sm:items-center cursor-pointer w-full">
+            <label className="flex w-full cursor-pointer flex-row items-start gap-2 sm:items-center">
               <input
                 type="radio"
                 value="Others"
-                className="radio  radio-xs"
+                className="radio radio-xs"
                 {...register("items")}
               />
-              <div className="ml-0 sm:ml-2 w-full sm:w-auto">
+              <div className="ml-0 w-full sm:ml-2 sm:w-auto">
                 <input
                   type="text"
                   placeholder="Others (please specify)"
-                  className={`input w-full sm:w-auto ${errors.itemsOther ? "border-red-500" : ""}`}
+                  className={`input w-full sm:w-auto ${errors.itemsOther ? "input-error" : ""}`}
                   disabled={selectedItem !== "Others"}
                   {...register("itemsOther")}
                 />
@@ -206,9 +206,7 @@ export default function TransactionsPage() {
             </label>
 
             {errors.items && (
-              <span className="text-red-500 text-sm">
-                {errors.items.message}
-              </span>
+              <span className="text-error text-sm">{errors.items.message}</span>
             )}
           </div>
 
@@ -222,9 +220,9 @@ export default function TransactionsPage() {
 
           {/* SELECT */}
           <div>
-            <label className="font-bold text-sm">Duration of Travel:</label>
+            <label className="text-sm font-bold">Duration of Travel:</label>
             <select
-              className={`select w-full mt-1 ${errors.travelDuration ? "border-red-500" : ""}`}
+              className={`select mt-1 w-full ${errors.travelDuration ? "inpur-error" : ""}`}
               defaultValue=""
               {...register("travelDuration")}
             >
@@ -238,7 +236,7 @@ export default function TransactionsPage() {
               <option value="5 Days or more">5 Days or more</option>
             </select>
             {errors.travelDuration && (
-              <span className="text-red-500 text-sm">
+              <span className="text-error text-sm">
                 {errors.travelDuration.message}
               </span>
             )}
@@ -267,7 +265,7 @@ export default function TransactionsPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn btn-lg bg-green-500 hover:bg-green-400 text-white py-7 w-full rounded-2xl mt-5 uppercase font-bold tracking-wider"
+            className="btn btn-lg mt-5 w-full rounded-2xl bg-green-500 py-7 font-bold tracking-wider text-white uppercase hover:bg-green-400"
           >
             {isSubmitting ? "Requesting vehicle..." : "Request Vehicle"}
           </button>

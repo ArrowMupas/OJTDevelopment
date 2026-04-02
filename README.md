@@ -4,7 +4,7 @@ Not finished yet and not sure what really will be the future of this but
 We will be doing our best to finish the tasks asigned to us for our OJT
 Which is 300 Hours
 
-## 🛠 Technologies Used/ You can use
+## 🛠 Technologies Used
 
 - **Node.js** – JavaScript runtime environment to be able to run React
 - **Git** – Version control
@@ -20,11 +20,23 @@ In progress...
 
 ## Views
 
-In progress...
+Views are basically a specific query to the database that becomes its own table
+which we can query directly. Basically you would see that instead of querying
+the tables, sometimes we query a view instead for a more specific view of the
+supabase database itself. You would see them together with the supabase tables.
+
+I will also leave the query for their creation so if ever needed they can be
+updated, adjusted or deleted.
 
 ## Triggers
 
-In progress...
+Triggers are basically a logic that is on the supabase database that waits for some
+event to happen. If that event happen then it "triggers" and does whatever is it
+setup to do. For example it can trigger to make a history on a specific column
+being updated
+
+Just like views I will also leave the query for the trigger so it can be adjusted
+and documented. You can also view them on supabase at Database > Triggers
 
 ---
 

@@ -274,16 +274,16 @@ export default function MaintenancePage() {
   }, [drivers]);
 
   return (
-    <main className="px-3 py-4 sm:px-5  h-full pb-25 space-y-7">
+    <main className="h-full space-y-7 px-3 py-4 pb-25 sm:px-5">
       <div>
-        <h1 className="text-lg font-bold flex items-center gap-2">
+        <h1 className="flex items-center gap-2 text-lg font-bold">
           Staff
           <div className="badge badge-outline badge-info">{drivers.length}</div>
         </h1>
-        <p className="text-gray-500 text-sm">All the staff are listed here</p>
+        <p className="text-sm text-gray-500">All the staff are listed here</p>
       </div>
 
-      <div className="gap-3 flex justify-between">
+      <div className="flex justify-between gap-3">
         <div className="flex gap-2">
           <label className="input input-neutral">
             <Search className="h-4 w-6" />
@@ -322,7 +322,7 @@ export default function MaintenancePage() {
         </div>
 
         <button
-          className="btn  btn-info text-white font-bold"
+          className="btn btn-info font-bold text-white"
           onClick={() => {
             setIsEditing(false);
             setDriverToEdit(null);
@@ -343,8 +343,8 @@ export default function MaintenancePage() {
         </button>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-2 w-full ">
-        <div className="stat bg-base-100 shadow rounded-md">
+      <div className="grid w-full grid-cols-2 gap-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-4">
+        <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
             <CircleStar className="h-8 w-12 text-yellow-500" />
           </div>
@@ -352,7 +352,7 @@ export default function MaintenancePage() {
           <div className="stat-value text-yellow-500">1.6</div>
         </div>
 
-        <div className="stat bg-base-100 shadow rounded-md">
+        <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
             <Scroll className="h-8 w-12 text-green-600" />
           </div>
@@ -360,7 +360,7 @@ export default function MaintenancePage() {
           <div className="stat-value text-green-600">10</div>
         </div>
 
-        <div className="stat bg-base-100 shadow rounded-md">
+        <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
             <ClockCheck className="h-8 w-12 text-yellow-600" />
           </div>
@@ -368,7 +368,7 @@ export default function MaintenancePage() {
           <div className="stat-value text-yellow-600">94%</div>
         </div>
 
-        <div className="stat bg-base-100 shadow rounded-md">
+        <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
             <Users className="h-8 w-12 text-green-600" />
           </div>
@@ -382,7 +382,7 @@ export default function MaintenancePage() {
           <h1 className="text-2xl font-bold">
             {isEditing ? "Update Staff" : "Add Staff"}
           </h1>
-          <p className="text-gray-600 text-sm">
+          <p className="text-sm text-gray-600">
             {isEditing
               ? "Edit Staff details below."
               : "Create your staff here!"}
@@ -392,7 +392,7 @@ export default function MaintenancePage() {
           >
             <button
               type="button"
-              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+              className="btn btn-sm btn-circle btn-ghost absolute top-2 right-2"
               onClick={() => {
                 document.getElementById("driverModal").close();
                 setSelectedFile(null);
@@ -466,7 +466,7 @@ export default function MaintenancePage() {
             />
 
             <div className="space-y-4">
-              <div className="form-control w-full ">
+              <div className="form-control w-full">
                 <label className="label">
                   <span className="fieldset-legend text-sm">
                     Upload Staff Image
@@ -480,7 +480,7 @@ export default function MaintenancePage() {
                 />
               </div>
 
-              <div className="form-control w-full ">
+              <div className="form-control w-full">
                 <label className="label">
                   <span className="fieldset-legend text-sm">
                     Upload License Image
@@ -494,7 +494,7 @@ export default function MaintenancePage() {
                 />
               </div>
 
-              <div className="form-control w-full ">
+              <div className="form-control w-full">
                 <label className="label">
                   <span className="fieldset-legend text-sm">
                     Upload License Back Image
@@ -511,10 +511,10 @@ export default function MaintenancePage() {
 
             <button
               type="submit"
-              className="btn btn-lg w-full bg-green-600 text-white hover:bg-highlight mt-4 "
+              className="btn btn-lg hover:bg-highlight mt-4 w-full bg-green-600 text-white"
               disabled={isSubmitting || uploading}
             >
-              <Truck className="size-5 mr-2" />
+              <Truck className="mr-2 size-5" />
               {isSubmitting
                 ? isEditing
                   ? "Updating driver..."
@@ -540,7 +540,7 @@ export default function MaintenancePage() {
         <div className="space-y-2">
           <h2 className="text-md font-bold text-green-700">⭐ Key Personnel</h2>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
             {specialDrivers.map((driver) => (
               <CardDriver
                 key={driver.id}
@@ -577,25 +577,23 @@ export default function MaintenancePage() {
         </div>
       )}
 
-      <div className="border-0 ">
+      <div className="border-0">
         {drivers.length === 0 ? (
-          <div className="flex flex-col justify-center items-center h-40 gap-5">
+          <div className="flex h-40 flex-col items-center justify-center gap-5">
             {loading ? (
               <>
                 <span className="loading loading-infinity text-success"></span>
-                <p className="font-bold text-sm">Loading drivers...</p>
+                <p className="text-sm font-bold">Loading drivers...</p>
               </>
             ) : (
               <>
-                <BeanOff className="size-12 text-red-300" />
-                <p className="font-bold text-sm text-red-300">
-                  No drivers found
-                </p>
+                <BeanOff className="text-error size-12" />
+                <p className="text-error text-sm font-bold">No drivers found</p>
               </>
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-1 md:gap-2 ">
+          <div className="grid grid-cols-2 gap-1 md:grid-cols-4 md:gap-2 xl:grid-cols-5 2xl:grid-cols-6">
             {regularDrivers.map((driver) => (
               <CardDriver
                 key={driver.id}
@@ -633,9 +631,9 @@ export default function MaintenancePage() {
 
       <dialog id="deleteDriverModal" className="modal">
         <div className="modal-box">
-          <h2 className="text-xl font-bold text-center">Delete Driver</h2>
+          <h2 className="text-center text-xl font-bold">Delete Driver</h2>
 
-          <p className="text-center mt-3">
+          <p className="mt-3 text-center">
             Are you sure you want to delete{" "}
             <span className="font-bold">
               {driverToDelete?.first_name} {driverToDelete?.last_name}
@@ -643,7 +641,7 @@ export default function MaintenancePage() {
             ?
           </p>
 
-          <div className="modal-action justify-center mt-6">
+          <div className="modal-action mt-6 justify-center">
             <button
               className="btn btn-error text-white"
               onClick={async () => {

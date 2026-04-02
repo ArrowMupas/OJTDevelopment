@@ -41,13 +41,13 @@ export default function InquiryPage() {
   );
 
   return (
-    <main className="px-5 py-4 w-full h-full">
-      <h1 className="text-lg font-bold ">Inquiry</h1>
-      <p className="text-gray-500 text-sm mb-6">
+    <main className="h-full w-full px-5 py-4">
+      <h1 className="text-lg font-bold">Inquiry</h1>
+      <p className="mb-6 text-sm text-gray-500">
         All inquiries can be viewed here.
       </p>
 
-      <div className="space-x-2 mb-4">
+      <div className="mb-4 space-x-2">
         <label className="input input-neutral">
           <Search className="h-4 w-6" />
           <input
@@ -92,9 +92,9 @@ export default function InquiryPage() {
         </div>
       </div>
 
-      <div className="bg-white mt-2 border-0">
+      <div className="mt-2 border-0 bg-white">
         <div className="overflow-x-auto rounded-lg">
-          <table className="table ">
+          <table className="table">
             <thead className="bg-green-600 text-white">
               <tr>
                 <th>Name</th>
@@ -110,19 +110,19 @@ export default function InquiryPage() {
               {inquiries.length === 0 ? (
                 <tr>
                   <td colSpan="7" className="text-center">
-                    <div className="flex flex-col justify-center items-center h-20 gap-5">
+                    <div className="flex h-20 flex-col items-center justify-center gap-5">
                       {loading && (
                         <span className="loading loading-spinner text-success"></span>
                       )}
 
                       {loading ? (
-                        <p className="font-bold text-sm">
+                        <p className="text-sm font-bold">
                           Loading inquiries...
                         </p>
                       ) : (
-                        <div className="flex flex-col justify-center items-center gap-2">
-                          <UserRoundX className="size-12 text-red-300" />
-                          <p className="font-bold text-sm text-red-300">
+                        <div className="flex flex-col items-center justify-center gap-2">
+                          <UserRoundX className="text-error size-12" />
+                          <p className="text-error text-sm font-bold">
                             No inquiries found
                           </p>
                         </div>
@@ -135,7 +135,7 @@ export default function InquiryPage() {
                   const date = new Date(inquiry.created_at);
 
                   return (
-                    <tr key={inquiry.id} className=" hover:bg-green-50">
+                    <tr key={inquiry.id} className="hover:bg-green-50">
                       <th>
                         {inquiry.first_name} {inquiry.last_name}
                       </th>
@@ -144,7 +144,7 @@ export default function InquiryPage() {
 
                       <td>
                         {inquiry.phone_number || (
-                          <span className="text-gray-500 text-xs">
+                          <span className="text-xs text-gray-500">
                             Did not give any
                           </span>
                         )}
