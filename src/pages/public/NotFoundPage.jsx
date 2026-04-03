@@ -1,7 +1,7 @@
 export default function NotFoundPage() {
   return (
     <div className="p-4 text-center">
-      <h1 className="text-3xl font-bold mb-2">404</h1>
+      <h1 className="mb-2 text-3xl font-bold">404</h1>
       <p>Page not found</p>
     </div>
   );
@@ -77,7 +77,7 @@ if (path === "/dashboard") {
 //         <h2 className="stat-value text-[#745fc9] leading-none">4.1</h2>
 //         <p className="text-sm">Joswe L. Tubio</p>
 //       </div>
-//       <Medal className="h-10 w-10 text-gray-400" />
+//       <Medal className="h-10 w-10 text-gray-500" />
 //     </div>
 //     <div className="absolute inset-0 bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 hover:opacity-30 transition duration-300 rounded-sm"></div>
 //   </div>

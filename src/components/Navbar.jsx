@@ -20,19 +20,19 @@ export default function Navbar() {
     { href: "/public-track", label: "Track PMS" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
-    { href: "/public-staff", label: "Staff" },
+    { href: "/staff", label: "Staff" },
   ];
 
   return (
-    <header className="bg-green-700 text-white py-4 px-4 sm:px-8 border-b border-green-400 w-full">
-      <div className="flex justify-between items-center">
+    <header className="w-full border-b border-green-400 bg-green-700 px-4 py-4 text-white sm:px-8">
+      <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <div
-            className="w-10 sm:w-12 aspect-square bg-white rounded-full p-1 flex items-center justify-center cursor-pointer"
+            className="flex aspect-square w-10 cursor-pointer items-center justify-center rounded-full bg-white p-1 sm:w-12"
             onClick={() => (window.location.href = "/")}
           >
             <img
-              className="w-full h-full object-contain"
+              className="h-full w-full object-contain"
               src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/national_electrification_logo.png"
               alt="Logo"
             />
@@ -40,17 +40,17 @@ export default function Navbar() {
 
           <div className="flex flex-col">
             {isDashboardPage ? (
-              <h1 className="font-black hidden text-sm sm:block  font-bolda uppercase">
+              <h1 className="font-bolda hidden text-sm font-black uppercase sm:block">
                 Vehicle Request Dashboard
               </h1>
             ) : (
-              <h1 className="font-semibold hidden text-sm sm:block font-bolda uppercase">
+              <h1 className="font-bolda hidden text-sm font-semibold uppercase sm:block">
                 National Electrification Administration{" "}
               </h1>
             )}
 
             {!isDashboardPage && (
-              <p className="hidden sm:block text-xs text-yellow-100">
+              <p className="hidden text-xs text-yellow-100 sm:block">
                 Transport Operations Services Unit (TOSU)
               </p>
             )}
@@ -65,13 +65,13 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   to={link.href}
-                  className="relative text-xs text-white hover:text-yellow-200 transition-colors duration-200 font-bold uppercase "
+                  className="relative text-xs font-bold text-white uppercase transition-colors duration-200 hover:text-yellow-200"
                 >
                   <span className={`${isActive ? "text-yellow-100" : ""}`}>
                     {link.label}
                   </span>
                   {isActive && (
-                    <span className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-yellow-200 rounded-full" />
+                    <span className="absolute -bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 transform rounded-full bg-yellow-200" />
                   )}
                 </Link>
               );

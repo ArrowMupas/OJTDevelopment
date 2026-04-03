@@ -91,26 +91,26 @@ export default function HistoryPage() {
   };
 
   return (
-    <main className="px-3 py-4 sm:px-5 min-h-screen pb-25 space-y-7">
+    <main className="min-h-screen space-y-7 px-3 py-4 pb-25 sm:px-5">
       <div className="flex gap-2">
         <div className="flex items-center gap-5">
           <button
             onClick={() => navigate(-1)}
-            className="btn btn-square btn-warning btn-dash h-full  "
+            className="btn btn-square btn-warning btn-dash h-full"
           >
             <ArrowLeft size={20} />
           </button>
         </div>
         <div>
-          <h1 className="text-lg font-bold ">Maintenance History</h1>
-          <p className="text-gray-500  text-sm">
+          <h1 className="text-lg font-bold">Maintenance History</h1>
+          <p className="text-sm text-gray-500">
             Check the recent history of vehicle maintenance
           </p>
         </div>
       </div>
 
       {/* Search and Filter (UI only) */}
-      <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 ">
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
         <label className="input input-neutral w-auto">
           <Search className="h-4 w-6" />
           <input
@@ -121,12 +121,12 @@ export default function HistoryPage() {
           />
         </label>
 
-        <form className="flex flex-wrap gap-2 w-full sm:w-fit">
+        <form className="flex w-full flex-wrap gap-2 sm:w-fit">
           {["tire", "battery", "pms"].map((type) => (
             <input
               key={type}
               type="checkbox"
-              className={`btn flex-1  ${
+              className={`btn flex-1 ${
                 selectedTypes.includes(type) ? "btn-success" : ""
               }`}
               aria-label={type.toUpperCase()}
@@ -155,8 +155,8 @@ export default function HistoryPage() {
       </div>
 
       <div ref={tableRef} className="overflow-auto rounded-lg">
-        <table className="table ">
-          <thead className="bg-green-500 text-white ">
+        <table className="table">
+          <thead className="bg-green-500 text-white">
             <tr>
               <th>Date</th>
               <th>Time Updated</th>
@@ -169,14 +169,14 @@ export default function HistoryPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={6} className="text-center py-4">
-                  <span className="loading loading-spinner text-green-500"></span>{" "}
+                <td colSpan={6} className="py-4 text-center">
+                  <span className="loading loading-spinner text-success"></span>{" "}
                   Loading history...
                 </td>
               </tr>
             ) : history.length === 0 ? (
               <tr>
-                <td colSpan={6} className="text-center py-4 text-gray-400">
+                <td colSpan={6} className="py-4 text-center text-gray-500">
                   No history found
                 </td>
               </tr>
@@ -194,7 +194,7 @@ export default function HistoryPage() {
                       {h.vehicle ? (
                         <div className="flex gap-2">
                           <p>{h.vehicle.name}</p>
-                          <div className="badge badge-primary  badge-dash badge-sm">
+                          <div className="badge badge-primary badge-dash badge-sm">
                             {h.vehicle.plate_number}
                           </div>
                         </div>
@@ -207,7 +207,7 @@ export default function HistoryPage() {
                       {h.old_value &&
                         Object.entries(h.old_value).map(([key, value]) => (
                           <div key={key} className="flex gap-2">
-                            <p className="capitalize text-gray-500">
+                            <p className="text-gray-500 capitalize">
                               {key.replace(/_/g, " ")}:
                             </p>{" "}
                             <p>{formatValue(value)}</p>
@@ -218,8 +218,8 @@ export default function HistoryPage() {
                     <td className="text-sm">
                       {h.new_value &&
                         Object.entries(h.new_value).map(([key, value]) => (
-                          <div key={key} className="flex gap-2 ">
-                            <p className="capitalize text-gray-500">
+                          <div key={key} className="flex gap-2">
+                            <p className="text-gray-500 capitalize">
                               {key.replace(/_/g, " ")}:
                             </p>{" "}
                             <p>{formatValue(value)}</p>

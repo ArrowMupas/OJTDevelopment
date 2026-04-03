@@ -6,57 +6,57 @@ export default function AdminNavbar() {
 
   const pageTitles = {
     "/dashboard": "Dashboard",
-    "/manage-requests": "Manage Requests",
+    "/vehicle-requests": "Manage Requests",
     "/drivermonitoring": "Driver Monitoring",
     "/vehiclestatusqueue": "Vehicle Status",
     "/transactions": "Transactions",
     "/survey": "Survey",
     "/vehicles": "Vehicles",
     "/registration": "Vehicle Registration",
-    "/drivers": "Transport Operations Services Unit (Staff)",
-    "/inquiry": "Inquiry",
-    "/vehiclemonitoring": "Vehicle Monitoring",
+    "/staff-management": "Transport Operations Services Unit (Staff)",
+    "/inquiries": "Inquiry",
+    "/pms": "Vehicle Monitoring",
     "/battery": "Vehicle Monitoring",
     "/tires": "Vehicle Monitoring",
     "/history": "Vehicle Changes History",
-    "/completerequest": "Completed Requests",
+    "/vehicle-requests/completed": "Completed Requests",
     "/track": "PMS Tracking",
   };
 
   const pageTitle = pageTitles[location.pathname] || "Admin Panel";
 
   return (
-    <header className="sticky top-0 z-10 bg-white px-5 h-16 shadow-lg flex items-center justify-between">
+    <header className="sticky top-0 z-10 flex h-16 items-center justify-between bg-white px-5 shadow-lg">
       <div className="flex items-center gap-3">
         <label
           htmlFor="admin-drawer"
           className="btn btn-ghost btn-sm lg:hidden"
         >
-          <Menu className="w-5 h-5" />
+          <Menu className="h-5 w-5" />
         </label>
 
         <h1 className="font-semibold">{pageTitle}</h1>
       </div>
       <div className="flex items-center gap-6">
-        <button className="hover:opacity-80 transition">
-          <Bell className="w-5 h-5" />
+        <button className="transition hover:opacity-80">
+          <Bell className="h-5 w-5" />
         </button>
 
         <div className="dropdown dropdown-end">
           <div
             tabIndex={0}
             role="button"
-            className="flex items-center gap-2 cursor-pointer hover:opacity-80"
+            className="flex cursor-pointer items-center gap-2 hover:opacity-80"
           >
-            <div className="w-8 h-8 rounded-full bg-white text-green-600 flex items-center justify-center font-semibold">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white font-semibold text-green-600">
               A
             </div>
-            <ChevronDown className="w-4 h-4" />
+            <ChevronDown className="h-4 w-4" />
           </div>
 
           <ul
             tabIndex={0}
-            className="dropdown-content menu bg-white text-black rounded-box z-50 w-48 p-2 shadow"
+            className="dropdown-content menu rounded-box z-50 w-48 bg-white p-2 text-black shadow"
           >
             <li>
               <a>Profile</a>

@@ -84,21 +84,21 @@ const AboutUs = () => {
         initial={{ opacity: 0, y: -40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, ease: "easeOut" }}
-        className=" text-black text-center py-20 px-4 flex flex-col items-center relative overflow-hidden"
+        className="relative flex flex-col items-center overflow-hidden px-4 py-20 text-center text-black"
       >
-        <div className="relative z-10 bg-white p-3 rounded-full mb-6 shadow-2xl">
+        <div className="relative z-10 mb-6 rounded-full bg-white p-3 shadow-2xl">
           <img
-            className="w-30 h-30 object-contain"
+            className="h-30 w-30 object-contain"
             src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/national_electrification_logo.png"
             alt="NEA Logo"
           />
         </div>
 
-        <h1 className="relative z-10 text-5xl font-bold uppercase mb-4 tracking-tight">
+        <h1 className="relative z-10 mb-4 text-5xl font-bold tracking-tight uppercase">
           About Us
         </h1>
 
-        <p className="relative z-10 text-lg max-w-2xl mx-auto text-black leading-relaxed px-4">
+        <p className="relative z-10 mx-auto max-w-2xl px-4 text-lg leading-relaxed text-black">
           The central hub where NEA employees coordinate with the Transport
           Operations Services Unit (TOSU) for dependable, safe, and professional
           travel.
@@ -106,7 +106,7 @@ const AboutUs = () => {
       </motion.header>
 
       {/* Our Purpose Section */}
-      <section className="max-w-5xl mx-auto py-20 px-6">
+      <section className="mx-auto max-w-5xl px-6 py-20">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -114,11 +114,11 @@ const AboutUs = () => {
           transition={{ duration: 0.6 }}
           className="pl-6"
         >
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 uppercase tracking-wide">
+          <h2 className="mb-6 text-3xl font-bold tracking-wide text-gray-900 uppercase">
             Our Purpose
           </h2>
 
-          <p className="text-gray-700 text-lg mb-6 leading-relaxed">
+          <p className="mb-6 text-lg leading-relaxed text-gray-700">
             The NEA Motorpool serves as the vital link between our workforce and
             their mission. It is the primary platform where all NEA employees
             request transport services from the Transport Operations Services
@@ -126,7 +126,7 @@ const AboutUs = () => {
             destinations.
           </p>
 
-          <p className="text-gray-700 text-lg leading-relaxed italic">
+          <p className="text-lg leading-relaxed text-gray-700 italic">
             Whether it is a quick same-day trip or an extended assignment
             requiring two or more days of travel, we ensure every department has
             the mobility required to fulfill their duties.
@@ -135,13 +135,13 @@ const AboutUs = () => {
       </section>
 
       {/* Core Values */}
-      <section className="bg-gray-50 py-20 px-4 shadow-inner">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-black mb-12 uppercase tracking-widest">
+      <section className="bg-gray-50 px-4 py-20 shadow-inner">
+        <div className="mx-auto max-w-6xl text-center">
+          <h2 className="mb-12 text-3xl font-bold tracking-widest text-black uppercase">
             Core Values
           </h2>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             {values.map((value, index) => (
               <motion.div
                 key={index}
@@ -149,13 +149,13 @@ const AboutUs = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="group p-8 border border-gray-100 rounded-2xl bg-white hover:bg-green-600 transition-all duration-300 shadow-sm hover:shadow-xl"
+                className="group rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-all duration-300 hover:bg-green-600 hover:shadow-xl"
               >
-                <h3 className="text-xl font-bold text-green-800 group-hover:text-white mb-3">
+                <h3 className="mb-3 text-xl font-bold text-green-800 group-hover:text-white">
                   {value.title}
                 </h3>
 
-                <p className="text-gray-600 group-hover:text-blue-50 transition-colors">
+                <p className="text-gray-500 transition-colors group-hover:text-blue-50">
                   {value.description}
                 </p>
               </motion.div>
@@ -165,19 +165,19 @@ const AboutUs = () => {
       </section>
 
       {/* What We Do */}
-      <section className="max-w-6xl mx-auto py-20 px-6">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4 tracking-tight uppercase">
+      <section className="mx-auto max-w-6xl px-6 py-20">
+        <div className="mb-12 text-center">
+          <h2 className="mb-4 text-3xl font-bold tracking-tight text-gray-900 uppercase">
             What We Do
           </h2>
 
-          <p className="text-gray-600 max-w-xl mx-auto text-lg italic">
+          <p className="mx-auto max-w-xl text-lg text-gray-500 italic">
             We handle the logistics and the maintenance so you can stay focused
             on your work.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid gap-8 md:grid-cols-2">
           {services.map((service, index) => (
             <motion.div
               key={index}
@@ -185,18 +185,18 @@ const AboutUs = () => {
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="flex items-start p-8 bg-white rounded-xl border border-gray-200 shadow-sm hover:border-green-700 transition-all duration-300"
+              className="flex items-start rounded-xl border border-gray-200 bg-white p-8 shadow-sm transition-all duration-300 hover:border-green-700"
             >
-              <div className="mr-5 mt-1 bg-green-50 p-3 rounded-lg">
-                <div className="w-3 h-3 bg-green-700 rounded-full"></div>
+              <div className="mt-1 mr-5 rounded-lg bg-green-50 p-3">
+                <div className="h-3 w-3 rounded-full bg-green-700"></div>
               </div>
 
               <div>
-                <h3 className="text-xl font-bold text-gray-800 mb-2">
+                <h3 className="mb-2 text-xl font-bold text-gray-800">
                   {service.title}
                 </h3>
 
-                <p className="text-gray-600 leading-relaxed">
+                <p className="leading-relaxed text-gray-500">
                   {service.description}
                 </p>
               </div>
@@ -206,9 +206,9 @@ const AboutUs = () => {
       </section>
 
       {/* FAQ */}
-      <section className="max-w-4xl mx-auto py-20 px-6 bg-white border-t border-gray-100">
-        <div className="text-center mb-12">
-          <h2 className="text-5xl font-serif text-gray-800 mb-6">FAQ</h2>
+      <section className="mx-auto max-w-4xl border-t border-gray-100 bg-white px-6 py-20">
+        <div className="mb-12 text-center">
+          <h2 className="mb-6 font-serif text-5xl text-gray-800">FAQ</h2>
         </div>
 
         <div className="border-t border-green-200">
@@ -223,7 +223,7 @@ const AboutUs = () => {
             >
               <button
                 onClick={() => toggleFaq(index)}
-                className="w-full flex justify-between items-center py-6 text-left hover:bg-green-50 transition px-2"
+                className="flex w-full items-center justify-between px-2 py-6 text-left transition hover:bg-green-50"
               >
                 <span className="text-xl font-bold text-gray-900">
                   {faq.question}
@@ -243,9 +243,9 @@ const AboutUs = () => {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   transition={{ duration: 0.3 }}
-                  className="pl-4 pr-10 pb-6 border-l-4 border-green-700"
+                  className="border-l-4 border-green-700 pr-10 pb-6 pl-4"
                 >
-                  <p className="text-gray-600 text-lg leading-relaxed">
+                  <p className="text-lg leading-relaxed text-gray-500">
                     {faq.answer}
                   </p>
                 </motion.div>
@@ -261,14 +261,14 @@ const AboutUs = () => {
         whileInView={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
-        className="bg-white py-20 px-4 text-center text-black"
+        className="bg-white px-4 py-20 text-center text-black"
       >
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-4xl font-bold mb-6 tracking-tight uppercase">
+        <div className="mx-auto max-w-3xl">
+          <h2 className="mb-6 text-4xl font-bold tracking-tight uppercase">
             Our Mission
           </h2>
 
-          <p className="text-xl font-light leading-relaxed opacity-95 italic">
+          <p className="text-xl leading-relaxed font-light italic opacity-95">
             "To support the workforce of the National Electrification
             Administration with seamless transport logistics, ensuring every
             official journey is safe, comfortable, and reliable."

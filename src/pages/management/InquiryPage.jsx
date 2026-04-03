@@ -41,13 +41,15 @@ export default function InquiryPage() {
   );
 
   return (
-    <main className="px-5 py-4 w-full h-full">
-      <h1 className="text-lg font-bold ">Inquiry</h1>
-      <p className="text-gray-500 text-sm mb-6">
-        All inquiries can be viewed here.
-      </p>
+    <main className="h-full w-full space-y-7 px-5 py-4 pb-25">
+      <div>
+        <h1 className="text-lg font-bold">Inquiry</h1>
+        <p className="text-sm text-gray-500">
+          All inquiries can be viewed here.
+        </p>
+      </div>
 
-      <div className="space-x-2 mb-4">
+      <div className="space-x-2">
         <label className="input input-neutral">
           <Search className="h-4 w-6" />
           <input
@@ -92,9 +94,9 @@ export default function InquiryPage() {
         </div>
       </div>
 
-      <div className="bg-white mt-2 border-0">
+      <div className="border-0 bg-white">
         <div className="overflow-x-auto rounded-lg">
-          <table className="table ">
+          <table className="table">
             <thead className="bg-green-600 text-white">
               <tr>
                 <th>Name</th>
@@ -107,26 +109,26 @@ export default function InquiryPage() {
             </thead>
 
             <tbody>
-              {inquiries.length === 0 ? (
+              {loading ? (
                 <tr>
-                  <td colSpan="7" className="text-center">
-                    <div className="flex flex-col justify-center items-center h-20 gap-5">
-                      {loading && (
-                        <span className="loading loading-spinner text-success"></span>
-                      )}
-
-                      {loading ? (
-                        <p className="font-bold text-sm">
-                          Loading inquiries...
-                        </p>
-                      ) : (
-                        <div className="flex flex-col justify-center items-center gap-2">
-                          <UserRoundX className="size-12 text-red-300" />
-                          <p className="font-bold text-sm text-red-300">
-                            No inquiries found
-                          </p>
-                        </div>
-                      )}
+                  <td colSpan="7" className="py-12 text-center sm:py-40">
+                    <div className="flex flex-col items-center justify-center gap-3">
+                      <span className="loading loading-infinity loading-xl"></span>
+                      <p className="text-gray-500">Loading inquiries...</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : inquiries.length === 0 ? (
+                <tr>
+                  <td colSpan="7" className="py-12 text-center sm:py-40">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Search className="size-8 text-gray-500" />
+                      <p className="text-gray-500">No inquiries found</p>
+                      <p className="text-xs text-gray-500">
+                        {search
+                          ? "Try a different search term"
+                          : "No inquiries available right now"}
+                      </p>
                     </div>
                   </td>
                 </tr>
@@ -135,7 +137,7 @@ export default function InquiryPage() {
                   const date = new Date(inquiry.created_at);
 
                   return (
-                    <tr key={inquiry.id} className=" hover:bg-green-50">
+                    <tr key={inquiry.id} className="hover:bg-green-50">
                       <th>
                         {inquiry.first_name} {inquiry.last_name}
                       </th>
@@ -144,7 +146,7 @@ export default function InquiryPage() {
 
                       <td>
                         {inquiry.phone_number || (
-                          <span className="text-gray-500 text-xs">
+                          <span className="text-xs text-gray-500">
                             Did not give any
                           </span>
                         )}
@@ -159,6 +161,13 @@ export default function InquiryPage() {
                 })
               )}
             </tbody>
+            <tfoot className="bg-green-400 font-medium">
+              <tr>
+                <td colSpan="8" className="py-5 text-center text-white">
+                  Total Requests: {inquiries.length}
+                </td>
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>
