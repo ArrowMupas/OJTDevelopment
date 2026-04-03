@@ -31,32 +31,32 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-full flex items-center justify-center bg-linear-to-br from-emerald-100 via-green-100 to-green-200 py-4 sm:py-14">
-      <div className="max-w-md w-full card bg-base-100 rounded-3xl shadow-sm p-7 flex flex-col items-center gap-4">
+    <div className="flex min-h-full items-center justify-center bg-linear-to-br from-emerald-100 via-green-100 to-green-200 py-4 sm:py-14">
+      <div className="card bg-base-100 flex w-full max-w-md flex-col items-center gap-4 rounded-3xl p-7 shadow-sm">
         {/* Logo */}
         <div
-          className="size-25 bg-green-100 rounded-full p-2 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-300"
+          className="flex size-25 cursor-pointer items-center justify-center rounded-full bg-green-100 p-2 transition-transform duration-300 hover:scale-105"
           onClick={() => (window.location.href = "/")}
         >
           <img
-            className="w-full h-full object-contain"
+            className="h-full w-full object-contain"
             src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/national_electrification_logo.png"
             alt="Logo"
           />
         </div>
 
         {/* Heading */}
-        <h2 className="text-center text-xl sm:text-3xl font-bold text-green-800  ">
+        <h2 className="text-center text-xl font-bold text-green-800 sm:text-3xl">
           Transport Operations Services Unit
         </h2>
-        <span className="text-green-600 text-lg sm:text-sm font-semibold">
+        <span className="text-lg font-semibold text-green-600 sm:text-sm">
           Motorpool
         </span>
 
         {/* Google Login */}
         <button
           onClick={loginWithGoogle}
-          className="w-full flex items-center justify-center gap-3 text-sm py-3 rounded uppercase font-bold shadow-sm hover:bg-gray-100 transition-all duration-300 border border-gray-300"
+          className="flex w-full items-center justify-center gap-3 rounded border border-gray-300 py-3 text-sm font-bold uppercase shadow-sm transition-all duration-300 hover:bg-gray-100"
         >
           <svg
             aria-label="Google logo"
@@ -89,18 +89,18 @@ export default function Login() {
         </button>
 
         {/* Divider */}
-        <div className="flex items-center w-full gap-4">
+        <div className="flex w-full items-center gap-4">
           <hr className="flex-1 border-gray-300" />
-          <span className="text-gray-400 text-sm uppercase">or</span>
+          <span className="text-sm text-gray-500 uppercase">or</span>
           <hr className="flex-1 border-gray-300" />
         </div>
 
         {/* Email / Password Login */}
-        <form onSubmit={loginWithEmail} className="w-full flex flex-col gap-4">
+        <form onSubmit={loginWithEmail} className="flex w-full flex-col gap-4">
           <input
             type="email"
             placeholder="Email"
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400"
+            className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-green-400 focus:outline-none"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -108,7 +108,7 @@ export default function Login() {
           <input
             type="password"
             placeholder="Password"
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400"
+            className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-green-400 focus:outline-none"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -116,24 +116,24 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-green-600 text-white font-semibold py-3 rounded-xl hover:bg-green-700 transition-colors duration-300"
+            className="w-full rounded-xl bg-green-600 py-3 font-semibold text-white transition-colors duration-300 hover:bg-green-700"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
         {/* Signup */}
-        <p className="text-gray-500 text-sm text-center mt-2">
+        <p className="mt-2 text-center text-sm text-gray-500">
           Don't have an account?{" "}
           <a
             href="/signup"
-            className="text-green-600 font-semibold hover:underline"
+            className="font-semibold text-green-600 hover:underline"
           >
             Sign up
           </a>
         </p>
 
-        <p className="text-xs text-gray-400 mt-2 text-center">
+        <p className="mt-2 text-center text-xs text-gray-500">
           By logging in, you agree to our Terms and Privacy Policy.
         </p>
       </div>

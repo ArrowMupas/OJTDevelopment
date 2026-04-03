@@ -108,7 +108,7 @@ export default function SurveyPage() {
     const newRequestId = surveyData[0]?.id;
 
     if (newRequestId) {
-      navigate(`/surveyinput/${newRequestId}`, { replace: true });
+      navigate(`/survey/finish/${newRequestId}`, { replace: true });
     }
 
     setIsSubmitting(false);

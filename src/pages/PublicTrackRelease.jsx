@@ -67,11 +67,11 @@ export default function PublicTrackRelease() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-2xl font-bold text-center mb-6">PMS Tracking</h1>
+      <h1 className="mb-6 text-center text-2xl font-bold">PMS Tracking</h1>
 
-      <div className="card-body flex-row justify-between bg-[#30694B] border-[#30694B] border-2 rounded-sm shadow-md mb-3 p-4">
+      <div className="card-body mb-3 flex-row justify-between rounded-sm border-2 border-[#30694B] bg-[#30694B] p-4 shadow-md">
         <h2 className="card-title text-white">
-          <ClockCheck className="h-8 w-12 mr-2 text-white" />
+          <ClockCheck className="mr-2 h-8 w-12 text-white" />
           For Release
         </h2>
         <div className="tooltip tooltip-left" data-tip="Toggle Vehicle View">
@@ -90,16 +90,16 @@ export default function PublicTrackRelease() {
       </div>
 
       {cars.map((car) => (
-        <div key={car.id} className="bg-white rounded-xl  p-4 mb-6">
-          <div className="flex justify-between mb-4">
+        <div key={car.id} className="mb-6 rounded-xl bg-white p-4">
+          <div className="mb-4 flex justify-between">
             <div>
-              <h2 className="font-bold text-lg">{car.plate}</h2>
-              <p className="text-sm text-gray-600">{car.name}</p>
+              <h2 className="text-lg font-bold">{car.plate}</h2>
+              <p className="text-sm text-gray-500">{car.name}</p>
             </div>
             <div>
               <p className="text-sm font-bold"></p>
-              <div className="badge badge-primary badge-dash badge-sm border-green-400 text-green-500">
-                <CheckCheck className="text-green-500" />
+              <div className="badge badge-primary badge-dash badge-sm text-success border-green-400">
+                <CheckCheck className="text-success" />
                 Complete
               </div>
             </div>
@@ -107,25 +107,25 @@ export default function PublicTrackRelease() {
 
           {/* Progress */}
           <div className="relative flex items-center justify-between">
-            <div className="absolute top-3 left-0 right-0 h-1 bg-gray-300"></div>
+            <div className="absolute top-3 right-0 left-0 h-1 bg-gray-300"></div>
 
             {steps.map((label, index) => (
               <div
                 key={index}
-                className="flex-1 flex flex-col items-center relative z-10"
+                className="relative z-10 flex flex-1 flex-col items-center"
               >
                 <div
-                  className={`w-6 h-6 rounded-full mb-1 ${
+                  className={`mb-1 h-6 w-6 rounded-full ${
                     index <= car.step ? "bg-[#30694B]" : "bg-gray-300"
                   }`}
                 ></div>
-                <span className="text-xs text-center">{label}</span>
+                <span className="text-center text-xs">{label}</span>
               </div>
             ))}
           </div>
           <div className="mt-5 text-sm text-gray-700">
             <p className="font-semibold">Assigned Personnel:</p>
-            <ul className="list-disc list-inside">
+            <ul className="list-inside list-disc">
               {car.personnel.map((person, index) => (
                 <li key={index}>{person}</li>
               ))}

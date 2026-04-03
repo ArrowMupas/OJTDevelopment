@@ -266,26 +266,26 @@ export default function UnoperationalVehicles() {
   };
 
   return (
-    <main className="px-3 py-4 sm:px-5  h-full pb-25 space-y-7">
-      <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
-        <div className=" flex gap-2">
+    <main className="h-full space-y-7 px-3 py-4 pb-25 sm:px-5">
+      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
+        <div className="flex gap-2">
           <button
             onClick={() => navigate(-1)}
-            className="btn btn-square btn-warning btn-dash h-auto  "
+            className="btn btn-square btn-warning btn-dash h-auto"
           >
             <ArrowLeft size={20} />
           </button>
           <div>
             <h1 className="text-lg font-bold">Unoperational Vehicles</h1>
-            <p className="text-gray-500 text-sm">
+            <p className="text-sm text-gray-500">
               View the unoperational vehicles available in the system
             </p>
           </div>
         </div>
 
-        <div className="flex  gap-2 w-full sm:w-auto">
-          <label className="input input-neutral flex items-center w-full ">
-            <Search className="h-4 w-6 mr-1" />
+        <div className="flex w-full gap-2 sm:w-auto">
+          <label className="input input-neutral flex w-full items-center">
+            <Search className="mr-1 h-4 w-6" />
             <input
               type="search"
               placeholder="Search vehicles..."
@@ -303,7 +303,7 @@ export default function UnoperationalVehicles() {
             <div
               tabIndex={0}
               role="button"
-              className="btn bg-green-600 text-white flex items-center gap-1"
+              className="btn flex items-center gap-1 bg-green-600 text-white"
             >
               <FilterIcon className="h-4 w-6" /> Filter
             </div>
@@ -311,7 +311,7 @@ export default function UnoperationalVehicles() {
               tabIndex="-1"
               className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
             >
-              <li className="rounded-sm focus:bg-highlight">
+              <li className="focus:bg-highlight rounded-sm">
                 <a className="active:bg-highlight">Ascending</a>
               </li>
               <li>
@@ -322,38 +322,38 @@ export default function UnoperationalVehicles() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-2 w-full">
-        <div className="stat bg-base-100 shadow rounded-md">
+      <div className="grid w-full grid-cols-2 gap-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-4">
+        <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
-            <ClipboardClock className="h-8 w-12 text-yellow-500" />
+            <ClipboardClock className="text-warning h-8 w-12" />
           </div>
           <div className="stat-title">Insurance Expiring</div>
-          <div className="stat-value text-yellow-500">
+          <div className="stat-value text-warning">
             {stats.insuranceExpiring}
           </div>
         </div>
 
-        <div className="stat bg-base-100 shadow rounded-md">
+        <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
-            <ClipboardX className="h-8 w-12 text-error" />
+            <ClipboardX className="text-error h-8 w-12" />
           </div>
           <div className="stat-title">Insurance Expired</div>
           <div className="stat-value text-error">{stats.insuranceExpired}</div>
         </div>
 
-        <div className="stat bg-base-100 shadow rounded-md">
+        <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
-            <ClipboardClock className="h-8 w-12 text-yellow-500" />
+            <ClipboardClock className="text-warning h-8 w-12" />
           </div>
           <div className="stat-title">Registration Expiring</div>
-          <div className="stat-value text-yellow-500">
+          <div className="stat-value text-warning">
             {stats.registrationExpiring}
           </div>
         </div>
 
-        <div className="stat bg-base-100 shadow rounded-md">
+        <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
-            <ClipboardX className="h-8 w-12 text-error" />
+            <ClipboardX className="text-error h-8 w-12" />
           </div>
           <div className="stat-title">Registration Expired</div>
           <div className="stat-value text-error">
@@ -365,13 +365,13 @@ export default function UnoperationalVehicles() {
       <dialog id="vehicleModal" className="modal">
         <div className="modal-box max-w-3xl">
           <h1 className="text-2xl font-bold">Update Vehicle</h1>
-          <p className="text-gray-600 text-sm mb-7">
+          <p className="mb-7 text-sm text-gray-500">
             Edit vehicle details below.
           </p>
           <form onSubmit={handleSubmit(updateVehicle)}>
             <button
               type="button"
-              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+              className="btn btn-sm btn-circle btn-ghost absolute top-2 right-2"
               onClick={() => {
                 document.getElementById("vehicleModal").close();
                 setSelectedFile(null);
@@ -384,11 +384,11 @@ export default function UnoperationalVehicles() {
             </button>
 
             <div className="mb-6">
-              <h3 className="font-semibold text-sm text-gray-500 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-gray-500">
                 Vehicle Information
               </h3>
 
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="grid gap-5 md:grid-cols-2">
                 <OurInput
                   label="Vehicle Name"
                   name="vehicleName"
@@ -408,11 +408,11 @@ export default function UnoperationalVehicles() {
             <div className="divider my-2"></div>
 
             <div className="mb-6">
-              <h3 className="font-semibold text-sm text-gray-500 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-gray-500">
                 Insurance Details
               </h3>
 
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="grid gap-5 md:grid-cols-2">
                 <OurInput
                   label="Policy ID"
                   name="policyID"
@@ -441,11 +441,11 @@ export default function UnoperationalVehicles() {
             <div className="divider my-2"></div>
 
             <div className="mb-6">
-              <h3 className="font-semibold text-sm text-gray-500 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-gray-500">
                 Vehicle Registration
               </h3>
 
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="grid gap-5 md:grid-cols-2">
                 <OurInput
                   label="Engine Number"
                   name="engineNumber"
@@ -461,7 +461,7 @@ export default function UnoperationalVehicles() {
                 />
               </div>
 
-              <div className="grid md:grid-cols-3 gap-5 mt-4">
+              <div className="mt-4 grid gap-5 md:grid-cols-3">
                 <OurInput
                   label="File Number"
                   name="fileNumber"
@@ -479,7 +479,7 @@ export default function UnoperationalVehicles() {
                     {...register("yearModel")}
                   />
                   {errors.yearModel && (
-                    <p className="text-error text-sm mt-1">
+                    <p className="text-error mt-1 text-sm">
                       {errors.yearModel.message}
                     </p>
                   )}
@@ -495,7 +495,7 @@ export default function UnoperationalVehicles() {
                     {...register("periodDuration")}
                   />
                   {errors.periodDuration && (
-                    <p className="text-error text-sm mt-1">
+                    <p className="text-error mt-1 text-sm">
                       {errors.periodDuration.message}
                     </p>
                   )}
@@ -513,7 +513,7 @@ export default function UnoperationalVehicles() {
                     {...register("periodDurationTo")}
                   />
                   {errors.periodDurationTo && (
-                    <p className="text-error text-sm mt-1">
+                    <p className="text-error mt-1 text-sm">
                       {errors.periodDurationTo.message}
                     </p>
                   )}
@@ -524,11 +524,11 @@ export default function UnoperationalVehicles() {
             <div className="divider my-2"></div>
 
             <div className="mb-6">
-              <h3 className="font-semibold text-sm text-gray-500 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-gray-500">
                 Insurance Period
               </h3>
 
-              <div className="grid md:grid-cols-3 gap-5">
+              <div className="grid gap-5 md:grid-cols-3">
                 <div className="form-control w-full">
                   <label className="label">
                     <span className="label-text">Issue Date</span>
@@ -568,7 +568,7 @@ export default function UnoperationalVehicles() {
 
             {/* IMAGE */}
             <div className="mb-6">
-              <h3 className="font-semibold text-sm text-gray-500 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-gray-500">
                 Vehicle Image
               </h3>
 
@@ -581,7 +581,7 @@ export default function UnoperationalVehicles() {
                 />
 
                 {selectedFile && (
-                  <p className="text-sm text-gray-600 mt-2">
+                  <p className="mt-2 text-sm text-gray-500">
                     Selected: {selectedFile.name}
                   </p>
                 )}
@@ -590,10 +590,10 @@ export default function UnoperationalVehicles() {
 
             <button
               type="submit"
-              className="btn btn-lg w-full bg-green-600 text-white hover:bg-highlight"
+              className="btn btn-lg hover:bg-highlight w-full bg-green-600 text-white"
               disabled={isSubmitting || uploading}
             >
-              <Truck className="size-5 mr-2" />
+              <Truck className="mr-2 size-5" />
               {isSubmitting ? "Updating vehicle..." : "Update Vehicle"}
             </button>
           </form>
@@ -602,30 +602,30 @@ export default function UnoperationalVehicles() {
 
       <div className="">
         {vehicles.length === 0 ? (
-          <div className="flex flex-col justify-center items-center h-40 gap-5">
+          <div className="flex h-40 flex-col items-center justify-center gap-5">
             {loading ? (
               <>
                 <span className="loading loading-spinner text-success"></span>
-                <p className="font-bold text-sm">Loading vehicles...</p>
+                <p className="text-sm font-bold">Loading vehicles...</p>
               </>
             ) : (
               <>
-                <BeanOff className="size-12 text-error" />
-                <p className="font-bold text-sm text-error">
+                <BeanOff className="text-error size-12" />
+                <p className="text-error text-sm font-bold">
                   No vehicles found
                 </p>
               </>
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-0.5 sm:gap-2">
+          <div className="grid grid-cols-2 gap-0.5 sm:gap-2 lg:grid-cols-3 xl:grid-cols-4">
             {vehiclesWithStatus.map((vehicle) => {
               return (
                 <div
                   key={vehicle.id}
-                  className="card bg-base-100 shadow border border-base-300 relative"
+                  className="card bg-base-100 border-base-300 relative border shadow"
                 >
-                  <div className="absolute top-1 right-1 flex flex-col gap-1 items-end ">
+                  <div className="absolute top-1 right-1 flex flex-col items-end gap-1">
                     {vehicle.status === "warning" && (
                       <div className="badge badge-sm badge-warning text-xs">
                         Insurance expiring
@@ -650,22 +650,22 @@ export default function UnoperationalVehicles() {
 
                   <figure className="px-4 pt-4">
                     {vehicle.image_url ? (
-                      <div className="w-full h-24 sm:h-42">
+                      <div className="h-24 w-full sm:h-42">
                         <img
                           src={vehicle.image_url}
                           alt={vehicle.name}
-                          className="w-full h-full object-fill rounded-xl"
+                          className="h-full w-full rounded-xl object-fill"
                         />
                       </div>
                     ) : (
-                      <div className="w-full h-24 sm:h-42 bg-indigo-100 rounded-xl flex items-center justify-center overflow-hidden">
+                      <div className="flex h-24 w-full items-center justify-center overflow-hidden rounded-xl bg-indigo-100 sm:h-42">
                         <Van className="size-12 text-gray-300" />
                       </div>
                     )}
                   </figure>
                   <div className="card-body p-5 pt-2">
-                    <div className="flex flex-col sm:flex-row justify-between items-start mt-0 sm:mt-2">
-                      <h2 className="text-sm sm:text-base font-bold">
+                    <div className="mt-0 flex flex-col items-start justify-between sm:mt-2 sm:flex-row">
+                      <h2 className="text-sm font-bold sm:text-base">
                         {vehicle.name}
                       </h2>
                       <div className="badge badge-dash badge-primary badge-xs sm:badge-sm text-xs">
@@ -673,10 +673,10 @@ export default function UnoperationalVehicles() {
                       </div>
                     </div>
 
-                    <div className="space-y-2  relative">
+                    <div className="relative space-y-2">
                       <div className="space-y-1 sm:space-y-2">
                         <div>
-                          <span className="text-gray-500 text-xs">
+                          <span className="text-xs text-gray-500">
                             Policy ID
                           </span>
                           <p className="text-xs sm:text-sm">
@@ -684,7 +684,7 @@ export default function UnoperationalVehicles() {
                           </p>
                         </div>
                         <div>
-                          <span className="text-gray-500 text-xs">
+                          <span className="text-xs text-gray-500">
                             Policy No.
                           </span>
                           <p className="text-xs sm:text-sm">
@@ -692,7 +692,7 @@ export default function UnoperationalVehicles() {
                           </p>
                         </div>
                         <div>
-                          <span className="text-gray-500 text-xs">
+                          <span className="text-xs text-gray-500">
                             Issue Date
                           </span>
                           <p className="text-sm">
@@ -705,13 +705,13 @@ export default function UnoperationalVehicles() {
                           </p>
                         </div>
                         <div>
-                          <span className="text-gray-500 text-xs">
+                          <span className="text-xs text-gray-500">
                             Required Covered
                           </span>
-                          <p className="text-sm ">{vehicle.required_covered}</p>
+                          <p className="text-sm">{vehicle.required_covered}</p>
                         </div>
                         <div>
-                          <span className="text-gray-500 text-xs">
+                          <span className="text-xs text-gray-500">
                             Period Covered
                           </span>
                           <p
@@ -745,7 +745,7 @@ export default function UnoperationalVehicles() {
                       </div>
 
                       <div>
-                        <span className="text-gray-500 text-xs">
+                        <span className="text-xs text-gray-500">
                           Engine No.
                         </span>
                         <p className="text-xs sm:text-sm">
@@ -754,7 +754,7 @@ export default function UnoperationalVehicles() {
                       </div>
 
                       <div>
-                        <span className="text-gray-500 text-xs">
+                        <span className="text-xs text-gray-500">
                           Chassis No.
                         </span>
                         <p className="text-xs sm:text-sm">
@@ -763,17 +763,17 @@ export default function UnoperationalVehicles() {
                       </div>
 
                       <div>
-                        <span className="text-gray-500 text-xs">File No.</span>
+                        <span className="text-xs text-gray-500">File No.</span>
                         <p className="text-xs sm:text-sm">
                           {vehicle.file_number || "N/A"}
                         </p>
                       </div>
 
                       <div>
-                        <span className="text-gray-500 text-xs">
+                        <span className="text-xs text-gray-500">
                           Year Model
                         </span>
-                        <p className=" text-sm">
+                        <p className="text-sm">
                           {vehicle.year_model
                             ? format(new Date(vehicle.year_model), "yyyy")
                             : "N/A"}
@@ -781,7 +781,7 @@ export default function UnoperationalVehicles() {
                       </div>
 
                       <div>
-                        <span className="text-gray-500 text-xs">
+                        <span className="text-xs text-gray-500">
                           Period Duration
                         </span>
                         <p
@@ -855,8 +855,8 @@ export default function UnoperationalVehicles() {
                           }}
                           className={`btn btn-ghost btn-square btn-sm ${
                             vehicle.operational
-                              ? "text-yellow-500"
-                              : "text-gray-400"
+                              ? "text-warning"
+                              : "text-gray-500"
                           }`}
                         >
                           <Activity className="h-4 w-4" />
@@ -873,13 +873,13 @@ export default function UnoperationalVehicles() {
 
       <dialog id="toggleOperationalModal" className="modal">
         <div className="modal-box">
-          <h2 className="text-xl font-bold text-center">
+          <h2 className="text-center text-xl font-bold">
             {vehicleToToggle?.operational
               ? "Mark as Not Operational?"
               : "Mark as Operational?"}
           </h2>
 
-          <p className="text-center mt-3">
+          <p className="mt-3 text-center">
             Are you sure you want to
             {vehicleToToggle?.operational ? " deactivate " : " activate "}
             <span className="font-bold">{vehicleToToggle?.name}</span>{" "}
@@ -889,7 +889,7 @@ export default function UnoperationalVehicles() {
             ?
           </p>
 
-          <div className="modal-action justify-center mt-6">
+          <div className="modal-action mt-6 justify-center">
             <button
               className="btn btn-warning text-white"
               onClick={async () => {
@@ -918,9 +918,9 @@ export default function UnoperationalVehicles() {
 
       <dialog id="deleteVehicleModal" className="modal">
         <div className="modal-box">
-          <h2 className="text-xl font-bold text-center">Delete Vehicle</h2>
+          <h2 className="text-center text-xl font-bold">Delete Vehicle</h2>
 
-          <p className="text-center mt-3">
+          <p className="mt-3 text-center">
             Are you sure you want to delete{" "}
             <span className="font-bold">
               {vehicleToDelete?.name} ({vehicleToDelete?.plate_number})
@@ -928,7 +928,7 @@ export default function UnoperationalVehicles() {
             ?
           </p>
 
-          <div className="modal-action justify-center mt-6">
+          <div className="modal-action mt-6 justify-center">
             <button
               className="btn btn-error text-white"
               onClick={async () => {

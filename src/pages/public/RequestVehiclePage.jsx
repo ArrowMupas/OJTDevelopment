@@ -81,7 +81,7 @@ export default function TransactionsPage() {
       const newRequestId = insertedData[0]?.id;
 
       if (newRequestId) {
-        navigate(`/requestinput/${newRequestId}`, { replace: true });
+        navigate(`/request-vehicle/finish/${newRequestId}`, { replace: true });
       }
     }
 

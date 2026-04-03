@@ -346,10 +346,10 @@ export default function MaintenancePage() {
       <div className="grid w-full grid-cols-2 gap-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-4">
         <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
-            <CircleStar className="h-8 w-12 text-yellow-500" />
+            <CircleStar className="text-warning h-8 w-12" />
           </div>
           <div className="stat-title">Average Rating</div>
-          <div className="stat-value text-yellow-500">1.6</div>
+          <div className="stat-value text-warning">1.6</div>
         </div>
 
         <div className="stat bg-base-100 rounded-md shadow">
@@ -382,7 +382,7 @@ export default function MaintenancePage() {
           <h1 className="text-2xl font-bold">
             {isEditing ? "Update Staff" : "Add Staff"}
           </h1>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-500">
             {isEditing
               ? "Edit Staff details below."
               : "Create your staff here!"}

@@ -33,7 +33,7 @@ export default function HomePage() {
                 <span className="">Services </span>
                 <span className="text-rotate text-5xl">
                   <span className="justify-items-start">
-                    <span className="text-green-500">System</span>
+                    <span className="text-success">System</span>
                     <span className="text-lime-600">Website</span>
                     <span className="text-emerald-700">Unit </span>
                   </span>

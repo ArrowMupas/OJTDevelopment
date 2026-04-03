@@ -158,7 +158,7 @@ export default function ManageRequestsPage() {
   }
 
   return (
-    <main className="h-full space-y-7 px-5 py-4 pb-40">
+    <main className="h-full space-y-7 px-5 py-4 pb-25">
       <div>
         <h1 className="text-lg font-bold">Manage Request</h1>
         <p className="text-sm text-gray-500">
@@ -222,7 +222,7 @@ export default function ManageRequestsPage() {
             <option value="NEA"></option>
           </datalist>
         </label>
-        <Link to={"/completerequest"}>
+        <Link to={"/vehicle-requests/completed"}>
           <button className="btn btn-success text-white">
             <span className="hidden sm:inline">View </span>Completed Requests
           </button>
@@ -247,7 +247,7 @@ export default function ManageRequestsPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="8" className="py-12 text-center">
+                  <td colSpan="8" className="py-12 text-center sm:py-25">
                     <div className="flex flex-col items-center justify-center gap-3">
                       <span className="loading loading-infinity loading-xl"></span>
                       <p className="text-gray-500">Loading requests...</p>
@@ -256,16 +256,14 @@ export default function ManageRequestsPage() {
                 </tr>
               ) : requests.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="py-12 text-center">
+                  <td colSpan="8" className="py-12 text-center sm:py-20">
                     <div className="flex flex-col items-center justify-center gap-2">
-                      <Search className="h-12 w-12 text-gray-400" />
-                      <p className="text-lg font-medium text-gray-500">
-                        No requests found
-                      </p>
-                      <p className="text-sm text-gray-400">
+                      <Search className="size-8 text-gray-500" />
+                      <p className="text-gray-500">No requests found</p>
+                      <p className="text-xs text-gray-500">
                         {search
                           ? "Try a different search term"
-                          : "No pending requests available"}
+                          : "No pending requests available right now"}
                       </p>
                     </div>
                   </td>
@@ -354,7 +352,7 @@ export default function ManageRequestsPage() {
                         <select
                           className={`select ${
                             req.status === "Completed"
-                              ? " select-success text-green-500"
+                              ? " select-success text-success"
                               : req.status === "Cancelled" &&
                                 "select-error text-error"
                           }`}
@@ -364,7 +362,7 @@ export default function ManageRequestsPage() {
                           <option value="Pending" className="text-black">
                             Pending
                           </option>
-                          <option value="Completed" className="text-green-500">
+                          <option value="Completed" className="text-success">
                             Completed
                           </option>
                           <option value="Cancelled" className="text-error">

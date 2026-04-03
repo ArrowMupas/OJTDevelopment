@@ -322,13 +322,13 @@ export default function MaintenancePage() {
   };
 
   return (
-    <main className="px-3 py-4 sm:px-5  h-full pb-25 space-y-7">
-      <div className="flex gap-2 justify-between items-center">
+    <main className="h-full space-y-7 px-3 py-4 pb-25 sm:px-5">
+      <div className="flex items-center justify-between gap-2">
         <div className="w-70">
           <h1 className="text-lg font-bold">
             {swap ? "Vehicle Insurance" : "Vehicle Registration"}
           </h1>
-          <p className="text-gray-500 text-sm">
+          <p className="text-sm text-gray-500">
             {swap
               ? "View the insurance of vehicles"
               : "View the current registration of Vehicles"}
@@ -350,7 +350,7 @@ export default function MaintenancePage() {
             <span className="hidden sm:inline">Add New Vehicle</span>
           </button>
 
-          <Link to="/vehicles-unoperational">
+          <Link to="/vehicles/unoperational">
             <button className="btn btn-error flex gap-2 text-white">
               <Activity className="h-4 w-6" />
               <span className="hidden sm:inline">Unoperational Vehicles</span>
@@ -359,8 +359,8 @@ export default function MaintenancePage() {
         </div>
       </div>
 
-      <div className="flex sm:justify-between gap-2 items-center">
-        <div className="flex gap-2 w-full">
+      <div className="flex items-center gap-2 sm:justify-between">
+        <div className="flex w-full gap-2">
           <label className="input input-neutral w-full sm:w-auto">
             <Search className="h-4 w-6" />
             <input
@@ -386,7 +386,7 @@ export default function MaintenancePage() {
               tabIndex="-1"
               className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
             >
-              <li className="rounded-sm focus:bg-highlight">
+              <li className="focus:bg-highlight rounded-sm">
                 <a className="active:bg-highlight">Ascending</a>
               </li>
               <li>
@@ -410,38 +410,38 @@ export default function MaintenancePage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-2 w-full">
-        <div className="stat bg-base-100 shadow rounded-md">
+      <div className="grid w-full grid-cols-2 gap-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-4">
+        <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
-            <ClipboardClock className="h-8 w-12 text-yellow-500" />
+            <ClipboardClock className="text-warning h-8 w-12" />
           </div>
           <div className="stat-title">Insurance Expiring</div>
-          <div className="stat-value text-yellow-500">
+          <div className="stat-value text-warning">
             {stats.insuranceExpiring}
           </div>
         </div>
 
-        <div className="stat bg-base-100 shadow rounded-md">
+        <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
-            <ClipboardX className="h-8 w-12 text-error" />
+            <ClipboardX className="text-error h-8 w-12" />
           </div>
           <div className="stat-title">Insurance Expired</div>
           <div className="stat-value text-error">{stats.insuranceExpired}</div>
         </div>
 
-        <div className="stat bg-base-100 shadow rounded-md">
+        <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
-            <ClipboardClock className="h-8 w-12 text-yellow-500" />
+            <ClipboardClock className="text-warning h-8 w-12" />
           </div>
           <div className="stat-title">Registration Expiring</div>
-          <div className="stat-value text-yellow-500">
+          <div className="stat-value text-warning">
             {stats.registrationExpiring}
           </div>
         </div>
 
-        <div className="stat bg-base-100 shadow rounded-md">
+        <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
-            <ClipboardX className="h-8 w-12 text-error" />
+            <ClipboardX className="text-error h-8 w-12" />
           </div>
           <div className="stat-title">Registration Expired</div>
           <div className="stat-value text-error">
@@ -455,7 +455,7 @@ export default function MaintenancePage() {
           <h1 className="text-2xl font-bold">
             {isEditing ? "Update Vehicle" : "Add Vehicle"}
           </h1>
-          <p className="text-gray-600 text-sm mb-7">
+          <p className="mb-7 text-sm text-gray-500">
             {isEditing
               ? "Edit vehicle details below."
               : "Create your vehicle here!"}
@@ -465,7 +465,7 @@ export default function MaintenancePage() {
           >
             <button
               type="button"
-              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+              className="btn btn-sm btn-circle btn-ghost absolute top-2 right-2"
               onClick={() => {
                 document.getElementById("vehicleModal").close();
                 setSelectedFile(null);
@@ -478,11 +478,11 @@ export default function MaintenancePage() {
             </button>
 
             <div className="space-y-2">
-              <h3 className="font-semibold text-sm text-gray-500">
+              <h3 className="text-sm font-semibold text-gray-500">
                 Vehicle Information
               </h3>
 
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid gap-4 md:grid-cols-2">
                 <OurInput
                   label="Vehicle Name"
                   name="vehicleName"
@@ -519,11 +519,11 @@ export default function MaintenancePage() {
             <div className="divider"></div>
 
             <div className="space-y-2">
-              <h3 className="font-semibold text-sm text-gray-500 ">
+              <h3 className="text-sm font-semibold text-gray-500">
                 Insurance Details
               </h3>
 
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="grid gap-5 md:grid-cols-2">
                 <OurInput
                   label="Policy ID"
                   name="policyID"
@@ -551,14 +551,14 @@ export default function MaintenancePage() {
               </div>
             </div>
 
-            <div className="divider "></div>
+            <div className="divider"></div>
 
             <div className="space-y-2">
-              <h3 className="font-semibold text-sm text-gray-500 ">
+              <h3 className="text-sm font-semibold text-gray-500">
                 Insurance Period
               </h3>
 
-              <div className="grid md:grid-cols-3 gap-5">
+              <div className="grid gap-5 md:grid-cols-3">
                 <OurInput
                   label="Issue Date"
                   name="issueDate"
@@ -585,14 +585,14 @@ export default function MaintenancePage() {
               </div>
             </div>
 
-            <div className="divider "></div>
+            <div className="divider"></div>
 
             <div className="space-y-2">
-              <h3 className="font-semibold text-sm text-gray-500 ">
+              <h3 className="text-sm font-semibold text-gray-500">
                 Vehicle Registration
               </h3>
 
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid gap-4 md:grid-cols-2">
                 <OurInput
                   label="Engine Number"
                   name="engineNumber"
@@ -614,7 +614,7 @@ export default function MaintenancePage() {
                   error={errors.fileNumber}
                 />
 
-                <div className="relative z-0 w-full group">
+                <div className="group relative z-0 w-full">
                   <fieldset className="fieldset">
                     <legend className="fieldset-legend text-sm">
                       Year Model
@@ -636,7 +636,7 @@ export default function MaintenancePage() {
                     </select>
 
                     {errors.yearModel && (
-                      <p className="text-error text-sm mt-1">
+                      <p className="text-error mt-1 text-sm">
                         {errors.yearModel.message}
                       </p>
                     )}
@@ -647,11 +647,11 @@ export default function MaintenancePage() {
               <div className="divider"></div>
 
               <div className="space-y-2">
-                <h3 className="font-semibold text-sm text-gray-500 ">
+                <h3 className="text-sm font-semibold text-gray-500">
                   Valid Period
                 </h3>
 
-                <div className="grid md:grid-cols-2 gap-5">
+                <div className="grid gap-5 md:grid-cols-2">
                   <OurInput
                     label="From"
                     name="periodDuration"
@@ -673,7 +673,7 @@ export default function MaintenancePage() {
 
             <div className="divider"></div>
 
-            <div className="relative z-0 w-full group">
+            <div className="group relative z-0 w-full">
               <fieldset className="fieldset">
                 <legend className="fieldset-legend text-sm">
                   Vehicle Image
@@ -690,10 +690,10 @@ export default function MaintenancePage() {
 
             <button
               type="submit"
-              className="btn btn-lg w-full bg-green-600 text-white hover:bg-highlight mt-7"
+              className="btn btn-lg hover:bg-highlight mt-7 w-full bg-green-600 text-white"
               disabled={isSubmitting || uploading}
             >
-              <Truck className="size-5 mr-2" />
+              <Truck className="mr-2 size-5" />
               {isSubmitting
                 ? isEditing
                   ? "Updating vehicle..."
@@ -708,30 +708,30 @@ export default function MaintenancePage() {
 
       <div className="">
         {vehicles.length === 0 ? (
-          <div className="flex flex-col justify-center items-center h-40 gap-5">
+          <div className="flex h-40 flex-col items-center justify-center gap-5">
             {loading ? (
               <>
                 <span className="loading loading-spinner text-success"></span>
-                <p className="font-bold text-sm">Loading vehicles...</p>
+                <p className="text-sm font-bold">Loading vehicles...</p>
               </>
             ) : (
               <>
-                <BeanOff className="size-12 text-error" />
-                <p className="font-bold text-sm text-error">
+                <BeanOff className="text-error size-12" />
+                <p className="text-error text-sm font-bold">
                   No vehicles found
                 </p>
               </>
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-0.5 sm:gap-2">
+          <div className="grid grid-cols-2 gap-0.5 sm:gap-2 lg:grid-cols-4 2xl:grid-cols-5">
             {vehiclesWithStatus.map((vehicle) => {
               return (
                 <div
                   key={vehicle.id}
-                  className="card bg-base-100 shadow border border-base-300 relative"
+                  className="card bg-base-100 border-base-300 relative border shadow"
                 >
-                  <div className="absolute top-1 right-1 flex flex-col gap-1 items-end ">
+                  <div className="absolute top-1 right-1 flex flex-col items-end gap-1">
                     {vehicle.status === "warning" && (
                       <div className="badge badge-sm badge-warning text-xs">
                         Insurance expiring
@@ -756,31 +756,31 @@ export default function MaintenancePage() {
 
                   <figure className="px-4 pt-4">
                     {vehicle.image_url ? (
-                      <div className="w-full h-24 sm:h-42">
+                      <div className="h-24 w-full sm:h-42">
                         <img
                           src={vehicle.image_url}
                           alt={vehicle.name}
-                          className="w-full h-full object-fill rounded-xl"
+                          className="h-full w-full rounded-xl object-fill"
                         />
                       </div>
                     ) : (
-                      <div className="w-full h-24 sm:h-42 bg-indigo-100 rounded-xl flex items-center justify-center overflow-hidden">
+                      <div className="flex h-24 w-full items-center justify-center overflow-hidden rounded-xl bg-indigo-100 sm:h-42">
                         <Van className="size-12 text-gray-300" />
                       </div>
                     )}
                   </figure>
                   <div className="card-body p-5 pt-2">
-                    <div className="flex flex-col sm:flex-row justify-between items-start mt-0 sm:mt-2">
-                      <h2 className="text-sm sm:text-base font-bold">
+                    <div className="mt-0 flex flex-col items-start justify-between sm:mt-2 sm:flex-row">
+                      <h2 className="text-sm font-bold sm:text-base">
                         {vehicle.name}
                       </h2>
-                      <div className="badge badge-dash badge-primary badge-xs sm:badge-sm text-xs truncate">
+                      <div className="badge badge-dash badge-primary badge-xs sm:badge-sm truncate text-xs">
                         {vehicle.plate_number}
                       </div>
                     </div>
 
                     <div>
-                      <span className="text-gray-500 text-xs">
+                      <span className="text-xs text-gray-500">
                         Acquisition Cost
                       </span>
                       <p className="text-xs sm:text-sm">
@@ -794,7 +794,7 @@ export default function MaintenancePage() {
                     </div>
 
                     <div>
-                      <span className="text-gray-500 text-xs">
+                      <span className="text-xs text-gray-500">
                         Acquisition Date
                       </span>
                       <p className="text-xs sm:text-sm">
@@ -807,7 +807,7 @@ export default function MaintenancePage() {
                       </p>
                     </div>
 
-                    <div className="space-y-2  relative">
+                    <div className="relative space-y-2">
                       <AnimatePresence mode="wait">
                         {swap ? (
                           <motion.div
@@ -819,7 +819,7 @@ export default function MaintenancePage() {
                             className="space-y-1 sm:space-y-2"
                           >
                             <div>
-                              <span className="text-gray-500 text-xs">
+                              <span className="text-xs text-gray-500">
                                 Policy ID
                               </span>
                               <p className="text-xs sm:text-sm">
@@ -827,7 +827,7 @@ export default function MaintenancePage() {
                               </p>
                             </div>
                             <div>
-                              <span className="text-gray-500 text-xs">
+                              <span className="text-xs text-gray-500">
                                 Policy No.
                               </span>
                               <p className="text-xs sm:text-sm">
@@ -835,7 +835,7 @@ export default function MaintenancePage() {
                               </p>
                             </div>
                             <div>
-                              <span className="text-gray-500 text-xs">
+                              <span className="text-xs text-gray-500">
                                 Issue Date
                               </span>
                               <p className="text-sm">
@@ -848,15 +848,15 @@ export default function MaintenancePage() {
                               </p>
                             </div>
                             <div>
-                              <span className="text-gray-500 text-xs">
+                              <span className="text-xs text-gray-500">
                                 Required Covered
                               </span>
-                              <p className="text-sm ">
+                              <p className="text-sm">
                                 {vehicle.required_covered || "N/A"}
                               </p>
                             </div>
                             <div>
-                              <span className="text-gray-500 text-xs">
+                              <span className="text-xs text-gray-500">
                                 Period Covered
                               </span>
                               <p
@@ -898,7 +898,7 @@ export default function MaintenancePage() {
                             className="space-y-1 sm:space-y-2"
                           >
                             <div>
-                              <span className="text-gray-500 text-xs">
+                              <span className="text-xs text-gray-500">
                                 Engine No.
                               </span>
                               <p className="text-xs sm:text-sm">
@@ -906,7 +906,7 @@ export default function MaintenancePage() {
                               </p>
                             </div>
                             <div>
-                              <span className="text-gray-500 text-xs">
+                              <span className="text-xs text-gray-500">
                                 Chassis No.
                               </span>
                               <p className="text-xs sm:text-sm">
@@ -914,7 +914,7 @@ export default function MaintenancePage() {
                               </p>
                             </div>
                             <div>
-                              <span className="text-gray-500 text-xs">
+                              <span className="text-xs text-gray-500">
                                 File No.
                               </span>
                               <p className="text-xs sm:text-sm">
@@ -922,10 +922,10 @@ export default function MaintenancePage() {
                               </p>
                             </div>
                             <div>
-                              <span className="text-gray-500 text-xs">
+                              <span className="text-xs text-gray-500">
                                 Year Model
                               </span>
-                              <p className=" text-sm">
+                              <p className="text-sm">
                                 {vehicle.year_model
                                   ? format(new Date(vehicle.year_model), "yyyy")
                                   : "N/A"}
@@ -933,7 +933,7 @@ export default function MaintenancePage() {
                             </div>
 
                             <div>
-                              <span className="text-gray-500 text-xs">
+                              <span className="text-xs text-gray-500">
                                 Period Duration
                               </span>
                               <p
@@ -1018,8 +1018,8 @@ export default function MaintenancePage() {
                           }}
                           className={`btn btn-ghost btn-square btn-sm ${
                             vehicle.operational
-                              ? "text-yellow-500"
-                              : "text-gray-400"
+                              ? "text-warning"
+                              : "text-gray-500"
                           }`}
                         >
                           <Activity className="h-4 w-4" />
@@ -1036,13 +1036,13 @@ export default function MaintenancePage() {
 
       <dialog id="toggleOperationalModal" className="modal">
         <div className="modal-box">
-          <h2 className="text-xl font-bold text-center">
+          <h2 className="text-center text-xl font-bold">
             {vehicleToToggle?.operational
               ? "Mark as Not Operational?"
               : "Mark as Operational?"}
           </h2>
 
-          <p className="text-center mt-3">
+          <p className="mt-3 text-center">
             Are you sure you want to
             {vehicleToToggle?.operational ? " deactivate " : " activate "}
             <span className="font-bold">{vehicleToToggle?.name}</span>{" "}
@@ -1052,7 +1052,7 @@ export default function MaintenancePage() {
             ?
           </p>
 
-          <div className="modal-action justify-center mt-6">
+          <div className="modal-action mt-6 justify-center">
             <button
               className="btn btn-warning text-white"
               onClick={async () => {
@@ -1081,9 +1081,9 @@ export default function MaintenancePage() {
 
       <dialog id="deleteVehicleModal" className="modal">
         <div className="modal-box">
-          <h2 className="text-xl font-bold text-center">Delete Vehicle</h2>
+          <h2 className="text-center text-xl font-bold">Delete Vehicle</h2>
 
-          <p className="text-center mt-3">
+          <p className="mt-3 text-center">
             Are you sure you want to delete{" "}
             <span className="font-bold">
               {vehicleToDelete?.name} ({vehicleToDelete?.plate_number})
@@ -1091,7 +1091,7 @@ export default function MaintenancePage() {
             ?
           </p>
 
-          <div className="modal-action justify-center mt-6">
+          <div className="modal-action mt-6 justify-center">
             <button
               className="btn btn-error text-white"
               onClick={async () => {

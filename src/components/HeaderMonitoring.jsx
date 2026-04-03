@@ -84,7 +84,7 @@ export default function HeaderMonitoring({
           </div>
 
           <div role="tablist" className="tabs tabs-border">
-            <NavLink to="/vehiclemonitoring" className={tabClass("pms")}>
+            <NavLink to="/pms" className={tabClass("pms")}>
               <Gauge className="size-4" />
               PMS
             </NavLink>
@@ -105,10 +105,10 @@ export default function HeaderMonitoring({
           <div className="grid min-w-150 grid-cols-3 gap-2">
             <div className="stat bg-base-100 rounded-md shadow">
               <div className="stat-figure">
-                <ClipboardClock className="size-8 text-yellow-500" />
+                <ClipboardClock className="text-warning size-8" />
               </div>
               <div className="stat-title">Due In 2 months</div>
-              <div className="stat-value text-yellow-500">{warning}</div>
+              <div className="stat-value text-warning">{warning}</div>
             </div>
             <div className="stat bg-base-100 rounded-md shadow">
               <div className="stat-figure">

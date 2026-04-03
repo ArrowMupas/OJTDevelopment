@@ -41,13 +41,15 @@ export default function InquiryPage() {
   );
 
   return (
-    <main className="h-full w-full px-5 py-4">
-      <h1 className="text-lg font-bold">Inquiry</h1>
-      <p className="mb-6 text-sm text-gray-500">
-        All inquiries can be viewed here.
-      </p>
+    <main className="h-full w-full space-y-7 px-5 py-4 pb-25">
+      <div>
+        <h1 className="text-lg font-bold">Inquiry</h1>
+        <p className="text-sm text-gray-500">
+          All inquiries can be viewed here.
+        </p>
+      </div>
 
-      <div className="mb-4 space-x-2">
+      <div className="space-x-2">
         <label className="input input-neutral">
           <Search className="h-4 w-6" />
           <input
@@ -92,7 +94,7 @@ export default function InquiryPage() {
         </div>
       </div>
 
-      <div className="mt-2 border-0 bg-white">
+      <div className="border-0 bg-white">
         <div className="overflow-x-auto rounded-lg">
           <table className="table">
             <thead className="bg-green-600 text-white">
@@ -107,26 +109,26 @@ export default function InquiryPage() {
             </thead>
 
             <tbody>
-              {inquiries.length === 0 ? (
+              {loading ? (
                 <tr>
-                  <td colSpan="7" className="text-center">
-                    <div className="flex h-20 flex-col items-center justify-center gap-5">
-                      {loading && (
-                        <span className="loading loading-spinner text-success"></span>
-                      )}
-
-                      {loading ? (
-                        <p className="text-sm font-bold">
-                          Loading inquiries...
-                        </p>
-                      ) : (
-                        <div className="flex flex-col items-center justify-center gap-2">
-                          <UserRoundX className="text-error size-12" />
-                          <p className="text-error text-sm font-bold">
-                            No inquiries found
-                          </p>
-                        </div>
-                      )}
+                  <td colSpan="7" className="py-12 text-center sm:py-40">
+                    <div className="flex flex-col items-center justify-center gap-3">
+                      <span className="loading loading-infinity loading-xl"></span>
+                      <p className="text-gray-500">Loading inquiries...</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : inquiries.length === 0 ? (
+                <tr>
+                  <td colSpan="7" className="py-12 text-center sm:py-40">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Search className="size-8 text-gray-500" />
+                      <p className="text-gray-500">No inquiries found</p>
+                      <p className="text-xs text-gray-500">
+                        {search
+                          ? "Try a different search term"
+                          : "No inquiries available right now"}
+                      </p>
                     </div>
                   </td>
                 </tr>
@@ -159,6 +161,13 @@ export default function InquiryPage() {
                 })
               )}
             </tbody>
+            <tfoot className="bg-green-400 font-medium">
+              <tr>
+                <td colSpan="8" className="py-5 text-center text-white">
+                  Total Requests: {inquiries.length}
+                </td>
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>

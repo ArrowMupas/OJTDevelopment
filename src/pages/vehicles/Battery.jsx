@@ -133,7 +133,7 @@ export default function Battery() {
   };
 
   return (
-    <main className="px-3 py-4 sm:px-5 h-full pb-25 space-y-5">
+    <main className="h-full space-y-5 px-3 py-4 pb-25 sm:px-5">
       <HeaderMonitoring
         title="Battery Monitoring"
         description="Battery is replaced every year"
@@ -147,7 +147,7 @@ export default function Battery() {
       />
 
       {/* VEHICLE CARDS */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1 sm:gap-2">
+      <div className="grid grid-cols-2 gap-1 sm:gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {vehicles.map((v) => {
           const status = getStatusByMonths(v.install_date_battery, 10, 11, 12);
           const nextChange = getNextDateByMonths(v.install_date_battery, 12);
@@ -177,7 +177,7 @@ export default function Battery() {
           return (
             <div
               key={v.id}
-              className="card bg-base-100 shadow-sm relative hover:ring-2 hover:ring-indigo-400 transition-all"
+              className="card bg-base-100 relative shadow-sm transition-all hover:ring-2 hover:ring-indigo-400"
             >
               <div
                 className={`absolute top-1 right-1 ${statusBadge.color} badge badge-sm`}
@@ -186,12 +186,12 @@ export default function Battery() {
               </div>
 
               <div className="card-body p-4">
-                <div className="w-full h-24 sm:h-42 bg-indigo-100 rounded-xl overflow-hidden flex items-center justify-center">
+                <div className="flex h-24 w-full items-center justify-center overflow-hidden rounded-xl bg-indigo-100 sm:h-42">
                   {v.image_url ? (
                     <img
                       src={v.image_url}
                       alt={v.name}
-                      className="w-full h-full object-fill"
+                      className="h-full w-full object-fill"
                     />
                   ) : (
                     <Van className="size-12 text-gray-300" />
@@ -207,7 +207,7 @@ export default function Battery() {
                   </div>
 
                   {!v.install_date_battery ? (
-                    <AlertTriangle className="text-gray-400" />
+                    <AlertTriangle className="text-gray-500" />
                   ) : status === "overdue" ? (
                     <AlertTriangle className="text-error" />
                   ) : status === "dueSoon" ? (
@@ -277,8 +277,8 @@ export default function Battery() {
       <dialog id="battery_modal" className="modal">
         <div className="modal-box">
           <div className="mb-4">
-            <h3 className="font-bold text-lg">Update Battery Information</h3>
-            <p className="text-gray-500 text-sm">
+            <h3 className="text-lg font-bold">Update Battery Information</h3>
+            <p className="text-sm text-gray-500">
               Insert the updated battery information
             </p>
           </div>
@@ -293,7 +293,7 @@ export default function Battery() {
                 className="input input-bordered w-full"
               />
               {errors.type_battery && (
-                <p className="text-error text-sm mt-1">
+                <p className="text-error mt-1 text-sm">
                   {errors.type_battery.message}
                 </p>
               )}
@@ -309,7 +309,7 @@ export default function Battery() {
                 className="input input-bordered w-full"
               />
               {errors.install_date_battery && (
-                <p className="text-error text-sm mt-1">
+                <p className="text-error mt-1 text-sm">
                   {errors.install_date_battery.message}
                 </p>
               )}

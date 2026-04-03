@@ -90,7 +90,7 @@ export default function CardDriver({
           onClick={() => onView(driver)}
           className={clsx(
             "btn btn-ghost btn-square btn-sm",
-            highlight ? "text-yellow-300" : "text-yellow-500",
+            highlight ? "text-yellow-300" : "text-warning",
           )}
         >
           <IdCard className="h-4 w-4" />
