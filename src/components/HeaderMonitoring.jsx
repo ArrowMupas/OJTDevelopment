@@ -40,7 +40,7 @@ export default function HeaderMonitoring({
 
         <button
           onClick={() => navigate("/history")}
-          className="btn btn-accent gap-2 text-white"
+          className="btn btn-warning gap-2 text-white"
         >
           <History size={18} /> View History
         </button>

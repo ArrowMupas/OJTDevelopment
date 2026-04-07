@@ -59,14 +59,22 @@ export default function HomePage() {
               * (1) One vehicle per request.
             </p>
 
-            <a
-              href="/survey"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-lg btn-success rounded-xl px-8 text-sm leading-tight font-bold text-white uppercase"
-            >
-              Fill up survey
-            </a>
+            <div className="space-x-2">
+              <a
+                href="/survey"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-lg btn-success rounded-xl px-8 text-sm leading-tight font-bold text-white uppercase"
+              >
+                Fill up survey
+              </a>
+              <a
+                href="/public-track"
+                className="btn btn-lg btn-info rounded-xl px-8 text-sm leading-tight font-bold text-white uppercase"
+              >
+                Track PMS
+              </a>
+            </div>
           </div>
         </div>
       </motion.div>

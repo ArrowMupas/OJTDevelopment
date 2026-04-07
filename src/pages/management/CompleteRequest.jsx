@@ -1,6 +1,6 @@
 import { format, parse } from "date-fns";
 import { supabase } from "../../supabaseClient";
-import { ArrowLeft, Info, Search } from "lucide-react";
+import { ArrowLeft, CheckCircle, Info, Search, XCircle } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
 import Tippy from "@tippyjs/react";
 import "tippy.js/themes/light.css";
@@ -168,14 +168,7 @@ export default function CompleteRequest() {
         </div>
       </div>
 
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-semibold text-gray-700">
-          List of Completed Request
-          <div className="badge badge-dash badge-primary badge-xs sm:badge-sm ml-2 text-xs">
-            Total: {requests.length}
-          </div>
-        </h2>
-
+      <div className="mb-4 flex items-center">
         <label className="input input-neutral">
           <Search className="h-4 w-6" />
           <input
@@ -211,7 +204,8 @@ export default function CompleteRequest() {
                 <th>Assigned Driver</th>
                 <th>Assigned vehicle</th>
                 <th>Status</th>
-                <th></th>
+                <th>Has Surveyed</th>
+                <th>More</th>
               </tr>
             </thead>
             <tbody>
@@ -255,7 +249,7 @@ export default function CompleteRequest() {
 
                   return (
                     <tr key={req.id} className="hover:bg-green-50">
-                      <th className="uppercase">{req.department}</th>
+                      <th className="text-xs uppercase">{req.department}</th>
 
                       <td className="">
                         <span className="font-bold capitalize">
@@ -344,6 +338,22 @@ export default function CompleteRequest() {
                         </select>
                       </td>
 
+                      <td className="">
+                        <p>
+                          {req.is_surveyed ? (
+                            <div className="badge badge-success badge-soft">
+                              <CheckCircle className="size-3" />
+                              <p className="text-xs">Done</p>
+                            </div>
+                          ) : (
+                            <div className="badge badge-error badge-soft">
+                              <XCircle className="size-3" />
+                              <p className="truncate text-xs">Undone</p>
+                            </div>
+                          )}
+                        </p>
+                      </td>
+
                       <td>
                         <Tippy
                           interactive
@@ -355,8 +365,6 @@ export default function CompleteRequest() {
                               <p>{req.other_instructions || "None"}</p>
                               <h3 className="mt-2 font-bold">Items</h3>
                               <p>{req.items || "None"}</p>
-                              <h3 className="mt-2 font-bold">Has surveyed</h3>
-                              <p>{req.is_surveyed ? "Yes" : "Not Yet"}</p>
                             </div>
                           }
                         >
@@ -370,7 +378,7 @@ export default function CompleteRequest() {
             </tbody>
             <tfoot className="bg-green-400 font-medium">
               <tr>
-                <td colSpan="8" className="py-5 text-center text-white">
+                <td colSpan="9" className="py-5 text-center text-white">
                   Total Requests: {requests.length}
                 </td>
               </tr>

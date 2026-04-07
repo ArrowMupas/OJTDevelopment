@@ -8,10 +8,30 @@ export default function ProtectedRoute({ children }) {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const { data } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-      if (data.session) {
+      if (!session) {
+        setAuthenticated(false);
+        setLoading(false);
+        return;
+      }
+
+      const userEmail = session.user.email;
+
+      // 🔐 check if email is allowed
+      const { data, error } = await supabase
+        .from("users")
+        .select("email")
+        .eq("email", userEmail)
+        .single();
+
+      if (data) {
         setAuthenticated(true);
+      } else {
+        await supabase.auth.signOut();
+        setAuthenticated(false);
       }
 
       setLoading(false);
