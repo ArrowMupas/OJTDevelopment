@@ -61,7 +61,9 @@ export default function TrackingPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="mb-6 text-center text-2xl font-bold">PMS Tracking</h1>
+      <h1 className="mb-6 text-center text-2xl font-bold">
+        Repair and Maintenance
+      </h1>
 
       <div className="card-body mb-3 flex-row justify-between rounded-sm border-2 border-[#30694B] bg-[#30694B] p-4 shadow-md">
         <h2 className="card-title text-white">

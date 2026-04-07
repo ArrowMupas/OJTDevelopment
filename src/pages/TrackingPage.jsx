@@ -65,10 +65,12 @@ export default function TrackingPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="mb-6 text-center text-2xl font-bold">PMS Tracking</h1>
+      <h1 className="mb-6 text-center text-2xl font-bold">
+        Repair and Maintenance
+      </h1>
 
       <button
-        className="btn btn-info text-white font-bold mb-4 bg-green-700 border-green-700 hover:bg-[#30694B] hover:border-[#30694B] shadow-md"
+        className="btn btn-info mb-4 border-green-700 bg-green-700 font-bold text-white shadow-md hover:border-[#30694B] hover:bg-[#30694B]"
         onClick={() => {
           setSelectedCarId("");
           setMaintenance1("");
@@ -76,10 +78,10 @@ export default function TrackingPage() {
           document.getElementById("trackingModal").showModal();
         }}
       >
-        <CirclePlus className="h-4 w-6" /> Add New Tracking
+        <CirclePlus className="h-4 w-6" /> Add Job Order
       </button>
 
-      <div className="card-body flex-row justify-between bg-green-500 border-green-500 border-2 rounded-sm shadow-md mb-3 p-4">
+      <div className="card-body mb-3 flex-row justify-between rounded-sm border-2 border-green-500 bg-green-500 p-4 shadow-md">
         <h2 className="card-title text-white">
           <ClockFading className="mr-2 h-8 w-12 text-white" />
           Ongoing Tracking
@@ -97,16 +99,17 @@ export default function TrackingPage() {
             />
           </div>
         </div>
+
         <dialog id="trackingModal" className="modal">
           <div className="modal-box">
             <h1 className="text-xl font-bold">Add New Tracking</h1>
-            <p className="text-sm text-gray-500 mb-4">
+            <p className="mb-4 text-sm text-gray-500">
               Assign personnel and select vehicle
             </p>
 
             {/* CLOSE BUTTON */}
             <button
-              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+              className="btn btn-sm btn-circle btn-ghost absolute top-2 right-2"
               onClick={() => document.getElementById("trackingModal").close()}
             >
               ✕
@@ -161,7 +164,7 @@ export default function TrackingPage() {
 
               {/* SUBMIT BUTTON */}
               <button
-                className="btn btn-success w-full text-white [#30694B] bg-[#30694B] hover:bg-green-700 hover:border-green-700 shadow-md"
+                className="btn btn-success [#30694B] w-full bg-[#30694B] text-white shadow-md hover:border-green-700 hover:bg-green-700"
                 onClick={() => {
                   if (!selectedCarId) return;
 
