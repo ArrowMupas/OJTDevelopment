@@ -9,6 +9,7 @@ import {
   ClipboardClock,
   ClipboardX,
   Activity,
+  FileClock,
 } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
@@ -354,6 +355,13 @@ export default function MaintenancePage() {
             <button className="btn btn-error flex gap-2 text-white">
               <Activity className="h-4 w-6" />
               <span className="hidden sm:inline">Unoperational Vehicles</span>
+            </button>
+          </Link>
+
+          <Link to="/vehicles/vehicle-history">
+            <button className="btn btn-primary flex gap-2 border border-green-600 bg-green-600 text-white">
+              <FileClock className="h-4 w-6" />
+              <span className="hidden sm:inline">Vehicle History</span>
             </button>
           </Link>
         </div>

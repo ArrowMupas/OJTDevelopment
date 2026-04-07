@@ -37,6 +37,7 @@ import Battery from "./pages/vehicles/Battery";
 import Tires from "./pages/vehicles/Tires";
 import VehicleMonitoringPage from "./pages/vehicles/VehicleMonitoringPage";
 import UnoperationalVehicles from "./pages/vehicles/UnoperationalVehicles";
+import VehicleHistory from "./pages/vehicles/VehicleHistory";
 
 import TransactionsPage from "./pages/TransactionsPage";
 import DriverMonitoringPage from "./pages/DriverMonitoringPage";
@@ -96,6 +97,10 @@ function App() {
           <Route path="/staff-management" element={<Drivers />} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/inquiries" element={<InquiryPage />} />
+          <Route
+            path="/vehicles/vehicle-history"
+            element={<VehicleHistory />}
+          />
         </Route>
 
         <Route element={<PublicLayout />}>

@@ -1,4 +1,4 @@
-import { ClockCheck, ClockFading } from "lucide-react";
+import { CirclePlus, ClockCheck, ClockFading, UserPlus } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -48,7 +48,7 @@ const initialCars = [
   },
 ];
 
-export default function PublicTrackingPage() {
+export default function TrackingPage() {
   const [cars, setCars] = useState(initialCars);
   const navigate = useNavigate();
 
@@ -59,9 +59,27 @@ export default function PublicTrackingPage() {
     setCars(updated);
   };
 
+  const [selectedCarId, setSelectedCarId] = useState("");
+  const [maintenance1, setMaintenance1] = useState("");
+  const [maintenance2, setMaintenance2] = useState("");
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="mb-6 text-center text-2xl font-bold">PMS Tracking</h1>
+      <h1 className="mb-6 text-center text-2xl font-bold">
+        Repair and Maintenance
+      </h1>
+
+      <button
+        className="btn btn-info mb-4 border-green-700 bg-green-700 font-bold text-white shadow-md hover:border-[#30694B] hover:bg-[#30694B]"
+        onClick={() => {
+          setSelectedCarId("");
+          setMaintenance1("");
+          setMaintenance2("");
+          document.getElementById("trackingModal").showModal();
+        }}
+      >
+        <CirclePlus className="h-4 w-6" /> Add New Tracking
+      </button>
 
       <div className="card-body mb-3 flex-row justify-between rounded-sm border-2 border-green-500 bg-green-500 p-4 shadow-md">
         <h2 className="card-title text-white">
@@ -82,6 +100,95 @@ export default function PublicTrackingPage() {
           </div>
         </div>
       </div>
+
+      <dialog id="trackingModal" className="modal">
+        <div className="modal-box">
+          <h1 className="text-xl font-bold">Add New Tracking</h1>
+          <p className="mb-4 text-sm text-gray-500">
+            Assign personnel and select vehicle
+          </p>
+
+          {/* CLOSE BUTTON */}
+          <button
+            className="btn btn-sm btn-circle btn-ghost absolute top-2 right-2"
+            onClick={() => document.getElementById("trackingModal").close()}
+          >
+            ✕
+          </button>
+
+          {/* FORM */}
+          <div className="space-y-4">
+            {/* Vehicle Dropdown */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Select Vehicle</span>
+              </label>
+              <select
+                className="select select-bordered w-full"
+                value={selectedCarId}
+                onChange={(e) => setSelectedCarId(Number(e.target.value))}
+              >
+                <option value="">Select vehicle</option>
+                {cars.map((car) => (
+                  <option key={car.id} value={car.id}>
+                    {car.name} ({car.plate})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Maintenance 1 */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Maintenance 1</span>
+              </label>
+              <input
+                type="text"
+                className="input input-bordered w-full"
+                value={maintenance1}
+                onChange={(e) => setMaintenance1(e.target.value)}
+              />
+            </div>
+
+            {/* Maintenance 2 */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Maintenance 2</span>
+              </label>
+              <input
+                type="text"
+                className="input input-bordered w-full"
+                value={maintenance2}
+                onChange={(e) => setMaintenance2(e.target.value)}
+              />
+            </div>
+
+            {/* SUBMIT BUTTON */}
+            <button
+              className="btn btn-success [#30694B] w-full bg-[#30694B] text-white shadow-md hover:border-green-700 hover:bg-green-700"
+              onClick={() => {
+                if (!selectedCarId) return;
+
+                const updated = cars.map((car) => {
+                  if (car.id === selectedCarId) {
+                    return {
+                      ...car,
+                      personnel: [maintenance1, maintenance2],
+                    };
+                  }
+                  return car;
+                });
+
+                setCars(updated);
+
+                document.getElementById("trackingModal").close();
+              }}
+            >
+              Save Tracking
+            </button>
+          </div>
+        </div>
+      </dialog>
 
       {cars.map((car) => (
         <div key={car.id} className="mb-6 rounded-xl bg-white p-4">
