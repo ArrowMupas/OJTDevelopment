@@ -20,13 +20,11 @@ export default function Sidebar() {
     return (
       <Link
         to={to}
-        className={`flex items-center gap-2 p-2 rounded-r-lg text-sm transition-all text-gray-300
-        ${
+        className={`flex items-center gap-2 rounded-r-lg p-2 text-sm text-gray-300 transition-all ${
           isActive
             ? "border-l-4 border-green-600 bg-green-700 text-white"
             : "border-l-4 border-transparent"
-        }
-        hover:bg-green-700 hover:text-white`}
+        } hover:bg-green-700 hover:text-white`}
       >
         <Icon size={18} />
         {children}
@@ -41,16 +39,16 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="bg-green-900 min-h-full w-64 flex flex-col shadow-inner text-white">
+    <aside className="flex min-h-full w-64 flex-col bg-green-900 text-white shadow-inner">
       {/* LOGO */}
-      <div className="px-4 py-3 border-b border-green-300">
+      <div className="border-b border-green-300 px-4 py-3">
         <div className="flex items-center gap-3">
           <div
-            className="h-15 aspect-square bg-white rounded-full p-1 flex items-center justify-center cursor-pointer"
+            className="flex aspect-square h-15 cursor-pointer items-center justify-center rounded-full bg-white p-1"
             onClick={() => (window.location.href = "/")}
           >
             <img
-              className="w-full h-full object-contain"
+              className="h-full w-full object-contain"
               src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/national_electrification_logo.png"
               alt="NEA Logo"
               onError={(e) => {
@@ -60,7 +58,7 @@ export default function Sidebar() {
             />
           </div>
           <div className="tracking-tight">
-            <p className="text-lg font-bold font-rubik">NEA Dashboard</p>
+            <p className="font-rubik text-lg font-bold">NEA Dashboard</p>
             <p className="text-xs text-gray-300">
               Transport Operations Services Unit (TOSU)
             </p>
@@ -70,7 +68,7 @@ export default function Sidebar() {
 
       {/* MENU */}
       <div className="flex-1 overflow-y-auto px-1">
-        <ul className="menu w-full space-y-1 font-semibold text-sm">
+        <ul className="menu w-full space-y-1 text-sm font-semibold">
           <li>
             <MenuLink to="/admindashboard" icon={ChartColumnStacked}>
               Admin Dashboard
@@ -78,18 +76,18 @@ export default function Sidebar() {
           </li>
 
           <li>
-            <MenuLink to="/manage-requests" icon={Car}>
+            <MenuLink to="/vehicle-requests" icon={Car}>
               Vehicle Requests
             </MenuLink>
           </li>
 
           <li>
             <details className="group" open>
-              <summary className="flex items-center gap-3 p-2 rounded-r-lg cursor-pointer text-sm hover:bg-green-400 text-gray-200 hover:text-green-900 transition-all">
+              <summary className="flex cursor-pointer items-center gap-3 rounded-r-lg p-2 text-sm text-gray-200 transition-all hover:bg-green-400 hover:text-green-900">
                 Monitoring
               </summary>
 
-              <ul className="menu rounded-box ml-4 p-2 w-full space-y-1">
+              <ul className="menu rounded-box ml-4 w-full space-y-1 p-2">
                 {/* <li>
                   <MenuLink to="/drivermonitoring" icon={Users}>
                     Driver Monitoring
@@ -118,19 +116,19 @@ export default function Sidebar() {
 
           <li>
             <details className="group" open>
-              <summary className="flex items-center gap-3 p-2 rounded-r-lg cursor-pointer text-sm hover:bg-green-400 text-gray-200 hover:text-green-900 transition-all">
+              <summary className="flex cursor-pointer items-center gap-3 rounded-r-lg p-2 text-sm text-gray-200 transition-all hover:bg-green-400 hover:text-green-900">
                 Maintenance
               </summary>
 
-              <ul className="menu rounded-box ml-4 p-2 w-full space-y-1">
+              <ul className="menu rounded-box ml-4 w-full space-y-1 p-2">
                 <li>
-                  <MenuLink to="/vehiclemonitoring" icon={Car}>
+                  <MenuLink to="/pms" icon={Car}>
                     Vehicle Maintenance
                   </MenuLink>
                 </li>
 
                 <li>
-                  <MenuLink to="/drivers" icon={Users}>
+                  <MenuLink to="/staff-management" icon={Users}>
                     Staff
                   </MenuLink>
                 </li>
@@ -145,7 +143,7 @@ export default function Sidebar() {
           </li>
 
           <li>
-            <MenuLink to="/inquiry" icon={MessageCircleQuestionMark}>
+            <MenuLink to="/inquiries" icon={MessageCircleQuestionMark}>
               Inquiry
             </MenuLink>
           </li>
@@ -157,7 +155,7 @@ export default function Sidebar() {
       <div className="border-t border-green-700 p-3">
         <button
           onClick={handleLogout}
-          className="btn btn-ghost w-full flex justify-start hover:text-red-700"
+          className="btn btn-ghost hover:text-error flex w-full justify-start"
         >
           <LogOut size={18} />
           Logout

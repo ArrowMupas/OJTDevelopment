@@ -28,27 +28,27 @@ export default function HeaderMonitoring({
 
   return (
     <div className="space-y-5">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <div className="flex gap-5">
           <div>
-            <h1 className="text-lg font-bold flex items-center gap-2">
+            <h1 className="flex items-center gap-2 text-lg font-bold">
               {title}
             </h1>
-            <p className="text-gray-500 text-sm">{description}</p>
+            <p className="text-sm text-gray-500">{description}</p>
           </div>
         </div>
 
         <button
           onClick={() => navigate("/history")}
-          className="btn btn-accent text-white gap-2"
+          className="btn btn-accent gap-2 text-white"
         >
           <History size={18} /> View History
         </button>
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:justify-between ">
+      <div className="flex flex-col sm:flex-row sm:justify-between">
         <div className="flex flex-col gap-2">
-          <div className="flex gap-2 mb-2">
+          <div className="mb-2 flex gap-2">
             <label className="input input-neutral w-full">
               <Search className="h-4 w-6" />
               <input
@@ -84,7 +84,7 @@ export default function HeaderMonitoring({
           </div>
 
           <div role="tablist" className="tabs tabs-border">
-            <NavLink to="/vehiclemonitoring" className={tabClass("pms")}>
+            <NavLink to="/pms" className={tabClass("pms")}>
               <Gauge className="size-4" />
               PMS
             </NavLink>
@@ -101,28 +101,28 @@ export default function HeaderMonitoring({
           </div>
         </div>
 
-        <div className=" overflow-auto">
-          <div className="grid grid-cols-3 gap-2 min-w-150">
-            <div className="stat bg-base-100 shadow rounded-md">
+        <div className="overflow-auto">
+          <div className="grid min-w-150 grid-cols-3 gap-2">
+            <div className="stat bg-base-100 rounded-md shadow">
               <div className="stat-figure">
-                <ClipboardClock className="size-8 text-yellow-500 " />
+                <ClipboardClock className="text-warning size-8" />
               </div>
               <div className="stat-title">Due In 2 months</div>
-              <div className="stat-value text-yellow-500 ">{warning}</div>
+              <div className="stat-value text-warning">{warning}</div>
             </div>
-            <div className="stat bg-base-100 shadow rounded-md">
+            <div className="stat bg-base-100 rounded-md shadow">
               <div className="stat-figure">
-                <ClipboardClock className="size-8 text-error" />
+                <ClipboardClock className="text-error size-8" />
               </div>
               <div className="stat-title">Due in 1 month</div>
               <div className="stat-value text-error">{dueSoon}</div>
             </div>
-            <div className="stat bg-red-100 shadow rounded-md border-red-200 ">
+            <div className="stat rounded-md border-red-200 bg-red-100 shadow">
               <div className="stat-figure">
-                <ClipboardX className="size-8 text-red-600" />
+                <ClipboardX className="text-error size-8" />
               </div>
               <div className="stat-title">Overdue</div>
-              <div className="stat-value text-red-600 ">{overdue}</div>
+              <div className="stat-value text-error">{overdue}</div>
             </div>
           </div>
         </div>

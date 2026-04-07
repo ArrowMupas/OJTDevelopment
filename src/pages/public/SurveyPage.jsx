@@ -108,7 +108,7 @@ export default function SurveyPage() {
     const newRequestId = surveyData[0]?.id;
 
     if (newRequestId) {
-      navigate(`/surveyinput/${newRequestId}`, { replace: true });
+      navigate(`/survey/finish/${newRequestId}`, { replace: true });
     }
 
     setIsSubmitting(false);
@@ -120,9 +120,9 @@ export default function SurveyPage() {
     const [selected, setSelected] = useState(null);
 
     return (
-      <div className="border rounded-md p-5">
+      <div className="rounded-md border p-5">
         <p className="font-medium">{title}</p>
-        <p className="text-sm italic text-gray-500 mt-1">{description}</p>
+        <p className="mt-1 text-sm text-gray-500 italic">{description}</p>
 
         <div className="rating mt-3">
           {[1, 2, 3, 4, 5].map((num) => (
@@ -139,22 +139,22 @@ export default function SurveyPage() {
         </div>
 
         {selected && (
-          <p className="text-sm text-gray-700 mt-1 font-medium">
+          <p className="mt-1 text-sm font-medium text-gray-700">
             {ratingLabels[selected - 1]}
           </p>
         )}
 
         {errors[name] && (
-          <p className="text-red-500 text-sm mt-1">{errors[name].message}</p>
+          <p className="text-error mt-1 text-sm">{errors[name].message}</p>
         )}
       </div>
     );
   };
 
   return (
-    <main className="min-h-screen bg-linear-to-b from-emerald-100 to-emerald-200 sm:pb-25 flex justify-center p-2 sm:p-8">
-      <div className="card w-xl bg-white shadow-lg rounded-3xl p-10 ">
-        <div className=" text-center items-center justify-center flex flex-col gap-1 mb-4 ">
+    <main className="flex min-h-screen justify-center bg-linear-to-b from-emerald-100 to-emerald-200 p-2 sm:p-8 sm:pb-25">
+      <div className="card w-xl rounded-3xl bg-white p-10 shadow-lg">
+        <div className="mb-4 flex flex-col items-center justify-center gap-1 text-center">
           <img
             className="size-20 sm:size-28"
             src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/national_electrification_logo.png"
@@ -165,17 +165,17 @@ export default function SurveyPage() {
             }}
           />
           <div className="space-x-0">
-            <h2 className="text-3xl font-bold text-center mb-2 text-green-800 uppercase tracking-tight">
+            <h2 className="mb-2 text-center text-3xl font-bold tracking-tight text-green-800 uppercase">
               Tell us about the service
             </h2>
-            <p className="text-center text-gray-500 mb-4 text-sm">
+            <p className="mb-4 text-center text-sm text-gray-500">
               Tell us how is your experience with our service vehicles and
               drivers. Your feedback is important to us!
             </p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-0">
+        <div className="mb-0 grid grid-cols-1 gap-4 md:grid-cols-2">
           <OurInput
             label="Last Name"
             name="lastName"
@@ -211,10 +211,10 @@ export default function SurveyPage() {
 
           {/* DRIVER */}
           <div>
-            <label className="font-bold text-sm">Driver</label>
+            <label className="text-sm font-bold">Driver</label>
             <select
-              className={`select w-full mt-1 ${
-                errors.driverName ? "border-red-500" : ""
+              className={`select mt-1 w-full ${
+                errors.driverName ? "input-error" : ""
               }`}
               defaultValue=""
               {...register("driverName")}
@@ -241,11 +241,9 @@ export default function SurveyPage() {
 
           {/* VEHICLE */}
           <div>
-            <label className="font-bold text-sm mt-1 ">Vehicle</label>
+            <label className="mt-1 text-sm font-bold">Vehicle</label>
             <select
-              className={`select w-full ${
-                errors.vehicle ? "border-red-500" : ""
-              }`}
+              className={`select w-full ${errors.vehicle ? "input-error" : ""}`}
               defaultValue=""
               {...register("vehicle")}
             >
@@ -289,11 +287,11 @@ export default function SurveyPage() {
           />
 
           {/* COMMENTS */}
-          <div className="gap-2 flex flex-col">
-            <label className="font-bold text-sm">Comments / Suggestions</label>
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-bold">Comments / Suggestions</label>
             <textarea
               className={`textarea textarea-neutral w-full ${
-                errors.comments ? "border-red-500" : ""
+                errors.comments ? "input-error" : ""
               }`}
               placeholder="Any comments about our service?"
               {...register("comments")}
@@ -303,7 +301,7 @@ export default function SurveyPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn btn-lg bg-green-600 hover:bg-green-500 text-white py-7 w-full rounded-2xl mt-5 font-bold tracking-woder uppercase"
+            className="btn btn-lg tracking-woder mt-5 w-full rounded-2xl bg-green-600 py-7 font-bold text-white uppercase hover:bg-green-500"
           >
             {isSubmitting ? "Submitting..." : "Submit Survey"}
           </button>

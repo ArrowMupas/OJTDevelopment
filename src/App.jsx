@@ -25,7 +25,7 @@ import TrackingRelease from "./pages/TrackingRelease";
 import StaffPage from "./pages/public/StaffPage";
 
 // Management
-import AdminDashboard from "./pages/AdminDashboard";
+import AdminDashboard from "./pages/management/AdminDashboard";
 import Drivers from "./pages/management/Drivers";
 import InquiryPage from "./pages/management/InquiryPage";
 import ManageRequestsPage from "./pages/management/ManageRequestPage";
@@ -72,48 +72,54 @@ function App() {
        // Uncomment to activate google login (For later)
         */}
         <Route element={<MainLayout />}>
-          <Route path="/transactions" element={<TransactionsPage />} />
-          <Route path="/inquiry" element={<InquiryPage />} />
+          <Route path="/admindashboard" element={<AdminDashboard />} />
+          <Route path="/vehicle-requests" element={<ManageRequestsPage />} />
+          <Route
+            path="/vehicle-requests/completed"
+            element={<CompleteRequest />}
+          />
           <Route path="/vehicles" element={<VehiclePage />} />
           <Route
-            path="/vehicles-unoperational"
+            path="/vehicles/unoperational"
             element={<UnoperationalVehicles />}
           />
-          <Route path="/drivers" element={<Drivers />} />
+
+          <Route path="/vehiclestatusqueue" element={<VehicleStatusPage />} />
           <Route path="/drivermonitoring" element={<DriverMonitoringPage />} />
-          <Route path="/battery" element={<Battery />} />
-          <Route path="/tires" element={<Tires />} />
-          <Route
-            path="/vehiclemonitoring"
-            element={<VehicleMonitoringPage />}
-          />
+
           <Route path="/track" element={<TrackingPage />} />
           <Route path="/track-release" element={<TrackingRelease />} />
-          <Route path="/admindashboard" element={<AdminDashboard />} />
-          <Route path="/vehiclestatusqueue" element={<VehicleStatusPage />} />
-          <Route path="/manage-requests" element={<ManageRequestsPage />} />
+          <Route path="/pms" element={<VehicleMonitoringPage />} />
+          <Route path="/battery" element={<Battery />} />
+          <Route path="/tires" element={<Tires />} />
           <Route path="/history" element={<HistoryPage />} />
-          <Route path="/completerequest" element={<CompleteRequest />} />
+          <Route path="/staff-management" element={<Drivers />} />
+          <Route path="/transactions" element={<TransactionsPage />} />
+          <Route path="/inquiries" element={<InquiryPage />} />
         </Route>
 
         <Route element={<PublicLayout />}>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/contact" element={<ContactPage />} />
           <Route path="/" element={<HomePage />} />
-          <Route path="/requestinput/:id" element={<RequestInputPage />} />
-          <Route path="/surveyinput/:id" element={<SurveyInput />} />
-
-          <Route path="/survey" element={<SurveyPage />} />
-          <Route path="/request-vehicle" element={<RequestVehiclePage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/staff" element={<StaffPage />} />
+
           <Route path="/public-track" element={<PublicTrackPage />} />
-          <Route path="/public-staff" element={<StaffPage />} />
           <Route
             path="/public-track-release"
             element={<PublicTrackRelease />}
           />
         </Route>
+
+        <Route path="/request-vehicle" element={<RequestVehiclePage />} />
+        <Route
+          path="/request-vehicle/finish/:id"
+          element={<RequestInputPage />}
+        />
+        <Route path="/survey" element={<SurveyPage />} />
+        <Route path="/survey/finish/:id" element={<SurveyInput />} />
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
