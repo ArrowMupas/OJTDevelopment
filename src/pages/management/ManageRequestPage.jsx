@@ -7,6 +7,9 @@ import {
   Info,
   Search,
   Loader2,
+  ArrowRight,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import Tippy from "@tippyjs/react";
@@ -158,7 +161,7 @@ export default function ManageRequestsPage() {
   }
 
   return (
-    <main className="h-full space-y-7 px-5 py-4 pb-25">
+    <main className="h-full space-y-7 px-3 py-4 pb-25 sm:px-5">
       <div>
         <h1 className="text-lg font-bold">Manage Request</h1>
         <p className="text-sm text-gray-500">
@@ -166,12 +169,12 @@ export default function ManageRequestsPage() {
         </p>
       </div>
 
-      <div className="grid w-full grid-cols-2 gap-2 md:grid-cols-4">
+      <div className="grid w-full grid-cols-2 gap-1 sm:gap-2 md:grid-cols-4">
         <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
             <Clipboard className="h-8 w-12 text-[#d2dc15]" />
           </div>
-          <div className="stat-title">Today's Request</div>
+          <div className="stat-title">Today Requests</div>
           <div className="stat-value text-[#d2dc15]">21</div>
         </div>
 
@@ -179,7 +182,9 @@ export default function ManageRequestsPage() {
           <div className="stat-figure">
             <ClipboardCheck className="text-highlight h-8 w-12" />
           </div>
-          <div className="stat-title">Completed Request</div>
+          <div className="stat-title">
+            Completed <span className="hidden sm:inline">Request</span>
+          </div>
           <div className="stat-value text-highlight">4</div>
         </div>
 
@@ -200,7 +205,7 @@ export default function ManageRequestsPage() {
         </div>
       </div>
 
-      <div className="flex justify-between gap-2">
+      <div className="flex justify-between gap-8">
         <label className="input input-neutral">
           <Search className="h-4 w-6" />
           <input
@@ -224,14 +229,15 @@ export default function ManageRequestsPage() {
         </label>
         <Link to={"/vehicle-requests/completed"}>
           <button className="btn btn-success text-white">
-            <span className="hidden sm:inline">View </span>Completed Requests
+            <span className="hidden sm:inline">View </span>Completed
+            <ArrowRight className="size-4" />
           </button>
         </Link>
       </div>
 
       <div className="bg-white">
         <div className="overflow-x-auto rounded-lg">
-          <table className="table-sm lg:table-md table">
+          <table className="table">
             <thead className="bg-green-500 text-white">
               <tr>
                 <th>Department</th>
@@ -241,7 +247,8 @@ export default function ManageRequestsPage() {
                 <th>Assigned Driver</th>
                 <th>Assigned vehicle</th>
                 <th>Status</th>
-                <th></th>
+                <th>Has Surveyed</th>
+                <th>More</th>
               </tr>
             </thead>
             <tbody>
@@ -371,6 +378,22 @@ export default function ManageRequestsPage() {
                         </select>
                       </td>
 
+                      <td className="">
+                        <p>
+                          {req.is_surveyed ? (
+                            <div className="badge badge-success badge-soft">
+                              <CheckCircle className="size-3" />
+                              <p className="text-xs">Done</p>
+                            </div>
+                          ) : (
+                            <div className="badge badge-error badge-soft">
+                              <XCircle className="size-3" />
+                              <p className="truncate text-xs">Undone</p>
+                            </div>
+                          )}
+                        </p>
+                      </td>
+
                       <td>
                         <Tippy
                           interactive
@@ -383,9 +406,6 @@ export default function ManageRequestsPage() {
 
                               <h3 className="mt-2 font-bold">Items</h3>
                               <p>{req.items || "None"}</p>
-
-                              <h3 className="mt-2 font-bold">Has surveyed</h3>
-                              <p>{req.is_surveyed ? "Yes" : "Not Yet"}</p>
                             </div>
                           }
                         >
@@ -399,7 +419,7 @@ export default function ManageRequestsPage() {
             </tbody>
             <tfoot className="bg-green-400 font-medium">
               <tr>
-                <td colSpan="8" className="py-5 text-center text-white">
+                <td colSpan="9" className="py-5 text-center text-white">
                   Total Requests: {requests.length}
                 </td>
               </tr>

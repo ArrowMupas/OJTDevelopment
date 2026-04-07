@@ -31,7 +31,7 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-full items-center justify-center bg-linear-to-br from-emerald-100 via-green-100 to-green-200 py-4 sm:py-14">
+    <div className="flex min-h-full items-center justify-center bg-linear-to-br from-emerald-100 via-green-100 to-green-200 p-4 sm:py-14">
       <div className="card bg-base-100 flex w-full max-w-md flex-col items-center gap-4 rounded-3xl p-7 shadow-sm">
         {/* Logo */}
         <div

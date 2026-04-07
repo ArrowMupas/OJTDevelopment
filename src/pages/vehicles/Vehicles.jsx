@@ -733,22 +733,22 @@ export default function MaintenancePage() {
                 >
                   <div className="absolute top-1 right-1 flex flex-col items-end gap-1">
                     {vehicle.status === "warning" && (
-                      <div className="badge badge-sm badge-warning text-xs">
+                      <div className="badge badge-sm badge-warning text-xs text-white">
                         Insurance expiring
                       </div>
                     )}
                     {vehicle.status === "expired" && (
-                      <div className="badge badge-sm badge-error text-xs">
+                      <div className="badge badge-sm badge-error text-xs text-white">
                         Insurance expired
                       </div>
                     )}
                     {vehicle.status2 === "warning" && (
-                      <div className="badge badge-sm badge-warning text-xs">
+                      <div className="badge badge-sm badge-warning text-xs text-white">
                         Registration expiring
                       </div>
                     )}
                     {vehicle.status2 === "expired" && (
-                      <div className="badge badge-sm badge-error text-xs">
+                      <div className="badge badge-sm badge-error text-xs text-white">
                         Registration expired
                       </div>
                     )}
@@ -769,7 +769,8 @@ export default function MaintenancePage() {
                       </div>
                     )}
                   </figure>
-                  <div className="card-body p-5 pt-2">
+
+                  <div className="card-body px-4">
                     <div className="mt-0 flex flex-col items-start justify-between sm:mt-2 sm:flex-row">
                       <h2 className="text-sm font-bold sm:text-base">
                         {vehicle.name}

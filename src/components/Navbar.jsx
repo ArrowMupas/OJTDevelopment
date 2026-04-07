@@ -17,7 +17,6 @@ export default function Navbar() {
     { href: "/admindashboard", label: "Admin" },
     { href: "/", label: "Home" },
     { href: "/dashboard", label: "Dashboard" },
-    { href: "/public-track", label: "Track PMS" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
     { href: "/staff", label: "Staff" },
@@ -44,13 +43,13 @@ export default function Navbar() {
                 Vehicle Request Dashboard
               </h1>
             ) : (
-              <h1 className="font-bolda hidden text-sm font-semibold uppercase sm:block">
+              <h1 className="font-bolda hidden text-xs font-semibold uppercase sm:block md:text-sm">
                 National Electrification Administration{" "}
               </h1>
             )}
 
             {!isDashboardPage && (
-              <p className="hidden text-xs text-yellow-100 sm:block">
+              <p className="hidden text-xs text-yellow-100 md:block">
                 Transport Operations Services Unit (TOSU)
               </p>
             )}
@@ -58,7 +57,7 @@ export default function Navbar() {
         </div>
 
         {!hideNavLinks && (
-          <nav className="flex space-x-3 sm:space-x-5 md:space-x-7">
+          <nav className="flex space-x-2 sm:space-x-3 md:space-x-7">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.href;
               return (
