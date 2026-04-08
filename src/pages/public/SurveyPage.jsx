@@ -32,6 +32,7 @@ export default function SurveyPage() {
       const { data, error } = await supabase
         .from("drivers")
         .select("*")
+        .in("designation", ["Driver Mechanic A", "Driver Mechanic B"])
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -79,6 +80,17 @@ export default function SurveyPage() {
 
     const fullName = `${data.lastName}, ${data.firstName}`;
 
+    // Calculate average score
+    const ratings = [
+      Number(data.appearance),
+      Number(data.behavior),
+      Number(data.safety),
+      Number(data.vehicleCondition),
+      Number(data.onTime),
+    ];
+    const averageScore =
+      ratings.reduce((sum, val) => sum + val, 0) / ratings.length;
+
     const { data: surveyData, error } = await supabase
       .from("passenger_survey")
       .insert([
@@ -94,6 +106,7 @@ export default function SurveyPage() {
           rating_vehicle: data.vehicleCondition,
           rating_ontime: data.onTime,
           comments: data.comments,
+          average_score: averageScore,
         },
       ])
       .select();
@@ -106,7 +119,6 @@ export default function SurveyPage() {
     }
 
     const newRequestId = surveyData[0]?.id;
-
     if (newRequestId) {
       navigate(`/survey/finish/${newRequestId}`, { replace: true });
     }
@@ -154,7 +166,7 @@ export default function SurveyPage() {
   return (
     <main className="flex min-h-screen justify-center bg-linear-to-b from-emerald-100 to-emerald-200 p-2 sm:p-8 sm:pb-25">
       <div className="card w-xl rounded-3xl bg-white p-10 shadow-lg">
-        <div className="mb-4 flex flex-col items-center justify-center gap-1 text-center">
+        <div className="mb-4 flex flex-col items-center justify-center gap-2 text-center">
           <img
             className="size-20 sm:size-28"
             src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/national_electrification_logo.png"
@@ -175,7 +187,7 @@ export default function SurveyPage() {
           </div>
         </div>
 
-        <div className="mb-0 grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="mb-7 grid grid-cols-1 gap-4 md:grid-cols-2">
           <OurInput
             label="Last Name"
             name="lastName"
@@ -196,6 +208,7 @@ export default function SurveyPage() {
         <form onSubmit={handleSubmit(submitSurvey)} className="space-y-8">
           <OurInput
             label="Email"
+            label2="Use the email used to make the vehicle request"
             name="email"
             register={register}
             error={errors.email}

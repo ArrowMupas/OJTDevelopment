@@ -96,13 +96,13 @@ export default function HistoryPage() {
         <div className="flex items-center gap-5">
           <button
             onClick={() => navigate(-1)}
-            className="btn btn-square btn-warning btn-dash h-full"
+            className="btn btn-neutral btn-dash h-full"
           >
             <ArrowLeft size={20} />
           </button>
         </div>
         <div>
-          <h1 className="text-lg font-bold">Maintenance History</h1>
+          <h1 className="text-lg font-bold">PMS History</h1>
           <p className="text-sm text-gray-500">
             Check the recent history of vehicle maintenance
           </p>

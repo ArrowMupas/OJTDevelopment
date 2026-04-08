@@ -116,15 +116,14 @@ function App() {
             path="/public-track-release"
             element={<PublicTrackRelease />}
           />
+          <Route path="/request-vehicle" element={<RequestVehiclePage />} />
+          <Route
+            path="/request-vehicle/finish/:id"
+            element={<RequestInputPage />}
+          />
+          <Route path="/survey" element={<SurveyPage />} />
+          <Route path="/survey/finish/:id" element={<SurveyInput />} />
         </Route>
-
-        <Route path="/request-vehicle" element={<RequestVehiclePage />} />
-        <Route
-          path="/request-vehicle/finish/:id"
-          element={<RequestInputPage />}
-        />
-        <Route path="/survey" element={<SurveyPage />} />
-        <Route path="/survey/finish/:id" element={<SurveyInput />} />
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

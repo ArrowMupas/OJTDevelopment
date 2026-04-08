@@ -1,62 +1,80 @@
-import { FilterIcon, Search, UserRoundX } from "lucide-react";
+import { ArrowLeft, FilterIcon, Search } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import debounce from "lodash.debounce";
+import { useNavigate } from "react-router-dom";
 
 export default function VehicleHistory() {
-  const [inquiries, setInquiries] = useState([]);
+  const navigate = useNavigate();
+  const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  async function fetchInquiries(searchTerm = "") {
+  async function fetchHistory(searchTerm = "") {
     setLoading(true);
 
     let query = supabase
-      .from("contacts")
-      .select("*")
-      .order("created_at", { ascending: false });
+      .from("vehicle_update_history")
+      .select(
+        `
+        id,
+        changes,
+        changed_at,
+        vehicles (
+          name,
+          plate_number
+        )
+      `,
+      )
+      .order("changed_at", { ascending: false });
 
     if (searchTerm) {
-      query = query.or(
-        `first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%,message.ilike.%${searchTerm}%`,
-      );
+      query = query
+        .ilike("vehicles.name", `%${searchTerm}%`)
+        .or(`vehicles.plate_number.ilike.%${searchTerm}%`);
     }
 
     const { data, error } = await query;
 
     if (error) console.error(error);
-    else setInquiries(data);
+    else setHistory(data || []);
 
     setLoading(false);
   }
 
   useEffect(() => {
-    fetchInquiries();
+    fetchHistory();
   }, []);
 
   const debouncedSearch = useMemo(
-    () => debounce((value) => fetchInquiries(value), 400),
+    () => debounce((value) => fetchHistory(value), 400),
     [],
   );
 
   return (
     <main className="h-full w-full space-y-7 px-5 py-4 pb-25">
-      <div>
-        <h1 className="text-lg font-bold">
-          Insurance and Registration History
-        </h1>
-        <p className="text-sm text-gray-500">
-          Insurance and Registration History are stored here.
-        </p>
+      <div className="flex gap-2">
+        <div className="flex items-center gap-5">
+          <button
+            onClick={() => navigate(-1)}
+            className="btn btn-square btn-neutral btn-dash h-full"
+          >
+            <ArrowLeft size={20} />
+          </button>
+        </div>
+        <div>
+          <h1 className="text-lg font-bold">Vehicle Update History</h1>
+          <p className="text-sm text-gray-500">All vehicle updates</p>
+        </div>
       </div>
 
-      <div className="space-x-2">
-        <label className="input input-neutral">
-          <Search className="h-4 w-6" />
+      <div className="flex items-center space-x-2">
+        <label className="input input-neutral flex items-center">
+          <Search className="mr-2 h-4 w-6" />
           <input
             type="search"
-            placeholder="Search"
+            placeholder="Search by name or plate"
             value={search}
             onChange={(e) => {
               const value = e.target.value;
@@ -72,7 +90,7 @@ export default function VehicleHistory() {
             role="button"
             className="btn bg-green-600 text-white"
           >
-            <FilterIcon className="h-4 w-6" />
+            <FilterIcon className="mr-1 h-4 w-6" />
             Filter
           </div>
 
@@ -86,12 +104,6 @@ export default function VehicleHistory() {
             <li>
               <a>Descending</a>
             </li>
-            <li>
-              <a>Date</a>
-            </li>
-            <li>
-              <a>Time</a>
-            </li>
           </ul>
         </div>
       </div>
@@ -101,73 +113,56 @@ export default function VehicleHistory() {
           <table className="table">
             <thead className="bg-green-600 text-white">
               <tr>
-                <th>Vehicle Name</th>
+                <th>Vehicle</th>
                 <th>Plate No.</th>
-                <th>Policy ID</th>
-                <th>Policy Number</th>
-                <th>Issue Date</th>
-                <th>Required Covered</th>
-                <th>Period Covered</th>
+                <th>Changes</th>
+                <th>Changed At</th>
               </tr>
             </thead>
 
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="7" className="py-12 text-center sm:py-40">
+                  <td colSpan="4" className="py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
                       <span className="loading loading-infinity loading-xl"></span>
-                      <p className="text-gray-500">Loading inquiries...</p>
-                    </div>
-                  </td>
-                </tr>
-              ) : inquiries.length === 0 ? (
-                <tr>
-                  <td colSpan="7" className="py-12 text-center sm:py-40">
-                    <div className="flex flex-col items-center justify-center gap-2">
-                      <Search className="size-8 text-gray-500" />
-                      <p className="text-gray-500">No inquiries found</p>
-                      <p className="text-xs text-gray-500">
-                        {search
-                          ? "Try a different search term"
-                          : "No inquiries available right now"}
+                      <p className="text-gray-500">
+                        Loading vehicle history...
                       </p>
                     </div>
                   </td>
                 </tr>
+              ) : history.length === 0 ? (
+                <tr>
+                  <td colSpan="4" className="py-12 text-center">
+                    <p className="text-gray-500">No vehicle updates found</p>
+                  </td>
+                </tr>
               ) : (
-                inquiries.map((inquiry) => {
-                  const date = new Date(inquiry.created_at);
-
-                  return (
-                    <tr key={inquiry.id} className="hover:bg-green-50">
-                      <th>
-                        {inquiry.first_name} {inquiry.last_name}
-                      </th>
-
-                      <td>{inquiry.email}</td>
-
-                      <td>
-                        {inquiry.phone_number || (
-                          <span className="text-xs text-gray-500">
-                            Did not give any
-                          </span>
-                        )}
-                      </td>
-
-                      <td>{inquiry.message}</td>
-
-                      <td>{format(date, "hh:mm a")}</td>
-                      <td>{format(date, "MMM. d, yyyy")}</td>
-                    </tr>
-                  );
-                })
+                history.map((item) => (
+                  <tr key={item.id} className="hover:bg-green-50">
+                    <th>{item.vehicles?.name || "Unknown"}</th>
+                    <td>{item.vehicles?.plate_number || "Unknown"}</td>
+                    <td>
+                      {Object.entries(item.changes).map(([field, value]) => (
+                        <div key={field}>
+                          <strong>{field}:</strong> {value.old ?? "—"} →{" "}
+                          {value.new ?? "—"}
+                        </div>
+                      ))}
+                    </td>
+                    <td>
+                      {format(new Date(item.changed_at), "MMM d, yyyy hh:mm a")}
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
+
             <tfoot className="bg-green-400 font-medium">
               <tr>
-                <td colSpan="8" className="py-5 text-center text-white">
-                  Total Requests: {inquiries.length}
+                <td colSpan="4" className="py-5 text-center text-white">
+                  Total Updates: {history.length}
                 </td>
               </tr>
             </tfoot>

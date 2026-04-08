@@ -6,10 +6,10 @@ import {
   Truck,
   Van,
   Pencil,
-  ClipboardClock,
-  ClipboardX,
   Activity,
   FileClock,
+  Plus,
+  CircleParkingOff,
 } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
@@ -347,27 +347,52 @@ export default function MaintenancePage() {
               document.getElementById("vehicleModal").showModal();
             }}
           >
-            <Van className="h-4 w-6" />
+            <div className="flex">
+              <Plus className="size-6" />
+            </div>
             <span className="hidden sm:inline">Add New Vehicle</span>
           </button>
 
           <Link to="/vehicles/unoperational">
             <button className="btn btn-error flex gap-2 text-white">
-              <Activity className="h-4 w-6" />
+              <CircleParkingOff className="h-4 w-6" />
               <span className="hidden sm:inline">Unoperational Vehicles</span>
-            </button>
-          </Link>
-
-          <Link to="/vehicles/vehicle-history">
-            <button className="btn btn-primary flex gap-2 border border-green-600 bg-green-600 text-white">
-              <FileClock className="h-4 w-6" />
-              <span className="hidden sm:inline">Vehicle History</span>
             </button>
           </Link>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 sm:justify-between">
+      <div className="grid w-full grid-cols-2 gap-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-4">
+        <div className="stat bg-base-100 rounded-md shadow">
+          <div className="stat-title">Insurance Expiring</div>
+          <div className="stat-value text-warning">
+            {String(stats.insuranceExpiring).padStart(2, "0")}
+          </div>
+        </div>
+
+        <div className="stat bg-base-100 rounded-md shadow">
+          <div className="stat-title">Insurance Expired</div>
+          <div className="stat-value text-error">
+            {String(stats.insuranceExpired).padStart(2, "0")}
+          </div>
+        </div>
+
+        <div className="stat bg-base-100 rounded-md shadow">
+          <div className="stat-title">Registration Expiring</div>
+          <div className="stat-value text-warning">
+            {String(stats.registrationExpiring).padStart(2, "0")}
+          </div>
+        </div>
+
+        <div className="stat bg-base-100 rounded-md shadow">
+          <div className="stat-title">Registration Expired</div>
+          <div className="stat-value text-error">
+            {String(stats.registrationExpired).padStart(2, "0")}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-8 sm:justify-between">
         <div className="flex w-full gap-2">
           <label className="input input-neutral w-full sm:w-auto">
             <Search className="h-4 w-6" />
@@ -382,7 +407,7 @@ export default function MaintenancePage() {
               }}
             />
           </label>
-          <div className="dropdown">
+          {/* <div className="dropdown">
             <div
               tabIndex={0}
               role="button"
@@ -401,59 +426,26 @@ export default function MaintenancePage() {
                 <a className="active:bg-highlight">Descending</a>
               </li>
             </ul>
-          </div>
+          </div> */}
         </div>
 
-        <div className="fab">
-          <div className="tooltip tooltip-left" data-tip="Toggle Vehicle View">
-            <div>
-              <input
-                type="checkbox"
-                className="toggle toggle-xl my-auto border-violet-600 bg-violet-500 checked:border-indigo-500 checked:bg-indigo-400 checked:text-indigo-800"
-                checked={swap}
-                onChange={() => setSwap((prev) => !prev)}
-              />
-            </div>
-          </div>
-        </div>
+        <Link to="/vehicles/vehicle-history">
+          <button className="btn btn-warning flex gap-2 text-white">
+            <FileClock className="h-4 w-6" />
+            <span className="truncate">Vehicle History</span>
+          </button>
+        </Link>
       </div>
 
-      <div className="grid w-full grid-cols-2 gap-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-4">
-        <div className="stat bg-base-100 rounded-md shadow">
-          <div className="stat-figure">
-            <ClipboardClock className="text-warning h-8 w-12" />
-          </div>
-          <div className="stat-title">Insurance Expiring</div>
-          <div className="stat-value text-warning">
-            {stats.insuranceExpiring}
-          </div>
-        </div>
-
-        <div className="stat bg-base-100 rounded-md shadow">
-          <div className="stat-figure">
-            <ClipboardX className="text-error h-8 w-12" />
-          </div>
-          <div className="stat-title">Insurance Expired</div>
-          <div className="stat-value text-error">{stats.insuranceExpired}</div>
-        </div>
-
-        <div className="stat bg-base-100 rounded-md shadow">
-          <div className="stat-figure">
-            <ClipboardClock className="text-warning h-8 w-12" />
-          </div>
-          <div className="stat-title">Registration Expiring</div>
-          <div className="stat-value text-warning">
-            {stats.registrationExpiring}
-          </div>
-        </div>
-
-        <div className="stat bg-base-100 rounded-md shadow">
-          <div className="stat-figure">
-            <ClipboardX className="text-error h-8 w-12" />
-          </div>
-          <div className="stat-title">Registration Expired</div>
-          <div className="stat-value text-error">
-            {stats.registrationExpired}
+      <div className="fab">
+        <div className="tooltip tooltip-left" data-tip="Toggle Vehicle View">
+          <div>
+            <input
+              type="checkbox"
+              className="toggle toggle-xl my-auto border-violet-600 bg-violet-500 checked:border-indigo-500 checked:bg-indigo-400 checked:text-indigo-800"
+              checked={swap}
+              onChange={() => setSwap((prev) => !prev)}
+            />
           </div>
         </div>
       </div>
