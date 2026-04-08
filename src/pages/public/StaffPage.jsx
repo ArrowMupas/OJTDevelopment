@@ -25,101 +25,177 @@ export default function StaffPage() {
     fetchDrivers();
   }, []);
 
-  const keyDesignations = [
-    "Transport Operations Services Chief",
-    "Sr. Auto Mechanic",
-    "Data Transport",
-    "Maintenance",
-    "Driver Mechanic A",
-  ];
+  const chief = drivers.filter(
+    (d) => d.designation === "Transport Operations Services Chief",
+  );
 
-  const keyPersonnel = drivers.filter((d) =>
-    keyDesignations.includes(d.designation),
+  const dataTransport = drivers.filter(
+    (d) => d.designation === "Data Transport",
+  );
+
+  const maintenance = drivers.filter((d) => d.designation === "Maintenance");
+
+  const mechanics = drivers.filter(
+    (d) =>
+      d.designation === "Sr. Auto Mechanic" ||
+      d.designation === "Driver Mechanic A",
   );
 
   const regularDrivers = drivers.filter(
-    (d) => !keyDesignations.includes(d.designation),
+    (d) =>
+      ![
+        "Transport Operations Services Chief",
+        "Data Transport",
+        "Maintenance",
+        "Sr. Auto Mechanic",
+        "Driver Mechanic A",
+      ].includes(d.designation),
   );
 
-  const renderDriverCard = (driver) => (
-    <div key={driver.id} className="card bg-base-100 shadow rounded">
-      <div className="w-full aspect-square bg-linear-to-r from-emerald-100 to-green-200 rounded-xl flex items-center justify-center overflow-hidden mb-2">
-        {driver.image_url ? (
-          <img
-            src={driver.image_url}
-            alt={`${driver.first_name} ${driver.last_name}`}
-            className="w-full h-full object-cover object-center"
-          />
-        ) : (
-          <UserXIcon className="size-12 text-gray-300" />
-        )}
-      </div>
+  const renderDriverCard = (driver, size = "normal") => {
+    const sizeClass =
+      size === "large"
+        ? "max-w-[220px] text-sm"
+        : size === "medium"
+          ? "max-w-[200px] text-sm"
+          : "max-w-[160px] text-xs";
 
-      <div className="text-center space-y-1 w-full">
-        <h2 className="text-sm  truncate">
-          {driver.first_name} {driver.last_name}
-        </h2>
-        <p className="capitalize text-xs">{driver.designation}</p>
-
-        <div className="flex items-center gap-1 justify-center text-xs">
-          <Mail className="size-4 text-green-700" />
-          <p className="truncate">{driver.email || "No email"}</p>
+    return (
+      <div
+        key={driver.id}
+        className={`group card rounded-xl border border-emerald-100 bg-white/80 p-3 shadow-md backdrop-blur transition-all duration-300 hover:scale-105 hover:border-emerald-400 hover:shadow-xl ${sizeClass}`}
+      >
+        <div className="mb-2 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-r from-emerald-200 to-green-300">
+          {driver.image_url ? (
+            <img
+              src={driver.image_url}
+              alt={`${driver.first_name} ${driver.last_name}`}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <UserXIcon className="size-12 text-gray-300" />
+          )}
         </div>
 
-        <div className="flex items-center gap-1 justify-center text-xs">
-          <Phone className="size-4 text-green-700" />
-          <p>{driver.contact_number || "No number"}</p>
-        </div>
+        <div className="text-center">
+          {/* NAME & TITLE */}
+          <div className="mb-2">
+            <h2 className="truncate font-semibold text-emerald-800 transition group-hover:text-emerald-700">
+              {driver.first_name} {driver.last_name}
+            </h2>
+            <p className="text-[11px] tracking-wide text-emerald-600 uppercase">
+              {driver.designation}
+            </p>
+          </div>
 
-        <button
-          onClick={() => {
-            setLicenseToView(driver.license_url);
-            document.getElementById("licenseModal")?.showModal();
-          }}
-          className="underline text-blue-600 text-xs mt-1"
-        >
-          View License
-        </button>
+          {/* CONTACT INFO */}
+          <div className="space-y-1 text-[11px] text-gray-600">
+            <div className="flex items-center justify-center gap-1">
+              <Mail className="size-3 text-emerald-500" />
+              <p className="max-w-[140px] leading-tight break-all">
+                {driver.email || "No email"}
+              </p>
+            </div>
+
+            <div className="flex items-center justify-center gap-1">
+              <Phone className="size-3 text-emerald-500" />
+              <p className="leading-tight">
+                {driver.contact_number || "No number"}
+              </p>
+            </div>
+          </div>
+
+          {/* ACTION */}
+          <button
+            onClick={() => {
+              setLicenseToView(driver.license_url);
+              document.getElementById("licenseModal")?.showModal();
+            }}
+            className="mt-2 inline-block rounded-full bg-emerald-600 px-2 py-1 text-xs font-medium text-white shadow-sm transition hover:bg-emerald-700 hover:shadow-md"
+          >
+            View License
+          </button>
+        </div>
       </div>
+    );
+  };
+
+  const Connector = () => (
+    <div className="flex justify-center">
+      <div className="h-10 w-px bg-emerald-300" />
     </div>
   );
 
   return (
-    <div className="p-8 max-w-5xl mx-auto py-20 min-h-screen">
-      <div>
-        <h1 className="text-xl  mb-4">Key Personnel</h1>
+    // FULL SCREEN BACKGROUND FIX
+    <div className="min-h-screen w-full bg-gradient-to-b from-white to-emerald-50">
+      {/* CONTENT WRAPPER (centered, does NOT control background) */}
+      <div className="mx-auto max-w-6xl space-y-6 p-8 py-14">
         {loading ? (
           <p>Loading...</p>
-        ) : keyPersonnel.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-            {keyPersonnel.map(renderDriverCard)}
-          </div>
         ) : (
-          <p>No key personnel found.</p>
-        )}
-      </div>
+          <>
+            {/* HEADER */}
+            <div className="mb-6 text-center">
+              <h1 className="text-2xl font-bold text-emerald-700">
+                Key Personnels
+              </h1>
+              <p className="mt-2 text-gray-600">
+                Here are the key personnel of Transportation Operation Service
+                Unit (TOSU)
+              </p>
+            </div>
+            {/* CHIEF */}
+            <div className="flex flex-col items-center">
+              {chief.map((d) => renderDriverCard(d, "large"))}
+            </div>
 
-      <div>
-        <h1 className="text-xl  mb-4">Other Drivers</h1>
-        {loading ? (
-          <p>Loading...</p>
-        ) : regularDrivers.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-            {regularDrivers.map(renderDriverCard)}
-          </div>
-        ) : (
-          <p>No other drivers found.</p>
-        )}
-      </div>
+            <Connector />
 
-      <ModalLicense
-        licenseFront={licenseToView}
-        licenseBack={null}
-        onClose={() => {
-          setLicenseToView(null);
-          document.getElementById("licenseModal")?.close();
-        }}
-      />
+            {/* DATA TRANSPORT */}
+            <div className="flex flex-col items-center">
+              {dataTransport.map((d) => renderDriverCard(d, "medium"))}
+            </div>
+
+            <Connector />
+
+            {/* MAINTENANCE */}
+            <div className="flex flex-col items-center">
+              {maintenance.map((d) => renderDriverCard(d, "medium"))}
+            </div>
+
+            <Connector />
+
+            {/* MECHANICS */}
+            <div className="flex flex-col items-center">
+              <div className="flex flex-wrap justify-center gap-6">
+                {mechanics.map((d) => renderDriverCard(d, "medium"))}
+              </div>
+            </div>
+
+            <Connector />
+
+            {/* DRIVERS */}
+            <div className="text-center">
+              <h1 className="mb-4 text-lg font-semibold text-emerald-700">
+                Drivers
+              </h1>
+              <div className="flex flex-wrap justify-center gap-4">
+                {regularDrivers.map((d) => renderDriverCard(d, "small"))}
+              </div>
+            </div>
+          </>
+        )}
+
+        <ModalLicense
+          licenseFront={licenseToView}
+          licenseBack={null}
+          onClose={() => {
+            setLicenseToView(null);
+            document.getElementById("licenseModal")?.close();
+          }}
+        />
+      </div>
     </div>
   );
 }
