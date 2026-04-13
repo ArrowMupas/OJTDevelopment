@@ -69,18 +69,6 @@ export default function TrackingPage() {
         Repair and Maintenance
       </h1>
 
-      <button
-        className="btn btn-info mb-4 border-green-700 bg-green-700 font-bold text-white shadow-md hover:border-[#30694B] hover:bg-[#30694B]"
-        onClick={() => {
-          setSelectedCarId("");
-          setMaintenance1("");
-          setMaintenance2("");
-          document.getElementById("trackingModal").showModal();
-        }}
-      >
-        <CirclePlus className="h-4 w-6" /> Add Job Order
-      </button>
-
       <div className="card-body mb-3 flex-row justify-between rounded-sm border-2 border-green-500 bg-green-500 p-4 shadow-md">
         <h2 className="card-title text-white">
           <ClockFading className="mr-2 h-8 w-12 text-white" />

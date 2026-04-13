@@ -11,9 +11,10 @@ import { useNavigate } from "react-router-dom";
 const steps = [
   "Inspection",
   "Job Order",
-  "Spare Parts Complete",
-  "On-Going Repair",
+  "Transaction",
+  "Auto Repair Service",
   "Accomplished | For Release",
+
 ];
 
 const initialCars = [
@@ -65,16 +66,19 @@ export default function PublicTrackRelease() {
     setCars(updated);
   };
 
+  
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <h1 className="mb-6 text-center text-2xl font-bold">
         Repair and Maintenance
       </h1>
 
+      
+
       <div className="card-body mb-3 flex-row justify-between rounded-sm border-2 border-[#30694B] bg-[#30694B] p-4 shadow-md">
         <h2 className="card-title text-white">
           <ClockCheck className="mr-2 h-8 w-12 text-white" />
-          For Release
+          External
         </h2>
         <div className="tooltip tooltip-left" data-tip="Toggle Vehicle View">
           <div>
@@ -100,10 +104,19 @@ export default function PublicTrackRelease() {
             </div>
             <div>
               <p className="text-sm font-bold"></p>
-              <div className="badge badge-primary badge-dash badge-sm text-success border-green-400">
-                <CheckCheck className="text-success" />
-                Complete
-              </div>
+              <div className="mt-2">
+              <select
+                className="select select-sm select-bordered w-full max-w-xs"
+                value={car.step}
+                onChange={(e) => updateStatus(car.id, Number(e.target.value))}
+              >
+                {steps.map((label, index) => (
+                  <option key={index} value={index}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </div>
             </div>
           </div>
 
@@ -132,6 +145,7 @@ export default function PublicTrackRelease() {
                 <li key={index}>{person}</li>
               ))}
             </ul>
+            
           </div>
         </div>
       ))}
