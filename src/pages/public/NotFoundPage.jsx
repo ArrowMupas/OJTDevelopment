@@ -1,8 +1,21 @@
+import { Link } from "react-router-dom";
+
 export default function NotFoundPage() {
   return (
-    <div className="p-4 text-center">
-      <h1 className="mb-2 text-3xl font-bold">404</h1>
-      <p>Page not found</p>
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="card bg-base-100 max-w-md space-y-4 p-8 text-center">
+        <h2 className="text-center text-5xl font-bold tracking-tight uppercase">
+          Error 404
+        </h2>
+        <p className="relative z-10 mx-auto max-w-2xl px-4 text-lg leading-relaxed text-black">
+          The page was not found.
+        </p>
+        <Link to="/">
+          <button className="btn btn-error btn-dash btn-lg uppercase">
+            Go Home
+          </button>
+        </Link>
+      </div>
     </div>
   );
 }

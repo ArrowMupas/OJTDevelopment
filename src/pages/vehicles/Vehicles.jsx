@@ -323,7 +323,7 @@ export default function MaintenancePage() {
   };
 
   return (
-    <main className="h-full space-y-7 px-3 py-4 pb-25 sm:px-5">
+    <main className="h-full space-y-4 px-3 py-4 pb-25 sm:space-y-7 sm:px-5">
       <div className="flex items-center justify-between gap-2">
         <div className="w-70">
           <h1 className="text-lg font-bold">
@@ -708,21 +708,30 @@ export default function MaintenancePage() {
 
       <div className="">
         {vehicles.length === 0 ? (
-          <div className="flex h-40 flex-col items-center justify-center gap-5">
+          <>
             {loading ? (
-              <>
-                <span className="loading loading-spinner text-success"></span>
-                <p className="text-sm font-bold">Loading vehicles...</p>
-              </>
+              <div className="grid grid-cols-2 gap-0.5 sm:gap-2 lg:grid-cols-4 2xl:grid-cols-5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="flex w-full flex-col gap-4 space-y-4 p-5"
+                  >
+                    <div className="skeleton mb-6 h-36 w-full sm:h-42"></div>
+                    <div className="skeleton h-4 w-28"></div>
+                    <div className="skeleton h-4 w-28"></div>
+                    <div className="skeleton h-4 w-28"></div>
+                  </div>
+                ))}
+              </div>
             ) : (
-              <>
+              <div className="flex h-40 flex-col items-center justify-center gap-5">
                 <BeanOff className="text-error size-12" />
                 <p className="text-error text-sm font-bold">
                   No vehicles found
                 </p>
-              </>
+              </div>
             )}
-          </div>
+          </>
         ) : (
           <div className="grid grid-cols-2 gap-0.5 sm:gap-2 lg:grid-cols-4 2xl:grid-cols-5">
             {vehiclesWithStatus.map((vehicle) => {
@@ -754,24 +763,25 @@ export default function MaintenancePage() {
                     )}
                   </div>
 
-                  <figure className="px-4 pt-4">
+                  <figure className="px-2 pt-2 sm:px-4 sm:pt-4">
                     {vehicle.image_url ? (
-                      <div className="h-24 w-full sm:h-42">
+                      <div className="h-36 w-full sm:h-42">
                         <img
                           src={vehicle.image_url}
                           alt={vehicle.name}
+                          loading="lazy"
                           className="h-full w-full rounded-xl object-fill"
                         />
                       </div>
                     ) : (
-                      <div className="flex h-24 w-full items-center justify-center overflow-hidden rounded-xl bg-indigo-100 sm:h-42">
+                      <div className="flex h-36 w-full items-center justify-center overflow-hidden rounded-xl bg-indigo-100 sm:h-42">
                         <Van className="size-12 text-gray-300" />
                       </div>
                     )}
                   </figure>
 
                   <div className="card-body px-4">
-                    <div className="mt-0 flex flex-col items-start justify-between sm:mt-2 sm:flex-row">
+                    <div className="flex flex-col items-start justify-between sm:flex-row">
                       <h2 className="text-sm font-bold sm:text-base">
                         {vehicle.name}
                       </h2>
@@ -860,7 +870,7 @@ export default function MaintenancePage() {
                               <span className="text-xs text-gray-500">
                                 Period Covered
                               </span>
-                              <p
+                              <div
                                 className={`text-sm ${
                                   vehicle.status === "expired"
                                     ? "text-error font-semibold"
@@ -886,7 +896,7 @@ export default function MaintenancePage() {
                                 ) : (
                                   "N/A"
                                 )}
-                              </p>
+                              </div>
                             </div>
                           </motion.div>
                         ) : (
@@ -1043,7 +1053,7 @@ export default function MaintenancePage() {
               : "Mark as Operational?"}
           </h2>
 
-          <p className="mt-3 text-center">
+          <div className="mt-3 text-center">
             Are you sure you want to
             {vehicleToToggle?.operational ? " deactivate " : " activate "}
             <span className="font-bold">{vehicleToToggle?.name}</span>{" "}
@@ -1051,7 +1061,7 @@ export default function MaintenancePage() {
               {vehicleToToggle?.plate_number}
             </div>
             ?
-          </p>
+          </div>
 
           <div className="modal-action mt-6 justify-center">
             <button

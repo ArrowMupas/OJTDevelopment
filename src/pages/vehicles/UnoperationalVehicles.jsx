@@ -654,6 +654,7 @@ export default function UnoperationalVehicles() {
                         <img
                           src={vehicle.image_url}
                           alt={vehicle.name}
+                          loading="lazy"
                           className="h-full w-full rounded-xl object-fill"
                         />
                       </div>
@@ -714,7 +715,7 @@ export default function UnoperationalVehicles() {
                           <span className="text-xs text-gray-500">
                             Period Covered
                           </span>
-                          <p
+                          <div
                             className={`text-sm ${
                               vehicle.status === "expired"
                                 ? "text-error font-semibold"
@@ -740,7 +741,7 @@ export default function UnoperationalVehicles() {
                             ) : (
                               "N/A"
                             )}
-                          </p>
+                          </div>
                         </div>
                       </div>
 
@@ -879,7 +880,7 @@ export default function UnoperationalVehicles() {
               : "Mark as Operational?"}
           </h2>
 
-          <p className="mt-3 text-center">
+          <div className="mt-3 text-center">
             Are you sure you want to
             {vehicleToToggle?.operational ? " deactivate " : " activate "}
             <span className="font-bold">{vehicleToToggle?.name}</span>{" "}
@@ -887,7 +888,7 @@ export default function UnoperationalVehicles() {
               {vehicleToToggle?.plate_number}
             </div>
             ?
-          </p>
+          </div>
 
           <div className="modal-action mt-6 justify-center">
             <button

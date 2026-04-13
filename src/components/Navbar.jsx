@@ -4,7 +4,13 @@ export default function Navbar() {
   const location = useLocation();
 
   // Check if current path starts with any of these routes
-  const hiddenNavRoutes = ["/survey", "/request-vehicle", "/requestinput"];
+  const hiddenNavRoutes = [
+    "/survey",
+    "/request-vehicle",
+    "/requestinput",
+    // "/public-track",
+    // "/public-track-release",
+  ];
   const hideNavLinks = hiddenNavRoutes.some((route) =>
     location.pathname.startsWith(route),
   );
