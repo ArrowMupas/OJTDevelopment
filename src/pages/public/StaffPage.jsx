@@ -65,7 +65,7 @@ export default function StaffPage() {
         key={driver.id}
         className={`group card rounded-xl border border-emerald-100 bg-white/80 p-3 shadow-md backdrop-blur transition-all duration-300 hover:scale-105 hover:border-emerald-400 hover:shadow-xl ${sizeClass}`}
       >
-        <div className="mb-2 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-r from-emerald-200 to-green-300">
+        <div className="mb-2 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-linear-to-r from-emerald-200 to-green-300">
           {driver.image_url ? (
             <img
               src={driver.image_url}
@@ -92,7 +92,7 @@ export default function StaffPage() {
           <div className="space-y-1 text-[11px] text-gray-600">
             <div className="flex items-center justify-center gap-1">
               <Mail className="size-3 text-emerald-500" />
-              <p className="max-w-[140px] leading-tight break-all">
+              <p className="max-w-35 leading-tight break-all">
                 {driver.email || "No email"}
               </p>
             </div>
@@ -128,7 +128,7 @@ export default function StaffPage() {
 
   return (
     // FULL SCREEN BACKGROUND FIX
-    <div className="min-h-screen w-full bg-gradient-to-b from-white to-emerald-50">
+    <div className="min-h-screen w-full bg-linear-to-b from-white to-emerald-50">
       {/* CONTENT WRAPPER (centered, does NOT control background) */}
       <div className="mx-auto max-w-6xl space-y-6 p-8 py-14">
         {loading ? (

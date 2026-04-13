@@ -32,7 +32,7 @@ const driverSchema = z.object({
   contact: z.string().min(7, "Contact number must be at least 7 digits"),
 });
 
-export default function MaintenancePage() {
+export default function Staff() {
   // Driver fetch states
   const [drivers, setDrivers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -274,7 +274,7 @@ export default function MaintenancePage() {
   }, [drivers]);
 
   return (
-    <main className="h-full space-y-7 px-3 py-4 pb-25 sm:px-5">
+    <main className="h-full space-y-4 px-3 py-4 pb-25 sm:space-y-7 sm:px-5">
       <div>
         <h1 className="flex items-center gap-2 text-lg font-bold">
           Staff
@@ -540,7 +540,7 @@ export default function MaintenancePage() {
         <div className="space-y-2">
           <h2 className="text-md font-bold text-green-700">⭐ Key Personnel</h2>
 
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
+          <div className="grid grid-cols-2 gap-1 sm:gap-2 md:grid-cols-5">
             {specialDrivers.map((driver) => (
               <CardDriver
                 key={driver.id}

@@ -2,15 +2,28 @@ import { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 import { parse, format } from "date-fns";
 
-export default function HomePage() {
+export default function Dashboard() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Fetch service vehicle requests
   async function fetchRequests() {
     const { data, error } = await supabase
-      .from("request_dashboard_view")
-      .select("*")
+      .from("service_vehicle_requests")
+      .select(
+        `
+        *,
+        drivers (
+          first_name,
+          middle_initial,
+          last_name
+        ),
+        vehicles (
+          name,
+          plate_number
+        )
+      `,
+      )
       .eq("status", "Pending")
       .order("timestamp", { ascending: false });
 
@@ -33,10 +46,10 @@ export default function HomePage() {
   }, []);
 
   return (
-    <main className=" min-h-screen pb-40">
+    <main className="min-h-screen pb-40">
       <div className="">
-        <div className="overflow-x-auto ">
-          <table className="table table-sm lg:table-md xl:table-lg">
+        <div className="overflow-x-auto">
+          <table className="table-sm lg:table-md xl:table-lg table">
             <thead className="bg-green-500 text-white">
               <tr className="uppercase">
                 <th>Department</th>
@@ -82,7 +95,7 @@ export default function HomePage() {
                     <tr key={req.id}>
                       <th className="uppercase">{req.department}</th>
 
-                      <td className="flex flex-col justify-center items-start">
+                      <td className="flex flex-col items-start justify-center">
                         <span className="">
                           {format(formattedDateTime, "MMM. d, yyyy")}
                         </span>
@@ -91,27 +104,33 @@ export default function HomePage() {
                         </span>
                       </td>
 
-                      <td className="text-green-700 font-bold capitalize">
+                      <td className="font-bold text-green-700 capitalize">
                         {req.destination}
                       </td>
 
                       <td className="flex flex-col">
                         <span className="capitalize">{req.passengers}</span>
-                        <span className="text-xs text-gray-500 font-medium">
+                        <span className="text-xs font-medium text-gray-500">
                           {req.email}
                         </span>
                       </td>
 
-                      <td className="text-sm">{req.other_instructions}</td>
+                      <td className="">{req.other_instructions}</td>
 
                       <td className="bg-blue-50">
-                        {req.driver_first_name} {req.driver_last_name}
+                        {req.drivers
+                          ? `${req.drivers.first_name} ${req.drivers.middle_initial}. ${req.drivers.last_name}`
+                          : "Unassigned"}
                       </td>
-                      <td className="bg-violet-50">{req.vehicle_name}</td>
+
                       <td className="bg-violet-50">
-                        {req.plate_number && (
+                        {req.vehicles?.name || "Unassigned"}
+                      </td>
+
+                      <td className="bg-violet-50">
+                        {req.vehicles?.plate_number && (
                           <div className="badge badge-dash badge-primary text-base lg:text-lg">
-                            {req.plate_number}
+                            {req.vehicles.plate_number}
                           </div>
                         )}
                       </td>

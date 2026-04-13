@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import ScrollToTop from "./utils/ScrollToTop";
+import ErrorBoundary from "./components/ErrorBoundary";
 import ProtectedRoute from "./utils/ProtectedRoute";
 
 import MainLayout from "./layouts/MainLayout";
@@ -8,7 +9,7 @@ import PublicLayout from "./layouts/PublicLayout";
 
 // Public
 import HomePage from "./pages/public/HomePage";
-import DashboardPage from "./pages/public/DashboardPage";
+import Dashboard from "./pages/public/Dashboard";
 import SurveyPage from "./pages/public/SurveyPage";
 import ContactPage from "./pages/public/ContactPage";
 import NotFoundPage from "./pages/public/NotFoundPage";
@@ -26,7 +27,7 @@ import StaffPage from "./pages/public/StaffPage";
 
 // Management
 import AdminDashboard from "./pages/management/AdminDashboard";
-import Drivers from "./pages/management/Drivers";
+import Staffs from "./pages/management/Staffs";
 import InquiryPage from "./pages/management/InquiryPage";
 import ManageRequestsPage from "./pages/management/ManageRequestPage";
 
@@ -45,7 +46,7 @@ import VehicleStatusPage from "./pages/VehicleStatusPage";
 
 function App() {
   return (
-    <>
+    <ErrorBoundary>
       <ScrollToTop />
       <Toaster
         position="top-right"
@@ -94,7 +95,7 @@ function App() {
           <Route path="/battery" element={<Battery />} />
           <Route path="/tires" element={<Tires />} />
           <Route path="/history" element={<HistoryPage />} />
-          <Route path="/staff-management" element={<Drivers />} />
+          <Route path="/staff-management" element={<Staffs />} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/inquiries" element={<InquiryPage />} />
           <Route
@@ -106,7 +107,7 @@ function App() {
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/staff" element={<StaffPage />} />
@@ -127,7 +128,7 @@ function App() {
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </>
+    </ErrorBoundary>
   );
 }
 

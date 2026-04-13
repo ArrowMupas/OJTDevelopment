@@ -339,19 +339,17 @@ export default function CompleteRequest() {
                       </td>
 
                       <td className="">
-                        <p>
-                          {req.is_surveyed ? (
-                            <div className="badge badge-success badge-soft">
-                              <CheckCircle className="size-3" />
-                              <p className="text-xs">Done</p>
-                            </div>
-                          ) : (
-                            <div className="badge badge-error badge-soft">
-                              <XCircle className="size-3" />
-                              <p className="truncate text-xs">Undone</p>
-                            </div>
-                          )}
-                        </p>
+                        {req.is_surveyed ? (
+                          <div className="badge badge-success badge-soft">
+                            <CheckCircle className="size-3" />
+                            <p className="text-xs">Done</p>
+                          </div>
+                        ) : (
+                          <div className="badge badge-error badge-soft">
+                            <XCircle className="size-3" />
+                            <p className="truncate text-xs">Undone</p>
+                          </div>
+                        )}
                       </td>
 
                       <td>

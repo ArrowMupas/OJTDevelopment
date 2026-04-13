@@ -23,6 +23,7 @@ export default function CardDriver({
             <img
               src={driver.image_url}
               alt={`${driver.first_name} ${driver.last_name}`}
+              loading="lazy"
               className="h-full w-full object-cover object-center"
             />
           </div>

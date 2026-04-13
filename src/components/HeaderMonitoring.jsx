@@ -27,7 +27,7 @@ export default function HeaderMonitoring({
     `tab flex gap-2 ${activeTab === tab ? "tab-active" : ""}`;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4 sm:space-y-7">
       <div className="flex items-center justify-between">
         <div className="flex gap-5">
           <div>

@@ -161,7 +161,7 @@ export default function ManageRequestsPage() {
   }
 
   return (
-    <main className="h-full space-y-7 px-3 py-4 pb-25 sm:px-5">
+    <main className="h-full space-y-4 px-3 py-4 pb-25 sm:space-y-7 sm:px-5">
       <div>
         <h1 className="text-lg font-bold">Manage Request</h1>
         <p className="text-sm text-gray-500">
@@ -254,7 +254,7 @@ export default function ManageRequestsPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="8" className="py-12 text-center sm:py-25">
+                  <td colSpan="9" className="py-12 text-center sm:py-25">
                     <div className="flex flex-col items-center justify-center gap-3">
                       <span className="loading loading-infinity loading-xl"></span>
                       <p className="text-gray-500">Loading requests...</p>
@@ -379,19 +379,17 @@ export default function ManageRequestsPage() {
                       </td>
 
                       <td className="">
-                        <p>
-                          {req.is_surveyed ? (
-                            <div className="badge badge-success badge-soft">
-                              <CheckCircle className="size-3" />
-                              <p className="text-xs">Done</p>
-                            </div>
-                          ) : (
-                            <div className="badge badge-error badge-soft">
-                              <XCircle className="size-3" />
-                              <p className="truncate text-xs">Undone</p>
-                            </div>
-                          )}
-                        </p>
+                        {req.is_surveyed ? (
+                          <div className="badge badge-success badge-soft">
+                            <CheckCircle className="size-3" />
+                            <p className="text-xs">Done</p>
+                          </div>
+                        ) : (
+                          <div className="badge badge-error badge-soft">
+                            <XCircle className="size-3" />
+                            <p className="truncate text-xs">Undone</p>
+                          </div>
+                        )}
                       </td>
 
                       <td>

@@ -119,7 +119,7 @@ export default function VehicleMonitoringPage() {
   };
 
   return (
-    <main className="h-full space-y-5 px-3 py-4 pb-25 sm:px-5">
+    <main className="h-full space-y-4 px-3 py-4 pb-25 sm:space-y-7 sm:px-5">
       <HeaderMonitoring
         title="PMS Monitoring"
         description="PMS is updated every 6 months"
@@ -281,9 +281,15 @@ export default function VehicleMonitoringPage() {
                 Save
               </button>
 
-              <form method="dialog">
-                <button className="btn">Cancel</button>
-              </form>
+              <button
+                type="button"
+                className="btn"
+                onClick={() => {
+                  document.getElementById("pms_modal")?.close();
+                }}
+              >
+                Cancel
+              </button>
             </div>
           </form>
         </div>

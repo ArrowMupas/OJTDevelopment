@@ -236,17 +236,8 @@ export default function SurveyPage() {
                 Select Driver
               </option>
               {drivers.map((d) => (
-                <option key={d.id}>
-                  <div className="flex gap-2">
-                    <img
-                      className="size-14"
-                      src={d.image_url}
-                      alt={d.last_name}
-                    />
-                    <p className="">
-                      {d.first_name} {d.last_name}
-                    </p>
-                  </div>
+                <option key={d.id} value={d.id}>
+                  {d.first_name} {d.last_name}
                 </option>
               ))}
             </select>
