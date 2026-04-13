@@ -62,6 +62,7 @@ export default function TrackingPage() {
   const [selectedCarId, setSelectedCarId] = useState("");
   const [maintenance1, setMaintenance1] = useState("");
   const [maintenance2, setMaintenance2] = useState("");
+  const [type, setType] = useState(""); // ✅ NEW STATE
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -75,16 +76,17 @@ export default function TrackingPage() {
           setSelectedCarId("");
           setMaintenance1("");
           setMaintenance2("");
+          setType(""); // ✅ reset
           document.getElementById("trackingModal").showModal();
         }}
       >
-        <CirclePlus className="h-4 w-6" /> Add New Tracking
+        <CirclePlus className="h-4 w-6" /> Add New Repair
       </button>
 
       <div className="card-body mb-3 flex-row justify-between rounded-sm border-2 border-green-500 bg-green-500 p-4 shadow-md">
         <h2 className="card-title text-white">
           <ClockFading className="mr-2 h-8 w-12 text-white" />
-          Ongoing Tracking
+          Internal
         </h2>
         <div className="tooltip tooltip-left" data-tip="Toggle Vehicle View">
           <div>
@@ -103,7 +105,7 @@ export default function TrackingPage() {
 
       <dialog id="trackingModal" className="modal">
         <div className="modal-box">
-          <h1 className="text-xl font-bold">Add New Tracking</h1>
+          <h1 className="text-xl font-bold">Add New Repair</h1>
           <p className="mb-4 text-sm text-gray-500">
             Assign personnel and select vehicle
           </p>
@@ -118,6 +120,42 @@ export default function TrackingPage() {
 
           {/* FORM */}
           <div className="space-y-4">
+
+            {/* ✅ TYPE DROPDOWN BUTTON */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Select Type</span>
+              </label>
+
+              <div className="dropdown w-full">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="btn w-full justify-between bg-white border border-gray-300 font-light"
+                >
+                  {type
+                    ? type.charAt(0).toUpperCase() + type.slice(1)
+                    : "Select type"}
+                </div>
+
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content menu p-2 shadow bg-white rounded-box w-full z-[9999]"
+                >
+                  <li>
+                    <button type="button" onClick={() => setType("external")}>
+                      External
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" onClick={() => setType("internal")}>
+                      Internal
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
             {/* Vehicle Dropdown */}
             <div className="form-control">
               <label className="label">
@@ -165,7 +203,7 @@ export default function TrackingPage() {
 
             {/* SUBMIT BUTTON */}
             <button
-              className="btn btn-success [#30694B] w-full bg-[#30694B] text-white shadow-md hover:border-green-700 hover:bg-green-700"
+              className="btn btn-success w-full bg-[#30694B] text-white shadow-md hover:border-green-700 hover:bg-green-700"
               onClick={() => {
                 if (!selectedCarId) return;
 
@@ -174,17 +212,17 @@ export default function TrackingPage() {
                     return {
                       ...car,
                       personnel: [maintenance1, maintenance2],
+                      type: type, // ✅ save type
                     };
                   }
                   return car;
                 });
 
                 setCars(updated);
-
                 document.getElementById("trackingModal").close();
               }}
             >
-              Save Tracking
+              Save
             </button>
           </div>
         </div>
@@ -230,6 +268,7 @@ export default function TrackingPage() {
               </div>
             ))}
           </div>
+
           <div className="mt-5 text-sm text-gray-700">
             <p className="font-semibold">Assigned Personnel:</p>
             <ul className="list-inside list-disc">
