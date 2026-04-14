@@ -3,24 +3,9 @@ import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import OurInput from "../../components/OurInput";
 import { useNavigate } from "react-router-dom";
-
-const satisfactionSurveySchema = z.object({
-  email: z.email({ message: "Please enter a valid email" }),
-  lastName: z.string().nonempty("Last name is required"),
-  firstName: z.string().nonempty("First name is required"),
-  travelDate: z.string().nonempty("Travel date is required"),
-  driverName: z.string().nonempty("Driver is required"),
-  vehicle: z.string().nonempty("Vehicle is required"),
-  appearance: z.string().nonempty("Required"),
-  behavior: z.string().nonempty("Required"),
-  safety: z.string().nonempty("Required"),
-  vehicleCondition: z.string().nonempty("Required"),
-  onTime: z.string().nonempty("Required"),
-  comments: z.string().nonempty("Comments are required"),
-});
+import { surveySchema } from "../../schemas/surveySchema";
 
 export default function SurveyPage() {
   const [drivers, setDrivers] = useState([]);
@@ -71,7 +56,7 @@ export default function SurveyPage() {
     reset,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(satisfactionSurveySchema),
+    resolver: zodResolver(surveySchema),
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -178,7 +163,7 @@ export default function SurveyPage() {
           />
           <div className="space-x-0">
             <h2 className="mb-2 text-center text-3xl font-bold tracking-tight text-green-800 uppercase">
-              Tell us about the service
+              Passenger Survey
             </h2>
             <p className="mb-4 text-center text-sm text-gray-500">
               Tell us how is your experience with our service vehicles and

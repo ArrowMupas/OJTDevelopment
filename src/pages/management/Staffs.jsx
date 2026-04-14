@@ -12,25 +12,12 @@ import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useEffect, useState, useMemo } from "react";
 import debounce from "lodash.debounce";
 import OurInput from "../../components/OurInput";
 import CardDriver from "../../components/CardDriver";
 import ModalLicense from "../../components/ModalLicense";
-
-// Driver schema for input validation
-const driverSchema = z.object({
-  firstName: z.string().min(2, "First name must be at least 2 characters"),
-  lastName: z.string().min(2, "Last name must be at least 2 characters"),
-  middleInitial: z
-    .string()
-    .min(1, "Middle initial must be at least 1 character")
-    .optional(),
-  designation: z.string().min(2, "Designation must be at least 2 characters"),
-  email: z.email("Invalid email address"),
-  contact: z.string().min(7, "Contact number must be at least 7 digits"),
-});
+import { staffSchema } from "../../schemas/staffSchema";
 
 export default function Staff() {
   // Driver fetch states
@@ -121,7 +108,7 @@ export default function Staff() {
     reset,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(driverSchema),
+    resolver: zodResolver(staffSchema),
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 

@@ -96,7 +96,7 @@ export default function InquiryPage() {
 
       <div className="border-0 bg-white">
         <div className="overflow-x-auto rounded-lg">
-          <table className="table">
+          <table className="table min-h-50">
             <thead className="bg-green-600 text-white">
               <tr>
                 <th>Name</th>
