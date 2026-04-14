@@ -19,9 +19,7 @@ import { useEffect, useState, useMemo } from "react";
 import { format } from "date-fns";
 import debounce from "lodash.debounce";
 import OurInput from "../../components/OurInput";
-import { motion, AnimatePresence } from "framer-motion";
 import { vehicleSchema } from "../../schemas/vehicleSchema";
-import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 export default function UnoperationalVehicles() {

@@ -78,7 +78,7 @@ const AboutUs = () => {
   };
 
   return (
-    <div className="min-h-screen font-sans text-gray-900">
+    <div className="min-h-screen">
       {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: -40 }}

@@ -34,8 +34,6 @@ export default function MaintenancePage() {
   const fetchVehicles = async (searchTerm = "") => {
     setLoading(true);
 
-    const orderColumn = swap ? "period_to" : "period_duration_to";
-
     let query = supabase
       .from("vehicles_with_first_number")
       .select("*")

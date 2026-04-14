@@ -6,7 +6,6 @@ import {
   ClipboardClock,
   Info,
   Search,
-  Loader2,
   ArrowRight,
   CheckCircle,
   XCircle,
@@ -205,7 +204,7 @@ export default function ManageRequestsPage() {
         </div>
       </div>
 
-      <div className="flex justify-between gap-8">
+      <div className="flex justify-between">
         <label className="input input-neutral">
           <Search className="h-4 w-6" />
           <input
@@ -237,7 +236,7 @@ export default function ManageRequestsPage() {
 
       <div className="bg-white">
         <div className="overflow-x-auto rounded-lg">
-          <table className="table">
+          <table className="table min-h-50">
             <thead className="bg-green-500 text-white">
               <tr>
                 <th>Department</th>
