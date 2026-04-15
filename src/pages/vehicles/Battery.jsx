@@ -28,11 +28,7 @@ export default function Battery() {
   const fetchVehicles = async (searchTerm = "") => {
     setLoading(true);
 
-    let query = supabase
-      .from("vehicles")
-      .select("*")
-      .eq("operational", true)
-      .order("install_date_battery", { ascending: true, nullsFirst: true });
+    let query = supabase.from("vehicles").select("*").eq("operational", true);
 
     const alwaysFields = ["name", "plate_number"];
     const additionalFields = ["type_battery"];
@@ -52,7 +48,9 @@ export default function Battery() {
       query = query.or(orQueryParts.join(","));
     }
 
-    const { data, error } = await query;
+    const { data, error } = await query
+      .order("last_digit", { ascending: true })
+      .order("acquisition_date", { ascending: true });
 
     if (error) console.error(error);
     else setVehicles(data);

@@ -15,6 +15,7 @@ import Tippy from "@tippyjs/react";
 import "tippy.js/themes/light.css";
 import { Link } from "react-router-dom";
 import debounce from "lodash.debounce";
+import clsx from "clsx";
 
 export default function ManageRequestsPage() {
   const [drivers, setDrivers] = useState([]);
@@ -27,7 +28,7 @@ export default function ManageRequestsPage() {
     let query = supabase
       .from("service_vehicle_requests")
       .select("*")
-      .eq("status", "Pending")
+      .in("status", ["Pending", "On_Going"])
       .order("timestamp", { ascending: false });
 
     const searchColumns = [
@@ -69,8 +70,14 @@ export default function ManageRequestsPage() {
         { data: vehiclesData, error: vehiclesError },
         requestsData,
       ] = await Promise.all([
-        supabase.from("drivers").select("*"),
-        supabase.from("vehicles").select("*"),
+        supabase
+          .from("drivers")
+          .select("*")
+          .order("last_name", { ascending: true }),
+        supabase
+          .from("vehicles")
+          .select("*")
+          .order("name", { ascending: true }),
         fetchRequests(),
       ]);
 
@@ -102,6 +109,10 @@ export default function ManageRequestsPage() {
     };
   }, [debouncedSearch]);
 
+  const refetchRequests = async () => {
+    const data = await fetchRequests(search);
+    setRequests(data);
+  };
   async function updateAssignedVehicle(requestId, vehicleId) {
     const { error } = await supabase
       .from("service_vehicle_requests")
@@ -110,17 +121,13 @@ export default function ManageRequestsPage() {
 
     if (error) {
       console.error("Error updating vehicle:", error);
-    } else {
-      setRequests((prev) =>
-        prev.map((req) =>
-          req.id === requestId ? { ...req, vehicle_id: vehicleId } : req,
-        ),
-      );
-
-      console.log("Vehicle updated successfully for request", requestId);
+      return;
     }
-  }
 
+    console.log("Vehicle updated successfully for request", requestId);
+
+    await refetchRequests();
+  }
   async function updateAssignedDriver(requestId, driverId) {
     const { error } = await supabase
       .from("service_vehicle_requests")
@@ -129,15 +136,12 @@ export default function ManageRequestsPage() {
 
     if (error) {
       console.error("Error updating driver:", error);
-    } else {
-      setRequests((prev) =>
-        prev.map((req) =>
-          req.id === requestId ? { ...req, driver_id: driverId } : req,
-        ),
-      );
-
-      console.log("Driver updated successfully for request", requestId);
+      return;
     }
+
+    console.log("Driver updated successfully for request", requestId);
+
+    await refetchRequests();
   }
 
   async function updateStatus(requestId, status) {
@@ -246,7 +250,7 @@ export default function ManageRequestsPage() {
                 <th>Assigned Driver</th>
                 <th>Assigned vehicle</th>
                 <th>Status</th>
-                <th>Has Surveyed</th>
+                <th>Survey</th>
                 <th>More</th>
               </tr>
             </thead>
@@ -262,7 +266,7 @@ export default function ManageRequestsPage() {
                 </tr>
               ) : requests.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="py-12 text-center sm:py-20">
+                  <td colSpan="9" className="py-12 text-center sm:py-20">
                     <div className="flex flex-col items-center justify-center gap-2">
                       <Search className="size-8 text-gray-500" />
                       <p className="text-gray-500">No requests found</p>
@@ -315,16 +319,26 @@ export default function ManageRequestsPage() {
                       <td>
                         <select
                           className="select"
-                          value={req.driver_id || ""}
-                          onChange={(e) =>
-                            updateAssignedDriver(req.id, Number(e.target.value))
+                          disabled={
+                            req.status === "Completed" ||
+                            req.status === "Cancelled"
                           }
+                          value={req.driver_id || ""}
+                          onChange={(e) => {
+                            const value = e.target.value;
+
+                            updateAssignedDriver(
+                              req.id,
+                              value === "" ? null : Number(value),
+                            );
+                          }}
                         >
                           <option value="">Unassigned</option>
 
                           {drivers.map((driver) => (
                             <option key={driver.id} value={driver.id}>
-                              {driver.first_name} {driver.last_name}
+                              {driver.last_name}, {driver.first_name}{" "}
+                              {driver.middle_initial}.
                             </option>
                           ))}
                         </select>
@@ -335,18 +349,25 @@ export default function ManageRequestsPage() {
                         <div className="flex flex-col gap-2">
                           <select
                             className="select"
+                            disabled={
+                              req.status === "Completed" ||
+                              req.status === "Cancelled"
+                            }
                             value={req.vehicle_id || ""}
-                            onChange={(e) =>
+                            onChange={(e) => {
+                              const value = e.target.value;
+
                               updateAssignedVehicle(
                                 req.id,
-                                Number(e.target.value),
-                              )
-                            }
+                                value === "" ? null : Number(value),
+                              );
+                            }}
                           >
                             <option value="">Unassigned</option>
+
                             {vehicles.map((vehicle) => (
                               <option key={vehicle.id} value={vehicle.id}>
-                                {vehicle.name}
+                                {vehicle.name} ({vehicle.plate_number})
                               </option>
                             ))}
                           </select>
@@ -354,19 +375,24 @@ export default function ManageRequestsPage() {
                       </td>
 
                       {/* STATUS */}
-                      <td>
+                      <td className="min-w-35">
                         <select
-                          className={`select ${
-                            req.status === "Completed"
-                              ? " select-success text-success"
-                              : req.status === "Cancelled" &&
-                                "select-error text-error"
-                          }`}
+                          className={clsx("select", {
+                            "select-success text-success":
+                              req.status === "Completed",
+                            "select-error text-error":
+                              req.status === "Cancelled",
+                            "select-warning text-warning":
+                              req.status === "On_Going",
+                          })}
                           value={req.status || ""}
                           onChange={(e) => updateStatus(req.id, e.target.value)}
                         >
-                          <option value="Pending" className="text-black">
+                          <option value="Pending" className="text-gray-500">
                             Pending
+                          </option>
+                          <option value="On_Going" className="text-warning">
+                            On Going
                           </option>
                           <option value="Completed" className="text-success">
                             Completed

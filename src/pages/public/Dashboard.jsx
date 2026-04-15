@@ -24,7 +24,7 @@ export default function Dashboard() {
         )
       `,
       )
-      .eq("status", "Pending")
+      .in("status", ["Pending", "On_Going"])
       .order("timestamp", { ascending: false });
 
     if (error) {
@@ -95,7 +95,7 @@ export default function Dashboard() {
                     <tr key={req.id}>
                       <th className="uppercase">{req.department}</th>
 
-                      <td className="flex flex-col items-start justify-center">
+                      <td className="flex flex-col items-start justify-center truncate">
                         <span className="">
                           {format(formattedDateTime, "MMM. d, yyyy")}
                         </span>
@@ -127,7 +127,7 @@ export default function Dashboard() {
                         {req.vehicles?.name || "Unassigned"}
                       </td>
 
-                      <td className="bg-violet-50">
+                      <td className="truncate bg-violet-50">
                         {req.vehicles?.plate_number && (
                           <div className="badge badge-dash badge-primary text-base lg:text-lg">
                             {req.vehicles.plate_number}

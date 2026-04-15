@@ -36,7 +36,7 @@ import VehiclePage from "./pages/vehicles/Vehicles";
 import HistoryPage from "./pages/vehicles/HistoryPage";
 import Battery from "./pages/vehicles/Battery";
 import Tires from "./pages/vehicles/Tires";
-import VehicleMonitoringPage from "./pages/vehicles/VehicleMonitoringPage";
+import PMS from "./pages/vehicles/PMS";
 import UnoperationalVehicles from "./pages/vehicles/UnoperationalVehicles";
 import VehicleHistory from "./pages/vehicles/VehicleHistory";
 import TrackingHistory from "./pages/TrackingHistory";
@@ -81,10 +81,15 @@ function App() {
             path="/vehicle-requests/completed"
             element={<CompleteRequest />}
           />
+
           <Route path="/vehicles" element={<VehiclePage />} />
           <Route
             path="/vehicles/unoperational"
             element={<UnoperationalVehicles />}
+          />
+          <Route
+            path="/vehicles/vehicle-history"
+            element={<VehicleHistory />}
           />
 
           <Route path="/vehiclestatusqueue" element={<VehicleStatusPage />} />
@@ -92,20 +97,17 @@ function App() {
 
           <Route path="/track" element={<TrackingPage />} />
           <Route path="/track-release" element={<TrackingRelease />} />
-          <Route path="/pms" element={<VehicleMonitoringPage />} />
+          <Route path="/tracking-history" element={<TrackingHistory />} />
+
+          <Route path="/pms" element={<PMS />} />
           <Route path="/battery" element={<Battery />} />
           <Route path="/tires" element={<Tires />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/staff-management" element={<Staffs />} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/inquiries" element={<InquiryPage />} />
-          <Route
-            path="/vehicles/vehicle-history"
-            element={<VehicleHistory />}
-          />
         </Route>
 
-        <Route path="/tracking-history" element={<TrackingHistory />} />
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
