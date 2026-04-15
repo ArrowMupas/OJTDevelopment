@@ -13,7 +13,7 @@ const internalSteps = [
 const externalSteps = [
   "Inspection",
   "Job Order",
-  "Transaction",
+  "Received Disbursement Voucher with Check",
   "On-Going Repair",
   "Accomplished | For Release",
 ];
@@ -192,7 +192,7 @@ export default function TrackingPage() {
 
           <div className="flex gap-2">
             <button
-              className="btn sm:btn-lg btn-info flex items-center gap-2 rounded-lg tracking-wider text-white uppercase"
+              className="btn lg:btn-lg btn-info flex items-center gap-2 rounded-lg tracking-wider text-white uppercase"
               onClick={() => {
                 setSelectedVehicleId("");
                 setMaintenance1("");
@@ -247,7 +247,7 @@ export default function TrackingPage() {
               </select>
 
               <select
-                className="select select-bordered w-full"
+                className="select select-bordered size-sm w-full"
                 value={type}
                 onChange={(e) => setType(e.target.value)}
               >
@@ -267,25 +267,33 @@ export default function TrackingPage() {
                 />
               )}
 
-              {type !== "external" && (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Maintenance 1"
-                    className="input input-bordered w-full"
-                    value={maintenance1}
-                    onChange={(e) => setMaintenance1(e.target.value)}
-                  />
+              <select
+                className="select select-bordered w-full"
+                value={maintenance1}
+                onChange={(e) => setMaintenance1(e.target.value)}
+              >
+                <option value="">Select Maintenance 1</option>
+                <option value="Fernando L. Aquino">Fernando L. Aquino</option>
+                <option value="Joseph Neil S. Leonardo">
+                  Joseph Neil S. Leonardo
+                </option>
+                <option value="Ruel V. Bebanco">Ruel V. Bebanco</option>
+                <option value="None">None</option>
+              </select>
 
-                  <input
-                    type="text"
-                    placeholder="Maintenance 2"
-                    className="input input-bordered w-full"
-                    value={maintenance2}
-                    onChange={(e) => setMaintenance2(e.target.value)}
-                  />
-                </>
-              )}
+              <select
+                className="select select-bordered w-full"
+                value={maintenance2}
+                onChange={(e) => setMaintenance2(e.target.value)}
+              >
+                <option value="">Select Maintenance 2</option>
+                <option value="Fernando L. Aquino">Fernando L. Aquino</option>
+                <option value="Joseph Neil S. Leonardo">
+                  Joseph Neil S. Leonardo
+                </option>
+                <option value="Ruel V. Bebanco">Ruel V. Bebanco</option>
+                <option value="None">None</option>
+              </select>
 
               <button
                 className="btn btn-lg w-full rounded-lg bg-green-600 tracking-wider text-white uppercase hover:bg-green-500"

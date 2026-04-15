@@ -58,7 +58,7 @@ export default function Sidebar() {
             />
           </div>
           <div className="tracking-tight">
-            <p className="font-rubik text-lg font-bold">NEA Dashboard</p>
+            <p className="font-rubik text-lg font-bold">TOSU Dashboard</p>
             <p className="text-xs text-gray-300">
               Transport Operations Services Unit (TOSU)
             </p>
