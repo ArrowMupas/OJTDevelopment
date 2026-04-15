@@ -39,6 +39,7 @@ import Tires from "./pages/vehicles/Tires";
 import VehicleMonitoringPage from "./pages/vehicles/VehicleMonitoringPage";
 import UnoperationalVehicles from "./pages/vehicles/UnoperationalVehicles";
 import VehicleHistory from "./pages/vehicles/VehicleHistory";
+import TrackingHistory from "./pages/TrackingHistory";
 
 import TransactionsPage from "./pages/TransactionsPage";
 import DriverMonitoringPage from "./pages/DriverMonitoringPage";
@@ -104,6 +105,7 @@ function App() {
           />
         </Route>
 
+        <Route path="/tracking-history" element={<TrackingHistory />} />
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
