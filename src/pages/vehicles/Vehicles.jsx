@@ -34,10 +34,7 @@ export default function MaintenancePage() {
   const fetchVehicles = async (searchTerm = "") => {
     setLoading(true);
 
-    let query = supabase
-      .from("vehicles_with_first_number")
-      .select("*")
-      .order("first_number", { ascending: true });
+    let query = supabase.from("vehicles").select("*").eq("operational", true);
 
     const searchColumns = [
       "name",
@@ -57,7 +54,9 @@ export default function MaintenancePage() {
       query = query.or(orQueryParts.join(","));
     }
 
-    const { data, error } = await query;
+    const { data, error } = await query
+      .order("last_digit", { ascending: true })
+      .order("acquisition_date", { ascending: true });
 
     if (error) console.error(error);
     else setVehicles(data);

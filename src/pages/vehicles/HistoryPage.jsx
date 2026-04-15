@@ -25,7 +25,7 @@ export default function HistoryPage() {
     setLoading(true);
 
     let query = supabase
-      .from("vehicle_history")
+      .from("vehicle_pms_history")
       .select(
         `
       *,
@@ -188,11 +188,11 @@ export default function HistoryPage() {
 
                 return (
                   <tr key={h.id} className="border-t hover:bg-gray-50">
-                    <td>{date}</td>
+                    <td className="truncate">{date}</td>
                     <td>{time}</td>
                     <td>
                       {h.vehicle ? (
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 truncate">
                           <p>{h.vehicle.name}</p>
                           <div className="badge badge-primary badge-dash badge-sm">
                             {h.vehicle.plate_number}

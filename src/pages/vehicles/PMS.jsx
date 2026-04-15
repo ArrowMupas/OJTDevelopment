@@ -18,7 +18,7 @@ const pmsSchema = z.object({
   pms_date: z.string().min(1, "Date is required"),
 });
 
-export default function VehicleMonitoringPage() {
+export default function PMS() {
   const navigate = useNavigate();
   const [vehicles, setVehicles] = useState([]);
   const [search, setSearch] = useState("");
@@ -28,11 +28,7 @@ export default function VehicleMonitoringPage() {
   const fetchVehicles = async (searchTerm = "") => {
     setLoading(true);
 
-    let query = supabase
-      .from("vehicles")
-      .select("*")
-      .eq("operational", true)
-      .order("pms_date", { ascending: true, nullsFirst: true });
+    let query = supabase.from("vehicles").select("*").eq("operational", true);
 
     if (searchTerm) {
       query = query.or(
@@ -40,7 +36,9 @@ export default function VehicleMonitoringPage() {
       );
     }
 
-    const { data, error } = await query;
+    const { data, error } = await query
+      .order("last_digit", { ascending: true })
+      .order("acquisition_date", { ascending: true });
 
     if (error) console.error(error);
     else setVehicles(data);

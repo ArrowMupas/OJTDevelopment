@@ -6,6 +6,7 @@ import Tippy from "@tippyjs/react";
 import "tippy.js/themes/light.css";
 import { Link } from "react-router-dom";
 import debounce from "lodash.debounce";
+import clsx from "clsx";
 
 export default function CompleteRequest() {
   const [drivers, setDrivers] = useState([]);
@@ -18,7 +19,7 @@ export default function CompleteRequest() {
     let query = supabase
       .from("service_vehicle_requests")
       .select("*")
-      .neq("status", "Pending")
+      .in("status", ["Completed", "Cancelled"])
       .order("timestamp", { ascending: false });
 
     const searchColumns = [
@@ -211,7 +212,7 @@ export default function CompleteRequest() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="8" className="py-12 text-center sm:py-40">
+                  <td colSpan="9" className="py-12 text-center sm:py-40">
                     <div className="flex flex-col items-center justify-center gap-3">
                       <span className="loading loading-infinity loading-xl"></span>
                       <p className="text-gray-500">
@@ -222,7 +223,7 @@ export default function CompleteRequest() {
                 </tr>
               ) : requests.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="py-12 text-center sm:py-35">
+                  <td colSpan="9" className="py-12 text-center sm:py-35">
                     <div className="flex flex-col items-center justify-center gap-2">
                       <Search className="size-8 text-gray-500" />
                       <p className="text-gray-500">
@@ -277,15 +278,25 @@ export default function CompleteRequest() {
                       <td>
                         <select
                           className="select"
-                          value={req.driver_id || ""}
-                          onChange={(e) =>
-                            updateAssignedDriver(req.id, Number(e.target.value))
+                          disabled={
+                            req.status === "Completed" ||
+                            req.status === "Cancelled"
                           }
+                          value={req.driver_id || ""}
+                          onChange={(e) => {
+                            const value = e.target.value;
+
+                            updateAssignedDriver(
+                              req.id,
+                              value === "" ? null : Number(value),
+                            );
+                          }}
                         >
                           <option value="">Unassigned</option>
                           {drivers.map((driver) => (
                             <option key={driver.id} value={driver.id}>
-                              {driver.first_name} {driver.last_name}
+                              {driver.last_name}, {driver.first_name}{" "}
+                              {driver.middle_initial}.
                             </option>
                           ))}
                         </select>
@@ -296,13 +307,19 @@ export default function CompleteRequest() {
                         <div className="flex flex-col gap-2">
                           <select
                             className="select"
+                            disabled={
+                              req.status === "Completed" ||
+                              req.status === "Cancelled"
+                            }
                             value={req.vehicle_id || ""}
-                            onChange={(e) =>
+                            onChange={(e) => {
+                              const value = e.target.value;
+
                               updateAssignedVehicle(
                                 req.id,
-                                Number(e.target.value),
-                              )
-                            }
+                                value === "" ? null : Number(value),
+                              );
+                            }}
                           >
                             <option value="">Unassigned</option>
                             {vehicles.map((vehicle) => (
@@ -315,19 +332,24 @@ export default function CompleteRequest() {
                       </td>
 
                       {/* STATUS */}
-                      <td>
+                      <td className="min-w-35">
                         <select
-                          className={`select ${
-                            req.status === "Completed"
-                              ? "select-success text-success"
-                              : req.status === "Cancelled" &&
-                                "select-error text-error"
-                          }`}
+                          className={clsx("select", {
+                            "select-success text-success":
+                              req.status === "Completed",
+                            "select-error text-error":
+                              req.status === "Cancelled",
+                            "select-warning text-warning":
+                              req.status === "On_Going",
+                          })}
                           value={req.status || ""}
                           onChange={(e) => updateStatus(req.id, e.target.value)}
                         >
                           <option value="Pending" className="text-black">
                             Pending
+                          </option>
+                          <option value="On_Going" className="text-warning">
+                            On Going
                           </option>
                           <option value="Completed" className="text-success">
                             Completed

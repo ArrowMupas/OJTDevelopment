@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const surveySchema = z.object({
-  email: z.email({ message: "Please enter a valid email" }),
+  // email: z.email({ message: "Please enter a valid email" }),
   lastName: z.string().nonempty("Last name is required"),
   firstName: z.string().nonempty("First name is required"),
   travelDate: z.string().nonempty("Travel date is required"),

@@ -80,7 +80,7 @@ export default function SurveyPage() {
       .from("passenger_survey")
       .insert([
         {
-          email: data.email,
+          // email: data.email,
           passenger_name: fullName,
           travel_date: data.travelDate,
           driver_name: data.driverName,
@@ -191,13 +191,13 @@ export default function SurveyPage() {
         </div>
 
         <form onSubmit={handleSubmit(submitSurvey)} className="space-y-8">
-          <OurInput
+          {/* <OurInput
             label="Email"
             label2="Use the email used to make the vehicle request"
             name="email"
             register={register}
             error={errors.email}
-          />
+          /> */}
 
           <OurInput
             label="Travel Date"

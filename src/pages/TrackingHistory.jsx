@@ -90,136 +90,129 @@ export default function TrackingHistory() {
   }, [search, filterType, repairs]);
 
   return (
-    <div className="min-h-screen bg-gray-100 px-6 py-20">
-      <div className="mx-auto max-w-5xl">
+    <main className="min-h-screen space-y-7 px-3 py-4 pb-25 sm:px-5">
+      <div className="flex gap-2">
         <button
-          className="btn mb-6 flex items-center gap-2 bg-gray-200 text-black hover:bg-gray-300"
-          onClick={() => navigate("/track")}
+          onClick={() => navigate(-1)}
+          className="btn btn-square btn-warning btn-dash h-auto"
         >
-          <ArrowLeft className="size-4" />
-          Go Back
+          <ArrowLeft size={20} />
         </button>
-
-        <div className="mb-12 text-center">
-          <h1 className="text-5xl font-bold tracking-tight uppercase">
-            Repair History
-          </h1>
-          <p className="mt-2 text-lg text-gray-600">
-            Completed maintenance records
+        <div>
+          <h1 className="text-lg font-bold">Repair History</h1>
+          <p className="text-sm text-gray-500">
+            View your vehicle&apos;s repair history
           </p>
         </div>
+      </div>
 
-        <div className="mb-6 flex flex-col gap-3 rounded-xl bg-green-600 p-5 text-white shadow sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold tracking-wide uppercase">
-              History Tracker
-            </span>
-          </div>
-
-          <div className="flex flex-col gap-2 sm:w-full sm:flex-row sm:items-center sm:justify-end">
-            <div className="relative w-full bg-transparent sm:w-[250px] md:w-[330px] lg:w-[350px]">
-              <SearchIcon className="absolute text-black" />
-              <input
-                type="text"
-                placeholder="Search vehicle, plate, shop..."
-                className="input input-bordered w-full pl-9 text-black"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-
-            <select
-              className="select text-green-700"
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-            >
-              <option value="all">All</option>
-              <option value="internal">Internal</option>
-              <option value="external">External</option>
-              <option value="internal-mini">Internal (Mini Repair)</option>
-            </select>
-          </div>
+      <div className="mb-6 flex flex-col gap-3 rounded-xl bg-green-600 p-5 text-white shadow sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-2">
+          <span className="font-semibold tracking-wide uppercase">
+            History Tracker
+          </span>
         </div>
 
-        {/* LIST */}
-        <div className="space-y-4">
-          {filtered.length === 0 && (
-            <div className="text-center text-gray-500">
-              No completed records found
-            </div>
-          )}
+        <div className="flex flex-col gap-2 sm:w-full sm:flex-row sm:items-center sm:justify-end">
+          <div className="relative w-full bg-transparent sm:w-[250px] md:w-[330px] lg:w-[350px]">
+            <SearchIcon className="absolute text-black" />
+            <input
+              type="text"
+              placeholder="Search vehicle, plate, shop..."
+              className="input input-bordered w-full pl-9 text-black"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
 
-          {filtered.map((repair) => {
-            const steps = getSteps(repair.type);
-
-            const personnel = [
-              repair.assigned_personnel_1,
-              repair.assigned_personnel_2,
-            ].filter(Boolean);
-
-            return (
-              <div
-                key={repair.id}
-                className="rounded-xl border bg-white p-6 shadow-sm"
-              >
-                {/* HEADER */}
-                <div className="mb-4 flex items-center justify-between">
-                  <div>
-                    <h2 className="text-lg font-semibold">
-                      {repair.vehicles?.name}
-                    </h2>
-                    <p className="text-sm text-gray-500">
-                      {repair.vehicles?.plate_number}
-                    </p>
-                  </div>
-
-                  <div className="badge badge-success">Completed</div>
-                </div>
-
-                {/* TIMELINE */}
-                <div className="relative flex justify-between">
-                  <div className="absolute top-2 right-0 left-0 h-1 bg-green-500" />
-
-                  {steps.map((label, index) => (
-                    <div
-                      key={index}
-                      className="flex flex-1 flex-col items-center"
-                    >
-                      <div className="h-4 w-4 rounded-full bg-green-500" />
-                      <span className="mt-2 text-center text-xs">{label}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* DETAILS */}
-                <div className="mt-6 text-sm">
-                  {repair.type === "external" ? (
-                    <>
-                      <p className="font-semibold">Service Shop:</p>
-                      <p className="text-gray-600">
-                        {repair.service_shop || "N/A"}
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <p className="font-semibold">Personnel:</p>
-                      <ul className="list-disc pl-5">
-                        {personnel.length > 0 ? (
-                          personnel.map((p, i) => <li key={i}>{p}</li>)
-                        ) : (
-                          <li className="text-gray-400">
-                            No personnel assigned
-                          </li>
-                        )}
-                      </ul>
-                    </>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+          <select
+            className="select text-green-700"
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+          >
+            <option value="all">All</option>
+            <option value="internal">Internal</option>
+            <option value="external">External</option>
+            <option value="internal-mini">Internal (Mini Repair)</option>
+          </select>
         </div>
       </div>
-    </div>
+      {/* LIST */}
+      <div className="space-y-4">
+        {filtered.length === 0 && (
+          <div className="text-center text-gray-500">
+            No completed records found
+          </div>
+        )}
+
+        {filtered.map((repair) => {
+          const steps = getSteps(repair.type);
+
+          const personnel = [
+            repair.assigned_personnel_1,
+            repair.assigned_personnel_2,
+          ].filter(Boolean);
+
+          return (
+            <div
+              key={repair.id}
+              className="rounded-xl border bg-white p-6 shadow-sm"
+            >
+              {/* HEADER */}
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold">
+                    {repair.vehicles?.name}
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    {repair.vehicles?.plate_number}
+                  </p>
+                </div>
+
+                <div className="badge badge-success">Completed</div>
+              </div>
+
+              {/* TIMELINE */}
+              <div className="relative flex justify-between">
+                <div className="absolute top-2 right-0 left-0 h-1 bg-green-500" />
+
+                {steps.map((label, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-1 flex-col items-center"
+                  >
+                    <div className="h-4 w-4 rounded-full bg-green-500" />
+                    <span className="mt-2 text-center text-xs">{label}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* DETAILS */}
+              <div className="mt-6 text-sm">
+                {repair.type === "external" ? (
+                  <>
+                    <p className="font-semibold">Service Shop:</p>
+                    <p className="text-gray-600">
+                      {repair.service_shop || "N/A"}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-semibold">Personnel:</p>
+                    <ul className="list-disc pl-5">
+                      {personnel.length > 0 ? (
+                        personnel.map((p, i) => <li key={i}>{p}</li>)
+                      ) : (
+                        <li className="text-gray-400">No personnel assigned</li>
+                      )}
+                    </ul>
+                  </>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </main>
   );
 }
