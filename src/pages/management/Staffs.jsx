@@ -309,7 +309,7 @@ export default function Staff() {
         </div>
 
         <button
-          className="btn btn-info font-bold text-white"
+          className="btn btn-primary font-bold text-white"
           onClick={() => {
             setIsEditing(false);
             setDriverToEdit(null);
@@ -330,7 +330,7 @@ export default function Staff() {
         </button>
       </div>
 
-      <div className="grid w-full grid-cols-2 gap-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-4">
+      {/* <div className="grid w-full grid-cols-2 gap-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-4">
         <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
             <CircleStar className="text-warning h-8 w-12" />
@@ -362,6 +362,108 @@ export default function Staff() {
           <div className="stat-title">Active Drivers</div>
           <div className="stat-value text-green-600">11</div>
         </div>
+      </div> */}
+
+      <ModalLicense
+        licenseFront={driverToView?.license_url}
+        licenseBack={driverToView?.license_back}
+        onClose={() => {
+          setDriverToView(null);
+          document.getElementById("licenseModal")?.close();
+        }}
+      />
+
+      {specialDrivers.length > 0 && (
+        <div className="space-y-2">
+          <h2 className="text-md font-bold text-green-700">⭐ Key Personnel</h2>
+
+          <div className="grid grid-cols-2 gap-1 sm:gap-2 md:grid-cols-5">
+            {specialDrivers.map((driver) => (
+              <CardDriver
+                key={driver.id}
+                driver={driver}
+                highlight={true}
+                onView={(driver) => {
+                  setDriverToView(driver);
+                  document.getElementById("licenseModal").showModal();
+                }}
+                onEdit={(driver) => {
+                  setIsEditing(true);
+                  setDriverToEdit(driver);
+
+                  reset({
+                    firstName: driver.first_name,
+                    lastName: driver.last_name,
+                    middleInitial: driver.middle_initial,
+                    designation: driver.designation,
+                    email: driver.email || "",
+                    contact: driver.contact_number || "",
+                  });
+
+                  setSelectedFile(null);
+                  setLicenseFile(null);
+                  document.getElementById("driverModal").showModal();
+                }}
+                onDelete={(driver) => {
+                  setDriverToDelete(driver);
+                  document.getElementById("deleteDriverModal").showModal();
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="border-0">
+        {drivers.length === 0 ? (
+          <div className="flex h-40 flex-col items-center justify-center gap-5">
+            {loading ? (
+              <>
+                <span className="loading loading-infinity text-success"></span>
+                <p className="text-sm font-bold">Loading drivers...</p>
+              </>
+            ) : (
+              <>
+                <BeanOff className="text-error size-12" />
+                <p className="text-error text-sm font-bold">No drivers found</p>
+              </>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-1 md:grid-cols-4 md:gap-2 xl:grid-cols-5 2xl:grid-cols-6">
+            {regularDrivers.map((driver) => (
+              <CardDriver
+                key={driver.id}
+                driver={driver}
+                onView={(driver) => {
+                  setDriverToView(driver);
+                  document.getElementById("licenseModal").showModal();
+                }}
+                onEdit={(driver) => {
+                  setIsEditing(true);
+                  setDriverToEdit(driver);
+
+                  reset({
+                    firstName: driver.first_name,
+                    lastName: driver.last_name,
+                    middleInitial: driver.middle_initial,
+                    designation: driver.designation,
+                    email: driver.email || "",
+                    contact: driver.contact_number || "",
+                  });
+
+                  setSelectedFile(null);
+                  setLicenseFile(null);
+                  document.getElementById("driverModal").showModal();
+                }}
+                onDelete={(driver) => {
+                  setDriverToDelete(driver);
+                  document.getElementById("deleteDriverModal").showModal();
+                }}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       <dialog id="driverModal" className="modal">
@@ -513,108 +615,6 @@ export default function Staff() {
           </form>
         </div>
       </dialog>
-
-      <ModalLicense
-        licenseFront={driverToView?.license_url}
-        licenseBack={driverToView?.license_back}
-        onClose={() => {
-          setDriverToView(null);
-          document.getElementById("licenseModal")?.close();
-        }}
-      />
-
-      {specialDrivers.length > 0 && (
-        <div className="space-y-2">
-          <h2 className="text-md font-bold text-green-700">⭐ Key Personnel</h2>
-
-          <div className="grid grid-cols-2 gap-1 sm:gap-2 md:grid-cols-5">
-            {specialDrivers.map((driver) => (
-              <CardDriver
-                key={driver.id}
-                driver={driver}
-                highlight={true}
-                onView={(driver) => {
-                  setDriverToView(driver);
-                  document.getElementById("licenseModal").showModal();
-                }}
-                onEdit={(driver) => {
-                  setIsEditing(true);
-                  setDriverToEdit(driver);
-
-                  reset({
-                    firstName: driver.first_name,
-                    lastName: driver.last_name,
-                    middleInitial: driver.middle_initial,
-                    designation: driver.designation,
-                    email: driver.email || "",
-                    contact: driver.contact_number || "",
-                  });
-
-                  setSelectedFile(null);
-                  setLicenseFile(null);
-                  document.getElementById("driverModal").showModal();
-                }}
-                onDelete={(driver) => {
-                  setDriverToDelete(driver);
-                  document.getElementById("deleteDriverModal").showModal();
-                }}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="border-0">
-        {drivers.length === 0 ? (
-          <div className="flex h-40 flex-col items-center justify-center gap-5">
-            {loading ? (
-              <>
-                <span className="loading loading-infinity text-success"></span>
-                <p className="text-sm font-bold">Loading drivers...</p>
-              </>
-            ) : (
-              <>
-                <BeanOff className="text-error size-12" />
-                <p className="text-error text-sm font-bold">No drivers found</p>
-              </>
-            )}
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-1 md:grid-cols-4 md:gap-2 xl:grid-cols-5 2xl:grid-cols-6">
-            {regularDrivers.map((driver) => (
-              <CardDriver
-                key={driver.id}
-                driver={driver}
-                onView={(driver) => {
-                  setDriverToView(driver);
-                  document.getElementById("licenseModal").showModal();
-                }}
-                onEdit={(driver) => {
-                  setIsEditing(true);
-                  setDriverToEdit(driver);
-
-                  reset({
-                    firstName: driver.first_name,
-                    lastName: driver.last_name,
-                    middleInitial: driver.middle_initial,
-                    designation: driver.designation,
-                    email: driver.email || "",
-                    contact: driver.contact_number || "",
-                  });
-
-                  setSelectedFile(null);
-                  setLicenseFile(null);
-                  document.getElementById("driverModal").showModal();
-                }}
-                onDelete={(driver) => {
-                  setDriverToDelete(driver);
-                  document.getElementById("deleteDriverModal").showModal();
-                }}
-              />
-            ))}
-          </div>
-        )}
-      </div>
 
       <dialog id="deleteDriverModal" className="modal">
         <div className="modal-box">

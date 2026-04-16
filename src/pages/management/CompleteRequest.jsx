@@ -156,7 +156,7 @@ export default function CompleteRequest() {
       <div className="flex gap-2">
         <div className="mb-6 flex items-center gap-5">
           <Link to={"/vehicle-requests"}>
-            <button className="btn btn-square btn-warning btn-dash h-12">
+            <button className="btn btn-square btn-neutral btn-dash h-12">
               <ArrowLeft size={20} />
             </button>
           </Link>
@@ -262,7 +262,9 @@ export default function CompleteRequest() {
                         </span>
                       </td>
 
-                      <td className="capitalize">{req.destination}</td>
+                      <td className="text-success font-bold capitalize">
+                        {req.destination}
+                      </td>
 
                       <td className="">
                         <span className="text-sm">

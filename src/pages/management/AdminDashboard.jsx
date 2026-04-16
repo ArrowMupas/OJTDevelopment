@@ -6,6 +6,7 @@ import {
   ClipboardClock,
   FileCheck,
   FileX,
+  Medal,
   TriangleAlert,
   Wrench,
 } from "lucide-react";
@@ -81,7 +82,6 @@ export default function AdminDashboard() {
     <main className="h-full px-5 py-4 pb-25">
       <h1 className="text-lg font-bold">Admin Dashboard</h1>
       <p className="mb-6 text-sm text-gray-500">Overall view of system data.</p>
-
       <h1 className="text-SM mt-8 mb-1 font-bold text-green-700">
         VEHICLE REQUESTS
       </h1>
@@ -138,11 +138,9 @@ export default function AdminDashboard() {
           <Line data={lineData} />
         </div>
       </div>
-
       <h1 className="text-SM mt-10 mb-1 font-bold text-[#745fc9]">
         DRIVER MONITORING
       </h1>
-
       <div className="grid grid-cols-2 gap-5">
         <div className="card bg-base-100 card-md relative shadow-sm">
           <div className="card-body flex-row justify-between rounded-sm border-2 border-[#745fc9]">
@@ -166,11 +164,9 @@ export default function AdminDashboard() {
           <div className="absolute inset-0 rounded-sm bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 hover:opacity-30"></div>
         </div>
       </div>
-
       <h1 className="text-SM mt-4 mb-1 font-bold text-[#745fc9]">
         Top 3 Driver by Ratings
       </h1>
-
       <div className="grid grid-cols-3 gap-5">
         <div className="card bg-base-100 card-md relative shadow-sm">
           <div className="card-body flex-row items-center justify-between rounded-sm border-2 border-[#745fc9]">
@@ -179,11 +175,7 @@ export default function AdminDashboard() {
               <h2 className="stat-value leading-none text-[#745fc9]">4.9</h2>
               <p className="text-sm">Jayzen P. Galvez</p>
             </div>
-            <img
-              className="h-12 w-auto"
-              src="https://cdn-icons-png.flaticon.com/512/4899/4899679.png"
-              alt="first"
-            />
+            <Medal className="h-10 w-10 text-yellow-500" />
           </div>
           <div className="absolute inset-0 rounded-sm bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 hover:opacity-30"></div>
         </div>
@@ -195,11 +187,7 @@ export default function AdminDashboard() {
               <h2 className="stat-value leading-none text-[#745fc9]">4.1</h2>
               <p className="text-sm">Joswe L. Tubio</p>
             </div>
-            <img
-              className="h-12 w-auto"
-              src="https://cdn-icons-png.flaticon.com/512/4899/4899684.png"
-              alt="second"
-            />
+            <Medal className="h-10 w-10 text-gray-500" />
           </div>
           <div className="absolute inset-0 rounded-sm bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 hover:opacity-30"></div>
         </div>
@@ -211,20 +199,15 @@ export default function AdminDashboard() {
               <h2 className="stat-value leading-none text-[#745fc9]">3.9</h2>
               <p className="text-sm">Dester O. Golloso</p>
             </div>
-            <img
-              className="h-12 w-auto"
-              src="https://cdn-icons-png.flaticon.com/512/4899/4899691.png"
-              alt="third"
-            />
+            <Medal className="h-10 w-10 text-orange-500" />
           </div>
           <div className="absolute inset-0 rounded-sm bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 transition duration-300 hover:opacity-30"></div>
         </div>
       </div>
-
+      ;
       <h1 className="text-SM mt-10 mb-1 font-bold text-[#1B4079]">
         COMPLIANCE MONITORING
       </h1>
-
       <div className="grid grid-cols-2 gap-5">
         <div className="grid grid-cols-2 gap-5">
           {[

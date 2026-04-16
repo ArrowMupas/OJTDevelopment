@@ -9,47 +9,38 @@ import { surveySchema } from "../../schemas/surveySchema";
 
 export default function SurveyPage() {
   const [drivers, setDrivers] = useState([]);
+  const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchDrivers() {
+    async function fetchData() {
       setLoading(true);
-      const { data, error } = await supabase
+
+      const { data: driverData, error: driverError } = await supabase
         .from("drivers")
         .select("*")
-        .in("designation", ["Driver Mechanic A", "Driver Mechanic B"])
-        .order("created_at", { ascending: false });
+        .in("designation", ["Driver Mechanic B"])
+        .order("last_name", { ascending: true });
 
-      if (error) {
-        console.error(error);
-      } else {
-        setDrivers(data);
-      }
-      setLoading(false);
-    }
-    fetchDrivers();
-  }, []);
-
-  const [vehicles, setVehicles] = useState([]);
-  useEffect(() => {
-    async function fetchVehicles() {
-      setLoading(true);
-      const { data: vehicleData, error } = await supabase
+      const { data: vehicleData, error: vehicleError } = await supabase
         .from("vehicles")
         .select("*")
         .order("name", { ascending: true });
 
-      if (error) {
-        console.error(error);
-      } else {
-        setVehicles(vehicleData);
-      }
+      if (driverError) console.error(driverError);
+      else setDrivers(driverData);
+
+      if (vehicleError) console.error(vehicleError);
+      else setVehicles(vehicleData);
+
       setLoading(false);
     }
-    fetchVehicles();
+
+    fetchData();
   }, []);
 
   const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -58,6 +49,7 @@ export default function SurveyPage() {
   } = useForm({
     resolver: zodResolver(surveySchema),
   });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const submitSurvey = async (data) => {
@@ -65,7 +57,6 @@ export default function SurveyPage() {
 
     const fullName = `${data.lastName}, ${data.firstName}`;
 
-    // Calculate average score
     const ratings = [
       Number(data.appearance),
       Number(data.behavior),
@@ -73,6 +64,7 @@ export default function SurveyPage() {
       Number(data.vehicleCondition),
       Number(data.onTime),
     ];
+
     const averageScore =
       ratings.reduce((sum, val) => sum + val, 0) / ratings.length;
 
@@ -80,11 +72,10 @@ export default function SurveyPage() {
       .from("passenger_survey")
       .insert([
         {
-          // email: data.email,
           passenger_name: fullName,
           travel_date: data.travelDate,
-          driver_name: data.driverName,
-          vehicle: data.vehicle,
+          driver_id: Number(data.driver_id),
+          vehicle_id: Number(data.vehicle_id),
           rating_appearance: data.appearance,
           rating_behavior: data.behavior,
           rating_safety: data.safety,
@@ -103,7 +94,7 @@ export default function SurveyPage() {
       reset();
     }
 
-    const newRequestId = surveyData[0]?.id;
+    const newRequestId = surveyData?.[0]?.id;
     if (newRequestId) {
       navigate(`/survey/finish/${newRequestId}`, { replace: true });
     }
@@ -156,18 +147,14 @@ export default function SurveyPage() {
             className="size-20 sm:size-28"
             src="https://yelvewyjonvcyucwjcti.supabase.co/storage/v1/object/public/NEAMotorpoolBucket/national_electrification_logo.png"
             alt="NEA Logo"
-            onError={(e) => {
-              e.currentTarget.src =
-                "https://8upload.com/display/33ff4ec683a6b52a/nea-logo.png.php";
-            }}
           />
-          <div className="space-x-0">
-            <h2 className="mb-2 text-center text-3xl font-bold tracking-tight text-green-800 uppercase">
+          <div>
+            <h2 className="mb-2 text-3xl font-bold tracking-tight text-green-800 uppercase">
               Passenger Survey
             </h2>
-            <p className="mb-4 text-center text-sm text-gray-500">
+            <p className="mb-4 text-sm text-gray-500">
               Tell us how is your experience with our service vehicles and
-              drivers. Your feedback is important to us!
+              drivers.
             </p>
           </div>
         </div>
@@ -178,27 +165,16 @@ export default function SurveyPage() {
             name="lastName"
             register={register}
             error={errors.lastName}
-            placeholder="Enter last name"
           />
-
           <OurInput
             label="First Name"
             name="firstName"
             register={register}
             error={errors.firstName}
-            placeholder="Enter first name"
           />
         </div>
 
         <form onSubmit={handleSubmit(submitSurvey)} className="space-y-8">
-          {/* <OurInput
-            label="Email"
-            label2="Use the email used to make the vehicle request"
-            name="email"
-            register={register}
-            error={errors.email}
-          /> */}
-
           <OurInput
             label="Travel Date"
             type="date"
@@ -212,17 +188,17 @@ export default function SurveyPage() {
             <label className="text-sm font-bold">Driver</label>
             <select
               className={`select mt-1 w-full ${
-                errors.driverName ? "input-error" : ""
+                errors.driver_id ? "input-error" : ""
               }`}
               defaultValue=""
-              {...register("driverName")}
+              {...register("driver_id")}
             >
               <option value="" disabled>
                 Select Driver
               </option>
               {drivers.map((d) => (
                 <option key={d.id} value={d.id}>
-                  {d.first_name} {d.last_name}
+                  {d.last_name}, {d.first_name} {d.middle_initial}.
                 </option>
               ))}
             </select>
@@ -230,17 +206,21 @@ export default function SurveyPage() {
 
           {/* VEHICLE */}
           <div>
-            <label className="mt-1 text-sm font-bold">Vehicle</label>
+            <label className="text-sm font-bold">Vehicle</label>
             <select
-              className={`select w-full ${errors.vehicle ? "input-error" : ""}`}
+              className={`select w-full ${
+                errors.vehicle_id ? "input-error" : ""
+              }`}
               defaultValue=""
-              {...register("vehicle")}
+              {...register("vehicle_id")}
             >
               <option value="" disabled>
                 Select Vehicle
               </option>
               {vehicles.map((v) => (
-                <option key={v.id}>{v.name}</option>
+                <option key={v.id} value={v.id}>
+                  {v.name}
+                </option>
               ))}
             </select>
           </div>
@@ -254,19 +234,19 @@ export default function SurveyPage() {
           <RatingGroup
             name="behavior"
             title="Driver's Behavior"
-            description="Courtesy, assistance, professionalism"
+            description="Courtesy, professionalism"
           />
 
           <RatingGroup
             name="safety"
             title="Safety Driving Skills"
-            description="Traffic laws, attention, safe driving"
+            description="Traffic laws, safe driving"
           />
 
           <RatingGroup
             name="vehicleCondition"
             title="Vehicle Condition"
-            description="Cleanliness, AC, maintenance"
+            description="Cleanliness, maintenance"
           />
 
           <RatingGroup
@@ -275,14 +255,12 @@ export default function SurveyPage() {
             description="Pickup and arrival punctuality"
           />
 
-          {/* COMMENTS */}
           <div className="flex flex-col gap-2">
             <label className="text-sm font-bold">Comments / Suggestions</label>
             <textarea
               className={`textarea textarea-neutral w-full ${
                 errors.comments ? "input-error" : ""
               }`}
-              placeholder="Any comments about our service?"
               {...register("comments")}
             />
           </div>
@@ -290,7 +268,7 @@ export default function SurveyPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn btn-lg tracking-woder mt-5 w-full rounded-2xl bg-green-600 py-7 font-bold text-white uppercase hover:bg-green-500"
+            className="btn btn-lg mt-5 w-full rounded-2xl bg-green-600 py-7 font-bold text-white uppercase hover:bg-green-500"
           >
             {isSubmitting ? "Submitting..." : "Submit Survey"}
           </button>
