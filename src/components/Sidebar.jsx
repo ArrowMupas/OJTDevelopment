@@ -138,11 +138,11 @@ export default function Sidebar() {
             </details>
           </li>
 
-          <li>
+          {/* <li>
             <MenuLink to="/transactions" icon={ScrollText}>
               Transactions
             </MenuLink>
-          </li>
+          </li> */}
 
           <li>
             <MenuLink to="/inquiries" icon={MessageCircleQuestionMark}>
@@ -150,12 +150,11 @@ export default function Sidebar() {
             </MenuLink>
           </li>
 
-           <li>
+          <li>
             <MenuLink to="/ticket" icon={TicketCheckIcon}>
               Trip Ticket
             </MenuLink>
           </li>
-
 
           <li></li>
           <li>
