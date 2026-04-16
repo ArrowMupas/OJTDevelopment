@@ -30,7 +30,7 @@ import AdminDashboard from "./pages/management/AdminDashboard";
 import Staffs from "./pages/management/Staffs";
 import InquiryPage from "./pages/management/InquiryPage";
 import ManageRequestsPage from "./pages/management/ManageRequestPage";
-import SurveyResult from "./pages/management/surveyresult";
+import SurveyResult from "./pages/management/Surveyresult";
 
 // Vehicles
 import VehiclePage from "./pages/vehicles/Vehicles";
@@ -46,7 +46,6 @@ import TransactionsPage from "./pages/TransactionsPage";
 import DriverMonitoringPage from "./pages/DriverMonitoringPage";
 import VehicleStatusPage from "./pages/VehicleStatusPage";
 import TripTicketPage from "./pages/TripTicketPage";
-
 
 function App() {
   return (
@@ -109,7 +108,7 @@ function App() {
           <Route path="/staff-management" element={<Staffs />} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/inquiries" element={<InquiryPage />} />
-          <Route path="/ticket" element={<TripTicketPage/>} />
+          <Route path="/ticket" element={<TripTicketPage />} />
           <Route path="/survey-results" element={<SurveyResult />} />
         </Route>
 
