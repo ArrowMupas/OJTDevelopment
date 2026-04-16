@@ -46,6 +46,7 @@ import DriverMonitoringPage from "./pages/DriverMonitoringPage";
 import VehicleStatusPage from "./pages/VehicleStatusPage";
 import TripTicketPage from "./pages/TripTicketPage";
 
+
 function App() {
   return (
     <ErrorBoundary>
