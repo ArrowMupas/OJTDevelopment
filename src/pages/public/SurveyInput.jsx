@@ -13,7 +13,13 @@ export default function SurveyInput() {
     async function fetchSurvey() {
       const { data, error } = await supabase
         .from("passenger_survey")
-        .select("*")
+        .select(
+          `
+          *,
+          drivers ( first_name, last_name, middle_initial ),
+          vehicles ( name )
+        `,
+        )
         .eq("id", id)
         .single();
 
@@ -80,7 +86,9 @@ export default function SurveyInput() {
                     <div className="space-y-1">
                       <p className="text-xs text-gray-500">Driver</p>
                       <p className="text-lg font-bold">
-                        {survey.driver_name || "N/A"}
+                        {survey.drivers.last_name || "N/A"},{" "}
+                        {survey.drivers.first_name || "N/A"}{" "}
+                        {survey.drivers.middle_initial || "N/A"}.
                       </p>
                     </div>
 
@@ -94,7 +102,7 @@ export default function SurveyInput() {
                     <div className="space-y-1">
                       <p className="text-xs text-gray-500">Vehicle</p>
                       <p className="font-medium text-gray-800">
-                        {survey.vehicle || "N/A"}
+                        {survey.vehicles.name || "N/A"}
                       </p>
                     </div>
                   </div>

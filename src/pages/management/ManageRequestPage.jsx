@@ -73,6 +73,7 @@ export default function ManageRequestsPage() {
         supabase
           .from("drivers")
           .select("*")
+          .eq("designation", "Driver Mechanic B")
           .order("last_name", { ascending: true }),
         supabase
           .from("vehicles")
@@ -303,7 +304,9 @@ export default function ManageRequestsPage() {
                         </span>
                       </td>
 
-                      <td className="capitalize">{req.destination}</td>
+                      <td className="text-success font-bold capitalize">
+                        {req.destination}
+                      </td>
 
                       <td className="">
                         <span className="text-sm">

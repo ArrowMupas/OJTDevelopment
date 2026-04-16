@@ -334,21 +334,12 @@ export default function MaintenancePage() {
         </div>
 
         <div className="flex gap-2">
-          <button
-            className="btn btn-primary flex gap-2"
-            onClick={() => {
-              setIsEditing(false);
-              setVehicleToEdit(null);
-              reset({});
-              setSelectedFile(null);
-              document.getElementById("vehicleModal").showModal();
-            }}
-          >
-            <div className="flex">
-              <Plus className="size-6" />
-            </div>
-            <span className="hidden sm:inline">Add New Vehicle</span>
-          </button>
+          <Link to="/vehicles/vehicle-history">
+            <button className="btn btn-info flex gap-2 text-white">
+              <FileClock className="h-4 w-6" />
+              <span className="hidden truncate sm:inline">Vehicle History</span>
+            </button>
+          </Link>
 
           <Link to="/vehicles/unoperational">
             <button className="btn btn-error flex gap-2 text-white">
@@ -389,9 +380,9 @@ export default function MaintenancePage() {
         </div>
       </div>
 
-      <div className="flex items-center gap-8 sm:justify-between">
+      <div className="flex items-center gap-2 sm:justify-between">
         <div className="flex w-full gap-2">
-          <label className="input input-neutral w-full sm:w-auto">
+          <label className="input input-neutral">
             <Search className="h-4 w-6" />
             <input
               type="search"
@@ -424,14 +415,22 @@ export default function MaintenancePage() {
               </li>
             </ul>
           </div> */}
-        </div>
-
-        <Link to="/vehicles/vehicle-history">
-          <button className="btn btn-warning flex gap-2 text-white">
-            <FileClock className="h-4 w-6" />
-            <span className="truncate">Vehicle History</span>
-          </button>
-        </Link>
+        </div>{" "}
+        <button
+          className="btn btn-primary flex gap-2"
+          onClick={() => {
+            setIsEditing(false);
+            setVehicleToEdit(null);
+            reset({});
+            setSelectedFile(null);
+            document.getElementById("vehicleModal").showModal();
+          }}
+        >
+          <div className="flex">
+            <Plus className="size-6" />
+          </div>
+          <span className="">Add New Vehicle</span>
+        </button>
       </div>
 
       <div className="fab">
@@ -739,22 +738,22 @@ export default function MaintenancePage() {
                 >
                   <div className="absolute top-1 right-1 flex flex-col items-end gap-1">
                     {vehicle.status === "warning" && (
-                      <div className="badge badge-sm badge-warning text-xs text-white">
+                      <div className="badge badge-sm badge-soft badge-warning text-xs">
                         Insurance expiring
                       </div>
                     )}
                     {vehicle.status === "expired" && (
-                      <div className="badge badge-sm badge-error text-xs text-white">
+                      <div className="badge badge-sm badge-soft badge-error text-xs">
                         Insurance expired
                       </div>
                     )}
                     {vehicle.status2 === "warning" && (
-                      <div className="badge badge-sm badge-warning text-xs text-white">
+                      <div className="badge badge-sm badge-soft badge-warning text-xs">
                         Registration expiring
                       </div>
                     )}
                     {vehicle.status2 === "expired" && (
-                      <div className="badge badge-sm badge-error text-xs text-white">
+                      <div className="badge badge-sm badge-soft badge-error text-xs">
                         Registration expired
                       </div>
                     )}

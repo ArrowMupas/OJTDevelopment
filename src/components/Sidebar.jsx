@@ -9,6 +9,7 @@ import {
   FolderClosed,
   MapPin,
   TicketCheckIcon,
+  NotebookPen,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { supabase } from "../supabaseClient";
@@ -157,6 +158,11 @@ export default function Sidebar() {
 
 
           <li></li>
+          <li>
+            <MenuLink to="/survey-results" icon={NotebookPen}>
+              Survey Results
+            </MenuLink>
+          </li>
         </ul>
       </div>
 
