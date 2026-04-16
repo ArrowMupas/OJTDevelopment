@@ -8,6 +8,7 @@ import {
   LogOut,
   FolderClosed,
   MapPin,
+  TicketCheckIcon,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { supabase } from "../supabaseClient";
@@ -147,6 +148,14 @@ export default function Sidebar() {
               Inquiry
             </MenuLink>
           </li>
+
+           <li>
+            <MenuLink to="/ticket" icon={TicketCheckIcon}>
+              Trip Ticket
+            </MenuLink>
+          </li>
+
+
           <li></li>
         </ul>
       </div>
