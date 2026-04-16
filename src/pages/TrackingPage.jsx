@@ -191,7 +191,7 @@ export default function TrackingPage() {
           </select>
 
           <button
-            className="btn btn-warning flex items-center gap-2 text-white"
+            className="btn btn-info flex items-center gap-2 text-white"
             onClick={() => navigate("/tracking-history")} // ✅ REDIRECT HERE
           >
             <FolderClock className="size-4" />

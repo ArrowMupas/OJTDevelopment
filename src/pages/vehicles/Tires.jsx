@@ -167,7 +167,7 @@ export default function Tires() {
               className="card bg-base-100 relative shadow-sm transition-all hover:ring-2 hover:ring-indigo-400"
             >
               <div
-                className={`absolute top-1 right-1 ${statusBadge.color} badge badge-sm`}
+                className={`absolute top-1 right-1 ${statusBadge.color} badge badge-sm badge-soft`}
               >
                 {statusBadge.text}
               </div>

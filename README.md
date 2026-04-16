@@ -38,6 +38,20 @@ being updated
 Just like views I will also leave the query for the trigger so it can be adjusted
 and documented. You can also view them on supabase at Database > Triggers
 
+## Colors
+
+We use daisyUI for our design and they offer some default styling and colors which we
+use for easier and mroe consistent designing.
+
+Some colors from DaisyUI are used for specific entities
+
+| Entity                                            |  Color  |
+| :------------------------------------------------ | :-----: |
+| Success, Completed, OK, Done, Main Topics         | success |
+| Failure, Delete, Error, Inactive, Undone, Expired |  error  |
+| History                                           |  info   |
+| Add, Vehicle                                      | primary |
+
 ---
 
 ## 🚀 Git Commands (Quick Reference)
