@@ -8,6 +8,7 @@ import {
   LogOut,
   FolderClosed,
   MapPin,
+  TicketCheckIcon,
   NotebookPen,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -148,6 +149,15 @@ export default function Sidebar() {
               Inquiry
             </MenuLink>
           </li>
+
+           <li>
+            <MenuLink to="/ticket" icon={TicketCheckIcon}>
+              Trip Ticket
+            </MenuLink>
+          </li>
+
+
+          <li></li>
           <li>
             <MenuLink to="/survey-results" icon={NotebookPen}>
               Survey Results

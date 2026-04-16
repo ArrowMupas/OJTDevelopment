@@ -45,6 +45,8 @@ import TrackingHistory from "./pages/TrackingHistory";
 import TransactionsPage from "./pages/TransactionsPage";
 import DriverMonitoringPage from "./pages/DriverMonitoringPage";
 import VehicleStatusPage from "./pages/VehicleStatusPage";
+import TripTicketPage from "./pages/TripTicketPage";
+
 
 function App() {
   return (
@@ -107,6 +109,7 @@ function App() {
           <Route path="/staff-management" element={<Staffs />} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/inquiries" element={<InquiryPage />} />
+          <Route path="/ticket" element={<TripTicketPage/>} />
           <Route path="/survey-results" element={<SurveyResult />} />
         </Route>
 
