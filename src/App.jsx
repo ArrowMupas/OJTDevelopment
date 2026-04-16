@@ -30,6 +30,7 @@ import AdminDashboard from "./pages/management/AdminDashboard";
 import Staffs from "./pages/management/Staffs";
 import InquiryPage from "./pages/management/InquiryPage";
 import ManageRequestsPage from "./pages/management/ManageRequestPage";
+import SurveyResult from "./pages/management/surveyresult";
 
 // Vehicles
 import VehiclePage from "./pages/vehicles/Vehicles";
@@ -106,6 +107,7 @@ function App() {
           <Route path="/staff-management" element={<Staffs />} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/inquiries" element={<InquiryPage />} />
+          <Route path="/survey-results" element={<SurveyResult />} />
         </Route>
 
         <Route element={<PublicLayout />}>
