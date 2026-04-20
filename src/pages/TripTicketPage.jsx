@@ -10,8 +10,12 @@ export default function TripTicketPage() {
 
   const [history, setHistory] = useState([]);
 
+  // 🔍 FILTER STATES
+  const [search, setSearch] = useState("");
+  const [filterDate, setFilterDate] = useState("");
+  const [filterRating, setFilterRating] = useState("");
+
   const receiveTicket = () => {
-    // ✅ Validate date & time
     if (!dateReceived || !timeReceived) {
       alert("Please select date and time!");
       return;
@@ -35,10 +39,8 @@ export default function TripTicketPage() {
 
     setHistory([...history, newRecord]);
 
-    // 🔥 Generate next ticket number
     const nextNumber = `TT-${String(history.length + 2).padStart(3, "0")}`;
 
-    // 🔄 Reset form
     setTimeout(() => {
       setTicketNo(nextNumber);
       setStatus("Pending");
@@ -49,128 +51,170 @@ export default function TripTicketPage() {
     }, 1000);
   };
 
+  // 🔍 FILTER LOGIC
+  const filteredHistory = history.filter((item) => {
+    return (
+      item.number.toLowerCase().includes(search.toLowerCase()) &&
+      (filterDate ? item.date === filterDate : true) &&
+      (filterRating ? item.rating === Number(filterRating) : true)
+    );
+  });
+
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-8">
+    <div className="p-6 max-w-6xl mx-auto">
+      <div className="flex flex-col md:flex-row gap-6">
 
-      {/* ===== Trip Ticket Form ===== */}
-      <div className="card bg-base-100 shadow-xl p-6 space-y-4">
-        <h2 className="text-xl font-bold text-center">Trip Ticket</h2>
+        {/* ===== Trip Ticket Form ===== */}
+        <div className="card bg-base-100 shadow-xl p-6 space-y-4 flex-1">
+          <h2 className="text-xl font-bold text-center">
+            Driver's Trip Ticket
+          </h2>
 
-        {/* Ticket No */}
-        <div>
-          <label className="font-semibold">Trip Ticket No.</label>
-          <input
+          <div>
+            <label className="font-semibold">DTT No.</label>
+           <input
             type="text"
-            value={ticketNo}
+            onChange={(e) => setTicketNo(e.target.value)}
             className="input input-bordered w-full mt-1"
-            readOnly
-          />
-        </div>
-
-        {/* Status */}
-        <div>
-          <label className="font-semibold">Status</label>
-          <input
-            type="text"
-            value={status}
-            className="input input-bordered w-full mt-1"
-            readOnly
-          />
-        </div>
-
-        {/* ✅ Selectable Date */}
-        <div>
-          <label className="font-semibold">Select Date</label>
-          <input
-            type="date"
-            value={dateReceived}
-            onChange={(e) => setDateReceived(e.target.value)}
-            className="input input-bordered w-full mt-1"
-          />
-        </div>
-
-        {/* ✅ Selectable Time */}
-        <div>
-          <label className="font-semibold">Select Time</label>
-          <input
-            type="time"
-            value={timeReceived}
-            onChange={(e) => setTimeReceived(e.target.value)}
-            className="input input-bordered w-full mt-1"
-          />
-        </div>
-
-        {/* Rating */}
-        <div>
-          <label className="font-semibold mb-2 block">Driver Rating</label>
-          <div className="flex gap-2">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                onClick={() => setRating(star)}
-                className={`text-2xl ${
-                  star <= rating ? "text-yellow-400" : "text-gray-300"
-                }`}
-              >
-                ★
-              </button>
-            ))}
+            />
           </div>
-          <p className="text-sm mt-1 text-gray-500">
-            Selected: {rating} star{rating > 1 && "s"}
-          </p>
+
+          <div>
+            <label className="font-semibold">Status</label>
+            <input
+              type="text"
+              value={status}
+              className="input input-bordered w-full mt-1"
+              
+            />
+          </div>
+
+          <div>
+            <label className="font-semibold">Select Date</label>
+            <input
+              type="date"
+              value={dateReceived}
+              onChange={(e) => setDateReceived(e.target.value)}
+              className="input input-bordered w-full mt-1"
+            />
+          </div>
+
+          <div>
+            <label className="font-semibold">Select Time</label>
+            <input
+              type="time"
+              value={timeReceived}
+              onChange={(e) => setTimeReceived(e.target.value)}
+              className="input input-bordered w-full mt-1"
+            />
+          </div>
+
+          <div>
+            <label className="font-semibold mb-2 block">
+              Driver Rating
+            </label>
+            <div className="flex gap-2">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => setRating(star)}
+                  className={`text-2xl ${
+                    star <= rating ? "text-yellow-400" : "text-gray-300"
+                  }`}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+            <p className="text-sm mt-1 text-gray-500">
+              Selected: {rating} star{rating > 1 && "s"}
+            </p>
+          </div>
+
+          <button
+            onClick={receiveTicket}
+            disabled={isReceived}
+            className={`btn w-full ${
+              isReceived ? "btn-disabled" : "btn-success"
+            }`}
+          >
+            {isReceived ? "Received" : "Receive"}
+          </button>
         </div>
 
-        {/* Button */}
-        <button
-          onClick={receiveTicket}
-          disabled={isReceived}
-          className={`btn w-full ${
-            isReceived ? "btn-disabled" : "btn-success"
-          }`}
-        >
-          {isReceived ? "Received" : "Receive"}
-        </button>
-      </div>
+        {/* ===== Trip History ===== */}
+        <div className="card bg-base-100 shadow-xl p-6 flex-1">
+          <h2 className="text-xl font-bold mb-4">
+            Trip History Report
+          </h2>
 
-      {/* ===== History / Report ===== */}
-      <div className="card bg-base-100 shadow-xl p-6">
-        <h2 className="text-xl font-bold mb-4">Trip History Report</h2>
+          {/* 🔍 FILTER UI */}
+          <div className="grid md:grid-cols-3 gap-3 mb-4">
+            <input
+              type="text"
+              placeholder="Search DTT No..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="input input-bordered w-full"
+            />
 
-        {history.length === 0 ? (
-          <p className="text-gray-500">No records yet.</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="table w-full">
-              <thead>
-                <tr>
-                  <th>Trip Ticket No.</th>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Rating</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {history.map((item, index) => (
-                  <tr key={index}>
-                    <td>{item.number}</td>
-                    <td>{item.date}</td>
-                    <td>{item.time}</td>
-                    <td>{"★".repeat(item.rating)}</td>
-                    <td>
-                      <span className="badge badge-success">
-                        {item.status}
-                      </span>
-                    </td>
+            <input
+              type="date"
+              value={filterDate}
+              onChange={(e) => setFilterDate(e.target.value)}
+              className="input input-bordered w-full"
+            />
+
+            <select
+              value={filterRating}
+              onChange={(e) => setFilterRating(e.target.value)}
+              className="select select-bordered w-full"
+            >
+              <option value="">All Ratings</option>
+              <option value="5">5 Stars</option>
+              <option value="4">4 Stars</option>
+              <option value="3">3 Stars</option>
+              <option value="2">2 Stars</option>
+              <option value="1">1 Star</option>
+            </select>
+          </div>
+
+          {/* TABLE */}
+          {filteredHistory.length === 0 ? (
+            <p className="text-gray-500">No matching records.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="table w-full">
+                <thead>
+                  <tr>
+                    <th>Trip Ticket No.</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Rating</th>
+                    <th>Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+                </thead>
+                <tbody>
+                  {filteredHistory.map((item, index) => (
+                    <tr key={index}>
+                      <td>{item.number}</td>
+                      <td>{item.date}</td>
+                      <td>{item.time}</td>
+                      <td>{"★".repeat(item.rating)}</td>
+                      <td>
+                        <span className="badge badge-success">
+                          {item.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
 
+      </div>
     </div>
   );
 }
