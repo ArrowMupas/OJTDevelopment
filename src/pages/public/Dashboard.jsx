@@ -6,7 +6,6 @@ export default function Dashboard() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch service vehicle requests
   async function fetchRequests() {
     const { data, error } = await supabase
       .from("service_vehicle_requests")
@@ -38,6 +37,8 @@ export default function Dashboard() {
 
   useEffect(() => {
     let channel;
+    let reconnectTimeout;
+    let isSubscribed = true;
 
     async function loadInitialData() {
       setLoading(true);
@@ -46,29 +47,54 @@ export default function Dashboard() {
       setLoading(false);
     }
 
+    function setupRealtimeSubscription() {
+      if (!isSubscribed) return;
+
+      channel = supabase
+        .channel("service_vehicle_requests_realtime")
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "service_vehicle_requests",
+          },
+          async (payload) => {
+            console.log("Realtime change:", payload);
+            const updatedData = await fetchRequests();
+            setRequests(updatedData);
+          },
+        )
+        .subscribe((status) => {
+          console.log("[Realtime Status]:", status);
+
+          // Handle different statuses
+          if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+            console.log("Connection issue, attempting to reconnect...");
+            // Clean up current channel
+            if (channel) {
+              supabase.removeChannel(channel);
+            }
+            // Attempt reconnection after delay
+            clearTimeout(reconnectTimeout);
+            reconnectTimeout = setTimeout(() => {
+              if (isSubscribed) {
+                setupRealtimeSubscription();
+              }
+            }, 3000); // Wait 5 seconds before reconnecting
+          }
+        });
+    }
+
     loadInitialData();
-
-    channel = supabase
-      .channel("service_vehicle_requests_realtime")
-      .on(
-        "postgres_changes",
-        {
-          event: "*", // INSERT | UPDATE | DELETE
-          schema: "public",
-          table: "service_vehicle_requests",
-        },
-        async (payload) => {
-          console.log("Realtime change:", payload);
-
-          // simplest + safest approach: refetch
-          const updatedData = await fetchRequests();
-          setRequests(updatedData);
-        },
-      )
-      .subscribe();
+    setupRealtimeSubscription();
 
     return () => {
-      supabase.removeChannel(channel);
+      isSubscribed = false;
+      clearTimeout(reconnectTimeout);
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
     };
   }, []);
 
@@ -82,7 +108,7 @@ export default function Dashboard() {
                 <th>Department</th>
                 <th>Date & Time</th>
                 <th className="">Destination</th>
-                <th>Name</th>
+                <th>Passenger Name</th>
                 <th>Instructions</th>
                 <th className="bg-blue-500">Assigned Driver</th>
                 <th className="bg-violet-500">Assigned Vehicle</th>
@@ -121,20 +147,24 @@ export default function Dashboard() {
                     <tr key={req.id}>
                       <th className="uppercase">{req.department}</th>
 
-                      <td className="flex flex-col items-start justify-center truncate">
-                        <span>{format(parsedDateTime, "MMM. d, yyyy")}</span>
-                        <span>{format(parsedDateTime, "hh:mm a")}</span>
+                      <td className="truncate">
+                        <div className="flex h-full flex-col items-start justify-center">
+                          <span>{format(parsedDateTime, "MMM. d, yyyy")}</span>
+                          <span>{format(parsedDateTime, "hh:mm a")}</span>
+                        </div>
                       </td>
 
                       <td className="font-bold text-green-700 capitalize">
                         {req.destination}
                       </td>
 
-                      <td className="flex flex-col">
-                        <span className="capitalize">{req.passengers}</span>
-                        <span className="text-xs font-medium text-gray-500">
-                          {req.email}
-                        </span>
+                      <td className="">
+                        <div className="flex h-full flex-col items-start justify-center">
+                          <span className="capitalize">{req.passengers}</span>
+                          <span className="text-xs font-medium text-gray-500">
+                            {req.email}
+                          </span>
+                        </div>
                       </td>
 
                       <td className="">{req.other_instructions}</td>
@@ -146,7 +176,9 @@ export default function Dashboard() {
                       </td>
 
                       <td className="bg-violet-50">
-                        {req.vehicles?.name || "Unassigned"}
+                        <div className="truncate">
+                          {req.vehicles?.name || "Unassigned"}
+                        </div>
                         {req.vehicles?.plate_number && (
                           <div className="badge badge-dash badge-primary">
                             {req.vehicles.plate_number}

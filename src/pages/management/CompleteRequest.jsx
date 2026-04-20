@@ -280,7 +280,7 @@ export default function CompleteRequest() {
                       {/* DRIVER SELECT */}
                       <td>
                         <select
-                          className="select"
+                          className="select select-sm"
                           disabled={
                             req.status === "Completed" ||
                             req.status === "Cancelled"
@@ -309,7 +309,7 @@ export default function CompleteRequest() {
                       <td>
                         <div className="flex flex-col gap-2">
                           <select
-                            className="select"
+                            className="select select-sm"
                             disabled={
                               req.status === "Completed" ||
                               req.status === "Cancelled"
@@ -337,7 +337,7 @@ export default function CompleteRequest() {
                       {/* STATUS */}
                       <td className="min-w-35">
                         <select
-                          className={clsx("select", {
+                          className={clsx("select select-sm", {
                             "select-success text-success":
                               req.status === "Completed",
                             "select-error text-error":
