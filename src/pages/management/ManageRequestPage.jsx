@@ -29,7 +29,8 @@ export default function ManageRequestsPage() {
       .from("service_vehicle_requests")
       .select("*")
       .in("status", ["Pending", "On_Going"])
-      .order("timestamp", { ascending: false });
+      .order("departure_date", { ascending: true })
+      .order("departure_time", { ascending: true });
 
     const searchColumns = [
       "department",
