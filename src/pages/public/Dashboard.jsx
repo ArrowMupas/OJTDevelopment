@@ -25,7 +25,8 @@ export default function Dashboard() {
       `,
       )
       .in("status", ["Pending", "On_Going"])
-      .order("timestamp", { ascending: false });
+      .order("departure_date", { ascending: true })
+      .order("departure_time", { ascending: true });
 
     if (error) {
       console.error("Error fetching requests:", error);
@@ -36,20 +37,46 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    async function loadData() {
+    let channel;
+
+    async function loadInitialData() {
       setLoading(true);
       const data = await fetchRequests();
       setRequests(data);
       setLoading(false);
     }
-    loadData();
+
+    loadInitialData();
+
+    channel = supabase
+      .channel("service_vehicle_requests_realtime")
+      .on(
+        "postgres_changes",
+        {
+          event: "*", // INSERT | UPDATE | DELETE
+          schema: "public",
+          table: "service_vehicle_requests",
+        },
+        async (payload) => {
+          console.log("Realtime change:", payload);
+
+          // simplest + safest approach: refetch
+          const updatedData = await fetchRequests();
+          setRequests(updatedData);
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   return (
     <main className="min-h-screen pb-40">
       <div className="">
-        <div className="overflow-x-auto">
-          <table className="table-sm lg:table-md xl:table-lg table">
+        <div className="min-w-full overflow-x-auto">
+          <table className="table-sm lg:table-lg md:table-md table">
             <thead className="bg-green-500 text-white">
               <tr className="uppercase">
                 <th>Department</th>
@@ -59,7 +86,6 @@ export default function Dashboard() {
                 <th>Instructions</th>
                 <th className="bg-blue-500">Assigned Driver</th>
                 <th className="bg-violet-500">Assigned Vehicle</th>
-                <th className="bg-violet-500">Plate No.</th>
               </tr>
             </thead>
             <tbody>
@@ -96,12 +122,8 @@ export default function Dashboard() {
                       <th className="uppercase">{req.department}</th>
 
                       <td className="flex flex-col items-start justify-center truncate">
-                        <span className="">
-                          {format(formattedDateTime, "MMM. d, yyyy")}
-                        </span>
-                        <span className="">
-                          {format(formattedDateTime, "hh:mm a")}
-                        </span>
+                        <span>{format(parsedDateTime, "MMM. d, yyyy")}</span>
+                        <span>{format(parsedDateTime, "hh:mm a")}</span>
                       </td>
 
                       <td className="font-bold text-green-700 capitalize">
@@ -125,11 +147,8 @@ export default function Dashboard() {
 
                       <td className="bg-violet-50">
                         {req.vehicles?.name || "Unassigned"}
-                      </td>
-
-                      <td className="truncate bg-violet-50">
                         {req.vehicles?.plate_number && (
-                          <div className="badge badge-dash badge-primary text-base lg:text-lg">
+                          <div className="badge badge-dash badge-primary">
                             {req.vehicles.plate_number}
                           </div>
                         )}

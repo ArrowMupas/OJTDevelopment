@@ -20,7 +20,8 @@ export default function CompleteRequest() {
       .from("service_vehicle_requests")
       .select("*")
       .in("status", ["Completed", "Cancelled"])
-      .order("timestamp", { ascending: false });
+      .order("departure_date", { ascending: false })
+      .order("departure_time", { ascending: false });
 
     const searchColumns = [
       "department",
