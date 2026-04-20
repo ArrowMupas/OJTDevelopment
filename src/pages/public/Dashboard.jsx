@@ -141,7 +141,7 @@ export default function Dashboard() {
 
                       <td className="bg-blue-50">
                         {req.drivers
-                          ? `${req.drivers.first_name} ${req.drivers.middle_initial}. ${req.drivers.last_name}`
+                          ? `${req.drivers.last_name}, ${req.drivers.first_name} ${req.drivers.middle_initial}. `
                           : "Unassigned"}
                       </td>
 
