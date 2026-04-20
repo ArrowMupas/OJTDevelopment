@@ -322,7 +322,7 @@ export default function ManageRequestsPage() {
                       {/* DRIVER SELECT */}
                       <td>
                         <select
-                          className="select"
+                          className="select select-sm"
                           disabled={
                             req.status === "Completed" ||
                             req.status === "Cancelled"
@@ -352,7 +352,7 @@ export default function ManageRequestsPage() {
                       <td>
                         <div className="flex flex-col gap-2">
                           <select
-                            className="select"
+                            className="select select-sm"
                             disabled={
                               req.status === "Completed" ||
                               req.status === "Cancelled"
@@ -381,7 +381,7 @@ export default function ManageRequestsPage() {
                       {/* STATUS */}
                       <td className="min-w-35">
                         <select
-                          className={clsx("select", {
+                          className={clsx("select select-sm", {
                             "select-success text-success":
                               req.status === "Completed",
                             "select-error text-error":
