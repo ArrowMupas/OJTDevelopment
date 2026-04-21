@@ -19,12 +19,17 @@ export default function SurveyPage() {
       const { data: driverData, error: driverError } = await supabase
         .from("drivers")
         .select("*")
-        .in("designation", ["Driver Mechanic B"])
+        .in("designation", [
+          "Driver Mechanic B",
+          "Driver Mechanic A",
+          "Sr. Auto Mechanic",
+        ])
         .order("last_name", { ascending: true });
 
       const { data: vehicleData, error: vehicleError } = await supabase
         .from("vehicles")
         .select("*")
+        .neq("operational", false)
         .order("name", { ascending: true });
 
       if (driverError) console.error(driverError);
