@@ -396,14 +396,18 @@ export default function CompleteRequest() {
                           theme="light"
                           content={
                             <div className="w-64 p-3">
-                              <h3 className="font-bold">Instructions</h3>
+                              <h3 className="font-bold">Requested By</h3>
+                              <p>{req.requested_by || "None"}</p>
+
+                              <h3 className="mt-2 font-bold">Instructions</h3>
                               <p>{req.other_instructions || "None"}</p>
+
                               <h3 className="mt-2 font-bold">Items</h3>
                               <p>{req.items || "None"}</p>
                             </div>
                           }
                         >
-                          <Info className="size-5" />
+                          <Info className="size-5 cursor-pointer" />
                         </Tippy>
                       </td>
                     </tr>

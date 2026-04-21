@@ -86,6 +86,7 @@ export default function Dashboard() {
                 <th>Date & Time</th>
                 <th className="">Destination</th>
                 <th>Passenger Name</th>
+                <th>Purpose</th>
                 <th>Instructions</th>
                 <th className="bg-blue-500">Assigned Driver</th>
                 <th className="bg-violet-500">Assigned Vehicle</th>
@@ -122,37 +123,47 @@ export default function Dashboard() {
 
                   return (
                     <tr key={req.id}>
-                      <th className="uppercase">{req.department}</th>
+                      <th className="text-base uppercase">{req.department}</th>
 
                       <td className="truncate">
                         <div className="flex h-full flex-col items-start justify-center">
-                          <span>{format(parsedDateTime, "MMM. d, yyyy")}</span>
+                          <span>{format(parsedDateTime, "MMM. d, yy")}</span>
                           <span>{format(parsedDateTime, "hh:mm a")}</span>
                         </div>
                       </td>
 
-                      <td className="font-bold text-green-700 capitalize">
+                      <td className="max-w-50 font-bold text-green-700 capitalize">
                         {req.destination}
                       </td>
 
                       <td className="">
                         <div className="flex h-full flex-col items-start justify-center">
-                          <span className="capitalize">{req.passengers}</span>
+                          <span className="line-clamp-3 max-w-55 text-sm capitalize">
+                            {req.passengers}
+                          </span>
                           <span className="text-xs font-medium text-gray-500">
                             {req.email}
                           </span>
                         </div>
                       </td>
 
-                      <td className="">{req.other_instructions}</td>
-
-                      <td className="bg-blue-50">
-                        {req.drivers
-                          ? `${req.drivers.last_name}, ${req.drivers.first_name} ${req.drivers.middle_initial}. `
-                          : "Unassigned"}
+                      <td className="text-xs sm:text-sm">{req.purpose}</td>
+                      <td className="text-xs sm:text-sm">
+                        {req.other_instructions}
                       </td>
 
-                      <td className="bg-violet-50">
+                      <td className="truncate bg-blue-50">
+                        {req.drivers ? (
+                          <p className="text-base font-bold">
+                            {req.drivers.last_name}, {req.drivers.first_name}{" "}
+                            {req.drivers.middle_initial}.
+                          </p>
+                        ) : (
+                          <p className="text-sm text-gray-500">Unassigned</p>
+                        )}
+                      </td>
+
+                      <td className="bg-violet-50 text-sm font-bold">
                         <div className="truncate">
                           {req.vehicles?.name || "Unassigned"}
                         </div>
