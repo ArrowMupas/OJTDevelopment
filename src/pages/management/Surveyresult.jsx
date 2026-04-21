@@ -1,26 +1,77 @@
-import { FilterIcon, Search } from "lucide-react";
+import { File, FileArchive, FilterIcon, Search } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import debounce from "lodash.debounce";
+import * as XLSX from "xlsx";
 
 export default function SurveyPage() {
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [drivers, setDrivers] = useState([]);
+  const [selectedDriver, setSelectedDriver] = useState("");
+
+  async function fetchDrivers() {
+    const { data, error } = await supabase
+      .from("drivers")
+      .select("id, first_name, middle_initial, last_name")
+      .in("designation", [
+        "Driver Mechanic B",
+        "Driver Mechanic A",
+        "Sr. Auto Mechanic",
+      ])
+      .order("last_name", { ascending: true });
+
+    if (error) console.error(error);
+    else setDrivers(data);
+  }
+
   const [surveys, setSurveys] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  async function fetchSurveys(searchTerm = "") {
+  async function fetchSurveys(
+    searchTerm = "",
+    driverId = "",
+    start = "",
+    end = "",
+  ) {
     setLoading(true);
 
     let query = supabase
       .from("passenger_survey")
-      .select("*")
+      .select(
+        `
+      *,
+      drivers!inner (
+        id,
+        first_name,
+        middle_initial,
+        last_name
+      )
+    `,
+      )
       .order("timestamp", { ascending: false });
 
+    // Search
     if (searchTerm) {
       query = query.or(
         `passenger_name.ilike.%${searchTerm}%,comments.ilike.%${searchTerm}%`,
       );
+    }
+
+    // Driver filter
+    if (driverId) {
+      query = query.eq("driver_id", driverId);
+    }
+
+    // Date range filter
+    if (start) {
+      query = query.gte("travel_date", start);
+    }
+
+    if (end) {
+      query = query.lte("travel_date", end);
     }
 
     const { data, error } = await query;
@@ -33,65 +84,174 @@ export default function SurveyPage() {
 
   useEffect(() => {
     fetchSurveys();
+    fetchDrivers();
   }, []);
 
   const debouncedSearch = useMemo(
-    () => debounce((value) => fetchSurveys(value), 400),
+    () =>
+      debounce((value, driverId, start, end) => {
+        fetchSurveys(value, driverId, start, end);
+      }, 400),
     [],
   );
 
+  const overallAverage = useMemo(() => {
+    if (!selectedDriver || surveys.length === 0) return null;
+
+    const valid = surveys.filter(
+      (s) => s.average_score !== null && s.average_score !== undefined,
+    );
+
+    if (valid.length === 0) return null;
+
+    const total = valid.reduce((sum, s) => sum + s.average_score, 0);
+    return total / valid.length;
+  }, [surveys, selectedDriver]);
+
+  function handleExport() {
+    if (!surveys.length) return;
+
+    const sheetData = [
+      ["Passenger Survey Report"],
+      [],
+      ["Total Responses:", surveys.length],
+      ...(selectedDriver && overallAverage !== null
+        ? [["Overall Average:", overallAverage.toFixed(2)]]
+        : []),
+      [],
+      [
+        "Name",
+        "Travel Date",
+        "Appearance",
+        "Behavior",
+        "Safety",
+        "Vehicle",
+        "On-time",
+        "Average",
+        "Comments",
+        "Driver Name",
+      ],
+      ...surveys.map((s) => [
+        s.passenger_name || "Anonymous",
+        s.travel_date ? format(new Date(s.travel_date), "MMM d, yyyy") : "-",
+        s.rating_appearance ?? "-",
+        s.rating_behavior ?? "-",
+        s.rating_safety ?? "-",
+        s.rating_vehicle ?? "-",
+        s.rating_ontime ?? "-",
+        s.average_score ? s.average_score.toFixed(2) : "-",
+        s.comments || "-",
+        `${s.drivers.last_name}, ${s.drivers.first_name} ${s.drivers.middle_initial}.`,
+      ]),
+    ];
+
+    const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+
+    worksheet["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 9 } }];
+
+    worksheet["!cols"] = [
+      { wch: 20 },
+      { wch: 15 },
+      { wch: 10 },
+      { wch: 10 },
+      { wch: 10 },
+      { wch: 10 },
+      { wch: 10 },
+      { wch: 10 },
+      { wch: 30 },
+      { wch: 25 },
+    ];
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Surveys");
+
+    XLSX.writeFile(workbook, "survey_report.xlsx");
+  }
+
   return (
     <main className="h-full w-full space-y-7 px-5 py-4 pb-25">
-      <div>
-        <h1 className="text-lg font-bold">Passenger Survey</h1>
-        <p className="text-sm text-gray-500">
-          All passenger survey responses can be viewed here.
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-lg font-bold">Passenger Survey</h1>
+          <p className="text-sm text-gray-500">
+            All passenger survey responses can be viewed here.
+          </p>
+        </div>
+
+        <button className="btn btn-secondary" onClick={handleExport}>
+          <FileArchive className="h-4 w-4" />
+          Generate Report
+        </button>
       </div>
 
-      <div className="space-x-2">
-        <label className="input input-neutral">
+      <div className="flex flex-col gap-2 sm:flex-row sm:justify-between">
+        <label className="input input-neutral w-full">
           <Search className="h-4 w-6" />
           <input
             type="search"
-            placeholder="Search"
+            placeholder="Search by Passenger Name"
             value={search}
             onChange={(e) => {
               const value = e.target.value;
               setSearch(value);
-              debouncedSearch(value);
+              debouncedSearch(value, selectedDriver, startDate, endDate);
             }}
           />
         </label>
 
-        <div className="dropdown">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn bg-green-600 text-white"
-          >
-            <FilterIcon className="h-4 w-6" />
-            Filter
-          </div>
+        <select
+          className="select w-full"
+          value={selectedDriver}
+          onChange={(e) => {
+            const value = e.target.value;
+            setSelectedDriver(value);
+            fetchSurveys(search, value);
+          }}
+        >
+          <option value="">All Drivers</option>
 
-          <ul
-            tabIndex={-1}
-            className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
-          >
-            <li>
-              <a>Ascending</a>
-            </li>
-            <li>
-              <a>Descending</a>
-            </li>
-            <li>
-              <a>Date</a>
-            </li>
-            <li>
-              <a>Rating</a>
-            </li>
-          </ul>
-        </div>
+          {drivers.map((driver) => (
+            <option key={driver.id} value={driver.id}>
+              {driver.last_name}, {driver.first_name} {driver.middle_initial}.
+            </option>
+          ))}
+        </select>
+
+        <input
+          type="date"
+          className="input input-bordered w-full"
+          value={startDate}
+          onChange={(e) => {
+            const value = e.target.value;
+            z;
+            setStartDate(value);
+            fetchSurveys(search, selectedDriver, value, endDate);
+          }}
+        />
+
+        <input
+          type="date"
+          className="input input-bordered w-full"
+          value={endDate}
+          onChange={(e) => {
+            const value = e.target.value;
+            setEndDate(value);
+            fetchSurveys(search, selectedDriver, startDate, value);
+          }}
+        />
+
+        <button
+          className="btn btn-error btn-soft"
+          onClick={() => {
+            setSearch("");
+            setSelectedDriver("");
+            setStartDate("");
+            setEndDate("");
+            fetchSurveys();
+          }}
+        >
+          Clear
+        </button>
       </div>
 
       <div className="border-0 bg-white">
@@ -102,25 +262,15 @@ export default function SurveyPage() {
                 <th>Name</th>
                 <th>Travel Date</th>
 
-                <th className="w-16 text-center" title="Appearance">
-                  Appearance Rating
-                </th>
-                <th className="w-16 text-center" title="Behavior">
-                  Behavior Rating
-                </th>
-                <th className="w-16 text-center" title="Safety">
-                  Safety Rating
-                </th>
-                <th className="w-16 text-center" title="Vehicle">
-                  Vehicle Rating
-                </th>
-                <th className="w-16 text-center" title="On-time">
-                  On-time Rating
-                </th>
+                <th className="text-center">Appearance</th>
+                <th className="text-center">Behavior</th>
+                <th className="text-center">Safety</th>
+                <th className="text-center">Vehicle</th>
+                <th className="text-center">On-time</th>
 
                 <th className="w-20 text-center">Avg</th>
                 <th>Comments</th>
-                <th className="w-40">Date & Time</th>
+                <th className="w-40">Driver Name</th>
               </tr>
             </thead>
 
@@ -129,7 +279,7 @@ export default function SurveyPage() {
                 <tr>
                   <td colSpan="10" className="py-12 text-center sm:py-40">
                     <div className="flex flex-col items-center justify-center gap-3">
-                      <span className="loading loading-infinity loading-xl"></span>
+                      <progress className="progress progress-success w-56"></progress>
                       <p className="text-gray-500">Loading surveys...</p>
                     </div>
                   </td>
@@ -154,28 +304,30 @@ export default function SurveyPage() {
 
                   return (
                     <tr key={survey.id} className="hover:bg-green-50">
-                      <th>{survey.passenger_name || "Anonymous"}</th>
+                      <td className="font-semibold capitalize">
+                        {survey.passenger_name || "Anonymous"}
+                      </td>
 
-                      <td>
+                      <td className="truncate">
                         {survey.travel_date
                           ? format(new Date(survey.travel_date), "MMM d, yyyy")
                           : "-"}
                       </td>
 
-                      {/* Compact Ratings */}
-                      <td className="w-16 px-1 text-center">
+                      {/* Compacts */}
+                      <td className="text-center">
                         {survey.rating_appearance ?? "-"}
                       </td>
-                      <td className="w-16 px-1 text-center">
+                      <td className="text-center">
                         {survey.rating_behavior ?? "-"}
                       </td>
-                      <td className="w-16 px-1 text-center">
+                      <td className="text-center">
                         {survey.rating_safety ?? "-"}
                       </td>
-                      <td className="w-16 px-1 text-center">
+                      <td className="text-center">
                         {survey.rating_vehicle ?? "-"}
                       </td>
-                      <td className="w-16 px-1 text-center">
+                      <td className="text-center">
                         {survey.rating_ontime ?? "-"}
                       </td>
 
@@ -183,20 +335,34 @@ export default function SurveyPage() {
                         {survey.average_score?.toFixed(2) || "-"}
                       </td>
 
-                      <td>{survey.comments || "-"}</td>
+                      <td className="text-xs">{survey.comments || "-"}</td>
 
-                      <td>{format(date, "MMM d, yyyy • hh:mm a")}</td>
+                      <td className="font-bold capitalize">
+                        {survey.drivers.last_name}, {survey.drivers.first_name}{" "}
+                        {survey.drivers.middle_initial}.
+                      </td>
                     </tr>
                   );
                 })
               )}
             </tbody>
 
-            <tfoot className="bg-green-400 font-medium">
+            <tfoot className="bg-green-50 font-medium">
               <tr>
-                <td colSpan="10" className="py-5 text-center text-white">
+                <td colSpan="6" className="py-5 text-left text-gray-700">
                   Total Responses: {surveys.length}
                 </td>
+                <td colSpan="1" className="py-5 text-left text-gray-700">
+                  {selectedDriver && overallAverage !== null
+                    ? "Overalll Average"
+                    : ""}
+                </td>
+                <td className="text-center font-semibold text-gray-700">
+                  {selectedDriver && overallAverage !== null
+                    ? overallAverage.toFixed(2)
+                    : ""}
+                </td>
+                <td colSpan="2"></td>
               </tr>
             </tfoot>
           </table>

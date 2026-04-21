@@ -34,6 +34,7 @@ export default function Dashboard() {
 
     return data;
   }
+
   useEffect(() => {
     let channel;
 
@@ -61,6 +62,13 @@ export default function Dashboard() {
         console.log(channel);
         console.log(status);
       });
+
+    const handleFocus = async () => {
+      console.log("Tab focused → refetching data");
+      const data = await fetchRequests();
+      setRequests(data);
+    };
+    window.addEventListener("focus", handleFocus);
 
     return () => {
       supabase.removeChannel(channel);
