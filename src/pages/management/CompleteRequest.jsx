@@ -62,8 +62,20 @@ export default function CompleteRequest() {
         { data: vehiclesData, error: vehiclesError },
         requestsData,
       ] = await Promise.all([
-        supabase.from("drivers").select("*"),
-        supabase.from("vehicles").select("*"),
+        supabase
+          .from("drivers")
+          .select("*")
+          .in("designation", [
+            "Driver Mechanic B",
+            "Driver Mechanic A",
+            "Sr. Auto Mechanic",
+          ])
+          .order("last_name", { ascending: true }),
+        supabase
+          .from("vehicles")
+          .select("*")
+          .neq("operational", false)
+          .order("name", { ascending: true }),
         fetchRequests(),
       ]);
 

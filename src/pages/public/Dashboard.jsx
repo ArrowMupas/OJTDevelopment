@@ -34,11 +34,8 @@ export default function Dashboard() {
 
     return data;
   }
-
   useEffect(() => {
     let channel;
-    let reconnectTimeout;
-    let isSubscribed = true;
 
     async function loadInitialData() {
       setLoading(true);
@@ -47,54 +44,26 @@ export default function Dashboard() {
       setLoading(false);
     }
 
-    function setupRealtimeSubscription() {
-      if (!isSubscribed) return;
-
-      channel = supabase
-        .channel("service_vehicle_requests_realtime")
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "service_vehicle_requests",
-          },
-          async (payload) => {
-            console.log("Realtime change:", payload);
-            const updatedData = await fetchRequests();
-            setRequests(updatedData);
-          },
-        )
-        .subscribe((status) => {
-          console.log("[Realtime Status]:", status);
-
-          // Handle different statuses
-          if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
-            console.log("Connection issue, attempting to reconnect...");
-            // Clean up current channel
-            if (channel) {
-              supabase.removeChannel(channel);
-            }
-            // Attempt reconnection after delay
-            clearTimeout(reconnectTimeout);
-            reconnectTimeout = setTimeout(() => {
-              if (isSubscribed) {
-                setupRealtimeSubscription();
-              }
-            }, 3000); // Wait 5 seconds before reconnecting
-          }
-        });
-    }
-
     loadInitialData();
-    setupRealtimeSubscription();
+
+    channel = supabase
+      .channel("service_vehicle_requests_realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "service_vehicle_requests" },
+        async (payload) => {
+          console.log("Realtime change:", payload);
+          const updatedData = await fetchRequests();
+          setRequests(updatedData);
+        },
+      )
+      .subscribe((status) => {
+        console.log(channel);
+        console.log(status);
+      });
 
     return () => {
-      isSubscribed = false;
-      clearTimeout(reconnectTimeout);
-      if (channel) {
-        supabase.removeChannel(channel);
-      }
+      supabase.removeChannel(channel);
     };
   }, []);
 

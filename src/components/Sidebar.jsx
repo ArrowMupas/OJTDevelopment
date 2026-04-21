@@ -101,12 +101,11 @@ export default function Sidebar() {
                     Insurance & Registration
                   </MenuLink>
                 </li>
-
-                <li>
+                {/* <li>
                   <MenuLink to="/vehiclestatusqueue" icon={ActivityIcon}>
                     Vehicle Status
                   </MenuLink>
-                </li>
+                </li> */}
                 <li>
                   <MenuLink to="/track" icon={MapPin}>
                     PMS Tracking
@@ -156,7 +155,6 @@ export default function Sidebar() {
             </MenuLink>
           </li>
 
-          <li></li>
           <li>
             <MenuLink to="/survey-results" icon={NotebookPen}>
               Survey Results

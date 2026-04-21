@@ -74,11 +74,16 @@ export default function ManageRequestsPage() {
         supabase
           .from("drivers")
           .select("*")
-          .eq("designation", "Driver Mechanic B")
+          .in("designation", [
+            "Driver Mechanic B",
+            "Driver Mechanic A",
+            "Sr. Auto Mechanic",
+          ])
           .order("last_name", { ascending: true }),
         supabase
           .from("vehicles")
           .select("*")
+          .neq("operational", false)
           .order("name", { ascending: true }),
         fetchRequests(),
       ]);
