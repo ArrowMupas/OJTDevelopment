@@ -98,6 +98,12 @@ export default function ManageRequestsPage() {
       setLoading(false);
     }
 
+    const handleFocus = async () => {
+      console.log("Tab focused → refetching data");
+      await fetchRequests();
+    };
+    window.addEventListener("focus", handleFocus);
+
     fetchAllData();
   }, []);
 
