@@ -382,19 +382,26 @@ export default function MaintenancePage() {
 
       <div className="flex items-center gap-2 sm:justify-between">
         <div className="flex w-full gap-2">
-          <label className="input input-neutral">
-            <Search className="h-4 w-6" />
-            <input
-              type="search"
-              placeholder="Search vehicles..."
-              value={search}
-              onChange={(e) => {
-                const value = e.target.value;
-                setSearch(value);
-                debouncedSearch(value);
-              }}
-            />
-          </label>
+          <span>
+            {/* <div
+              className="tooltip capitalize"
+              data-tip="Search by name, plate number, policy number, policy id, engine number, chassis number, file number"
+            > */}
+            <label className="input input-neutral">
+              <Search className="h-4 w-6" />
+              <input
+                type="search"
+                placeholder="Search vehicles..."
+                value={search}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSearch(value);
+                  debouncedSearch(value);
+                }}
+              />
+            </label>
+            {/* </div> */}
+          </span>
           {/* <div className="dropdown">
             <div
               tabIndex={0}
@@ -433,16 +440,14 @@ export default function MaintenancePage() {
         </button>
       </div>
 
-      <div className="fab">
-        <div className="tooltip tooltip-left" data-tip="Toggle Vehicle View">
-          <div>
-            <input
-              type="checkbox"
-              className="toggle toggle-xl my-auto border-violet-600 bg-violet-500 checked:border-indigo-500 checked:bg-indigo-400 checked:text-indigo-800"
-              checked={swap}
-              onChange={() => setSwap((prev) => !prev)}
-            />
-          </div>
+      <div className="fixed top-4 left-38 z-50 sm:left-88">
+        <div className="tooltip tooltip-right" data-tip="Toggle Vehicle View">
+          <input
+            type="checkbox"
+            className="toggle toggle-xl my-auto border-violet-600 bg-violet-500 checked:border-indigo-500 checked:bg-indigo-400 checked:text-indigo-800"
+            checked={swap}
+            onChange={() => setSwap((prev) => !prev)}
+          />
         </div>
       </div>
 
