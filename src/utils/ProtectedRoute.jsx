@@ -6,8 +6,16 @@ export default function ProtectedRoute({ children }) {
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
 
+  const isDev = import.meta.env.DEV;
+
   useEffect(() => {
     const handleSession = async (session) => {
+      if (isDev) {
+        setAuthenticated(true);
+        setLoading(false);
+        return;
+      }
+
       if (!session) {
         setAuthenticated(false);
         setLoading(false);
@@ -45,8 +53,10 @@ export default function ProtectedRoute({ children }) {
       await handleSession(session);
     };
 
+    // initial check
     checkInitialSession();
 
+    // listen for login/logout changes (IMPORTANT for OAuth)
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -54,8 +64,9 @@ export default function ProtectedRoute({ children }) {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [isDev]);
 
+  // ⏳ loading UI
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -64,9 +75,11 @@ export default function ProtectedRoute({ children }) {
     );
   }
 
+  // ❌ not allowed → login page
   if (!authenticated) {
     return <Navigate to="/login" replace />;
   }
 
+  // ✅ allowed → render page
   return children;
 }

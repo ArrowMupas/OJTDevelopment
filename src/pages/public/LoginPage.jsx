@@ -1,5 +1,6 @@
 import { supabase } from "../../supabaseClient";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -25,25 +26,30 @@ export default function Login() {
   };
 
   // Email/password login
-  const loginWithEmail = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) {
-      setErrorMsg(error.message);
-    }
-    setLoading(false);
-  };
+  // const loginWithEmail = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   const { error } = await supabase.auth.signInWithPassword({
+  //     email,
+  //     password,
+  //   });
+  //   if (error) {
+  //     setErrorMsg(error.message);
+  //   }
+  //   setLoading(false);
+  // };
 
   return (
-    <div className="flex min-h-full items-center justify-center bg-linear-to-br from-emerald-100 via-green-100 to-green-200 p-4 sm:py-14">
-      <div className="card bg-base-100 flex w-full max-w-md flex-col items-center gap-4 rounded-3xl p-7 shadow-sm">
+    <motion.div
+      initial={{ opacity: 0, y: -40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="flex min-h-full items-center justify-center p-4 sm:py-20"
+    >
+      <div className="flex w-full max-w-lg flex-col items-center gap-5">
         {/* Logo */}
         <div
-          className="flex size-25 cursor-pointer items-center justify-center rounded-full bg-green-100 p-2 transition-transform duration-300 hover:scale-105"
+          className="flex size-30 cursor-pointer items-center justify-center rounded-full bg-green-100 p-2 transition-transform duration-300 hover:scale-105"
           onClick={() => (window.location.href = "/")}
         >
           <img
@@ -54,18 +60,20 @@ export default function Login() {
         </div>
 
         {/* Heading */}
-        <h2 className="text-center text-xl font-bold text-green-800 sm:text-3xl">
+        <h2 className="text-center text-xl font-bold uppercase sm:text-5xl">
           Transport Operations Services Unit
         </h2>
-        <span className="text-lg font-semibold text-green-600 sm:text-sm">
-          Motorpool
-        </span>
+
+        <p className="mx-auto max-w-2xl px-4 text-center text-lg leading-relaxed">
+          Only authorized employees are allowed to access anything beyond this
+          page
+        </p>
 
         {/* Google Login */}
         <button
           onClick={loginWithGoogle}
           disabled={loading}
-          className="flex w-full items-center justify-center gap-3 rounded border border-gray-300 py-3 text-sm font-bold uppercase shadow-sm transition-all duration-300 hover:bg-gray-100"
+          className="btn btn-block btn-xl btn-outline rounded-2xl py-8 uppercase"
         >
           <svg
             aria-label="Google logo"
@@ -99,55 +107,57 @@ export default function Login() {
 
         {errorMsg && <p className="text-sm text-red-500">{errorMsg}</p>}
 
-        {/* Divider */}
-        <div className="flex w-full items-center gap-4">
-          <hr className="flex-1 border-gray-300" />
-          <span className="text-sm text-gray-500 uppercase">or</span>
-          <hr className="flex-1 border-gray-300" />
-        </div>
+        {/* <>
+          <div className="flex w-full items-center gap-4">
+            <hr className="flex-1 border-gray-300" />
+            <span className="text-sm text-gray-500 uppercase">or</span>
+            <hr className="flex-1 border-gray-300" />
+          </div>
 
-        {/* Email / Password Login */}
-        <form onSubmit={loginWithEmail} className="flex w-full flex-col gap-4">
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-green-400 focus:outline-none"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-green-400 focus:outline-none"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-xl bg-green-600 py-3 font-semibold text-white transition-colors duration-300 hover:bg-green-700"
+          <form
+            onSubmit={loginWithEmail}
+            className="flex w-full flex-col gap-4"
           >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
+            <input
+              type="email"
+              placeholder="Email"
+              className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-green-400 focus:outline-none"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-green-400 focus:outline-none"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-xl bg-green-600 py-3 font-semibold text-white transition-colors duration-300 hover:bg-green-700"
+            >
+              {loading ? "Logging in..." : "Login"}
+            </button>
+          </form>
 
-        {/* Signup */}
-        <p className="mt-2 text-center text-sm text-gray-500">
-          Don't have an account?{" "}
-          <a
-            href="/signup"
-            className="font-semibold text-green-600 hover:underline"
-          >
-            Sign up
-          </a>
-        </p>
+          <p className="mt-2 text-center text-sm text-gray-500">
+            Don't have an account?{" "}
+            <a
+              href="/signup"
+              className="font-semibold text-green-600 hover:underline"
+            >
+              Sign up
+            </a>
+          </p>
 
-        <p className="mt-2 text-center text-xs text-gray-500">
-          By logging in, you agree to our Terms and Privacy Policy.
-        </p>
+          <p className="mt-2 text-center text-xs text-gray-500">
+            By logging in, you agree to our Terms and Privacy Policy.
+          </p>
+        </> */}
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -94,16 +94,21 @@ export default function TripTicketPage() {
   });
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-
+    <div className="min-h-screen space-y-7 px-3 py-4 pb-25 sm:px-5">
+      <div>
+        <h1 className="flex items-center gap-2 text-lg font-bold">
+          Trip Ticket
+        </h1>
+        <p className="text-sm text-gray-500">
+          Fill out the form to receive a trip ticket.
+        </p>
+      </div>
       {/* MAIN LAYOUT */}
-      <div className="flex flex-col md:flex-row gap-6">
-
+      <div className="flex flex-col gap-6 md:flex-row">
         {/* ===== FORM (SIDEBAR) ===== */}
         {showForm && (
-          <div className="w-full md:w-1/3 card bg-base-100 shadow-xl p-6 space-y-4">
-
-            <h2 className="text-xl font-bold text-center">
+          <div className="card bg-base-100 w-full space-y-4 p-6 shadow-xl md:w-1/3">
+            <h2 className="text-center text-xl font-bold">
               Driver's Trip Ticket
             </h2>
 
@@ -114,7 +119,7 @@ export default function TripTicketPage() {
                 type="text"
                 value={ticketNo}
                 onChange={(e) => setTicketNo(e.target.value)}
-                className="input input-bordered w-full mt-1"
+                className="input input-bordered mt-1 w-full"
                 placeholder="Enter DTT No."
               />
             </div>
@@ -125,7 +130,7 @@ export default function TripTicketPage() {
               <select
                 value={driver}
                 onChange={(e) => setDriver(e.target.value)}
-                className="select select-bordered w-full mt-1"
+                className="select select-bordered mt-1 w-full"
               >
                 <option value="">Select Driver</option>
                 {drivers.map((d) => (
@@ -143,7 +148,7 @@ export default function TripTicketPage() {
                 type="date"
                 value={dateReceived}
                 onChange={(e) => setDateReceived(e.target.value)}
-                className="input input-bordered w-full mt-1"
+                className="input input-bordered mt-1 w-full"
               />
             </div>
 
@@ -154,7 +159,7 @@ export default function TripTicketPage() {
                 type="time"
                 value={timeReceived}
                 onChange={(e) => setTimeReceived(e.target.value)}
-                className="input input-bordered w-full mt-1"
+                className="input input-bordered mt-1 w-full"
               />
             </div>
 
@@ -190,57 +195,47 @@ export default function TripTicketPage() {
         )}
 
         {/* ===== HISTORY (MAIN AREA) ===== */}
-        <div className={`card bg-base-100 shadow-xl p-6 w-full ${fullHistory ? "" : "md:w-2/3"}`}>
+        <div
+          className={`card bg-base-100 w-full p-6 shadow-xl ${fullHistory ? "" : "md:w-2/3"}`}
+        >
+          <h2 className="mb-4 text-xl font-bold">Trip History Report</h2>
+          <button className="btn btn-sm btn-error mb-3 flex items-center gap-2">
+            🖨️ Export PDF
+          </button>
 
-          <h2 className="text-xl font-bold mb-4">
-            Trip History Report
-          </h2>
-          <button className="btn btn-sm btn-error mb-3 flex items-center gap-2 ">
-          🖨️ Export PDF
-           </button>
-
-
-          
-          <div className="grid md:grid-cols-3 gap-3 mb-4">
+          <div className="mb-4 grid gap-3 md:grid-cols-3">
             <div>
               <label className="text-sm font-light">Search</label>
 
-            <input
-              type="text"
-              placeholder="Search Driver..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="input input-bordered w-full"
-            />
+              <input
+                type="text"
+                placeholder="Search Driver..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="input input-bordered w-full"
+              />
             </div>
-            
 
-        <div>
-            <label className="text-sm font-light">From</label>
-          <input
-             type="date"
-             value={filterFrom}
-             onChange={(e) => setFilterFrom(e.target.value)}
-             className="input input-bordered w-full"
-          />
+            <div>
+              <label className="text-sm font-light">From</label>
+              <input
+                type="date"
+                value={filterFrom}
+                onChange={(e) => setFilterFrom(e.target.value)}
+                className="input input-bordered w-full"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-light">To</label>
+              <input
+                type="date"
+                value={filterTo}
+                onChange={(e) => setFilterTo(e.target.value)}
+                className="input input-bordered w-full"
+              />
+            </div>
           </div>
-        
-
-          <div> 
-             <label className="text-sm font-light">To</label>
-            <input
-              type="date"
-              value={filterTo}
-              onChange={(e) => setFilterTo(e.target.value)}
-              className="input input-bordered w-full"
-            /></div>
-            
-
-          
-
-          </div>
-
-          
 
           {/* TABLE */}
           {filteredHistory.length === 0 ? (
@@ -275,14 +270,11 @@ export default function TripTicketPage() {
                     </tr>
                   ))}
                 </tbody>
-
               </table>
             </div>
           )}
-
         </div>
-
       </div>
     </div>
   );
-} 
+}
