@@ -10,6 +10,7 @@ import {
   FileClock,
   Plus,
   CircleParkingOff,
+  FileArchive,
 } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
@@ -22,6 +23,7 @@ import OurInput from "../../components/OurInput";
 import { motion, AnimatePresence } from "framer-motion";
 import { vehicleSchema } from "../../schemas/vehicleSchema";
 import { Link } from "react-router-dom";
+import * as XLSX from "xlsx";
 
 export default function MaintenancePage() {
   const [vehicles, setVehicles] = useState([]);
@@ -90,9 +92,9 @@ export default function MaintenancePage() {
     let registrationExpiring = 0;
 
     const enrichedVehicles = (vehicles || []).map((v) => {
-      const periodTo = v.period_to ? new Date(v.period_to) : null;
-      const periodDurationTo = v.period_duration_to
-        ? new Date(v.period_duration_to)
+      const periodTo = v.insurance_end ? new Date(v.insurance_end) : null;
+      const periodDurationTo = v.registration_end
+        ? new Date(v.registration_end)
         : null;
 
       let status = "valid";
@@ -194,15 +196,15 @@ export default function MaintenancePage() {
           policy_id: data.policyID,
           required_covered: data.requiredCovered,
           issue_date: data.issueDate,
-          period_from: data.periodFrom,
-          period_to: data.periodTo,
+          insurance_start: data.periodFrom,
+          insurance_end: data.periodTo,
           image_url: imageUrl,
           engine_number: data.engineNumber,
           chassis_number: data.chassisNumber,
           file_number: data.fileNumber,
           year_model: data.yearModel,
-          period_duration: data.periodDuration,
-          period_duration_to: data.periodDurationTo,
+          registration_start: data.periodDuration,
+          registration_end: data.periodDurationTo,
           acquisition_date: data.acquisitionDate,
           acquisition_cost: data.acquisitionCost,
         },
@@ -253,15 +255,15 @@ export default function MaintenancePage() {
           policy_id: data.policyID,
           required_covered: data.requiredCovered,
           issue_date: data.issueDate,
-          period_from: data.periodFrom,
-          period_to: data.periodTo,
+          insurance_start: data.periodFrom,
+          insurance_end: data.periodTo,
           image_url: imageUrl,
           engine_number: data.engineNumber,
           chassis_number: data.chassisNumber,
           file_number: data.fileNumber,
           year_model: data.yearModel,
-          period_duration: data.periodDuration,
-          period_duration_to: data.periodDurationTo,
+          registration_start: data.periodDuration,
+          registration_end: data.periodDurationTo,
           acquisition_date: data.acquisitionDate,
           acquisition_cost: data.acquisitionCost,
         })
@@ -318,6 +320,72 @@ export default function MaintenancePage() {
       fetchVehicles(search);
     }
   };
+
+  function handleExport() {
+    if (!vehicles.length) return;
+
+    const table1 = [
+      [
+        "No.",
+        "VEHICLE",
+        "PLATE NO.",
+        "EXPIRATION OF REGISTRATION",
+        "DATE RENEWED",
+      ],
+      ...vehicles.map((v, index) => [
+        index + 1,
+        v.name ?? "-",
+        v.plate_number ?? "-",
+        v.registration_end
+          ? format(new Date(v.registration_end), "MM-dd, yyyy")
+          : "-",
+        "",
+      ]),
+    ];
+
+    const table2 = [
+      [
+        "No.",
+        "VEHICLE",
+        "PLATE NO.",
+        "EXPIRATION OF INSURANCE",
+        "DATE RENEWED",
+      ],
+      ...vehicles.map((v, index) => [
+        index + 1,
+        v.name ?? "-",
+        v.plate_number ?? "-",
+        v.insurance_end
+          ? format(new Date(v.insurance_end), "MM-dd, yyyy")
+          : "-",
+        "",
+      ]),
+    ];
+
+    const worksheet = XLSX.utils.aoa_to_sheet([]);
+
+    XLSX.utils.sheet_add_aoa(worksheet, table1, { origin: "A1" });
+
+    const spaceBetween = 1;
+    const startRow = table1.length + spaceBetween;
+
+    XLSX.utils.sheet_add_aoa(worksheet, table2, {
+      origin: `A${startRow + 1}`,
+    });
+
+    worksheet["!cols"] = [
+      { wch: 10 },
+      { wch: 40 },
+      { wch: 20 },
+      { wch: 40 },
+      { wch: 30 },
+    ];
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Vehicle Requests");
+
+    XLSX.writeFile(workbook, "vehicle_request_report.xlsx");
+  }
 
   return (
     <main className="h-full space-y-4 px-3 py-4 pb-25 sm:space-y-7 sm:px-5">
@@ -381,12 +449,8 @@ export default function MaintenancePage() {
       </div>
 
       <div className="flex items-center gap-2 sm:justify-between">
-        <div className="flex w-full gap-2">
+        <div className="flex gap-2">
           <span>
-            {/* <div
-              className="tooltip capitalize"
-              data-tip="Search by name, plate number, policy number, policy id, engine number, chassis number, file number"
-            > */}
             <label className="input input-neutral">
               <Search className="h-4 w-6" />
               <input
@@ -400,44 +464,31 @@ export default function MaintenancePage() {
                 }}
               />
             </label>
-            {/* </div> */}
           </span>
-          {/* <div className="dropdown">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn bg-green-600 text-white"
-            >
-              <FilterIcon className="h-4 w-6" /> Filter
+        </div>
+
+        <div className="flex gap-2">
+          <button className="btn btn-secondary" onClick={handleExport}>
+            <FileArchive className="h-4 w-4" />
+            Generate Report
+          </button>
+
+          <button
+            className="btn btn-primary flex gap-2"
+            onClick={() => {
+              setIsEditing(false);
+              setVehicleToEdit(null);
+              reset({});
+              setSelectedFile(null);
+              document.getElementById("vehicleModal").showModal();
+            }}
+          >
+            <div className="flex">
+              <Plus className="size-6" />
             </div>
-            <ul
-              tabIndex="-1"
-              className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
-            >
-              <li className="focus:bg-highlight rounded-sm">
-                <a className="active:bg-highlight">Ascending</a>
-              </li>
-              <li>
-                <a className="active:bg-highlight">Descending</a>
-              </li>
-            </ul>
-          </div> */}
-        </div>{" "}
-        <button
-          className="btn btn-primary flex gap-2"
-          onClick={() => {
-            setIsEditing(false);
-            setVehicleToEdit(null);
-            reset({});
-            setSelectedFile(null);
-            document.getElementById("vehicleModal").showModal();
-          }}
-        >
-          <div className="flex">
-            <Plus className="size-6" />
-          </div>
-          <span className="">Add New Vehicle</span>
-        </button>
+            <span className="">Add New Vehicle</span>
+          </button>
+        </div>
       </div>
 
       <div className="fixed top-4 left-38 z-50 sm:left-88">
@@ -880,16 +931,17 @@ export default function MaintenancePage() {
                                       : ""
                                 }`}
                               >
-                                {vehicle.period_from && vehicle.period_to ? (
+                                {vehicle.insurance_start &&
+                                vehicle.insurance_end ? (
                                   <div className="flex flex-col">
                                     <div>
                                       {format(
-                                        new Date(vehicle.period_from),
+                                        new Date(vehicle.insurance_start),
                                         "MMM. d, yyyy",
                                       )}
                                       {" - "}
                                       {format(
-                                        new Date(vehicle.period_to),
+                                        new Date(vehicle.insurance_end),
                                         "MMM. d, yyyy",
                                       )}
                                     </div>
@@ -958,12 +1010,12 @@ export default function MaintenancePage() {
                                 }`}
                               >
                                 {format(
-                                  new Date(vehicle.period_duration),
+                                  new Date(vehicle.registration_start),
                                   "MMM. d, yyyy",
                                 )}
                                 {" - "}
                                 {format(
-                                  new Date(vehicle.period_duration_to),
+                                  new Date(vehicle.registration_end),
                                   "MMM. d, yyyy",
                                 )}
                               </p>
@@ -984,14 +1036,14 @@ export default function MaintenancePage() {
                               policyNumber: vehicle.policy_number,
                               requiredCovered: vehicle.required_covered,
                               issueDate: vehicle.issue_date,
-                              periodFrom: vehicle.period_from,
-                              periodTo: vehicle.period_to,
+                              periodFrom: vehicle.insurance_start,
+                              periodTo: vehicle.insurance_end,
                               engineNumber: vehicle.engine_number,
                               chassisNumber: vehicle.chassis_number,
                               fileNumber: vehicle.file_number,
                               yearModel: vehicle.year_model,
-                              periodDuration: vehicle.period_duration,
-                              periodDurationTo: vehicle.period_duration_to,
+                              periodDuration: vehicle.registration_start,
+                              periodDurationTo: vehicle.registration_end,
                               acquisitionDate: vehicle.acquisition_date
                                 ? format(
                                     new Date(vehicle.acquisition_date),

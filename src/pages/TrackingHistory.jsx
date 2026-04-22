@@ -1,7 +1,7 @@
 import { FolderClock, Search, ArrowLeft, SearchIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { useNavigate } from "react-router-dom"; // ✅ ADD
+import { useNavigate } from "react-router-dom";
 
 const internalSteps = [
   "Inspection",
@@ -91,26 +91,20 @@ export default function TrackingHistory() {
 
   return (
     <main className="min-h-screen space-y-7 px-3 py-4 pb-25 sm:px-5">
-      <div className="flex gap-2">
-        <button
-          onClick={() => navigate(-1)}
-          className="btn btn-square btn-warning btn-dash h-auto"
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <div>
-          <h1 className="text-lg font-bold">Repair History</h1>
-          <p className="text-sm text-gray-500">
-            View your vehicle&apos;s repair history
-          </p>
-        </div>
-      </div>
-
-      <div className="mb-6 flex flex-col gap-3 rounded-xl bg-green-600 p-5 text-white shadow sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2">
-          <span className="font-semibold tracking-wide uppercase">
-            History Tracker
-          </span>
+      <div className="flex justify-between">
+        <div className="flex gap-2">
+          <button
+            onClick={() => navigate(-1)}
+            className="btn btn-square btn-warning btn-dash h-auto"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <div>
+            <h1 className="text-lg font-bold">Repair History</h1>
+            <p className="text-sm text-gray-500">
+              View your vehicle&apos;s repair history
+            </p>
+          </div>
         </div>
 
         <div className="flex flex-col gap-2 sm:w-full sm:flex-row sm:items-center sm:justify-end">
@@ -137,7 +131,7 @@ export default function TrackingHistory() {
           </select>
         </div>
       </div>
-      {/* LIST */}
+
       <div className="space-y-4">
         {filtered.length === 0 && (
           <div className="text-center text-gray-500">

@@ -316,51 +316,49 @@ export default function TrackingPage() {
 
                 {/* TIMELINE */}
                 <div className="relative flex justify-between">
-                  <div className="absolute top-2 right-0 left-0 h-1 bg-gray-300" />
+                  <ul className="steps w-full">
+                    {steps.map((label, index) => {
+                      const isActive = index <= repair.step;
+                      const isCurrent = index === repair.step;
 
-                  {steps.map((label, index) => {
-                    const isActive = index <= repair.step;
-                    const isCurrent = index === repair.step;
+                      return (
+                        <li
+                          key={index}
+                          className={`step ${isActive ? "step-success" : ""}`}
+                        >
+                          <div className="flex flex-col items-center">
+                            <span>{label}</span>
 
-                    return (
-                      <div
-                        key={index}
-                        className="relative flex flex-1 flex-col items-center"
-                      >
-                        {isCurrent && (
-                          <div className="absolute top-15 flex gap-2">
-                            {repair.step > 0 && (
-                              <button
-                                className="btn btn-xs"
-                                onClick={() => updateStep(repair.id, "prev")}
-                              >
-                                Undo
-                              </button>
-                            )}
+                            {isCurrent && (
+                              <div className="mt-2 flex gap-2">
+                                {repair.step > 0 && (
+                                  <button
+                                    className="btn btn-xs"
+                                    onClick={() =>
+                                      updateStep(repair.id, "prev")
+                                    }
+                                  >
+                                    Undo
+                                  </button>
+                                )}
 
-                            {repair.step < steps.length - 1 && (
-                              <button
-                                className="btn btn-xs bg-green-600 text-white"
-                                onClick={() => updateStep(repair.id, "next")}
-                              >
-                                Proceed
-                              </button>
+                                {repair.step < steps.length - 1 && (
+                                  <button
+                                    className="btn btn-xs btn-success"
+                                    onClick={() =>
+                                      updateStep(repair.id, "next")
+                                    }
+                                  >
+                                    Proceed
+                                  </button>
+                                )}
+                              </div>
                             )}
                           </div>
-                        )}
-
-                        <div
-                          className={`h-4 w-4 rounded-full ${
-                            isActive ? "bg-green-500" : "bg-gray-300"
-                          }`}
-                        />
-
-                        <span className="mt-2 text-center text-xs">
-                          {label}
-                        </span>
-                      </div>
-                    );
-                  })}
+                        </li>
+                      );
+                    })}
+                  </ul>
                 </div>
 
                 {/* DETAILS */}

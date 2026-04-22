@@ -37,7 +37,7 @@ export default function UnoperationalVehicles() {
       .from("vehicles")
       .select("*")
       .eq("operational", false)
-      .order("period_to", { ascending: true });
+      .order("insurance_end", { ascending: true });
 
     const searchColumns = [
       "name",
@@ -91,9 +91,9 @@ export default function UnoperationalVehicles() {
     let registrationExpiring = 0;
 
     const enrichedVehicles = (vehicles || []).map((v) => {
-      const periodTo = v.period_to ? new Date(v.period_to) : null;
-      const periodDurationTo = v.period_duration_to
-        ? new Date(v.period_duration_to)
+      const periodTo = v.insurance_end ? new Date(v.insurance_end) : null;
+      const periodDurationTo = v.registration_end
+        ? new Date(v.registration_end)
         : null;
 
       let status = "valid";
@@ -199,15 +199,15 @@ export default function UnoperationalVehicles() {
           policy_id: data.policyID,
           required_covered: data.requiredCovered,
           issue_date: data.issueDate,
-          period_from: data.periodFrom,
-          period_to: data.periodTo,
+          insurance_start: data.periodFrom,
+          insurance_end: data.periodTo,
           image_url: imageUrl,
           engine_number: data.engineNumber,
           chassis_number: data.chassisNumber,
           file_number: data.fileNumber,
           year_model: data.yearModel,
-          period_duration: data.periodDuration,
-          period_duration_to: data.periodDurationTo,
+          registration_start: data.periodDuration,
+          registration_end: data.periodDurationTo,
         })
         .eq("id", vehicleToEdit.id);
 
@@ -722,16 +722,17 @@ export default function UnoperationalVehicles() {
                                   : ""
                             }`}
                           >
-                            {vehicle.period_from && vehicle.period_to ? (
+                            {vehicle.insurance_start &&
+                            vehicle.insurance_end ? (
                               <div className="flex flex-col">
                                 <div>
                                   {format(
-                                    new Date(vehicle.period_from),
+                                    new Date(vehicle.insurance_start),
                                     "MMM. d, yyyy",
                                   )}
                                   {" - "}
                                   {format(
-                                    new Date(vehicle.period_to),
+                                    new Date(vehicle.insurance_end),
                                     "MMM. d, yyyy",
                                   )}
                                 </div>
@@ -793,12 +794,12 @@ export default function UnoperationalVehicles() {
                           }`}
                         >
                           {format(
-                            new Date(vehicle.period_duration),
+                            new Date(vehicle.registration_start),
                             "MMM. d, yyyy",
                           )}
                           {" - "}
                           {format(
-                            new Date(vehicle.period_duration),
+                            new Date(vehicle.registration_start),
                             "MMM. d, yyyy",
                           )}
                         </p>
@@ -816,14 +817,14 @@ export default function UnoperationalVehicles() {
                               policyNumber: vehicle.policy_number,
                               requiredCovered: vehicle.required_covered,
                               issueDate: vehicle.issue_date,
-                              periodFrom: vehicle.period_from,
-                              periodTo: vehicle.period_to,
+                              periodFrom: vehicle.insurance_start,
+                              periodTo: vehicle.insurance_end,
                               engineNumber: vehicle.engine_number,
                               chassisNumber: vehicle.chassis_number,
                               fileNumber: vehicle.file_number,
                               yearModel: vehicle.year_model,
-                              periodDuration: vehicle.period_duration,
-                              periodDurationTo: vehicle.period_duration_to,
+                              periodDuration: vehicle.registration_start,
+                              periodDurationTo: vehicle.registration_end,
                             });
                             setSelectedFile(null);
                             document.getElementById("vehicleModal").showModal();
