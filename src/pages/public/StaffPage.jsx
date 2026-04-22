@@ -128,19 +128,17 @@ export default function StaffPage() {
 
   return (
     // FULL SCREEN BACKGROUND FIX
-    <div className="min-h-screen w-full bg-linear-to-b from-white to-emerald-50">
+    <div className="min-h-full p-4 sm:py-20">
       {/* CONTENT WRAPPER (centered, does NOT control background) */}
-      <div className="mx-auto max-w-6xl space-y-6 p-8 py-14">
+      <div className="mx-auto max-w-6xl space-y-6">
         {loading ? (
           <p>Loading...</p>
         ) : (
           <>
             {/* HEADER */}
             <div className="mb-6 text-center">
-              <h1 className="text-2xl font-bold text-emerald-700">
-                Key Personnels
-              </h1>
-              <p className="mt-2 text-gray-600">
+              <h1 className="text-5xl font-bold uppercase">Key Personnels</h1>
+              <p className="mt-2 text-lg leading-relaxed">
                 Here are the key personnel of Transportation Operation Service
                 Unit (TOSU)
               </p>

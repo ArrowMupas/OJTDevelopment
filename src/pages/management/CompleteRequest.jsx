@@ -1,12 +1,20 @@
 import { format, parse } from "date-fns";
 import { supabase } from "../../supabaseClient";
-import { ArrowLeft, CheckCircle, Info, Search, XCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  CheckCircle,
+  FileArchive,
+  Info,
+  Search,
+  XCircle,
+} from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
 import Tippy from "@tippyjs/react";
 import "tippy.js/themes/light.css";
 import { Link } from "react-router-dom";
 import debounce from "lodash.debounce";
 import clsx from "clsx";
+import * as XLSX from "xlsx";
 
 export default function CompleteRequest() {
   const [drivers, setDrivers] = useState([]);
@@ -164,22 +172,84 @@ export default function CompleteRequest() {
     }
   }
 
+  const filteredRequests = requests.filter(
+    (r) => r.status === "Completed" && r.is_surveyed === true,
+  );
+
+  const vehicleMap = useMemo(() => {
+    const map = new Map();
+    vehicles.forEach((v) => {
+      map.set(v.id, v.name);
+    });
+    return map;
+  }, [vehicles]);
+
+  function handleExport() {
+    if (!requests.length) return;
+
+    const sheetData = [
+      [
+        "No.",
+        "REQUESTING PERSONNEL/OFFICE",
+        "DESTINATION",
+        "DATE REQUESTED",
+        "on: (DATE OF DEPARTURE)",
+        "DISPATCHED VEHICLE",
+        "RATING",
+      ],
+      ...filteredRequests.map((r, index) => [
+        index + 1,
+        r.department ?? "-",
+        r.destination ?? "-",
+        r.timestamp ? format(new Date(r.timestamp), "MM-dd, yyyy") : "-",
+        r.departure_date ?? "-",
+        vehicleMap.get(r.vehicle_id) ?? "-",
+        r.rating ?? "-",
+      ]),
+    ];
+
+    const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+
+    worksheet["!cols"] = [
+      { wch: 10 },
+      { wch: 40 },
+      { wch: 40 },
+      { wch: 30 },
+      { wch: 30 },
+      { wch: 25 },
+      { wch: 15 },
+    ];
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Vehicle Requests");
+
+    XLSX.writeFile(workbook, "vehicle_request_report.xlsx");
+  }
+
   return (
     <main className="h-full px-5 py-4 pb-40">
-      <div className="flex gap-2">
-        <div className="mb-6 flex items-center gap-5">
-          <Link to={"/vehicle-requests"}>
-            <button className="btn btn-square btn-neutral btn-dash h-12">
-              <ArrowLeft size={20} />
-            </button>
-          </Link>
+      <div className="flex justify-between">
+        <div className="flex gap-2">
+          <div className="mb-6 flex items-center gap-5">
+            <Link to={"/vehicle-requests"}>
+              <button className="btn btn-square btn-neutral btn-dash h-12">
+                <ArrowLeft size={20} />
+              </button>
+            </Link>
+          </div>
+
+          <div>
+            <h1 className="text-lg font-bold">Completed Requests</h1>
+            <p className="mb-8 text-sm text-gray-500">
+              View all completed vehicle request here.
+            </p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-lg font-bold">Completed Requests</h1>
-          <p className="mb-8 text-sm text-gray-500">
-            View all completed vehicle request here.
-          </p>
-        </div>
+
+        <button className="btn btn-secondary" onClick={handleExport}>
+          <FileArchive className="h-4 w-4" />
+          Generate Report
+        </button>
       </div>
 
       <div className="mb-4 flex items-center">
