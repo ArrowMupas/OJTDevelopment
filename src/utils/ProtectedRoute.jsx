@@ -7,40 +7,62 @@ export default function ProtectedRoute({ children }) {
   const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
+    const handleSession = async (session) => {
       if (!session) {
         setAuthenticated(false);
         setLoading(false);
         return;
       }
 
-      const userEmail = session.user.email;
+      try {
+        const userEmail = session.user.email;
 
-      // 🔐 check if email is allowed
-      const { data, error } = await supabase
-        .from("users")
-        .select("email")
-        .eq("email", userEmail)
-        .single();
+        const { data, error } = await supabase
+          .from("users")
+          .select("email")
+          .eq("email", userEmail)
+          .single();
 
-      if (data) {
-        setAuthenticated(true);
-      } else {
-        await supabase.auth.signOut();
+        if (error || !data) {
+          await supabase.auth.signOut();
+          setAuthenticated(false);
+        } else {
+          setAuthenticated(true);
+        }
+      } catch (err) {
+        console.error("Auth check error:", err.message);
         setAuthenticated(false);
       }
 
       setLoading(false);
     };
 
-    checkAuth();
+    const checkInitialSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      await handleSession(session);
+    };
+
+    checkInitialSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      handleSession(session);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  if (loading) return null;
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <span className="loading loading-spinner loading-lg text-green-600"></span>
+      </div>
+    );
+  }
 
   if (!authenticated) {
     return <Navigate to="/login" replace />;

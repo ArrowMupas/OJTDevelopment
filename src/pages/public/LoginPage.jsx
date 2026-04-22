@@ -8,12 +8,20 @@ export default function Login() {
   const [errorMsg, setErrorMsg] = useState("");
 
   const loginWithGoogle = async () => {
+    setLoading(true);
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/admindashboard` },
+      options: {
+        redirectTo: `${window.location.origin}/admindashboard`,
+      },
     });
 
-    if (error) console.error("Login error:", error.message);
+    if (error) {
+      console.error("Login error:", error.message);
+      setErrorMsg(error.message);
+      setLoading(false);
+    }
   };
 
   // Email/password login
@@ -56,6 +64,7 @@ export default function Login() {
         {/* Google Login */}
         <button
           onClick={loginWithGoogle}
+          disabled={loading}
           className="flex w-full items-center justify-center gap-3 rounded border border-gray-300 py-3 text-sm font-bold uppercase shadow-sm transition-all duration-300 hover:bg-gray-100"
         >
           <svg
@@ -85,8 +94,10 @@ export default function Login() {
               ></path>
             </g>
           </svg>
-          Login with Google
+          {loading ? "Redirecting..." : "Login with Google"}
         </button>
+
+        {errorMsg && <p className="text-sm text-red-500">{errorMsg}</p>}
 
         {/* Divider */}
         <div className="flex w-full items-center gap-4">

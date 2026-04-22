@@ -20,7 +20,7 @@ export default function Navbar() {
   const navLinks = [
     // Uncomment for real login
     { href: "/login", label: "login" },
-    { href: "/admindashboard", label: "Admin" },
+    // { href: "/admindashboard", label: "Admin" },
     { href: "/", label: "Home" },
     { href: "/dashboard", label: "Dashboard" },
     { href: "/about", label: "About" },

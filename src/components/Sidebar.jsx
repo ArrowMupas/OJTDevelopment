@@ -13,9 +13,11 @@ import {
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { supabase } from "../supabaseClient";
+import { useNavigate } from "react-router-dom";
 
 export default function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const MenuLink = ({ to, icon: Icon, children }) => {
     const isActive = location.pathname === to;
@@ -35,9 +37,14 @@ export default function Sidebar() {
   };
 
   const handleLogout = async () => {
-    // Uncomment for real logout
-    // await supabase.auth.signOut();
-    window.location.href = "/";
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.error("Logout error:", error.message);
+      return;
+    }
+
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -46,7 +53,7 @@ export default function Sidebar() {
       <div className="border-b border-green-300 px-4 py-3">
         <div className="flex items-center gap-3">
           <div
-            className="flex aspect-square h-15 cursor-pointer items-center justify-center rounded-full bg-white p-1"
+            className="flex aspect-square h-12 cursor-pointer items-center justify-center rounded-full bg-white p-1"
             onClick={() => (window.location.href = "/")}
           >
             <img
@@ -60,7 +67,7 @@ export default function Sidebar() {
             />
           </div>
           <div className="tracking-tight">
-            <p className="font-rubik text-lg font-bold">TOSU Dashboard</p>
+            <p className="font-rubik text-base font-bold">TOSU Dashboard</p>
             <p className="text-xs text-gray-300">
               Transport Operations Services Unit (TOSU)
             </p>
@@ -70,7 +77,7 @@ export default function Sidebar() {
 
       {/* MENU */}
       <div className="flex-1 overflow-y-auto px-1">
-        <ul className="menu w-full space-y-1 text-sm font-semibold">
+        <ul className="menu w-full space-y-0.5 text-sm font-semibold">
           <li>
             <MenuLink to="/admindashboard" icon={ChartColumnStacked}>
               Admin Dashboard
@@ -89,7 +96,7 @@ export default function Sidebar() {
                 Monitoring
               </summary>
 
-              <ul className="menu rounded-box ml-4 w-full space-y-1 p-2">
+              <ul className="menu rounded-box ml-4 w-full space-y-0.5 p-2">
                 {/* <li>
                   <MenuLink to="/drivermonitoring" icon={Users}>
                     Driver Monitoring
@@ -121,7 +128,7 @@ export default function Sidebar() {
                 Maintenance
               </summary>
 
-              <ul className="menu rounded-box ml-4 w-full space-y-1 p-2">
+              <ul className="menu rounded-box ml-4 w-full space-y-0.5 p-2">
                 <li>
                   <MenuLink to="/pms" icon={Car}>
                     Vehicle Maintenance

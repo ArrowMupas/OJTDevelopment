@@ -67,16 +67,16 @@ function App() {
         }}
       />
       <Routes>
-        {/* <Route
+        <Route
           element={
             <ProtectedRoute>
               <MainLayout />
             </ProtectedRoute>
           }
-        > 
-       // Uncomment to activate google login (For later)
-        */}
-        <Route element={<MainLayout />}>
+        >
+          {/* // Uncomment to activate google login (For later) */}
+
+          {/* <Route element={<MainLayout />}> */}
           <Route path="/admindashboard" element={<AdminDashboard />} />
           <Route path="/vehicle-requests" element={<ManageRequestsPage />} />
           <Route
