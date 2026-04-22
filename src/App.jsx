@@ -24,6 +24,7 @@ import PublicTrackPage from "./pages/PublicTrackPage";
 import PublicTrackRelease from "./pages/PublicTrackRelease";
 import TrackingRelease from "./pages/TrackingRelease";
 import StaffPage from "./pages/public/StaffPage";
+import EntryExitHistory from "./pages/public/EntryExitHistory";
 
 // Management
 import AdminDashboard from "./pages/management/AdminDashboard";
@@ -31,6 +32,7 @@ import Staffs from "./pages/management/Staffs";
 import InquiryPage from "./pages/management/InquiryPage";
 import ManageRequestsPage from "./pages/management/ManageRequestPage";
 import SurveyResult from "./pages/management/Surveyresult";
+import EntryExitMonitoring from "./pages/management/EntryExitMonitoring";
 
 // Vehicles
 import VehiclePage from "./pages/vehicles/Vehicles";
@@ -132,6 +134,11 @@ function App() {
           />
           <Route path="/survey" element={<SurveyPage />} />
           <Route path="/survey/finish/:id" element={<SurveyInput />} />
+          <Route
+            path="/entry-exit-monitoring"
+            element={<EntryExitMonitoring />}
+          />
+          <Route path="/entry-exit-history" element={<EntryExitHistory />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

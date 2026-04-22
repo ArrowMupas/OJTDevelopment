@@ -26,6 +26,7 @@ export default function Navbar() {
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
     { href: "/staff", label: "Staff" },
+    { href: "/entry-exit-monitoring", label: "Entry & Exit" },
   ];
 
   return (
