@@ -1,4 +1,4 @@
-import { ArrowLeft, FilterIcon, Search } from "lucide-react";
+import { ArrowLeft, ArrowRight, FilterIcon, Search } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
@@ -51,6 +51,13 @@ export default function VehicleHistory() {
     () => debounce((value) => fetchHistory(value), 400),
     [],
   );
+
+  const formatValue = (val) => {
+    if (val === true) return "true";
+    if (val === false) return "false";
+    if (val === null || val === undefined || val === "") return "—";
+    return val;
+  };
 
   return (
     <main className="h-full w-full space-y-7 px-5 py-4 pb-25">
@@ -142,15 +149,42 @@ export default function VehicleHistory() {
                 history.map((item) => (
                   <tr key={item.id} className="hover:bg-green-50">
                     <th>{item.vehicles?.name || "Unknown"}</th>
-                    <td>{item.vehicles?.plate_number || "Unknown"}</td>
+                    <td>
+                      <div className="badge badge-dash badge-primary">
+                        {item.vehicles?.plate_number || "Unknown"}
+                      </div>
+                    </td>
+
                     <td>
                       {Object.entries(item.changes).map(([field, value]) => (
-                        <div key={field}>
-                          <strong>{field}:</strong> {value.old ?? "—"} →{" "}
-                          {value.new ?? "—"}
+                        <div key={field} className="mb-2">
+                          <p className="font-bold capitalize">
+                            {field.replaceAll("_", " ")}:
+                          </p>
+
+                          {field === "image_url" ? (
+                            <span className="badge bg-info text-white">
+                              Image changed
+                            </span>
+                          ) : (
+                            <div className="flex flex-wrap items-center gap-2">
+                              {/* OLD VALUE */}
+                              <span className="badge bg-error text-white line-through">
+                                {formatValue(value.old)}
+                              </span>
+
+                              <ArrowRight className="h-4 w-4" />
+
+                              {/* NEW VALUE */}
+                              <span className="badge bg-success text-white">
+                                {formatValue(value.new)}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </td>
+
                     <td>
                       {format(new Date(item.changed_at), "MMM d, yyyy hh:mm a")}
                     </td>
