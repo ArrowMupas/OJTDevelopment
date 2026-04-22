@@ -55,26 +55,26 @@ export default function ContactPage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="p-8 max-w-5xl mx-auto py-20"
+      className="mx-auto max-w-5xl p-8 py-20"
     >
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="flex items-center justify-center flex-col"
+        className="flex flex-col items-center justify-center"
       >
-        <h1 className="text-5xl font-bold text-center tracking-tight uppercase">
+        <h1 className="text-center text-5xl font-bold tracking-tight uppercase">
           Contact Us
         </h1>
 
-        <p className="relative z-10 text-lg max-w-2xl mx-auto text-black leading-relaxed px-4">
+        <p className="relative z-10 mx-auto max-w-2xl px-4 text-lg leading-relaxed text-black">
           Leave a message for your inquiries
         </p>
       </motion.div>
 
       {/* Content */}
-      <div className="grid md:grid-cols-2 gap-12 py-20">
+      <div className="grid gap-12 py-20 md:grid-cols-2">
         {/* Contact Form */}
         <motion.form
           onSubmit={handleSubmit(submitMessage)}
@@ -82,7 +82,7 @@ export default function ContactPage() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="p-8 h-full flex flex-col justify-between bg-white rounded-xl border border-gray-200 shadow-sm hover:border-green-700 transition-all duration-300"
+          className="flex h-full flex-col justify-between rounded-xl border border-gray-200 bg-white p-8 shadow-sm transition-all duration-300 hover:border-green-700"
         >
           <div className="flex gap-4">
             <div className="flex-1">
@@ -97,7 +97,7 @@ export default function ContactPage() {
                   }`}
                 />
                 {errors.firstName && (
-                  <p className="text-error text-sm mt-1">
+                  <p className="text-error mt-1 text-sm">
                     {errors.firstName.message}
                   </p>
                 )}
@@ -116,7 +116,7 @@ export default function ContactPage() {
                   }`}
                 />
                 {errors.lastName && (
-                  <p className="text-error text-sm mt-1">
+                  <p className="text-error mt-1 text-sm">
                     {errors.lastName.message}
                   </p>
                 )}
@@ -131,12 +131,10 @@ export default function ContactPage() {
                 type="email"
                 placeholder="Email"
                 {...register("email")}
-                className={`input w-full ${
-                  errors.email ? "input-error" : ""
-                }`}
+                className={`input w-full ${errors.email ? "input-error" : ""}`}
               />
               {errors.email && (
-                <p className="text-error text-sm mt-1">
+                <p className="text-error mt-1 text-sm">
                   {errors.email.message}
                 </p>
               )}
@@ -150,12 +148,10 @@ export default function ContactPage() {
                 type="text"
                 placeholder="Phone Number"
                 {...register("phone")}
-                className={`input w-full ${
-                  errors.phone ? "input-error" : ""
-                }`}
+                className={`input w-full ${errors.phone ? "input-error" : ""}`}
               />
               {errors.phone && (
-                <p className="text-error text-sm mt-1">
+                <p className="text-error mt-1 text-sm">
                   {errors.phone.message}
                 </p>
               )}
@@ -168,12 +164,12 @@ export default function ContactPage() {
               <textarea
                 placeholder="Your Message"
                 {...register("message")}
-                className={`textarea w-full h-40 ${
+                className={`textarea h-40 w-full ${
                   errors.message ? "input-error" : ""
                 }`}
               />
               {errors.message && (
-                <p className="text-error text-sm mt-1">
+                <p className="text-error mt-1 text-sm">
                   {errors.message.message}
                 </p>
               )}
@@ -182,7 +178,7 @@ export default function ContactPage() {
 
           <button
             type="submit"
-            className="btn btn-lg bg-green-600 hover:bg-green-500 flex items-center gap-2 w-full mt-4 text-white uppercase rounded-lg tracking-wider"
+            className="btn btn-lg mt-4 flex w-full items-center gap-2 rounded-lg bg-green-600 tracking-wider text-white uppercase hover:bg-green-500"
             disabled={isSubmitting}
           >
             {isSubmitting && <span className="loading loading-spinner"></span>}
@@ -196,14 +192,14 @@ export default function ContactPage() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="bg-green-600 text-white py-8 px-10 rounded-lg space-y-8"
+          className="space-y-8 rounded-lg bg-green-600 px-10 py-8 text-white"
         >
-          <h2 className="text-2xl font-semibold mb-12 text-center uppercase tracking-wider">
+          <h2 className="mb-12 text-center text-2xl font-semibold tracking-wider uppercase">
             Contact Information
           </h2>
 
           <div className="flex items-start">
-            <PhoneCall className="h-5 w-5 mr-3 mt-1 text-white" />
+            <PhoneCall className="mt-1 mr-3 h-5 w-5 text-white" />
             <div>
               <p>
                 <strong>Trunkline:</strong> 8929-1909
@@ -219,14 +215,14 @@ export default function ContactPage() {
 
           <p>
             <strong>
-              <Mail className="h-4 w-4 inline-block mr-2" /> Email:
+              <Mail className="mr-2 inline-block h-4 w-4" /> Email:
             </strong>{" "}
             nea.motorpool@gmail.com
           </p>
 
           <p>
             <strong>
-              <MapPin className="h-4 w-4 inline-block mr-2" /> Address:
+              <MapPin className="mr-2 inline-block h-4 w-4" /> Address:
             </strong>{" "}
             Basement 1, NEA Building #57, NIA Road, Quezon City, Philippines,
             1001
