@@ -337,7 +337,7 @@ export default function MaintenancePage() {
         v.name ?? "-",
         v.plate_number ?? "-",
         v.registration_end
-          ? format(new Date(v.registration_end), "MM-dd, yyyy")
+          ? format(new Date(v.registration_end), "MMMM d, yyyy")
           : "-",
         "",
       ]),
@@ -356,7 +356,7 @@ export default function MaintenancePage() {
         v.name ?? "-",
         v.plate_number ?? "-",
         v.insurance_end
-          ? format(new Date(v.insurance_end), "MM-dd, yyyy")
+          ? format(new Date(v.insurance_end), "MMMM d, yyyy")
           : "-",
         "",
       ]),
@@ -374,10 +374,10 @@ export default function MaintenancePage() {
     });
 
     worksheet["!cols"] = [
-      { wch: 10 },
-      { wch: 40 },
+      { wch: 5 },
+      { wch: 25 },
       { wch: 20 },
-      { wch: 40 },
+      { wch: 30 },
       { wch: 30 },
     ];
 

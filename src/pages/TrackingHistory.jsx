@@ -108,7 +108,7 @@ export default function TrackingHistory() {
         </div>
 
         <div className="flex flex-col gap-2 sm:w-full sm:flex-row sm:items-center sm:justify-end">
-          <div className="relative w-full bg-transparent sm:w-[250px] md:w-[330px] lg:w-[350px]">
+          <div className="relative w-full bg-transparent sm:w-62.5 md:w-82.5 lg:w-87.5">
             <SearchIcon className="absolute text-black" />
             <input
               type="text"

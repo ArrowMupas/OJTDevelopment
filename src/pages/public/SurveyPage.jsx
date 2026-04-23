@@ -224,7 +224,7 @@ export default function SurveyPage() {
               </option>
               {vehicles.map((v) => (
                 <option key={v.id} value={v.id}>
-                  {v.name}
+                  {v.name} ({v.plate_number})
                 </option>
               ))}
             </select>
