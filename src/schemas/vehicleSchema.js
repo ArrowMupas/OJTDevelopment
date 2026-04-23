@@ -38,6 +38,10 @@ export const vehicleSchema = z
 
     periodDurationTo: z.string().min(1, "Period Duration To is required"),
 
+    registrationRenewal: z.string().nullable().optional(),
+
+    insuranceRenewal: z.string().nullable().optional(),
+
     acquisitionDate: z.string().min(1, "Acquisition date is required"),
 
     acquisitionCost: z.coerce

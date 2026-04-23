@@ -1,105 +1,177 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import toast from "react-hot-toast";
 import { LucideFileClock } from "lucide-react";
 import { Link } from "react-router-dom";
+import { supabase } from "../../supabaseClient";
+import toast from "react-hot-toast";
+import { format } from "date-fns";
 
 export default function EntryExitPage() {
   const [type, setType] = useState("private");
 
-  const [plate, setPlate] = useState("");
-  const [driver, setDriver] = useState("");
-  const [vehicleName, setVehicleName] = useState("");
+  const [vehicles, setVehicles] = useState([]);
+  const [drivers, setDrivers] = useState([]);
+  const [entryLog, setEntryLog] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [govVehicle, setGovVehicle] = useState("");
-  const [govDriver, setGovDriver] = useState("");
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
 
-  const [activeEntries, setActiveEntries] = useState([]);
-  const [history, setHistory] = useState([]);
+      const [
+        { data: vehiclesData, error: vehiclesError },
+        { data: driversData, error: driversError },
+        { data: logsData, error: logsError },
+      ] = await Promise.all([
+        supabase
+          .from("vehicles")
+          .select("*")
+          .order("name", { ascending: true }),
+        supabase
+          .from("drivers")
+          .select("*")
+          .order("last_name", { ascending: true }),
+        supabase
+          .from("entry_log")
+          .select("*")
+          .order("time_in", { ascending: false }),
+      ]);
 
-  const drivers = ["Juan Dela Cruz", "Pedro Santos", "Maria Reyes"];
-  const vehicles = ["ABC-123", "XYZ-789", "DEF-456"];
+      if (vehiclesError) console.error("Vehicles error:", vehiclesError);
+      if (driversError) console.error("Drivers error:", driversError);
+      if (logsError) console.error("Logs error:", logsError);
 
-  const handleEntry = () => {
-    const now = new Date();
+      setVehicles(vehiclesData || []);
+      setDrivers(driversData || []);
+      setEntryLog(logsData || []);
 
-    let entryData;
-
-    if (type === "private") {
-      if (!plate || !driver || !vehicleName) {
-        return toast.error("Please fill all private vehicle fields");
-      }
-
-      entryData = {
-        type: "Private",
-        plate,
-        driver,
-        vehicleName,
-        timeIn: now,
-      };
-    } else {
-      if (!govVehicle || !govDriver || !govVehicleName) {
-        return toast.error("Please select all government vehicle fields");
-      }
-
-      entryData = {
-        type: "Government",
-        plate: govVehicle,
-        driver: govDriver,
-        vehicleName: govVehicleName,
-        timeIn: now,
-      };
+      setLoading(false);
     }
 
-    setActiveEntries((prev) => [...prev, entryData]);
+    fetchData();
+  }, []);
 
-    setPlate("");
-    setDriver("");
-    setVehicleName("");
-    setGovVehicle("");
-    setGovDriver("");
-    setGovVehicleName("");
+  const [form, setForm] = useState({
+    plateNumber: "",
+    driverName: "",
+    vehicleName: "",
+    vehicleId: "",
+    driverId: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-    toast.success("Vehicle entered");
+  const handleChange = (e) => {
+    setForm((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
   };
 
-  const handleExit = (index) => {
+  const handleEntry = async () => {
+    setIsSubmitting(true);
+
+    try {
+      let payload = {
+        type,
+        time_out: null,
+      };
+
+      if (type === "private") {
+        payload = {
+          ...payload,
+          plate_number: form.plateNumber,
+          driver_name: form.driverName,
+          vehicle_name: form.vehicleName,
+        };
+      } else {
+        const selectedVehicle = vehicles.find((v) => v.id === form.vehicleId);
+        const selectedDriver = drivers.find((d) => d.id === form.driverId);
+
+        payload = {
+          ...payload,
+          plate_number: selectedVehicle?.plate_number || null,
+          vehicle_name: selectedVehicle?.name || null,
+          driver_name:
+            `${selectedDriver?.first_name} ${selectedDriver?.last_name}` ||
+            null,
+        };
+      }
+
+      const { error } = await supabase.from("entry_log").insert([payload]);
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      toast.success("Entry recorded successfully!");
+
+      // reset form
+      setForm({
+        plateNumber: "",
+        driverName: "",
+        vehicleName: "",
+        vehicleId: "",
+        driverId: "",
+      });
+
+      // refresh logs
+      const { data } = await supabase
+        .from("entry_log")
+        .select("*")
+        .order("time_in", { ascending: false });
+
+      setEntryLog(data || []);
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "-";
+    return format(new Date(date), "MMM d, yyyy h:mm a");
+  };
+  const handleTimeOut = async (entry) => {
     const now = new Date();
-    const entry = activeEntries[index];
 
-    const updatedEntry = {
-      ...entry,
-      timeOut: now,
-    };
+    const { error } = await supabase
+      .from("entry_log")
+      .update({
+        time_out: now,
+      })
+      .eq("id", entry.id);
 
-    setHistory((prev) => [updatedEntry, ...prev]);
-    setActiveEntries((prev) => prev.filter((_, i) => i !== index));
+    if (error) {
+      console.error(error);
+      toast.error("Failed to time out entry");
+      return;
+    }
 
-    toast.success("Vehicle exited");
+    toast.success("Time out recorded");
+
+    // refetch logs (same pattern you already use)
+    const { data } = await supabase
+      .from("entry_log")
+      .select("*")
+      .order("time_in", { ascending: false });
+
+    setEntryLog(data || []);
   };
-
-  const formatDate = (date) =>
-    new Date(date).toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="mx-auto max-w-7xl p-8 py-20"
+      className="mx-auto max-w-7xl py-20"
     >
       <div className="text-center">
         <h1 className="mt-7 text-5xl font-bold uppercase">
           Entry & Exit Monitoring
         </h1>
-        <p className="mt-2 text-gray-600">
-          Monitor vehicle entry and exit in real-time
-        </p>
+        <p className="mt-2 text-gray-600">Monitor vehicle entry and exit</p>
       </div>
 
       <div className="flex justify-end">
@@ -111,8 +183,11 @@ export default function EntryExitPage() {
         </Link>
       </div>
 
-      <div className="mt-10 grid grid-cols-2 items-start gap-8">
-        <div className="flex min-h-[260px] w-full flex-col justify-between rounded-xl border p-6 shadow-sm">
+      <div className="mt-10 grid grid-cols-3 items-start gap-4">
+        <div className="card bg-base h-fit p-6 shadow">
+          <h2 className="mt-2 mb-4 text-center text-3xl font-bold uppercase">
+            Time In here
+          </h2>
           <div className="mb-6 flex gap-4">
             <button
               className={`btn flex-1 ${type === "private" ? "bg-green-600 text-white" : ""}`}
@@ -128,29 +203,33 @@ export default function EntryExitPage() {
             </button>
           </div>
 
-          <div className="grid min-h-[70px] grid-cols-2 gap-4">
+          <div className="grid min-h-17.5 grid-cols-2 gap-4">
             {type === "private" ? (
               <>
                 <input
+                  name="plateNumber"
+                  value={form.plateNumber}
+                  onChange={handleChange}
                   type="text"
                   placeholder="Plate Number"
-                  value={plate}
-                  onChange={(e) => setPlate(e.target.value)}
-                  className="input input-bordered w-full"
-                />
-                <input
-                  type="text"
-                  placeholder="Driver Name"
-                  value={driver}
-                  onChange={(e) => setDriver(e.target.value)}
                   className="input input-bordered w-full"
                 />
 
                 <input
+                  name="driverName"
+                  value={form.driverName}
+                  onChange={handleChange}
                   type="text"
-                  placeholder="Vehicle Name (e.g. Toyota, Honda)"
-                  value={vehicleName}
-                  onChange={(e) => setVehicleName(e.target.value)}
+                  placeholder="Driver Name"
+                  className="input input-bordered w-full"
+                />
+
+                <input
+                  name="vehicleName"
+                  value={form.vehicleName}
+                  onChange={handleChange}
+                  type="text"
+                  placeholder="Vehicle Name"
                   className="input input-bordered col-span-2 w-full"
                 />
               </>
@@ -158,23 +237,37 @@ export default function EntryExitPage() {
               <>
                 <select
                   className="select select-bordered w-full"
-                  value={govVehicle}
-                  onChange={(e) => setGovVehicle(e.target.value)}
+                  value={form.vehicleId ?? ""}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      vehicleId: e.target.value ? Number(e.target.value) : "",
+                    }))
+                  }
                 >
                   <option value="">Select Vehicle</option>
-                  {vehicles.map((v, i) => (
-                    <option key={i}>{v}</option>
+                  {vehicles.map((v) => (
+                    <option key={v.id} value={v.id}>
+                      {v.name} ({v.plate_number})
+                    </option>
                   ))}
                 </select>
 
                 <select
                   className="select select-bordered w-full"
-                  value={govDriver}
-                  onChange={(e) => setGovDriver(e.target.value)}
+                  value={form.driverId ?? ""}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      driverId: e.target.value ? Number(e.target.value) : "",
+                    }))
+                  }
                 >
                   <option value="">Select Driver</option>
-                  {drivers.map((d, i) => (
-                    <option key={i}>{d}</option>
+                  {drivers.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.first_name} {d.last_name}
+                    </option>
                   ))}
                 </select>
               </>
@@ -183,63 +276,79 @@ export default function EntryExitPage() {
 
           <button
             onClick={handleEntry}
+            disabled={isSubmitting}
             className="btn mt-6 w-full bg-green-600 text-white"
           >
-            IN
+            {isSubmitting ? "Timing in..." : "TIME IN"}
           </button>
         </div>
 
-        <div className="rounded-xl border p-2 shadow">
-          <div className="w-full">
-            <h2 className="mt-2 mb-4 flex justify-center text-2xl font-semibold">
-              Vehicles Inside
-            </h2>
+        {/* RIGHT TABLE */}
+        <div className="col-span-2 overflow-x-auto rounded-lg shadow-sm">
+          <table className="table w-full rounded-2xl">
+            <thead className="bg-green-600 text-white">
+              <tr className="uppercase">
+                <th>Type</th>
+                <th>Plate</th>
+                <th>Vehicle</th>
+                <th>Driver</th>
+                <th>Time In</th>
+                <th>Time Out</th>
+              </tr>
+            </thead>
 
-            <div className="w-full overflow-x-auto rounded-lg">
-              <table className="table w-full">
-                <thead className="bg-green-600 text-white">
-                  <tr>
-                    <th className="w-24">Type</th>
-                    <th className="w-32">Plate</th>
-                    <th className="w-32">Vehicle</th>
-                    <th className="w-40">Driver</th>
-                    <th className="w-40">Time In</th>
-                    <th className="w-40">Time Out</th>
-                    <th className="w-24 text-center">Action</th>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan="6" className="py-6 text-center">
+                    Loading...
+                  </td>
+                </tr>
+              ) : entryLog.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="py-6 text-center">
+                    No records found
+                  </td>
+                </tr>
+              ) : (
+                entryLog.map((entry) => (
+                  <tr key={entry.id} className="bg-green-50 capitalize">
+                    <td>
+                      <span
+                        className={`badge ${
+                          entry.type === "private"
+                            ? "badge-secondary"
+                            : "badge-success"
+                        } badge-sm text-white capitalize`}
+                      >
+                        {entry.type}
+                      </span>
+                    </td>{" "}
+                    <td>
+                      <div className="badge badge-dash badge-primary badge-sm truncate">
+                        {entry.plate_number}
+                      </div>
+                    </td>
+                    <td>{entry.vehicle_name}</td>
+                    <td>{entry.driver_name}</td>
+                    <td className="truncate">{formatDate(entry.time_in)}</td>
+                    <td className="truncate">
+                      {entry.time_out ? (
+                        formatDate(entry.time_out)
+                      ) : (
+                        <button
+                          onClick={() => handleTimeOut(entry)}
+                          className="btn btn-sm btn-warning btn-block text-white uppercase"
+                        >
+                          Time Out
+                        </button>
+                      )}
+                    </td>
                   </tr>
-                </thead>
-
-                <tbody>
-                  {activeEntries.length === 0 ? (
-                    <tr>
-                      <td colSpan="6" className="py-6 text-center">
-                        No active entries
-                      </td>
-                    </tr>
-                  ) : (
-                    activeEntries.map((entry, index) => (
-                      <tr key={index}>
-                        <td>{entry.type}</td>
-                        <td>{entry.plate}</td>
-                        <td>{entry.vehicleName}</td>
-                        <td>{entry.driver}</td>
-                        <td>{formatDate(entry.timeIn)}</td>
-                        <td>{formatDate(entry.timeOut)}</td>
-                        <td className="text-center">
-                          <button
-                            className="btn btn-sm bg-red-500 text-white"
-                            onClick={() => handleExit(index)}
-                          >
-                            OUT
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </motion.div>

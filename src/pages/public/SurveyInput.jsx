@@ -21,6 +21,7 @@ export default function SurveyInput() {
         `,
         )
         .eq("id", id)
+        .order("travel_date", { ascending: true })
         .single();
 
       if (error) {

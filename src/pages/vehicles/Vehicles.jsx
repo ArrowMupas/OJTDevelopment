@@ -205,6 +205,8 @@ export default function MaintenancePage() {
           year_model: data.yearModel,
           registration_start: data.periodDuration,
           registration_end: data.periodDurationTo,
+          registration_renewal: data.registrationRenewal,
+          insurance_renewal: data.insuranceRenewal,
           acquisition_date: data.acquisitionDate,
           acquisition_cost: data.acquisitionCost,
         },
@@ -264,6 +266,8 @@ export default function MaintenancePage() {
           year_model: data.yearModel,
           registration_start: data.periodDuration,
           registration_end: data.periodDurationTo,
+          registration_renewal: data.registrationRenewal,
+          insurance_renewal: data.insuranceRenewal,
           acquisition_date: data.acquisitionDate,
           acquisition_cost: data.acquisitionCost,
         })
@@ -339,7 +343,9 @@ export default function MaintenancePage() {
         v.registration_end
           ? format(new Date(v.registration_end), "MMMM d, yyyy")
           : "-",
-        "",
+        v.registration_renewal
+          ? format(new Date(v.registration_renewal), "MMMM d, yyyy")
+          : "-",
       ]),
     ];
 
@@ -358,7 +364,9 @@ export default function MaintenancePage() {
         v.insurance_end
           ? format(new Date(v.insurance_end), "MMMM d, yyyy")
           : "-",
-        "",
+        v.insurance_renewal
+          ? format(new Date(v.insurance_renewal), "MMMM d, yyyy")
+          : "-",
       ]),
     ];
 
@@ -610,7 +618,7 @@ export default function MaintenancePage() {
                 Insurance Period
               </h3>
 
-              <div className="grid gap-5 md:grid-cols-3">
+              <div className="grid gap-5 md:grid-cols-2">
                 <OurInput
                   label="Issue Date"
                   name="issueDate"
@@ -620,7 +628,15 @@ export default function MaintenancePage() {
                 />
 
                 <OurInput
-                  label="Period From"
+                  label="Renewal Date"
+                  name="insuranceRenewal"
+                  type="date"
+                  register={register}
+                  error={errors.insuranceRenewal}
+                />
+
+                <OurInput
+                  label="Insurance Start"
                   name="periodFrom"
                   type="date"
                   register={register}
@@ -628,7 +644,7 @@ export default function MaintenancePage() {
                 />
 
                 <OurInput
-                  label="Issue Date"
+                  label="Insurance End"
                   name="periodTo"
                   type="date"
                   register={register}
@@ -703,9 +719,17 @@ export default function MaintenancePage() {
                   Valid Period
                 </h3>
 
-                <div className="grid gap-5 md:grid-cols-2">
+                <div className="grid gap-4 md:grid-cols-3">
                   <OurInput
-                    label="From"
+                    label="OR Date"
+                    name="registrationRenewal"
+                    type="date"
+                    register={register}
+                    error={errors.registrationRenewal}
+                  />
+
+                  <OurInput
+                    label="Registration Start"
                     name="periodDuration"
                     type="date"
                     register={register}
@@ -713,7 +737,7 @@ export default function MaintenancePage() {
                   />
 
                   <OurInput
-                    label="To "
+                    label="Registration End"
                     name="periodDurationTo"
                     type="date"
                     register={register}
@@ -918,6 +942,21 @@ export default function MaintenancePage() {
                                 {vehicle.required_covered || "N/A"}
                               </p>
                             </div>
+
+                            <div>
+                              <span className="text-xs text-gray-500">
+                                Insurance Renewal Date
+                              </span>
+                              <p className="text-sm">
+                                {vehicle.insurance_renewal
+                                  ? format(
+                                      new Date(vehicle.insurance_renewal),
+                                      "MMM. d, yyyy",
+                                    )
+                                  : "N/A"}
+                              </p>
+                            </div>
+
                             <div>
                               <span className="text-xs text-gray-500">
                                 Period Covered
@@ -998,6 +1037,20 @@ export default function MaintenancePage() {
 
                             <div>
                               <span className="text-xs text-gray-500">
+                                OR Date
+                              </span>
+                              <p className="text-sm">
+                                {vehicle.registration_renewal
+                                  ? format(
+                                      new Date(vehicle.registration_renewal),
+                                      "MMM. d, yyyy",
+                                    )
+                                  : "N/A"}
+                              </p>
+                            </div>
+
+                            <div>
+                              <span className="text-xs text-gray-500">
                                 Period Duration
                               </span>
                               <p
@@ -1044,6 +1097,8 @@ export default function MaintenancePage() {
                               yearModel: vehicle.year_model,
                               periodDuration: vehicle.registration_start,
                               periodDurationTo: vehicle.registration_end,
+                              registrationRenewal: vehicle.registration_renewal,
+                              insuranceRenewal: vehicle.insurance_renewal,
                               acquisitionDate: vehicle.acquisition_date
                                 ? format(
                                     new Date(vehicle.acquisition_date),
