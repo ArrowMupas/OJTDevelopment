@@ -13,14 +13,12 @@ export default function EntryExitPage() {
 
   const [govVehicle, setGovVehicle] = useState("");
   const [govDriver, setGovDriver] = useState("");
-  const [govVehicleName, setGovVehicleName] = useState("");
 
   const [activeEntries, setActiveEntries] = useState([]);
   const [history, setHistory] = useState([]);
 
   const drivers = ["Juan Dela Cruz", "Pedro Santos", "Maria Reyes"];
   const vehicles = ["ABC-123", "XYZ-789", "DEF-456"];
-  const vehicleNames = ["Honda City", "Toyota Innova", "Isuzu Crosswind"];
 
   const handleEntry = () => {
     const now = new Date();
@@ -163,7 +161,7 @@ export default function EntryExitPage() {
                   value={govVehicle}
                   onChange={(e) => setGovVehicle(e.target.value)}
                 >
-                  <option value="">Select Plate</option>
+                  <option value="">Select Vehicle</option>
                   {vehicles.map((v, i) => (
                     <option key={i}>{v}</option>
                   ))}
@@ -179,17 +177,6 @@ export default function EntryExitPage() {
                     <option key={i}>{d}</option>
                   ))}
                 </select>
-
-                <select
-                  className="select select-bordered w-full"
-                  value={govVehicleName}
-                  onChange={(e) => setGovVehicleName(e.target.value)}
-                >
-                  <option value="">Select Vehicle</option>
-                  {vehicleNames.map((v, i) => (
-                    <option key={i}>{v}</option>
-                  ))}
-                </select>
               </>
             )}
           </div>
@@ -202,7 +189,6 @@ export default function EntryExitPage() {
           </button>
         </div>
 
-        {/* TABLE */}
         <div className="rounded-xl border p-2 shadow">
           <div className="w-full">
             <h2 className="mt-2 mb-4 flex justify-center text-2xl font-semibold">
@@ -218,6 +204,7 @@ export default function EntryExitPage() {
                     <th className="w-32">Vehicle</th>
                     <th className="w-40">Driver</th>
                     <th className="w-40">Time In</th>
+                    <th className="w-40">Time Out</th>
                     <th className="w-24 text-center">Action</th>
                   </tr>
                 </thead>
@@ -237,6 +224,7 @@ export default function EntryExitPage() {
                         <td>{entry.vehicleName}</td>
                         <td>{entry.driver}</td>
                         <td>{formatDate(entry.timeIn)}</td>
+                        <td>{formatDate(entry.timeOut)}</td>
                         <td className="text-center">
                           <button
                             className="btn btn-sm bg-red-500 text-white"
