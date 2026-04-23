@@ -133,7 +133,7 @@ export default function SurveyPage() {
       ],
       ...surveys.map((s) => [
         s.passenger_name || "Anonymous",
-        s.travel_date ? format(new Date(s.travel_date), "MMM d, yyyy") : "-",
+        s.travel_date ? format(new Date(s.travel_date), "MMMM d, yyyy") : "-",
         s.rating_appearance ?? "-",
         s.rating_behavior ?? "-",
         s.rating_safety ?? "-",
@@ -150,8 +150,8 @@ export default function SurveyPage() {
     worksheet["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 9 } }];
 
     worksheet["!cols"] = [
-      { wch: 20 },
-      { wch: 15 },
+      { wch: 25 },
+      { wch: 25 },
       { wch: 10 },
       { wch: 10 },
       { wch: 10 },

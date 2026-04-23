@@ -201,8 +201,10 @@ export default function CompleteRequest() {
         index + 1,
         r.department ?? "-",
         r.destination ?? "-",
-        r.timestamp ? format(new Date(r.timestamp), "MM-dd, yyyy") : "-",
-        r.departure_date ?? "-",
+        r.timestamp ? format(new Date(r.timestamp), "MMMM d, yyyy") : "-",
+        r.departure_date
+          ? format(new Date(r.departure_date), "MMMM d, yyyy")
+          : "-",
         vehicleMap.get(r.vehicle_id) ?? "-",
         r.rating ?? "-",
       ]),
@@ -211,13 +213,13 @@ export default function CompleteRequest() {
     const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
 
     worksheet["!cols"] = [
-      { wch: 10 },
+      { wch: 5 },
       { wch: 40 },
       { wch: 40 },
-      { wch: 30 },
-      { wch: 30 },
+      { wch: 20 },
       { wch: 25 },
-      { wch: 15 },
+      { wch: 25 },
+      { wch: 10 },
     ];
 
     const workbook = XLSX.utils.book_new();
