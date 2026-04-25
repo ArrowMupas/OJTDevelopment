@@ -106,7 +106,6 @@ export default function EntryExitPage() {
 
       toast.success("Entry recorded successfully!");
 
-      // reset form
       setForm({
         plateNumber: "",
         driverName: "",

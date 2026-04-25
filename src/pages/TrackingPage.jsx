@@ -32,6 +32,7 @@ export default function TrackingPage() {
   const [maintenance2, setMaintenance2] = useState("");
   const [serviceShop, setServiceShop] = useState("");
   const [type, setType] = useState("");
+
   const navigate = useNavigate();
 
   const getSteps = (type) => {
@@ -51,7 +52,7 @@ export default function TrackingPage() {
       return;
     }
 
-    setVehicles(data);
+    setVehicles(data || []);
   }
 
   async function fetchRecords() {
@@ -73,9 +74,9 @@ export default function TrackingPage() {
       return;
     }
 
-    const normalized = data.map((item) => ({
+    const normalized = (data || []).map((item) => ({
       ...item,
-      step: item.step ?? 0,
+      step: item.current_step ?? 0,
     }));
 
     setRepairs(normalized);
@@ -87,7 +88,10 @@ export default function TrackingPage() {
   }, []);
 
   async function createMaintenanceRecord() {
-    if (!selectedVehicleId || !type) return;
+    if (!selectedVehicleId || !type) {
+      alert("Please complete required fields");
+      return;
+    }
 
     if (
       (type === "internal" || type === "internal-mini") &&
@@ -105,7 +109,7 @@ export default function TrackingPage() {
     const payload = {
       vehicle_id: selectedVehicleId,
       type,
-      status: "Inspection",
+      current_step: 0,
 
       assigned_personnel_1: type === "external" ? null : maintenance1,
 
@@ -117,30 +121,30 @@ export default function TrackingPage() {
     const { data, error } = await supabase
       .from("maintenance_records")
       .insert([payload])
-      .select();
+      .select(
+        `
+        *,
+        vehicles (
+          name,
+          plate_number
+        )
+      `,
+      )
+      .single();
 
     if (error) {
       console.error("Insert error:", error);
+      alert("Failed to save record");
       return;
     }
 
-    const vehicle = vehicles.find((v) => v.id === selectedVehicleId);
-
-    const newRecord = {
-      id: data[0].id,
-      vehicle_id: selectedVehicleId,
-      name: vehicle?.name || "Vehicle",
-      plate: vehicle?.plate,
-
-      service_shop: type === "external" ? serviceShop : null,
-
-      personnel: type === "external" ? [] : [maintenance1, maintenance2],
-
-      step: 0,
-      type,
-    };
-
-    setRepairs((prev) => [newRecord, ...prev]);
+    setRepairs((prev) => [
+      {
+        ...data,
+        step: data.current_step ?? 0,
+      },
+      ...prev,
+    ]);
 
     setSelectedVehicleId("");
     setMaintenance1("");
@@ -151,22 +155,41 @@ export default function TrackingPage() {
     document.getElementById("trackingModal").close();
   }
 
-  const updateStep = (id, action) => {
-    const updated = repairs.map((repair) => {
-      if (repair.id !== id) return repair;
+  async function updateStep(id, action) {
+    const target = repairs.find((repair) => repair.id === id);
+    if (!target) return;
 
-      const steps = getSteps(repair.type);
+    const steps = getSteps(target.type);
 
-      let newStep = repair.step;
+    let newStep = target.step;
 
-      if (action === "next" && repair.step < steps.length - 1) newStep++;
-      if (action === "prev" && repair.step > 0) newStep--;
+    if (action === "next" && target.step < steps.length - 1) {
+      newStep++;
+    }
 
-      return { ...repair, step: newStep };
-    });
+    if (action === "prev" && target.step > 0) {
+      newStep--;
+    }
 
-    setRepairs(updated);
-  };
+    const { error } = await supabase
+      .from("maintenance_records")
+      .update({
+        current_step: newStep,
+      })
+      .eq("id", id);
+
+    if (error) {
+      console.error("Update step error:", error);
+      alert("Failed to update step");
+      return;
+    }
+
+    setRepairs((prev) =>
+      prev.map((repair) =>
+        repair.id === id ? { ...repair, step: newStep } : repair,
+      ),
+    );
+  }
 
   return (
     <main className="min-h-screen space-y-7 px-3 py-4 pb-25 sm:px-5">
@@ -179,6 +202,7 @@ export default function TrackingPage() {
             Manage and monitor vehicle repair progress
           </p>
         </div>
+
         <div className="flex gap-2">
           <select
             className="select text-green-700 sm:min-w-55"
@@ -192,14 +216,23 @@ export default function TrackingPage() {
 
           <button
             className="btn btn-info flex items-center gap-2 text-white"
-            onClick={() => navigate("/tracking-history")} // ✅ REDIRECT HERE
+            onClick={() => navigate("/tracking-history")}
           >
             <FolderClock className="size-4" />
             Tracking History
           </button>
+
+          <button
+            className="btn btn-success flex items-center gap-2 text-white"
+            onClick={() => document.getElementById("trackingModal").showModal()}
+          >
+            <CirclePlus className="size-4" />
+            Add Repair
+          </button>
         </div>
       </div>
 
+      {/* MODAL */}
       <dialog id="trackingModal" className="modal">
         <div className="modal-box rounded-xl p-8">
           <h1 className="mb-4 text-2xl font-bold tracking-wide uppercase">
@@ -228,7 +261,7 @@ export default function TrackingPage() {
             </select>
 
             <select
-              className="select select-bordered size-sm w-full"
+              className="select select-bordered w-full"
               value={type}
               onChange={(e) => setType(e.target.value)}
             >
@@ -248,33 +281,37 @@ export default function TrackingPage() {
               />
             )}
 
-            <select
-              className="select select-bordered w-full"
-              value={maintenance1}
-              onChange={(e) => setMaintenance1(e.target.value)}
-            >
-              <option value="">Select Maintenance 1</option>
-              <option value="Fernando L. Aquino">Fernando L. Aquino</option>
-              <option value="Joseph Neil S. Leonardo">
-                Joseph Neil S. Leonardo
-              </option>
-              <option value="Ruel V. Bebanco">Ruel V. Bebanco</option>
-              <option value="None">None</option>
-            </select>
+            {type !== "external" && (
+              <>
+                <select
+                  className="select select-bordered w-full"
+                  value={maintenance1}
+                  onChange={(e) => setMaintenance1(e.target.value)}
+                >
+                  <option value="">Select Maintenance 1</option>
+                  <option value="Fernando L. Aquino">Fernando L. Aquino</option>
+                  <option value="Joseph Neil S. Leonardo">
+                    Joseph Neil S. Leonardo
+                  </option>
+                  <option value="Ruel V. Bebanco">Ruel V. Bebanco</option>
+                  <option value="None">None</option>
+                </select>
 
-            <select
-              className="select select-bordered w-full"
-              value={maintenance2}
-              onChange={(e) => setMaintenance2(e.target.value)}
-            >
-              <option value="">Select Maintenance 2</option>
-              <option value="Fernando L. Aquino">Fernando L. Aquino</option>
-              <option value="Joseph Neil S. Leonardo">
-                Joseph Neil S. Leonardo
-              </option>
-              <option value="Ruel V. Bebanco">Ruel V. Bebanco</option>
-              <option value="None">None</option>
-            </select>
+                <select
+                  className="select select-bordered w-full"
+                  value={maintenance2}
+                  onChange={(e) => setMaintenance2(e.target.value)}
+                >
+                  <option value="">Select Maintenance 2</option>
+                  <option value="Fernando L. Aquino">Fernando L. Aquino</option>
+                  <option value="Joseph Neil S. Leonardo">
+                    Joseph Neil S. Leonardo
+                  </option>
+                  <option value="Ruel V. Bebanco">Ruel V. Bebanco</option>
+                  <option value="None">None</option>
+                </select>
+              </>
+            )}
 
             <button
               className="btn btn-lg w-full rounded-lg bg-green-600 tracking-wider text-white uppercase hover:bg-green-500"
@@ -304,13 +341,12 @@ export default function TrackingPage() {
                 className="rounded-xl border border-gray-200 bg-white p-8 shadow-sm transition-all duration-300 hover:border-green-600"
               >
                 <div className="mb-5 flex items-center gap-2">
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-lg font-semibold">
-                      {repair.vehicles?.name}
-                    </h2>
-                    <div className="badge badge-primary badge-dash">
-                      {repair.vehicles?.plate_number}
-                    </div>
+                  <h2 className="text-lg font-semibold">
+                    {repair.vehicles?.name}
+                  </h2>
+
+                  <div className="badge badge-primary badge-dash">
+                    {repair.vehicles?.plate_number}
                   </div>
                 </div>
 

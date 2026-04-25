@@ -46,7 +46,6 @@ import TrackingHistory from "./pages/TrackingHistory";
 
 import TransactionsPage from "./pages/TransactionsPage";
 import DriverMonitoringPage from "./pages/DriverMonitoringPage";
-import VehicleStatusPage from "./pages/VehicleStatusPage";
 import TripTicketPage from "./pages/TripTicketPage";
 
 function App() {
@@ -96,7 +95,6 @@ function App() {
             element={<VehicleHistory />}
           />
 
-          <Route path="/vehiclestatusqueue" element={<VehicleStatusPage />} />
           <Route path="/drivermonitoring" element={<DriverMonitoringPage />} />
 
           <Route path="/track" element={<TrackingPage />} />
