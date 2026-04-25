@@ -721,7 +721,7 @@ export default function MaintenancePage() {
 
                 <div className="grid gap-4 md:grid-cols-3">
                   <OurInput
-                    label="OR Date"
+                    label="Renewal Date"
                     name="registrationRenewal"
                     type="date"
                     register={register}
