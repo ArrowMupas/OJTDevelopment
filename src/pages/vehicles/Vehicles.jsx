@@ -511,11 +511,11 @@ export default function MaintenancePage() {
       </div>
 
       <dialog id="vehicleModal" className="modal">
-        <div className="modal-box max-w-2xl">
+        <div className="modal-box max-w-xl">
           <h1 className="text-2xl font-bold">
             {isEditing ? "Update Vehicle" : "Add Vehicle"}
           </h1>
-          <p className="mb-7 text-sm text-gray-500">
+          <p className="mb-4 text-sm text-gray-500">
             {isEditing
               ? "Edit vehicle details below."
               : "Create your vehicle here!"}
@@ -537,12 +537,12 @@ export default function MaintenancePage() {
               ✕
             </button>
 
-            <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-gray-500">
-                Vehicle Information
-              </h3>
-
-              <div className="grid gap-4 md:grid-cols-2">
+            <div className="bg-base-200 border-base-300 collapse-arrow collapse border">
+              <input type="checkbox" />
+              <div className="collapse-title font-semibold">
+                Vehicle Details
+              </div>
+              <div className="collapse-content grid gap-4 md:grid-cols-2">
                 <OurInput
                   label="Vehicle Name"
                   name="vehicleName"
@@ -573,195 +573,186 @@ export default function MaintenancePage() {
                   register={register}
                   error={errors.acquisitionCost}
                 />
-              </div>
-            </div>
 
-            <div className="divider"></div>
-
-            <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-gray-500">
-                Insurance Details
-              </h3>
-
-              <div className="grid gap-5 md:grid-cols-2">
-                <OurInput
-                  label="Policy ID"
-                  name="policyID"
-                  register={register}
-                  error={errors.policyID}
-                />
-
-                <OurInput
-                  label="Policy Number"
-                  name="policyNumber"
-                  register={register}
-                  error={errors.policyNumber}
-                />
-              </div>
-
-              <div className="mt-4">
-                <OurInput
-                  label="Required Covered"
-                  name="requiredCovered"
-                  register={register}
-                  error={errors.requiredCovered}
-                  list="requiredCoveredOptions"
-                  options={["Comprehensive", "TPL", "Comprehensive & TPL"]}
-                />
-              </div>
-            </div>
-
-            <div className="divider"></div>
-
-            <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-gray-500">
-                Insurance Period
-              </h3>
-
-              <div className="grid gap-5 md:grid-cols-2">
-                <OurInput
-                  label="Issue Date"
-                  name="issueDate"
-                  type="date"
-                  register={register}
-                  error={errors.issueDate}
-                />
-
-                <OurInput
-                  label="Renewal Date"
-                  name="insuranceRenewal"
-                  type="date"
-                  register={register}
-                  error={errors.insuranceRenewal}
-                />
-
-                <OurInput
-                  label="Insurance Start"
-                  name="periodFrom"
-                  type="date"
-                  register={register}
-                  error={errors.periodFrom}
-                />
-
-                <OurInput
-                  label="Insurance End"
-                  name="periodTo"
-                  type="date"
-                  register={register}
-                  error={errors.periodTo}
-                />
-              </div>
-            </div>
-
-            <div className="divider"></div>
-
-            <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-gray-500">
-                Vehicle Registration
-              </h3>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <OurInput
-                  label="Engine Number"
-                  name="engineNumber"
-                  register={register}
-                  error={errors.engineNumber}
-                />
-
-                <OurInput
-                  label="Chassis Number"
-                  name="chassisNumber"
-                  register={register}
-                  error={errors.chassisNumber}
-                />
-
-                <OurInput
-                  label="File Number"
-                  name="fileNumber"
-                  register={register}
-                  error={errors.fileNumber}
-                />
-
-                <div className="group relative z-0 w-full">
+                <div className="group relative z-0 col-span-full w-full">
                   <fieldset className="fieldset">
                     <legend className="fieldset-legend text-sm">
-                      Year Model
+                      Vehicle Image
                     </legend>
 
-                    <select
-                      className={`select select-bordered w-full ${errors.yearModel ? "select-error" : ""}`}
-                      {...register("yearModel")}
-                    >
-                      <option value="">Select Year</option>
-                      {Array.from({ length: 50 }, (_, i) => {
-                        const year = new Date().getFullYear() - i;
-                        return (
-                          <option key={year} value={year}>
-                            {year}
-                          </option>
-                        );
-                      })}
-                    </select>
-
-                    {errors.yearModel && (
-                      <p className="text-error mt-1 text-sm">
-                        {errors.yearModel.message}
-                      </p>
-                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="file-input file-input-bordered w-full text-xs"
+                      onChange={(e) => setSelectedFile(e.target.files[0])}
+                    />
                   </fieldset>
                 </div>
               </div>
+            </div>
 
-              <div className="divider"></div>
+            <div className="divider"></div>
 
-              <div className="space-y-2">
-                <h3 className="text-sm font-semibold text-gray-500">
-                  Valid Period
-                </h3>
+            <div className="bg-base-200 border-base-300 collapse-arrow collapse border">
+              <input type="checkbox" />
+              <div className="collapse-title font-semibold">
+                Insurance Details
+              </div>
 
-                <div className="grid gap-4 md:grid-cols-3">
+              <div className="collapse-content">
+                <div className="grid gap-5 md:grid-cols-2">
                   <OurInput
-                    label="Renewal Date"
-                    name="registrationRenewal"
-                    type="date"
+                    label="Policy ID"
+                    name="policyID"
                     register={register}
-                    error={errors.registrationRenewal}
+                    error={errors.policyID}
                   />
-
                   <OurInput
-                    label="Registration Start"
-                    name="periodDuration"
-                    type="date"
+                    label="Policy Number"
+                    name="policyNumber"
                     register={register}
-                    error={errors.periodDuration}
+                    error={errors.policyNumber}
                   />
-
+                </div>
+                <div className="mt-4">
                   <OurInput
-                    label="Registration End"
-                    name="periodDurationTo"
-                    type="date"
+                    label="Required Covered"
+                    name="requiredCovered"
                     register={register}
-                    error={errors.periodDurationTo}
+                    error={errors.requiredCovered}
+                    list="requiredCoveredOptions"
+                    options={["Comprehensive", "TPL", "Comprehensive & TPL"]}
                   />
+                </div>
+                <div className="divider"></div>
+
+                <div className="space-y-2">
+                  <h3 className="text-sm font-semibold text-gray-500">
+                    Insurance Period
+                  </h3>
+
+                  <div className="grid gap-5 md:grid-cols-2">
+                    <OurInput
+                      label="Issue Date"
+                      name="issueDate"
+                      type="date"
+                      register={register}
+                      error={errors.issueDate}
+                    />
+
+                    <OurInput
+                      label="Renewal Date"
+                      name="insuranceRenewal"
+                      type="date"
+                      register={register}
+                      error={errors.insuranceRenewal}
+                    />
+
+                    <OurInput
+                      label="Insurance Start"
+                      name="periodFrom"
+                      type="date"
+                      register={register}
+                      error={errors.periodFrom}
+                    />
+
+                    <OurInput
+                      label="Insurance End"
+                      name="periodTo"
+                      type="date"
+                      register={register}
+                      error={errors.periodTo}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
 
             <div className="divider"></div>
 
-            <div className="group relative z-0 w-full">
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend text-sm">
-                  Vehicle Image
-                </legend>
+            <div className="bg-base-200 border-base-300 collapse-arrow collapse border">
+              <input type="checkbox" />
+              <div className="collapse-title font-semibold">
+                Vehicle Registration
+              </div>
 
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="file-input file-input-bordered w-full text-xs"
-                  onChange={(e) => setSelectedFile(e.target.files[0])}
-                />
-              </fieldset>
+              <div className="collapse-content">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <OurInput
+                    label="Engine Number"
+                    name="engineNumber"
+                    register={register}
+                    error={errors.engineNumber}
+                  />
+                  <OurInput
+                    label="Chassis Number"
+                    name="chassisNumber"
+                    register={register}
+                    error={errors.chassisNumber}
+                  />
+                  <OurInput
+                    label="File Number"
+                    name="fileNumber"
+                    register={register}
+                    error={errors.fileNumber}
+                  />
+                  <div className="group relative z-0 w-full">
+                    <fieldset className="fieldset">
+                      <legend className="fieldset-legend text-sm">
+                        Year Model
+                      </legend>
+                      <select
+                        className={`select select-bordered w-full ${errors.yearModel ? "select-error" : ""}`}
+                        {...register("yearModel")}
+                      >
+                        <option value="">Select Year</option>
+                        {Array.from({ length: 50 }, (_, i) => {
+                          const year = new Date().getFullYear() - i;
+                          return (
+                            <option key={year} value={year}>
+                              {year}
+                            </option>
+                          );
+                        })}
+                      </select>
+                      {errors.yearModel && (
+                        <p className="text-error mt-1 text-sm">
+                          {errors.yearModel.message}
+                        </p>
+                      )}
+                    </fieldset>
+                  </div>
+                </div>
+                <div className="divider"></div>
+                <div className="space-y-2">
+                  <h3 className="text-sm font-semibold text-gray-500">
+                    Valid Period
+                  </h3>
+                  <div className="grid gap-4 md:grid-cols-3">
+                    <OurInput
+                      label="Renewal Date"
+                      name="registrationRenewal"
+                      type="date"
+                      register={register}
+                      error={errors.registrationRenewal}
+                    />
+                    <OurInput
+                      label="Registration Start"
+                      name="periodDuration"
+                      type="date"
+                      register={register}
+                      error={errors.periodDuration}
+                    />
+                    <OurInput
+                      label="Registration End"
+                      name="periodDurationTo"
+                      type="date"
+                      register={register}
+                      error={errors.periodDurationTo}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
             <button

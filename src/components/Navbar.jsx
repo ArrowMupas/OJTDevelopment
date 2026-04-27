@@ -46,7 +46,7 @@ export default function Navbar() {
 
           <div className="flex flex-col">
             {isDashboardPage ? (
-              <h1 className="font-bolda hidden text-sm font-black uppercase sm:block">
+              <h1 className="hidden text-lg font-bold tracking-wide sm:block">
                 Vehicle Request Dashboard
               </h1>
             ) : (
