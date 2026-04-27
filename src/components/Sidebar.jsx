@@ -10,6 +10,7 @@ import {
   MapPin,
   TicketCheckIcon,
   NotebookPen,
+  ShieldUser,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { supabase } from "../supabaseClient";
@@ -140,6 +141,13 @@ export default function Sidebar() {
                     Staff
                   </MenuLink>
                 </li>
+                  <li>
+                  <MenuLink to="/guard" icon={ShieldUser}>
+                    Guard On Duty
+                  </MenuLink>
+                </li>
+
+
               </ul>
             </details>
           </li>

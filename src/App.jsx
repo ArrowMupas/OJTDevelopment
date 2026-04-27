@@ -32,7 +32,9 @@ import Staffs from "./pages/management/Staffs";
 import InquiryPage from "./pages/management/InquiryPage";
 import ManageRequestsPage from "./pages/management/ManageRequestPage";
 import SurveyResult from "./pages/management/Surveyresult";
+import GuardPage from "./pages/management/GuardPage";
 import EntryExitMonitoring from "./pages/management/EntryExitMonitoring";
+
 
 // Vehicles
 import VehiclePage from "./pages/vehicles/Vehicles";
@@ -106,6 +108,7 @@ function App() {
           <Route path="/tires" element={<Tires />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/staff-management" element={<Staffs />} />
+          <Route path="/guard" element={<GuardPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/inquiries" element={<InquiryPage />} />
           <Route path="/ticket" element={<TripTicketPage />} />
