@@ -1,82 +1,148 @@
-import { Line, Bar, Pie, Doughnut } from "react-chartjs-2";
+import { useState } from "react";
 
-export default function TransactionsPage() {
-  const labels = ["Jan", "Feb", "Mar", "Apr"];
+export default function PaymentEntryPage() {
+  const [transactionNo, setTransactionNo] = useState("");
+  const [payerName, setPayerName] = useState("");
+  const [amount, setAmount] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
 
-  const lineData = {
-    labels,
-    datasets: [
-      {
-        label: "Sales",
-        data: [30, 45, 60, 50],
-        borderColor: "#2563EB",
-        backgroundColor: "rgba(37,99,235,0.15)",
-        pointBackgroundColor: "#1D4ED8",
-        tension: 0.4,
-        fill: true,
-      },
-    ],
-  };
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const barData = {
-    labels,
-    datasets: [
-      {
-        label: "Revenue",
-        data: [80, 55, 70, 90],
-        backgroundColor: ["#8B5CF6", "#6366F1", "#A78BFA", "#7C3AED"],
-        borderRadius: 8,
-      },
-    ],
-  };
+  const handleSubmit = () => {
+    if (
+      !transactionNo ||
+      !payerName ||
+      !amount ||
+      !paymentMethod ||
+      !date ||
+      !time
+    ) {
+      alert("Please complete all fields!");
+      return;
+    }
 
-  const pieData = {
-    labels: ["Marketing", "Operations", "Development"],
-    datasets: [
-      {
-        data: [30, 40, 30],
-        backgroundColor: ["#F97316", "#06B6D4", "#10B981"],
-        borderWidth: 2,
-        borderColor: "#ffffff",
-      },
-    ],
-  };
+    console.log({
+      transactionNo,
+      payerName,
+      amount,
+      paymentMethod,
+      date,
+      time,
+    });
 
-  const doughnutData = {
-    labels: ["Desktop", "Mobile", "Tablet"],
-    datasets: [
-      {
-        data: [45, 35, 20],
-        backgroundColor: ["#22D3EE", "#F472B6", "#A3E635"],
-        borderWidth: 0,
-      },
-    ],
+    setIsSubmitted(true);
+
+    setTimeout(() => {
+      setTransactionNo("");
+      setPayerName("");
+      setAmount("");
+      setPaymentMethod("");
+      setDate("");
+      setTime("");
+      setIsSubmitted(false);
+    }, 1000);
   };
 
   return (
-    <div className="p-6 space-y-8 max-w-6xl mx-auto">
-      {/* Line Chart */}
-      <div className="card bg-base-100 shadow-xl p-6">
-        <h2 className="text-xl font-bold mb-4">Line Chart</h2>
-        <Line data={lineData} />
+    <div className="flex min-h-screen flex-col items-center justify-start px-4 py-10">
+      {/* Header */}
+      <div className="mb-6 text-center">
+        <h1 className="text-2xl font-bold">Payment / Transaction Entry</h1>
+        <p className="text-sm text-gray-500">
+          Input payment or transaction details.
+        </p>
       </div>
 
-      {/* Bar Chart */}
-      <div className="card bg-base-100 shadow-xl p-6">
-        <h2 className="text-xl font-bold mb-4">Bar Chart</h2>
-        <Bar data={barData} />
-      </div>
+      {/* Centered Form */}
+      <div className="card bg-base-100 w-full max-w-lg space-y-5 rounded-xl p-8 shadow-xl">
+        <h2 className="text-center text-xl font-bold">Payment Entry Form</h2>
 
-      {/* Pie Chart */}
-      <div className="card bg-base-100 shadow-xl p-6">
-        <h2 className="text-xl font-bold mb-4">Pie Chart</h2>
-        <Pie data={pieData} />
-      </div>
+        {/* Transaction No */}
+        <div>
+          <label className="font-semibold">Transaction No.</label>
+          <input
+            type="text"
+            value={transactionNo}
+            onChange={(e) => setTransactionNo(e.target.value)}
+            className="input input-bordered mt-1 w-full"
+            placeholder="Enter Transaction No."
+          />
+        </div>
 
-      {/* Doughnut Chart */}
-      <div className="card bg-base-100 shadow-xl p-6">
-        <h2 className="text-xl font-bold mb-4">Doughnut Chart</h2>
-        <Doughnut data={doughnutData} />
+        {/* Payer Name */}
+        <div>
+          <label className="font-semibold">Payer Name</label>
+          <input
+            type="text"
+            value={payerName}
+            onChange={(e) => setPayerName(e.target.value)}
+            className="input input-bordered mt-1 w-full"
+            placeholder="Enter Name"
+          />
+        </div>
+
+        {/* Amount */}
+        <div>
+          <label className="font-semibold">Amount</label>
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className="input input-bordered mt-1 w-full"
+            placeholder="Enter Amount"
+          />
+        </div>
+
+        {/* Payment Method */}
+        <div>
+          <label className="font-semibold">Payment Method</label>
+          <select
+            value={paymentMethod}
+            onChange={(e) => setPaymentMethod(e.target.value)}
+            className="select select-bordered mt-1 w-full"
+          >
+            <option value="">Select Method</option>
+            <option>Cash</option>
+            <option>GCash</option>
+            <option>Bank Transfer</option>
+          </select>
+        </div>
+
+        {/* Date & Time (Improved Layout) */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="font-semibold">Date</label>
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="input input-bordered mt-1 w-full"
+            />
+          </div>
+
+          <div>
+            <label className="font-semibold">Time</label>
+            <input
+              type="time"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              className="input input-bordered mt-1 w-full"
+            />
+          </div>
+        </div>
+
+        {/* Submit */}
+        <button
+          onClick={handleSubmit}
+          disabled={isSubmitted}
+          className={`btn mt-2 w-full ${
+            isSubmitted ? "btn-disabled" : "btn-success"
+          }`}
+        >
+          {isSubmitted ? "Saved" : "Submit Transaction"}
+        </button>
       </div>
     </div>
   );
