@@ -2,6 +2,11 @@ import { CirclePlus, FolderClock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import OurInput from "../components/OurInput";
+import { repairSchema } from "../schemas/repairSchema";
+import toast from "react-hot-toast";
 
 const internalSteps = [
   "Inspection",
@@ -24,16 +29,21 @@ const miniSteps = ["Inspection", "Accomplished | For Release"];
 export default function TrackingPage() {
   const [repairs, setRepairs] = useState([]);
   const [vehicles, setVehicles] = useState([]);
-
   const [viewType, setViewType] = useState("internal");
 
-  const [selectedVehicleId, setSelectedVehicleId] = useState("");
-  const [maintenance1, setMaintenance1] = useState("");
-  const [maintenance2, setMaintenance2] = useState("");
-  const [serviceShop, setServiceShop] = useState("");
-  const [type, setType] = useState("");
-
   const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(repairSchema),
+  });
+
+  const selectedType = watch("type");
 
   const getSteps = (type) => {
     if (type === "internal-mini") return miniSteps;
@@ -47,12 +57,9 @@ export default function TrackingPage() {
       .select("*")
       .order("name", { ascending: true });
 
-    if (error) {
-      console.error("Vehicles error:", error);
-      return;
+    if (!error) {
+      setVehicles(data || []);
     }
-
-    setVehicles(data || []);
   }
 
   async function fetchRecords() {
@@ -69,17 +76,14 @@ export default function TrackingPage() {
       )
       .order("created_at", { ascending: false });
 
-    if (error) {
-      console.error("Records error:", error);
-      return;
+    if (!error) {
+      const normalized = (data || []).map((item) => ({
+        ...item,
+        step: item.current_step ?? 0,
+      }));
+
+      setRepairs(normalized);
     }
-
-    const normalized = (data || []).map((item) => ({
-      ...item,
-      step: item.current_step ?? 0,
-    }));
-
-    setRepairs(normalized);
   }
 
   useEffect(() => {
@@ -87,35 +91,19 @@ export default function TrackingPage() {
     fetchRecords();
   }, []);
 
-  async function createMaintenanceRecord() {
-    if (!selectedVehicleId || !type) {
-      alert("Please complete required fields");
-      return;
-    }
-
-    if (
-      (type === "internal" || type === "internal-mini") &&
-      (!maintenance1 || !maintenance2)
-    ) {
-      alert("2 personnel required");
-      return;
-    }
-
-    if (type === "external" && !serviceShop) {
-      alert("Service shop required");
-      return;
-    }
-
+  async function createMaintenanceRecord(formData) {
     const payload = {
-      vehicle_id: selectedVehicleId,
-      type,
+      vehicle_id: Number(formData.vehicleId),
+      type: formData.type,
       current_step: 0,
 
-      assigned_personnel_1: type === "external" ? null : maintenance1,
+      assigned_personnel_1:
+        formData.type === "external" ? null : formData.maintenance1,
 
-      assigned_personnel_2: type === "external" ? null : maintenance2,
+      assigned_personnel_2:
+        formData.type === "external" ? null : formData.maintenance2,
 
-      service_shop: type === "external" ? serviceShop : null,
+      service_shop: formData.type === "external" ? formData.serviceShop : null,
     };
 
     const { data, error } = await supabase
@@ -133,8 +121,7 @@ export default function TrackingPage() {
       .single();
 
     if (error) {
-      console.error("Insert error:", error);
-      alert("Failed to save record");
+      toast.error("Failed to save record");
       return;
     }
 
@@ -146,12 +133,8 @@ export default function TrackingPage() {
       ...prev,
     ]);
 
-    setSelectedVehicleId("");
-    setMaintenance1("");
-    setMaintenance2("");
-    setServiceShop("");
-    setType("");
-
+    reset();
+    toast.success("Record created successfully");
     document.getElementById("trackingModal").close();
   }
 
@@ -179,11 +162,11 @@ export default function TrackingPage() {
       .eq("id", id);
 
     if (error) {
-      console.error("Update step error:", error);
-      alert("Failed to update step");
+      toast.error("Failed to update step");
       return;
     }
 
+    toast.success("Step updated successfully");
     setRepairs((prev) =>
       prev.map((repair) =>
         repair.id === id ? { ...repair, step: newStep } : repair,
@@ -195,9 +178,7 @@ export default function TrackingPage() {
     <main className="min-h-screen space-y-7 px-3 py-4 pb-25 sm:px-5">
       <div className="flex justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-lg font-bold">
-            Repair & Maintenance
-          </h1>
+          <h1 className="text-lg font-bold">Repair & Maintenance</h1>
           <p className="text-sm text-gray-500">
             Manage and monitor vehicle repair progress
           </p>
@@ -215,7 +196,7 @@ export default function TrackingPage() {
           </select>
 
           <button
-            className="btn btn-info flex items-center gap-2 text-white"
+            className="btn btn-info text-white"
             onClick={() => navigate("/tracking-history")}
           >
             <FolderClock className="size-4" />
@@ -223,7 +204,7 @@ export default function TrackingPage() {
           </button>
 
           <button
-            className="btn btn-success flex items-center gap-2 text-white"
+            className="btn btn-success text-white"
             onClick={() => document.getElementById("trackingModal").showModal()}
           >
             <CirclePlus className="size-4" />
@@ -235,9 +216,7 @@ export default function TrackingPage() {
       {/* MODAL */}
       <dialog id="trackingModal" className="modal">
         <div className="modal-box rounded-xl p-8">
-          <h1 className="mb-4 text-2xl font-bold tracking-wide uppercase">
-            Add New Repair
-          </h1>
+          <h1 className="mb-4 text-2xl font-bold uppercase">Add New Repair</h1>
 
           <button
             className="btn btn-circle btn-ghost absolute top-3 right-3"
@@ -246,83 +225,137 @@ export default function TrackingPage() {
             ✕
           </button>
 
-          <div className="space-y-5">
-            <select
-              className="select select-bordered w-full"
-              value={selectedVehicleId}
-              onChange={(e) => setSelectedVehicleId(Number(e.target.value))}
-            >
-              <option value="">Select vehicle</option>
-              {vehicles.map((v) => (
-                <option key={v.id} value={v.id}>
-                  {v.name} ({v.plate_number})
+          <form
+            onSubmit={handleSubmit(createMaintenanceRecord)}
+            className="space-y-5"
+          >
+            {/* VEHICLE */}
+            <div>
+              <label className="text-sm font-bold">Vehicle</label>
+              <select
+                className={`select select-bordered w-full ${
+                  errors.vehicleId ? "select-error" : ""
+                }`}
+                defaultValue=""
+                {...register("vehicleId")}
+              >
+                <option value="" disabled>
+                  Select vehicle
                 </option>
-              ))}
-            </select>
 
-            <select
-              className="select select-bordered w-full"
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-            >
-              <option value="">Select type</option>
-              <option value="internal">Internal</option>
-              <option value="external">External</option>
-              <option value="internal-mini">Internal (Mini Repair)</option>
-            </select>
+                {vehicles.map((v) => (
+                  <option key={v.id} value={v.id}>
+                    {v.name} ({v.plate_number})
+                  </option>
+                ))}
+              </select>
 
-            {type === "external" && (
-              <input
-                type="text"
-                placeholder="Service Shop"
-                className="input input-bordered w-full"
-                value={serviceShop}
-                onChange={(e) => setServiceShop(e.target.value)}
+              {errors.vehicleId && (
+                <span className="text-error text-sm">
+                  {errors.vehicleId.message}
+                </span>
+              )}
+            </div>
+
+            {/* TYPE */}
+            <div>
+              <label className="text-sm font-bold">Repair Type</label>
+              <select
+                className={`select select-bordered w-full ${
+                  errors.type ? "select-error" : ""
+                }`}
+                defaultValue=""
+                {...register("type")}
+              >
+                <option value="" disabled>
+                  Select type
+                </option>
+                <option value="internal">Internal</option>
+                <option value="external">External</option>
+                <option value="internal-mini">Internal (Mini Repair)</option>
+              </select>
+
+              {errors.type && (
+                <span className="text-error text-sm">
+                  {errors.type.message}
+                </span>
+              )}
+            </div>
+
+            {/* EXTERNAL */}
+            {selectedType === "external" && (
+              <OurInput
+                label="Service Shop"
+                name="serviceShop"
+                register={register}
+                error={errors.serviceShop}
               />
             )}
 
-            {type !== "external" && (
+            {/* INTERNAL */}
+            {selectedType !== "external" && selectedType && (
               <>
-                <select
-                  className="select select-bordered w-full"
-                  value={maintenance1}
-                  onChange={(e) => setMaintenance1(e.target.value)}
-                >
-                  <option value="">Select Maintenance 1</option>
-                  <option value="Fernando L. Aquino">Fernando L. Aquino</option>
-                  <option value="Joseph Neil S. Leonardo">
-                    Joseph Neil S. Leonardo
-                  </option>
-                  <option value="Ruel V. Bebanco">Ruel V. Bebanco</option>
-                  <option value="None">None</option>
-                </select>
+                <div>
+                  <label className="text-sm font-bold">
+                    Maintenance Personnel 1
+                  </label>
+                  <select
+                    className={`select select-bordered w-full ${
+                      errors.maintenance1 ? "select-error" : ""
+                    }`}
+                    defaultValue=""
+                    {...register("maintenance1")}
+                  >
+                    <option value="" disabled>
+                      Select Personnel
+                    </option>
+                    <option value="Fernando L. Aquino">
+                      Fernando L. Aquino
+                    </option>
+                    <option value="Joseph Neil S. Leonardo">
+                      Joseph Neil S. Leonardo
+                    </option>
+                    <option value="Ruel V. Bebanco">Ruel V. Bebanco</option>
+                    <option value="None">None</option>
+                  </select>
+                </div>
 
-                <select
-                  className="select select-bordered w-full"
-                  value={maintenance2}
-                  onChange={(e) => setMaintenance2(e.target.value)}
-                >
-                  <option value="">Select Maintenance 2</option>
-                  <option value="Fernando L. Aquino">Fernando L. Aquino</option>
-                  <option value="Joseph Neil S. Leonardo">
-                    Joseph Neil S. Leonardo
-                  </option>
-                  <option value="Ruel V. Bebanco">Ruel V. Bebanco</option>
-                  <option value="None">None</option>
-                </select>
+                <div>
+                  <label className="text-sm font-bold">
+                    Maintenance Personnel 2
+                  </label>
+                  <select
+                    className={`select select-bordered w-full ${
+                      errors.maintenance2 ? "select-error" : ""
+                    }`}
+                    defaultValue=""
+                    {...register("maintenance2")}
+                  >
+                    <option value="" disabled>
+                      Select Personnel
+                    </option>
+                    <option value="Fernando L. Aquino">
+                      Fernando L. Aquino
+                    </option>
+                    <option value="Joseph Neil S. Leonardo">
+                      Joseph Neil S. Leonardo
+                    </option>
+                    <option value="Ruel V. Bebanco">Ruel V. Bebanco</option>
+                    <option value="None">None</option>
+                  </select>
+                </div>
               </>
             )}
 
             <button
-              className="btn btn-lg w-full rounded-lg bg-green-600 tracking-wider text-white uppercase hover:bg-green-500"
-              onClick={createMaintenanceRecord}
+              type="submit"
+              className="btn btn-lg w-full rounded-lg bg-green-600 text-white uppercase hover:bg-green-500"
             >
               Save
             </button>
-          </div>
+          </form>
         </div>
       </dialog>
-
       {/* LIST */}
       <div className="space-y-4">
         {repairs

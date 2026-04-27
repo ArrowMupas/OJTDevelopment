@@ -80,7 +80,7 @@ export default function Dashboard() {
       <div className="">
         <div className="min-w-full overflow-x-auto">
           <table className="table-sm lg:table-lg md:table-md table">
-            <thead className="bg-green-500 text-white">
+            <thead className="">
               <tr className="uppercase">
                 <th>Department</th>
                 <th>Date & Time</th>
@@ -88,8 +88,8 @@ export default function Dashboard() {
                 <th>Passenger Name</th>
                 <th>Purpose</th>
                 <th>Instructions</th>
-                <th className="bg-blue-500">Assigned Driver</th>
-                <th className="bg-violet-500">Assigned Vehicle</th>
+                <th className="">Assigned Driver</th>
+                <th className="">Assigned Vehicle</th>
               </tr>
             </thead>
             <tbody>
@@ -163,9 +163,15 @@ export default function Dashboard() {
                         )}
                       </td>
 
-                      <td className="bg-violet-50 text-sm font-bold">
+                      <td className="bg-violet-50">
                         <div className="truncate">
-                          {req.vehicles?.name || "Unassigned"}
+                          {req.vehicles ? (
+                            <p className="text-base font-bold">
+                              {req.vehicles.name}
+                            </p>
+                          ) : (
+                            <p className="text-sm text-gray-500">Unassigned</p>
+                          )}
                         </div>
                         {req.vehicles?.plate_number && (
                           <div className="badge badge-dash badge-primary">

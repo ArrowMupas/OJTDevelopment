@@ -1,6 +1,11 @@
 import { CirclePlus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import OurInput from "../components/OurInput";
+import { repairSchema } from "../schemas/repairSchema";
+import toast from "react-hot-toast";
 
 const internalSteps = [
   "Inspection",
@@ -23,14 +28,19 @@ const miniSteps = ["Inspection", "Accomplished | For Release"];
 export default function TrackingPage() {
   const [repairs, setRepairs] = useState([]);
   const [vehicles, setVehicles] = useState([]);
-
   const [viewType, setViewType] = useState("internal");
 
-  const [selectedVehicleId, setSelectedVehicleId] = useState("");
-  const [maintenance1, setMaintenance1] = useState("");
-  const [maintenance2, setMaintenance2] = useState("");
-  const [serviceShop, setServiceShop] = useState("");
-  const [type, setType] = useState("");
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(repairSchema),
+  });
+
+  const selectedType = watch("type");
 
   const getSteps = (type) => {
     if (type === "internal-mini") return miniSteps;
@@ -44,12 +54,7 @@ export default function TrackingPage() {
       .select("*")
       .order("name", { ascending: true });
 
-    if (error) {
-      console.error("Vehicles error:", error);
-      return;
-    }
-
-    setVehicles(data);
+    if (!error) setVehicles(data || []);
   }
 
   async function fetchRecords() {
@@ -66,14 +71,11 @@ export default function TrackingPage() {
       )
       .order("created_at", { ascending: false });
 
-    if (error) {
-      console.error("Records error:", error);
-      return;
-    }
+    if (error) return;
 
-    const normalized = data.map((item) => ({
+    const normalized = (data || []).map((item) => ({
       ...item,
-      step: item.step ?? 0,
+      step: item.current_step ?? 0,
     }));
 
     setRepairs(normalized);
@@ -84,105 +86,91 @@ export default function TrackingPage() {
     fetchRecords();
   }, []);
 
-  async function createMaintenanceRecord() {
-    if (!selectedVehicleId || !type) return;
-
-    if (
-      (type === "internal" || type === "internal-mini") &&
-      (!maintenance1 || !maintenance2)
-    ) {
-      alert("2 personnel required");
-      return;
-    }
-
-    if (type === "external" && !serviceShop) {
-      alert("Service shop required");
-      return;
-    }
-
+  async function createMaintenanceRecord(formData) {
     const payload = {
-      vehicle_id: selectedVehicleId,
-      type,
-      status: "Inspection",
+      vehicle_id: Number(formData.vehicleId),
+      type: formData.type,
+      current_step: 0,
 
-      assigned_personnel_1: type === "external" ? null : maintenance1,
+      assigned_personnel_1:
+        formData.type === "external" ? null : formData.maintenance1,
 
-      assigned_personnel_2: type === "external" ? null : maintenance2,
+      assigned_personnel_2:
+        formData.type === "external" ? null : formData.maintenance2,
 
-      service_shop: type === "external" ? serviceShop : null,
+      service_shop: formData.type === "external" ? formData.serviceShop : null,
     };
 
     const { data, error } = await supabase
       .from("maintenance_records")
       .insert([payload])
-      .select();
+      .select(
+        `
+        *,
+        vehicles (
+          name,
+          plate_number
+        )
+      `,
+      )
+      .single();
 
     if (error) {
-      console.error("Insert error:", error);
+      toast.error("Failed to save record");
       return;
     }
 
-    const vehicle = vehicles.find((v) => v.id === selectedVehicleId);
+    setRepairs((prev) => [{ ...data, step: data.current_step ?? 0 }, ...prev]);
 
-    const newRecord = {
-      id: data[0].id,
-      vehicle_id: selectedVehicleId,
-      name: vehicle?.name || "Vehicle",
-      plate: vehicle?.plate,
-
-      service_shop: type === "external" ? serviceShop : null,
-
-      personnel: type === "external" ? [] : [maintenance1, maintenance2],
-
-      step: 0,
-      type,
-    };
-
-    setRepairs((prev) => [newRecord, ...prev]);
-
-    setSelectedVehicleId("");
-    setMaintenance1("");
-    setMaintenance2("");
-    setServiceShop("");
-    setType("");
-
+    reset();
+    toast.success("Record created successfully");
     document.getElementById("trackingModal").close();
   }
 
-  const updateStep = (id, action) => {
-    const updated = repairs.map((repair) => {
-      if (repair.id !== id) return repair;
+  async function updateStep(id, action) {
+    const target = repairs.find((r) => r.id === id);
+    if (!target) return;
 
-      const steps = getSteps(repair.type);
+    const steps = getSteps(target.type);
 
-      let newStep = repair.step;
+    let newStep = target.step;
 
-      if (action === "next" && repair.step < steps.length - 1) newStep++;
-      if (action === "prev" && repair.step > 0) newStep--;
+    if (action === "next" && newStep < steps.length - 1) newStep++;
+    if (action === "prev" && newStep > 0) newStep--;
 
-      return { ...repair, step: newStep };
+    const { error } = await supabase
+      .from("maintenance_records")
+      .update({ current_step: newStep })
+      .eq("id", id);
+
+    if (error) {
+      toast.error("Failed to update step");
+      return;
+    }
+
+    toast.success("Step updated successfully", {
+      position: "bottom-right",
     });
-
-    setRepairs(updated);
-  };
+    setRepairs((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, step: newStep } : r)),
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 px-6 py-20">
       <div className="mx-auto max-w-5xl">
-        {/* PAGE HEADER */}
+        {/* HEADER */}
         <div className="mb-12 text-center">
-          <h1 className="text-5xl font-bold tracking-tight uppercase">
-            Repair & Maintenance
-          </h1>
-          <p className="mx-auto mt-2 max-w-2xl text-lg text-gray-600">
+          <h1 className="text-5xl font-bold uppercase">Repair & Maintenance</h1>
+          <p className="mt-2 text-gray-600">
             Manage and monitor vehicle repair progress
           </p>
         </div>
 
-        {/* HEADER BAR */}
-        <div className="mb-5 flex flex-col items-center gap-4 rounded-xl bg-green-600 p-6 text-white shadow-sm sm:flex-row sm:justify-between">
+        {/* TOP BAR */}
+        <div className="mb-5 flex flex-col items-center gap-4 rounded-xl bg-green-600 p-6 text-white sm:flex-row sm:justify-between">
           <div>
-            <h2 className="text-2xl font-semibold tracking-wider uppercase">
+            <h2 className="text-2xl font-semibold uppercase">
               Repair Tracking
             </h2>
             <p className="text-sm opacity-90">
@@ -192,22 +180,17 @@ export default function TrackingPage() {
 
           <div className="flex gap-2">
             <button
-              className="btn lg:btn-lg btn-info flex items-center gap-2 rounded-lg tracking-wider text-white uppercase"
-              onClick={() => {
-                setSelectedVehicleId("");
-                setMaintenance1("");
-                setMaintenance2("");
-                setServiceShop("");
-                setType("");
-                document.getElementById("trackingModal").showModal();
-              }}
+              className="btn btn-info text-white uppercase"
+              onClick={() =>
+                document.getElementById("trackingModal").showModal()
+              }
             >
-              <CirclePlus className="size-7" />
+              <CirclePlus className="size-6" />
               Add New Repair
             </button>
 
             <select
-              className="select sm:select-lg text-green-700 sm:min-w-55"
+              className="select text-green-700"
               value={viewType}
               onChange={(e) => setViewType(e.target.value)}
             >
@@ -221,7 +204,7 @@ export default function TrackingPage() {
         {/* MODAL */}
         <dialog id="trackingModal" className="modal">
           <div className="modal-box rounded-xl p-8">
-            <h1 className="mb-4 text-2xl font-bold tracking-wide uppercase">
+            <h1 className="mb-4 text-2xl font-bold uppercase">
               Add New Repair
             </h1>
 
@@ -232,176 +215,227 @@ export default function TrackingPage() {
               ✕
             </button>
 
-            <div className="space-y-5">
-              <select
-                className="select select-bordered w-full"
-                value={selectedVehicleId}
-                onChange={(e) => setSelectedVehicleId(Number(e.target.value))}
-              >
-                <option value="">Select vehicle</option>
-                {vehicles.map((v) => (
-                  <option key={v.id} value={v.id}>
-                    {v.name} ({v.plate_number})
-                  </option>
-                ))}
-              </select>
+            <form
+              onSubmit={handleSubmit(createMaintenanceRecord)}
+              className="space-y-5"
+            >
+              {/* VEHICLE */}
+              <div>
+                <label className="text-sm font-bold">Vehicle</label>
+                <select
+                  className={`select select-bordered w-full ${
+                    errors.vehicleId ? "select-error" : ""
+                  }`}
+                  {...register("vehicleId")}
+                >
+                  <option value="">Select vehicle</option>
+                  {vehicles.map((v) => (
+                    <option key={v.id} value={v.id}>
+                      {v.name} ({v.plate_number})
+                    </option>
+                  ))}
+                </select>
 
-              <select
-                className="select select-bordered size-sm w-full"
-                value={type}
-                onChange={(e) => setType(e.target.value)}
-              >
-                <option value="">Select type</option>
-                <option value="internal">Internal</option>
-                <option value="external">External</option>
-                <option value="internal-mini">Internal (Mini Repair)</option>
-              </select>
+                {errors.vehicleId && (
+                  <p className="text-error mt-1 text-sm">
+                    {errors.vehicleId.message}
+                  </p>
+                )}
+              </div>
 
-              {type === "external" && (
-                <input
-                  type="text"
-                  placeholder="Service Shop"
-                  className="input input-bordered w-full"
-                  value={serviceShop}
-                  onChange={(e) => setServiceShop(e.target.value)}
+              {/* TYPE */}
+              <div>
+                <label className="text-sm font-bold">Type</label>
+                <select
+                  className={`select select-bordered w-full ${
+                    errors.type ? "select-error" : ""
+                  }`}
+                  {...register("type")}
+                >
+                  <option value="">Select type</option>
+                  <option value="internal">Internal</option>
+                  <option value="external">External</option>
+                  <option value="internal-mini">Internal (Mini Repair)</option>
+                </select>
+
+                {errors.type && (
+                  <p className="text-error mt-1 text-sm">
+                    {errors.type.message}
+                  </p>
+                )}
+              </div>
+
+              {/* SERVICE SHOP (external only) */}
+              {selectedType === "external" && (
+                <OurInput
+                  label="Service Shop"
+                  name="serviceShop"
+                  register={register}
+                  error={errors.serviceShop}
                 />
               )}
 
-              <select
-                className="select select-bordered w-full"
-                value={maintenance1}
-                onChange={(e) => setMaintenance1(e.target.value)}
-              >
-                <option value="">Select Maintenance 1</option>
-                <option value="Fernando L. Aquino">Fernando L. Aquino</option>
-                <option value="Joseph Neil S. Leonardo">
-                  Joseph Neil S. Leonardo
-                </option>
-                <option value="Ruel V. Bebanco">Ruel V. Bebanco</option>
-                <option value="None">None</option>
-              </select>
+              {/* INTERNAL PERSONNEL */}
+              {selectedType !== "external" && selectedType && (
+                <>
+                  <div>
+                    <label className="text-sm font-bold">Maintenance 1</label>
+                    <select
+                      className={`select select-bordered w-full ${
+                        errors.maintenance1 ? "select-error" : ""
+                      }`}
+                      {...register("maintenance1")}
+                    >
+                      <option value="">Select Personnel</option>
+                      <option value="Fernando L. Aquino">
+                        Fernando L. Aquino
+                      </option>
+                      <option value="Joseph Neil S. Leonardo">
+                        Joseph Neil S. Leonardo
+                      </option>
+                      <option value="Ruel V. Bebanco">Ruel V. Bebanco</option>
+                      <option value="None">None</option>
+                    </select>
 
-              <select
-                className="select select-bordered w-full"
-                value={maintenance2}
-                onChange={(e) => setMaintenance2(e.target.value)}
-              >
-                <option value="">Select Maintenance 2</option>
-                <option value="Fernando L. Aquino">Fernando L. Aquino</option>
-                <option value="Joseph Neil S. Leonardo">
-                  Joseph Neil S. Leonardo
-                </option>
-                <option value="Ruel V. Bebanco">Ruel V. Bebanco</option>
-                <option value="None">None</option>
-              </select>
+                    {errors.maintenance1 && (
+                      <p className="text-error mt-1 text-sm">
+                        {errors.maintenance1.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-bold">Maintenance 2</label>
+                    <select
+                      className={`select select-bordered w-full ${
+                        errors.maintenance2 ? "select-error" : ""
+                      }`}
+                      {...register("maintenance2")}
+                    >
+                      <option value="">Select Personnel</option>
+                      <option value="Fernando L. Aquino">
+                        Fernando L. Aquino
+                      </option>
+                      <option value="Joseph Neil S. Leonardo">
+                        Joseph Neil S. Leonardo
+                      </option>
+                      <option value="Ruel V. Bebanco">Ruel V. Bebanco</option>
+                      <option value="None">None</option>
+                    </select>
+
+                    {errors.maintenance2 && (
+                      <p className="text-error mt-1 text-sm">
+                        {errors.maintenance2.message}
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
 
               <button
-                className="btn btn-lg w-full rounded-lg bg-green-600 tracking-wider text-white uppercase hover:bg-green-500"
-                onClick={createMaintenanceRecord}
+                type="submit"
+                className="btn btn-lg w-full bg-green-600 text-white uppercase hover:bg-green-500"
               >
                 Save
               </button>
-            </div>
+            </form>
           </div>
         </dialog>
 
+        {/* LIST */}
         <div className="space-y-4">
           {repairs
-            .filter((repair) => repair.type === viewType)
+            .filter((r) => r.type === viewType)
             .map((repair) => {
               const steps = getSteps(repair.type);
 
-              const personnel = [
-                repair.assigned_personnel_1,
-                repair.assigned_personnel_2,
-              ].filter(Boolean);
-
               return (
-                <div
-                  key={repair.id}
-                  className="rounded-xl border border-gray-200 bg-white p-8 shadow-sm transition-all duration-300 hover:border-green-600"
-                >
-                  <div className="mb-5 flex items-center gap-2">
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-lg font-semibold">
-                        {repair.vehicles?.name}
-                      </h2>
-                      <div className="badge badge-primary badge-dash">
-                        {repair.vehicles?.plate_number}
-                      </div>
-                    </div>
+                <div key={repair.id} className="rounded-xl bg-white p-8 shadow">
+                  {/* HEADER */}
+                  <div className="mb-4 flex items-center gap-2">
+                    <h2 className="font-semibold">{repair.vehicles?.name}</h2>
+
+                    <span className="badge badge-primary">
+                      {repair.vehicles?.plate_number}
+                    </span>
                   </div>
 
                   {/* TIMELINE */}
-                  <div className="relative flex justify-between">
-                    <ul className="steps w-full">
-                      {steps.map((label, index) => {
-                        const isActive = index <= repair.step;
-                        const isCurrent = index === repair.step;
+                  <ul className="steps w-full">
+                    {steps.map((label, i) => {
+                      const active = i <= repair.step;
+                      const current = i === repair.step;
 
-                        return (
-                          <li
-                            key={index}
-                            className={`step ${isActive ? "step-success" : ""}`}
-                          >
-                            <div className="flex flex-col items-center">
-                              <span>{label}</span>
+                      return (
+                        <li
+                          key={i}
+                          className={`step ${active ? "step-success" : ""}`}
+                        >
+                          <div className="flex flex-col items-center">
+                            <span>{label}</span>
 
-                              {isCurrent && (
-                                <div className="mt-2 flex gap-2">
-                                  {repair.step > 0 && (
-                                    <button
-                                      className="btn btn-xs"
-                                      onClick={() =>
-                                        updateStep(repair.id, "prev")
-                                      }
-                                    >
-                                      Undo
-                                    </button>
-                                  )}
+                            {current && (
+                              <div className="mt-2 flex gap-2">
+                                {repair.step > 0 && (
+                                  <button
+                                    className="btn btn-xs"
+                                    onClick={() =>
+                                      updateStep(repair.id, "prev")
+                                    }
+                                  >
+                                    Undo
+                                  </button>
+                                )}
 
-                                  {repair.step < steps.length - 1 && (
-                                    <button
-                                      className="btn btn-xs btn-success"
-                                      onClick={() =>
-                                        updateStep(repair.id, "next")
-                                      }
-                                    >
-                                      Proceed
-                                    </button>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
+                                {repair.step < steps.length - 1 && (
+                                  <button
+                                    className="btn btn-xs btn-success"
+                                    onClick={() =>
+                                      updateStep(repair.id, "next")
+                                    }
+                                  >
+                                    Proceed
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
 
                   {/* DETAILS */}
-                  <div className="mt-15 text-sm">
+                  <div className="mt-6 text-sm">
                     {repair.type === "external" ? (
-                      <>
+                      <div>
                         <p className="font-semibold">Service Shop:</p>
                         <p className="text-gray-600">
                           {repair.service_shop || "N/A"}
                         </p>
-                      </>
+                      </div>
                     ) : (
-                      <>
+                      <div>
                         <p className="font-semibold">Personnel:</p>
 
-                        <ul className="mt-1 list-disc pl-5">
-                          {personnel.length > 0 ? (
-                            personnel.map((p, i) => <li key={i}>{p}</li>)
+                        <ul className="mt-1 list-disc pl-5 text-gray-700">
+                          {repair.assigned_personnel_1 ||
+                          repair.assigned_personnel_2 ? (
+                            <>
+                              {repair.assigned_personnel_1 && (
+                                <li>{repair.assigned_personnel_1}</li>
+                              )}
+                              {repair.assigned_personnel_2 && (
+                                <li>{repair.assigned_personnel_2}</li>
+                              )}
+                            </>
                           ) : (
                             <li className="text-gray-400">
                               No personnel assigned
                             </li>
                           )}
                         </ul>
-                      </>
+                      </div>
                     )}
                   </div>
                 </div>

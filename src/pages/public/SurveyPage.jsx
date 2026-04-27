@@ -263,6 +263,8 @@ export default function SurveyPage() {
           <div className="flex flex-col gap-2">
             <label className="text-sm font-bold">Comments / Suggestions</label>
             <textarea
+              placeholder="Type here (up to 200 characters)"
+              maxLength={200}
               className={`textarea textarea-neutral w-full ${
                 errors.comments ? "input-error" : ""
               }`}

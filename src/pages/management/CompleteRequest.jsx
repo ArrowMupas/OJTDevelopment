@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import debounce from "lodash.debounce";
 import clsx from "clsx";
 import * as XLSX from "xlsx";
+import VehicleRequestsTable from "../../components/VehicleRequestsTable";
 
 export default function CompleteRequest() {
   const [drivers, setDrivers] = useState([]);
@@ -278,225 +279,16 @@ export default function CompleteRequest() {
         </label>
       </div>
 
-      <div className="mt-2 bg-white">
-        <div className="overflow-x-auto rounded-lg">
-          <table className="table">
-            <thead className="bg-green-500 text-white">
-              <tr>
-                <th>Department</th>
-                <th>Passengers</th>
-                <th>Destination</th>
-                <th>Date and Time.</th>
-                <th>Assigned Driver</th>
-                <th>Assigned vehicle</th>
-                <th>Status</th>
-                <th>Has Surveyed</th>
-                <th>More</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan="9" className="py-12 text-center sm:py-40">
-                    <div className="flex flex-col items-center justify-center gap-3">
-                      <span className="loading loading-infinity loading-xl"></span>
-                      <p className="text-gray-500">
-                        Loading completed requests...
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              ) : requests.length === 0 ? (
-                <tr>
-                  <td colSpan="9" className="py-12 text-center sm:py-35">
-                    <div className="flex flex-col items-center justify-center gap-2">
-                      <Search className="size-8 text-gray-500" />
-                      <p className="text-gray-500">
-                        No completed requests found
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {search
-                          ? "Try a different search term"
-                          : "No completed requests available right now"}
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              ) : (
-                requests.map((req) => {
-                  const date = req.departure_date;
-                  const time = req.departure_time;
-
-                  const parsedDateTime = parse(
-                    `${date} ${time}`,
-                    "yyyy-MM-dd HH:mm:ss",
-                    new Date(),
-                  );
-
-                  return (
-                    <tr key={req.id} className="hover:bg-green-50">
-                      <th className="text-xs uppercase">{req.department}</th>
-
-                      <td className="">
-                        <span className="font-bold capitalize">
-                          {req.passengers}
-                        </span>
-                        <br />
-                        <span className="text-xs font-medium">
-                          {req.passenger_contact_number}
-                        </span>
-                      </td>
-
-                      <td className="text-success font-bold capitalize">
-                        {req.destination}
-                      </td>
-
-                      <td className="">
-                        <span className="text-sm">
-                          {format(parsedDateTime, "MMM. d, yyyy")}
-                        </span>
-                        <br />
-                        <span className="text-xs">
-                          {format(parsedDateTime, "hh:mm a")}
-                        </span>
-                      </td>
-
-                      {/* DRIVER SELECT */}
-                      <td>
-                        <select
-                          className="select select-sm"
-                          disabled={
-                            req.status === "Completed" ||
-                            req.status === "Cancelled"
-                          }
-                          value={req.driver_id || ""}
-                          onChange={(e) => {
-                            const value = e.target.value;
-
-                            updateAssignedDriver(
-                              req.id,
-                              value === "" ? null : Number(value),
-                            );
-                          }}
-                        >
-                          <option value="">Unassigned</option>
-                          {drivers.map((driver) => (
-                            <option key={driver.id} value={driver.id}>
-                              {driver.last_name}, {driver.first_name}{" "}
-                              {driver.middle_initial}.
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-
-                      {/* VEHICLE SELECT */}
-                      <td>
-                        <div className="flex flex-col gap-2">
-                          <select
-                            className="select select-sm"
-                            disabled={
-                              req.status === "Completed" ||
-                              req.status === "Cancelled"
-                            }
-                            value={req.vehicle_id || ""}
-                            onChange={(e) => {
-                              const value = e.target.value;
-
-                              updateAssignedVehicle(
-                                req.id,
-                                value === "" ? null : Number(value),
-                              );
-                            }}
-                          >
-                            <option value="">Unassigned</option>
-                            {vehicles.map((vehicle) => (
-                              <option key={vehicle.id} value={vehicle.id}>
-                                {vehicle.name}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </td>
-
-                      {/* STATUS */}
-                      <td className="min-w-35">
-                        <select
-                          className={clsx("select select-sm", {
-                            "select-success text-success":
-                              req.status === "Completed",
-                            "select-error text-error":
-                              req.status === "Cancelled",
-                            "select-warning text-warning":
-                              req.status === "On_Going",
-                          })}
-                          value={req.status || ""}
-                          onChange={(e) => updateStatus(req.id, e.target.value)}
-                        >
-                          <option value="Pending" className="text-black">
-                            Pending
-                          </option>
-                          <option value="On_Going" className="text-warning">
-                            On Going
-                          </option>
-                          <option value="Completed" className="text-success">
-                            Completed
-                          </option>
-                          <option value="Cancelled" className="text-error">
-                            Cancelled
-                          </option>
-                        </select>
-                      </td>
-
-                      <td className="">
-                        {req.is_surveyed ? (
-                          <div className="badge badge-success badge-soft">
-                            <CheckCircle className="size-3" />
-                            <p className="text-xs">Done</p>
-                          </div>
-                        ) : (
-                          <div className="badge badge-error badge-soft">
-                            <XCircle className="size-3" />
-                            <p className="truncate text-xs">Undone</p>
-                          </div>
-                        )}
-                      </td>
-
-                      <td>
-                        <Tippy
-                          interactive
-                          placement="left"
-                          theme="light"
-                          content={
-                            <div className="w-64 p-3">
-                              <h3 className="font-bold">Requested By</h3>
-                              <p>{req.requested_by || "None"}</p>
-
-                              <h3 className="mt-2 font-bold">Instructions</h3>
-                              <p>{req.other_instructions || "None"}</p>
-
-                              <h3 className="mt-2 font-bold">Items</h3>
-                              <p>{req.items || "None"}</p>
-                            </div>
-                          }
-                        >
-                          <Info className="size-5 cursor-pointer" />
-                        </Tippy>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-            <tfoot className="bg-green-400 font-medium">
-              <tr>
-                <td colSpan="9" className="py-5 text-center text-white">
-                  Total Requests: {requests.length}
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </div>
+      <VehicleRequestsTable
+        data={requests}
+        loading={loading}
+        search={search}
+        drivers={drivers}
+        vehicles={vehicles}
+        updateAssignedDriver={updateAssignedDriver}
+        updateAssignedVehicle={updateAssignedVehicle}
+        updateStatus={updateStatus}
+      />
     </main>
   );
 }
