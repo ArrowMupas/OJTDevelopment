@@ -18,22 +18,24 @@ export default function EntryExitHistory() {
   const fetchHistoryLogs = async () => {
     setLoading(true);
 
-    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const todayStartISO = startOfToday.toISOString();
 
     const { data, error } = await supabase
       .from("entry_log")
       .select(
         `
-        *,
-        guard (
-          id,
-          first_name,
-          last_name
-        )
-      `,
+      *,
+      guard (
+        id,
+        first_name,
+        last_name
+      )
+    `,
       )
       .not("time_out", "is", null)
-      .lt("time_out", oneDayAgo)
+      .lt("time_out", todayStartISO)
       .order("time_out", { ascending: false });
 
     if (error) {

@@ -1,269 +1,390 @@
-import {
-  BeanOff,
-  Search,
-  UserPlus,
-  Mail,
-  Phone,
-  Pencil,
-  Trash2,
-} from "lucide-react";
+import { Search, UserPlus, Mail, Phone } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState, useMemo } from "react";
 import debounce from "lodash.debounce";
-import { staffSchema } from "../../schemas/staffSchema";
+import OurInput from "../../components/OurInput";
+import { guardSchema } from "../../schemas/guardSchema";
 
-export default function Staff() {
+export default function Guards() {
   const [guards, setGuards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+
   const [selectedFile, setSelectedFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Edit States
   const [isEditing, setIsEditing] = useState(false);
-  const [editingId, setEditingId] = useState(null);
+  const [guardToEdit, setGuardToEdit] = useState(null);
 
-  const cleanFirstName = (name = "") => {
-    return name.replace(/^(SG|LG|DC|SIC|SO)\s*/i, "").trim();
-  };
+  const [guardToDelete, setGuardToDelete] = useState(null);
 
   const fetchGuards = async (searchTerm = "") => {
     setLoading(true);
+
     let query = supabase
       .from("guard")
       .select("*")
       .order("last_name", { ascending: true });
 
     if (searchTerm) {
-      query = query.or(`first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%`);
+      query = query.or(
+        `first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%`,
+      );
     }
 
     const { data, error } = await query;
-    if (error) toast.error("Error loading guards");
-    else setGuards(data);
+
+    if (error) {
+      toast.error("Failed to load guards");
+      console.error(error);
+    } else {
+      setGuards(data);
+    }
+
     setLoading(false);
   };
 
-  const debouncedSearch = useMemo(() => debounce((v) => fetchGuards(v), 400), []);
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((value) => {
+        fetchGuards(value);
+      }, 400),
+    [],
+  );
 
   useEffect(() => {
     fetchGuards();
+    return () => debouncedSearch.cancel();
   }, []);
 
   const uploadFile = async (file) => {
     if (!file) return null;
+
     const ext = file.name.split(".").pop();
-    const filePath = `guard-images/${Math.random().toString(36).substring(2)}_${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from("NEAMotorpoolBucket").upload(filePath, file);
-    if (error) return null;
-    const { data } = supabase.storage.from("NEAMotorpoolBucket").getPublicUrl(filePath);
+    const fileName = `${Math.random()
+      .toString(36)
+      .substring(2)}_${Date.now()}.${ext}`;
+
+    const filePath = `guard-images/${fileName}`;
+
+    const { error } = await supabase.storage
+      .from("NEAMotorpoolBucket")
+      .upload(filePath, file);
+
+    if (error) {
+      toast.error("Upload failed");
+      return null;
+    }
+
+    const { data } = supabase.storage
+      .from("NEAMotorpoolBucket")
+      .getPublicUrl(filePath);
+
     return data.publicUrl;
   };
 
-  const { register, handleSubmit, reset, setValue } = useForm({
-    resolver: zodResolver(staffSchema),
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(guardSchema),
   });
 
-  // --- CRUD FUNCTIONS ---
-
-  const onSubmit = async (data) => {
+  const createGuard = async (data) => {
     setIsSubmitting(true);
+
     try {
-      let imageUrl = data.image_url || null;
-      if (selectedFile) {
-        imageUrl = await uploadFile(selectedFile);
-      }
+      const imageUrl = selectedFile ? await uploadFile(selectedFile) : null;
 
-      const payload = {
-        first_name: data.firstName,
-        last_name: data.lastName,
-        middle_initial: data.middleInitial,
-        email: data.email,
-        contact_number: data.contact,
-        image_url: imageUrl,
-      };
+      const { error } = await supabase.from("guard").insert([
+        {
+          first_name: data.firstName,
+          last_name: data.lastName,
+          middle_initial: data.middleInitial,
+          role: data.role,
+          email: data.email,
+          contact_number: data.contact,
+          image_url: imageUrl,
+        },
+      ]);
 
-      if (isEditing) {
-        // UPDATE
-        const { error } = await supabase
-          .from("guard")
-          .update(payload)
-          .eq("id", editingId);
-        if (error) throw error;
-        toast.success("Guard updated!");
-      } else {
-        // CREATE
-        const { error } = await supabase.from("guard").insert([payload]);
-        if (error) throw error;
-        toast.success("Guard added!");
-      }
+      if (error) throw error;
 
+      toast.success("Guard added successfully!");
       closeModal();
       fetchGuards(search);
     } catch (err) {
-      toast.error(isEditing ? "Update failed" : "Addition failed");
+      console.error(err);
+      toast.error("Failed to add guard");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const updateGuard = async (data) => {
+    if (!guardToEdit) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const imageUrl = selectedFile
+        ? await uploadFile(selectedFile)
+        : guardToEdit.image_url;
+
+      const { error } = await supabase
+        .from("guard")
+        .update({
+          first_name: data.firstName,
+          last_name: data.lastName,
+          middle_initial: data.middleInitial,
+          role: data.role,
+          email: data.email,
+          contact_number: data.contact,
+          image_url: imageUrl,
+        })
+        .eq("id", guardToEdit.id);
+
+      if (error) throw error;
+
+      toast.success("Guard updated successfully!");
+      closeModal();
+      fetchGuards(search);
+    } catch (err) {
+      console.error(err);
+      toast.error("Update failed");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const deleteGuard = async (id) => {
+    const guard = guards.find((g) => g.id === id);
+
+    if (guard?.image_url) {
+      const filePath = guard.image_url.split("/").slice(-2).join("/");
+      await supabase.storage.from("NEAMotorpoolBucket").remove([filePath]);
+    }
+
+    const { error } = await supabase.from("guard").delete().eq("id", id);
+
+    if (error) {
+      toast.error("Delete failed");
+    } else {
+      setGuards((prev) => prev.filter((g) => g.id !== id));
+      toast.success("Guard deleted");
+    }
+  };
+
   const handleEdit = (guard) => {
     setIsEditing(true);
-    setEditingId(guard.id);
-    
-    // Fill the form fields
+    setGuardToEdit(guard);
+
     setValue("firstName", guard.first_name);
     setValue("lastName", guard.last_name);
     setValue("middleInitial", guard.middle_initial);
     setValue("email", guard.email);
     setValue("contact", guard.contact_number);
-    
-    document.getElementById("driverModal").showModal();
-  };
+    setValue("role", guard.role);
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to remove this guard?")) return;
-
-    try {
-      const { error } = await supabase.from("guard").delete().eq("id", id);
-      if (error) throw error;
-      toast.success("Guard removed");
-      setGuards(guards.filter((g) => g.id !== id));
-    } catch (err) {
-      toast.error("Delete failed");
-    }
+    document.getElementById("guardModal").showModal();
   };
 
   const closeModal = () => {
     reset();
     setIsEditing(false);
-    setEditingId(null);
+    setGuardToEdit(null);
     setSelectedFile(null);
-    document.getElementById("driverModal")?.close();
+    document.getElementById("guardModal")?.close();
   };
 
   return (
     <main className="h-full space-y-4 px-3 py-4 pb-25 sm:px-5">
+      {/* HEADER */}
       <div className="flex items-center justify-between">
         <h1 className="flex items-center gap-2 text-lg font-bold">
-          Guard On Duty
+          Guards
           <div className="badge badge-info badge-outline">{guards.length}</div>
         </h1>
       </div>
 
-      <div className="flex flex-wrap justify-between gap-3">
-        <label className="input input-neutral flex items-center gap-2 w-full sm:w-auto">
+      {/* SEARCH + ADD */}
+      <div className="flex justify-between gap-3">
+        <label className="input input-neutral flex items-center gap-2">
           <Search size={18} />
           <input
-            type="text"
-            className="grow"
             value={search}
+            placeholder="Search guards..."
             onChange={(e) => {
               setSearch(e.target.value);
               debouncedSearch(e.target.value);
             }}
-            placeholder="Search guards..."
           />
         </label>
 
         <button
-          className="btn btn-primary text-white w-full sm:w-auto"
+          className="btn btn-primary text-white"
           onClick={() => {
             setIsEditing(false);
             reset();
-            document.getElementById("driverModal").showModal();
+            document.getElementById("guardModal").showModal();
           }}
         >
           <UserPlus size={18} /> Add Guard
         </button>
       </div>
 
+      {/* LIST */}
       {loading ? (
         <div className="flex h-40 items-center justify-center">
-          <span className="loading loading-infinity loading-lg text-success"></span>
+          <span className="loading loading-infinity text-success"></span>
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-4 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4">
-          {guards.map((guard) => {
-            const cleanFirst = cleanFirstName(guard.first_name);
-            const mI = guard.middle_initial ? ` ${guard.middle_initial.replace(/\./g, "")}.` : "";
-            const fullName = `${guard.last_name}, ${cleanFirst}${mI}`;
+        <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
+          {guards.map((guard) => (
+            <div
+              key={guard.id}
+              className="card border-base-200 bg-base-100 border shadow"
+            >
+              <figure className="p-3">
+                <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-green-100">
+                  {guard.image_url ? (
+                    <img
+                      src={guard.image_url}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-4xl font-bold text-green-400">
+                      {guard.last_name?.[0]}
+                    </span>
+                  )}
+                </div>
+              </figure>
 
-            return (
-              <div key={guard.id} className="card bg-base-100 shadow-md border border-base-200 overflow-hidden">
-                <figure className="px-4 pt-4">
-                  <div className="aspect-square w-full rounded-2xl bg-success/20 flex items-center justify-center overflow-hidden">
-                    {guard.image_url ? (
-                      <img src={guard.image_url} alt={fullName} className="h-full w-full object-cover" />
-                    ) : (
-                      <div className="text-success/40 text-6xl font-bold italic">{guard.last_name[0]}</div>
-                    )}
+              <div className="card-body p-3">
+                <div className="flex gap-2">
+                  <div className="badge badge-soft badge-neutral">
+                    {guard.role}
                   </div>
-                </figure>
+                  <h2 className="font-bold">
+                    {guard.last_name}, {guard.first_name}{" "}
+                    {guard.middle_initial && `${guard.middle_initial}.`}
+                  </h2>
+                </div>
 
-                <div className="card-body p-4 gap-1">
-                  <h2 className="card-title text-base leading-tight truncate">{fullName}</h2>
-                  <div className="mt-2 space-y-1">
-                    <div className="flex items-center gap-2 text-xs opacity-70">
-                      <Mail size={14} className="text-success flex-shrink-0" />
-                      <span className="truncate">{guard.email || "No email"}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs opacity-70">
-                      <Phone size={14} className="text-success flex-shrink-0" />
-                      <span>{guard.contact_number || "no number yet."}</span>
-                    </div>
+                <div className="space-y-1 text-xs opacity-70">
+                  <div className="flex items-center gap-2">
+                    <Mail size={14} />
+                    {guard.email || "No email"}
                   </div>
-
-                  <div className="card-actions justify-end mt-4 pt-2 border-t border-base-200">
-                    <button onClick={() => handleEdit(guard)} className="btn btn-ghost btn-sm text-primary">
-                      <Pencil size={16} />
-                    </button>
-                    <button onClick={() => handleDelete(guard.id)} className="btn btn-ghost btn-sm text-error">
-                      <Trash2 size={16} />
-                    </button>
+                  <div className="flex items-center gap-2">
+                    <Phone size={14} />
+                    {guard.contact_number || "No contact"}
                   </div>
                 </div>
+
+                <div className="card-actions mt-2 justify-end">
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => handleEdit(guard)}
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    className="btn btn-ghost btn-sm text-error"
+                    onClick={() => deleteGuard(guard.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       )}
 
       {/* MODAL */}
-      <dialog id="driverModal" className="modal">
-        <div className="modal-box max-w-md">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <h2 className="text-xl font-bold text-center">
-              {isEditing ? "Edit Guard Details" : "Add New Guard"}
-            </h2>
-            <div className="grid grid-cols-3 gap-2">
-              <input {...register("firstName")} placeholder="First Name" className="input input-bordered w-full" />
-              <input {...register("middleInitial")} placeholder="M.I." className="input input-bordered w-full" maxLength={2} />
-              <input {...register("lastName")} placeholder="Last Name" className="input input-bordered w-full" />
-      
-            </div>
-            <input {...register("email")} placeholder="Email Address" className="input input-bordered w-full" />
-            <input {...register("contact")} placeholder="Contact Number" className="input input-bordered w-full" />
-            
-            <div className="form-control">
-              <label className="label-text mb-1 block font-medium">
-                {isEditing ? "Change Image (Optional)" : "Upload Image"}
-              </label>
-              <input type="file" accept="image/*" className="file-input file-input-bordered w-full" onChange={(e) => setSelectedFile(e.target.files[0])} />
-            </div>
+      <dialog id="guardModal" className="modal">
+        <div className="modal-box">
+          <h1 className="text-xl font-bold">
+            {isEditing ? "Update Guard" : "Add Guard"}
+          </h1>
+
+          <form
+            onSubmit={handleSubmit(isEditing ? updateGuard : createGuard)}
+            className="mt-4 space-y-3"
+          >
+            <OurInput
+              label="First Name"
+              name="firstName"
+              register={register}
+              error={errors.firstName}
+            />
+
+            <OurInput
+              label="Middle Initial"
+              name="middleInitial"
+              register={register}
+              error={errors.middleInitial}
+            />
+
+            <OurInput
+              label="Last Name"
+              name="lastName"
+              register={register}
+              error={errors.lastName}
+            />
+
+            <OurInput
+              label="Role"
+              name="role"
+              register={register}
+              error={errors.role}
+            />
+
+            <OurInput
+              label="Email"
+              name="email"
+              register={register}
+              error={errors.email}
+            />
+
+            <OurInput
+              label="Contact"
+              name="contact"
+              register={register}
+              error={errors.contact}
+            />
+
+            <input
+              type="file"
+              className="file-input w-full"
+              onChange={(e) => setSelectedFile(e.target.files[0])}
+            />
 
             <div className="modal-action">
-              <button type="button" className="btn btn-ghost" onClick={closeModal}>Cancel</button>
-              <button type="submit" className="btn btn-primary text-white" disabled={isSubmitting}>
-                {isSubmitting ? <span className="loading loading-spinner"></span> : (isEditing ? "Update Guard" : "Save Guard")}
+              <button type="button" className="btn" onClick={closeModal}>
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                className="btn btn-primary text-white"
+                disabled={isSubmitting}
+              >
+                {isEditing ? "Update" : "Save"}
               </button>
             </div>
           </form>
         </div>
-        <div className="modal-backdrop" onClick={closeModal}><button>close</button></div>
+
+        <div className="modal-backdrop" onClick={closeModal} />
       </dialog>
     </main>
   );

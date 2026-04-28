@@ -16,6 +16,12 @@ import {
 
 const pmsSchema = z.object({
   pms_date: z.string().min(1, "Date is required"),
+  odometer: z.coerce
+    .number({
+      required_error: "Odometer is required",
+      invalid_type_error: "Odometer must be a number",
+    })
+    .min(0, "Odometer must be valid"),
 });
 
 export default function PMS() {
@@ -92,6 +98,7 @@ export default function PMS() {
 
     reset({
       pms_date: vehicle.pms_date || "",
+      odometer: vehicle.odometer || "",
     });
 
     document.getElementById("pms_modal").showModal();
@@ -102,6 +109,7 @@ export default function PMS() {
       .from("vehicles")
       .update({
         pms_date: data.pms_date,
+        odometer: data.odometer,
       })
       .eq("id", selectedVehicle.id);
 
@@ -114,6 +122,43 @@ export default function PMS() {
     document.getElementById("pms_modal").close();
     fetchVehicles();
     toast.success(`PMS info updated for ${selectedVehicle.name}`);
+  };
+
+  const getOdometerStatus = (odometer = 0) => {
+    const nextMilestone = Math.ceil(odometer / 10000) * 10000;
+    const prevMilestone = nextMilestone - 10000;
+
+    const distanceToNext = nextMilestone - odometer;
+
+    if (odometer === 0) {
+      return {
+        status: "none",
+        message: "No odometer recorded",
+        nextMilestone: 10000,
+      };
+    }
+
+    if (distanceToNext <= 500) {
+      return {
+        status: "warning",
+        message: `About to reach ${nextMilestone.toLocaleString()} km service interval`,
+        nextMilestone,
+      };
+    }
+
+    if (odometer >= nextMilestone) {
+      return {
+        status: "overdue",
+        message: `Past ${nextMilestone.toLocaleString()} km service interval`,
+        nextMilestone,
+      };
+    }
+
+    return {
+      status: "ok",
+      message: `Next service at ${nextMilestone.toLocaleString()} km`,
+      nextMilestone,
+    };
   };
 
   return (
@@ -135,6 +180,7 @@ export default function PMS() {
         {vehicles.map((v) => {
           const status = getStatusByMonths(v.pms_date, 4, 5, 6);
           const nextPms = getNextDateByMonths(v.pms_date, 6);
+          const odo = getOdometerStatus(v.odometer);
 
           const statusBadge = {
             text: !v.pms_date
@@ -156,6 +202,13 @@ export default function PMS() {
                     ? "badge-warning"
                     : "badge-success",
           };
+
+          const odoBadge =
+            odo.status === "warning"
+              ? "badge-warning"
+              : odo.status === "overdue"
+                ? "badge-error"
+                : "badge-success";
 
           return (
             <div
@@ -233,6 +286,16 @@ export default function PMS() {
                   )}
                 </div>
 
+                <div className="mt-2">
+                  <p className="text-xs text-gray-500">Odometer Status</p>
+
+                  <p className={`font-semibold ${odoBadge}`}>
+                    {v.odometer ? `${v.odometer.toLocaleString()} km` : "N/A"}
+                  </p>
+
+                  <p className="text-xs text-gray-500">{odo.message}</p>
+                </div>
+
                 <div className="card-actions mt-2">
                   <button
                     className="btn btn-success w-full text-white"
@@ -270,6 +333,25 @@ export default function PMS() {
               {errors.pms_date && (
                 <p className="text-error mt-1 text-sm">
                   {errors.pms_date.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="label">
+                <span className="label-text">Odometer</span>
+              </label>
+
+              <input
+                type="number"
+                {...register("odometer")}
+                className="input input-border input-neutral w-full"
+                placeholder="Enter current odometer"
+              />
+
+              {errors.odometer && (
+                <p className="text-error mt-1 text-sm">
+                  {errors.odometer.message}
                 </p>
               )}
             </div>
