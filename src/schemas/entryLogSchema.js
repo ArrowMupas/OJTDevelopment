@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const entryLogSchema = z.object({
-  type: z.enum(["private", "government"]),
+  vehicleType: z.enum(["private", "government"]),
 
   guardId: z.coerce.number().min(1, "Guard is required"),
 

@@ -15,5 +15,5 @@ export const guardSchema = z.object({
 
   email: z.email("Invalid email address").optional().or(z.literal("")),
 
-  contact: z.string().min(7, "Contact number must be at least 7 digits"),
+  contact: z.string().optional(),
 });

@@ -156,13 +156,12 @@ export default function HistoryPage() {
 
       <div ref={tableRef} className="overflow-auto rounded-lg">
         <table className="table">
-          <thead className="bg-green-500 text-white">
+          <thead className="uppercase">
             <tr>
-              <th>Date</th>
-              <th>Time Updated</th>
+              <th>Vehicle Name</th>
               <th>Plate No.</th>
               <th>Activity</th>
-              <th>Old Data</th>
+              <th>Previous Data</th>
               <th>New Data</th>
             </tr>
           </thead>
@@ -188,19 +187,14 @@ export default function HistoryPage() {
 
                 return (
                   <tr key={h.id} className="border-t hover:bg-gray-50">
-                    <td className="truncate">{date}</td>
-                    <td>{time}</td>
                     <td>
-                      {h.vehicle ? (
-                        <div className="flex gap-2 truncate">
-                          <p>{h.vehicle.name}</p>
-                          <div className="badge badge-primary badge-dash badge-sm">
-                            {h.vehicle.plate_number}
-                          </div>
-                        </div>
-                      ) : (
-                        "-"
-                      )}
+                      <p>{h.vehicle.name}</p>
+                    </td>
+
+                    <td>
+                      <div className="badge badge-primary badge-dash badge-sm">
+                        {h.vehicle.plate_number}
+                      </div>
                     </td>
                     <td className="uppercase">{h.change_type}</td>
                     <td className="text-sm">

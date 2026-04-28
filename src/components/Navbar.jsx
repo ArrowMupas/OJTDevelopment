@@ -30,7 +30,7 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="w-full border-b border-green-400 bg-green-700 px-4 py-4 text-white sm:px-8">
+    <header className="w-full bg-green-700 px-4 py-4 text-white sm:px-8">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <div
@@ -47,7 +47,7 @@ export default function Navbar() {
           <div className="flex flex-col">
             {isDashboardPage ? (
               <h1 className="hidden text-lg font-bold tracking-wide sm:block">
-                Vehicle Request Dashboard
+                TOSU Vehicle Request Dashboard
               </h1>
             ) : (
               <h1 className="font-bolda hidden text-xs font-semibold uppercase sm:block md:text-sm">
