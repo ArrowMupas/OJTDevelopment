@@ -1190,18 +1190,27 @@ export default function MaintenancePage() {
       </dialog>
 
       <dialog id="deleteVehicleModal" className="modal">
-        <div className="modal-box">
+        <div className="modal-box space-y-4">
           <h2 className="text-center text-xl font-bold">Delete Vehicle</h2>
 
-          <p className="mt-3 text-center">
+          <div className="text-center">
             Are you sure you want to delete{" "}
-            <span className="font-bold">
-              {vehicleToDelete?.name} ({vehicleToDelete?.plate_number})
-            </span>
-            ?
+            <div className="font-bold">
+              {vehicleToDelete?.name}{" "}
+              <div className="badge badge-primary badge-dash">
+                {vehicleToDelete?.plate_number}
+              </div>{" "}
+              ?
+            </div>
+          </div>
+
+          <p className="text-error px-3 text-center text-xs font-bold">
+            This action cannot be undone. This action will delete all related
+            history and records from this vehicle if you do not want this
+            behaviour you can also just mark the vehicle as unoperational.
           </p>
 
-          <div className="modal-action mt-6 justify-center">
+          <div className="modal-action justify-center">
             <button
               className="btn btn-error text-white"
               onClick={async () => {

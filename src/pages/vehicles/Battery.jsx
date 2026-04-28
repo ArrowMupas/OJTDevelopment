@@ -15,7 +15,10 @@ import {
 } from "../../helpers/statusHelper";
 
 const batterySchema = z.object({
-  type_battery: z.string().min(1, "Battery type is required"),
+  type_battery: z.enum(["Excel", "Gold"], {
+    required_error: "Battery type is required",
+  }),
+  battery_description: z.string().min(1, "Battery description is required"),
   install_date_battery: z.string().min(1, "Installation date is required"),
 });
 
@@ -104,6 +107,7 @@ export default function Battery() {
 
     reset({
       type_battery: vehicle.type_battery || "",
+      battery_description: vehicle.battery_description || "",
       install_date_battery: vehicle.install_date_battery || "",
     });
 
@@ -115,6 +119,7 @@ export default function Battery() {
       .from("vehicles")
       .update({
         type_battery: data.type_battery,
+        battery_description: data.battery_description,
         install_date_battery: data.install_date_battery,
       })
       .eq("id", selectedVehicle.id);
@@ -148,7 +153,17 @@ export default function Battery() {
       <div className="grid grid-cols-2 gap-1 sm:gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {vehicles.map((v) => {
           const status = getStatusByMonths(v.install_date_battery, 10, 11, 12);
-          const nextChange = getNextDateByMonths(v.install_date_battery, 12);
+          const batteryMonths =
+            v.type_battery === "Excel"
+              ? 24
+              : v.type_battery === "Gold"
+                ? 12
+                : 12;
+
+          const nextChange = getNextDateByMonths(
+            v.install_date_battery,
+            batteryMonths,
+          );
 
           const statusBadge = {
             text: !v.install_date_battery
@@ -215,6 +230,13 @@ export default function Battery() {
                   ) : (
                     <CheckCircle className="text-success" />
                   )}
+                </div>
+
+                <div className="mt-2">
+                  <p className="text-xs text-gray-500">Battery Description</p>
+                  <p className="font-semibold">
+                    {v.battery_description || "N/A"}
+                  </p>
                 </div>
 
                 <div className="mt-2">
@@ -286,13 +308,39 @@ export default function Battery() {
               <label className="label">
                 <span className="label-text">Battery Type</span>
               </label>
-              <input
+              <select
                 {...register("type_battery")}
-                className="input input-bordered w-full"
-              />
+                className="select select-bordered w-full"
+                defaultValue=""
+              >
+                <option value="" disabled>
+                  Select battery type
+                </option>
+                <option value="Excel">Excel</option>
+                <option value="Gold">Gold</option>
+              </select>
+
               {errors.type_battery && (
                 <p className="text-error mt-1 text-sm">
                   {errors.type_battery.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="label">
+                <span className="label-text">Battery Description</span>
+              </label>
+
+              <input
+                {...register("battery_description")}
+                className="input input-bordered w-full"
+                placeholder="Enter battery description"
+              />
+
+              {errors.battery_description && (
+                <p className="text-error mt-1 text-sm">
+                  {errors.battery_description.message}
                 </p>
               )}
             </div>

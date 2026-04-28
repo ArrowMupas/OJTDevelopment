@@ -1,272 +1,294 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "../supabaseClient";
+import toast from "react-hot-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import debounce from "lodash.debounce";
+
+import OurInput from "../components/OurInput";
+import { tripTicketSchema } from "../schemas/tripTicketSchema";
 
 export default function TripTicketPage() {
-  const [ticketNo, setTicketNo] = useState("");
-  const [dateReceived, setDateReceived] = useState("");
-  const [timeReceived, setTimeReceived] = useState("");
-  const [rating, setRating] = useState(0);
-  const [isReceived, setIsReceived] = useState(false);
-
-  const [driver, setDriver] = useState("");
+  const [tickets, setTickets] = useState([]);
   const [drivers, setDrivers] = useState([]);
-  const [history, setHistory] = useState([]);
-
-  // UI STATES
-  const [showForm, setShowForm] = useState(true);
-  const [fullHistory, setFullHistory] = useState(false);
-
-  // FILTER STATES
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [filterFrom, setFilterFrom] = useState("");
   const [filterTo, setFilterTo] = useState("");
 
-  // FETCH DRIVERS
-  useEffect(() => {
-    async function fetchDrivers() {
-      const { data, error } = await supabase
-        .from("drivers")
-        .select("*")
-        .eq("designation", "Driver Mechanic B")
-        .order("last_name", { ascending: true });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(tripTicketSchema),
+  });
 
-      if (error) {
-        console.error("Error fetching drivers:", error);
-      } else {
-        setDrivers(data);
-      }
+  const fetchDrivers = async () => {
+    const { data, error } = await supabase
+      .from("drivers")
+      .select("*")
+      .eq("designation", "Driver Mechanic B")
+      .order("last_name", { ascending: true });
+
+    if (error) {
+      toast.error("Failed to load drivers");
+      console.error(error);
+    } else {
+      setDrivers(data);
     }
-
-    fetchDrivers();
-  }, []);
-
-  // RECEIVE TICKET
-  const receiveTicket = () => {
-    if (!ticketNo || !dateReceived || !timeReceived || !driver) {
-      alert("Please complete all fields!");
-      return;
-    }
-
-    if (history.some((h) => h.number === ticketNo)) {
-      alert("DTT number already exists!");
-      return;
-    }
-
-    if (rating === 0) {
-      alert("Please rate the driver first!");
-      return;
-    }
-
-    const newRecord = {
-      number: ticketNo,
-      driver,
-      date: dateReceived,
-      time: timeReceived,
-      rating,
-      status: "Received",
-    };
-
-    setHistory([...history, newRecord]);
-    setIsReceived(true);
-
-    // RESET
-    setTimeout(() => {
-      setTicketNo("");
-      setDateReceived("");
-      setTimeReceived("");
-      setRating(0);
-      setDriver("");
-      setIsReceived(false);
-    }, 1000);
   };
 
-  // FILTER HISTORY (NO RATING FILTER NOW)
-  const filteredHistory = history.filter((item) => {
-    const itemDate = new Date(item.date);
+  const fetchTickets = async (searchTerm = "") => {
+    setLoading(true);
+
+    let query = supabase
+      .from("trip_tickets")
+      .select(
+        `
+        *,
+        drivers (
+          id,
+          first_name,
+          last_name,
+          middle_initial
+        )
+      `,
+      )
+      .order("created_at", { ascending: false });
+
+    if (searchTerm) {
+      query = query.ilike("dtt_no", `%${searchTerm}%`);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      toast.error("Failed to load tickets");
+      console.error(error);
+    } else {
+      setTickets(data);
+    }
+
+    setLoading(false);
+  };
+
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((value) => {
+        fetchTickets(value);
+      }, 400),
+    [],
+  );
+
+  useEffect(() => {
+    fetchDrivers();
+    fetchTickets();
+
+    return () => debouncedSearch.cancel();
+  }, []);
+
+  const createTicket = async (data) => {
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await supabase.from("trip_tickets").insert([
+        {
+          dtt_no: data.dttNo,
+          driver_id: data.driverId,
+          date_received: data.dateReceived,
+          time_received: data.timeReceived,
+          rating: data.rating,
+        },
+      ]);
+
+      if (error) throw error;
+
+      toast.success("Trip ticket created!");
+
+      reset();
+      fetchTickets(search);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to create ticket");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const filteredTickets = tickets.filter((item) => {
+    const itemDate = new Date(item.date_received);
     const fromDate = filterFrom ? new Date(filterFrom) : null;
     const toDate = filterTo ? new Date(filterTo) : null;
 
     return (
-      item.driver.toLowerCase().includes(search.toLowerCase()) &&
-      (!fromDate || itemDate >= fromDate) &&
-      (!toDate || itemDate <= toDate)
+      (!fromDate || itemDate >= fromDate) && (!toDate || itemDate <= toDate)
     );
   });
 
   return (
-    <div className="min-h-screen space-y-7 px-3 py-4 pb-25 sm:px-5">
+    <main className="min-h-screen space-y-4 px-3 py-4 pb-25 sm:px-5">
+      {/* HEADER */}
       <div>
-        <h1 className="flex items-center gap-2 text-lg font-bold">
-          Trip Ticket
-        </h1>
-        <p className="text-sm text-gray-500">
-          Fill out the form to receive a trip ticket.
-        </p>
+        <h1 className="text-lg font-bold">Trip Ticket</h1>
+        <p className="text-sm text-gray-500">Manage driver trip tickets</p>
       </div>
-      {/* MAIN LAYOUT */}
+
       <div className="flex flex-col gap-6 md:flex-row">
-        {/* ===== FORM (SIDEBAR) ===== */}
-        {showForm && (
-          <div className="card bg-base-100 w-full space-y-4 p-6 shadow-xl md:w-1/3">
-            <h2 className="text-center text-xl font-bold">
-              Driver's Trip Ticket
-            </h2>
+        {/* =====================
+            FORM (LIKE GUARDS)
+        ===================== */}
+        <div className="card bg-base-100 w-full space-y-4 p-6 shadow-xl md:w-1/3">
+          <h2 className="text-center text-xl font-bold">Receive Trip Ticket</h2>
 
-            {/* DTT No */}
-            <div>
-              <label className="font-semibold">DTT No.</label>
-              <input
-                type="text"
-                value={ticketNo}
-                onChange={(e) => setTicketNo(e.target.value)}
-                className="input input-bordered mt-1 w-full"
-                placeholder="Enter DTT No."
-              />
-            </div>
+          <form onSubmit={handleSubmit(createTicket)} className="space-y-3">
+            <OurInput
+              label="DTT No."
+              name="dttNo"
+              register={register}
+              error={errors.dttNo}
+            />
 
-            {/* Driver */}
-            <div>
-              <label className="font-semibold">Driver</label>
+            {/* DRIVER SELECT */}
+            <div className="form-control w-full">
+              <label className="label">
+                <span className="label-text">Driver</span>
+              </label>
+
               <select
-                value={driver}
-                onChange={(e) => setDriver(e.target.value)}
-                className="select select-bordered mt-1 w-full"
+                className="select select-bordered w-full"
+                {...register("driverId", { valueAsNumber: true })}
               >
                 <option value="">Select Driver</option>
                 {drivers.map((d) => (
-                  <option key={d.id} value={`${d.first_name} ${d.last_name}`}>
-                    {d.last_name}, {d.first_name} {d.middle_initial}.
+                  <option key={d.id} value={d.id}>
+                    {d.last_name}, {d.first_name} {d.middle_initial}
                   </option>
                 ))}
               </select>
+
+              {errors.driverId && (
+                <span className="text-error text-xs">
+                  {errors.driverId.message}
+                </span>
+              )}
             </div>
 
-            {/* Date */}
+            <OurInput
+              label="Date"
+              name="dateReceived"
+              type="date"
+              register={register}
+              error={errors.dateReceived}
+            />
+
+            <OurInput
+              label="Time"
+              name="timeReceived"
+              type="time"
+              register={register}
+              error={errors.timeReceived}
+            />
+
+            {/* RATING */}
             <div>
-              <label className="font-semibold">Date</label>
+              <label className="label-text">Rating</label>
               <input
-                type="date"
-                value={dateReceived}
-                onChange={(e) => setDateReceived(e.target.value)}
-                className="input input-bordered mt-1 w-full"
+                type="number"
+                min="1"
+                max="5"
+                className="input input-bordered w-full"
+                {...register("rating", { valueAsNumber: true })}
               />
+              {errors.rating && (
+                <span className="text-error text-xs">
+                  {errors.rating.message}
+                </span>
+              )}
             </div>
 
-            {/* Time */}
-            <div>
-              <label className="font-semibold">Time</label>
-              <input
-                type="time"
-                value={timeReceived}
-                onChange={(e) => setTimeReceived(e.target.value)}
-                className="input input-bordered mt-1 w-full"
-              />
-            </div>
-
-            {/* Rating */}
-            <div>
-              <label className="font-semibold">Driver's Rating</label>
-              <div className="flex gap-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    onClick={() => setRating(star)}
-                    className={`text-2xl ${
-                      star <= rating ? "text-yellow-400" : "text-gray-300"
-                    }`}
-                  >
-                    ★
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* SUBMIT */}
             <button
-              onClick={receiveTicket}
-              disabled={isReceived}
-              className={`btn w-full ${
-                isReceived ? "btn-disabled" : "btn-success"
-              }`}
+              type="submit"
+              className="btn btn-success w-full text-white"
+              disabled={isSubmitting}
             >
-              {isReceived ? "Received" : "Receive"}
+              {isSubmitting ? "Saving..." : "Receive Ticket"}
             </button>
-          </div>
-        )}
+          </form>
+        </div>
 
-        {/* ===== HISTORY (MAIN AREA) ===== */}
-        <div
-          className={`card bg-base-100 w-full p-6 shadow-xl ${fullHistory ? "" : "md:w-2/3"}`}
-        >
-          <h2 className="mb-4 text-xl font-bold">Trip History Report</h2>
-          <button className="btn btn-sm btn-error mb-3 flex items-center gap-2">
-            🖨️ Export PDF
-          </button>
+        {/* =====================
+            TABLE (LIKE STAFF/GUARDS)
+        ===================== */}
+        <div className="card bg-base-100 w-full p-6 shadow-xl md:w-2/3">
+          <h2 className="mb-4 text-xl font-bold">Trip History</h2>
 
+          {/* SEARCH + FILTER */}
           <div className="mb-4 grid gap-3 md:grid-cols-3">
-            <div>
-              <label className="text-sm font-light">Search</label>
+            <input
+              type="text"
+              placeholder="Search DTT..."
+              className="input input-bordered w-full"
+              onChange={(e) => {
+                setSearch(e.target.value);
+                debouncedSearch(e.target.value);
+              }}
+            />
 
-              <input
-                type="text"
-                placeholder="Search Driver..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="input input-bordered w-full"
-              />
-            </div>
+            <input
+              type="date"
+              className="input input-bordered w-full"
+              value={filterFrom}
+              onChange={(e) => setFilterFrom(e.target.value)}
+            />
 
-            <div>
-              <label className="text-sm font-light">From</label>
-              <input
-                type="date"
-                value={filterFrom}
-                onChange={(e) => setFilterFrom(e.target.value)}
-                className="input input-bordered w-full"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-light">To</label>
-              <input
-                type="date"
-                value={filterTo}
-                onChange={(e) => setFilterTo(e.target.value)}
-                className="input input-bordered w-full"
-              />
-            </div>
+            <input
+              type="date"
+              className="input input-bordered w-full"
+              value={filterTo}
+              onChange={(e) => setFilterTo(e.target.value)}
+            />
           </div>
 
           {/* TABLE */}
-          {filteredHistory.length === 0 ? (
-            <p className="text-gray-500">No matching records.</p>
+          {loading ? (
+            <div className="flex h-32 items-center justify-center">
+              <span className="loading loading-infinity text-success"></span>
+            </div>
+          ) : filteredTickets.length === 0 ? (
+            <p className="text-gray-500">No records found.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="table w-full">
                 <thead>
                   <tr>
-                    <th>DTT No.</th>
+                    <th>DTT No</th>
                     <th>Driver</th>
                     <th>Date</th>
                     <th>Time</th>
                     <th>Rating</th>
-                    <th>Status</th>
                   </tr>
                 </thead>
 
                 <tbody>
-                  {filteredHistory.map((item, index) => (
-                    <tr key={index}>
-                      <td>{item.number}</td>
-                      <td>{item.driver}</td>
-                      <td>{item.date}</td>
-                      <td>{item.time}</td>
-                      <td>{"★".repeat(item.rating)}</td>
+                  {filteredTickets.map((item) => (
+                    <tr key={item.id}>
+                      <td>{item.dtt_no}</td>
+
                       <td>
-                        <span className="badge badge-success">
-                          {item.status}
-                        </span>
+                        {item.drivers
+                          ? `${item.drivers.last_name}, ${item.drivers.first_name}`
+                          : "Unknown"}
                       </td>
+
+                      <td>{item.date_received}</td>
+                      <td>{item.time_received}</td>
+
+                      <td>{"★".repeat(item.rating)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -275,6 +297,6 @@ export default function TripTicketPage() {
           )}
         </div>
       </div>
-    </div>
+    </main>
   );
 }

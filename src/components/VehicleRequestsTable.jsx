@@ -89,7 +89,7 @@ export default function VehicleRequestsTable({
                     </td>
 
                     {/* DATE */}
-                    <td className="">
+                    <td className="truncate">
                       <span className="text-sm">
                         {format(parsedDateTime, "MMM. d, yyyy")}
                       </span>
