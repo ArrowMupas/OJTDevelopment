@@ -35,7 +35,6 @@ import SurveyResult from "./pages/management/Surveyresult";
 import GuardPage from "./pages/management/GuardPage";
 import EntryExitMonitoring from "./pages/management/EntryExitMonitoring";
 
-
 // Vehicles
 import VehiclePage from "./pages/vehicles/Vehicles";
 import HistoryPage from "./pages/vehicles/HistoryPage";
@@ -47,6 +46,7 @@ import VehicleHistory from "./pages/vehicles/VehicleHistory";
 import TrackingHistory from "./pages/TrackingHistory";
 
 import TransactionsPage from "./pages/TransactionsPage";
+import PaymentList from "./pages/PaymentList";
 import DriverMonitoringPage from "./pages/DriverMonitoringPage";
 import TripTicketPage from "./pages/TripTicketPage";
 
@@ -113,6 +113,7 @@ function App() {
           <Route path="/inquiries" element={<InquiryPage />} />
           <Route path="/ticket" element={<TripTicketPage />} />
           <Route path="/survey-results" element={<SurveyResult />} />
+          <Route path="/payment-list" element={<PaymentList />} />
         </Route>
 
         <Route element={<PublicLayout />}>
