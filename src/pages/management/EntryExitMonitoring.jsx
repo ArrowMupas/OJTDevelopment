@@ -18,6 +18,7 @@ export default function EntryExitPage() {
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // RHF + ZOD
   const {
     register,
     handleSubmit,
@@ -33,24 +34,23 @@ export default function EntryExitPage() {
 
   const selectedType = watch("type");
 
+  // FETCH DATA
   const fetchEntryLogs = async () => {
-    const startOfToday = new Date();
-    startOfToday.setHours(0, 0, 0, 0);
-    const todayStartISO = startOfToday.toISOString();
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
     const { data, error } = await supabase
       .from("entry_log")
       .select(
         `
-      *,
-      guard (
-        id,
-        first_name,
-        last_name
+        *,
+        guard (
+          id,
+          first_name,
+          last_name
+        )
+      `,
       )
-    `,
-      )
-      .or(`time_out.is.null,time_out.gte.${todayStartISO}`)
+      .or(`time_out.is.null,time_out.gte.${oneDayAgo}`)
       .order("time_in", { ascending: false });
 
     if (error) {

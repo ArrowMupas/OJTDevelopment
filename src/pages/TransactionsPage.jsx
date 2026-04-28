@@ -1,149 +1,174 @@
+import { LucideFileClock } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function PaymentEntryPage() {
-  const [transactionNo, setTransactionNo] = useState("");
-  const [payerName, setPayerName] = useState("");
+  const [controlNo, setControlNo] = useState("");
+  const [payeeName, setPayeeName] = useState("");
+  const [transactionType, setTransactionType] = useState("");
+  const [particulars, setParticulars] = useState("");
   const [amount, setAmount] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("");
   const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
 
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = () => {
     if (
-      !transactionNo ||
-      !payerName ||
+      !controlNo ||
+      !payeeName ||
+      !transactionType ||
+      !particulars ||
       !amount ||
-      !paymentMethod ||
-      !date ||
-      !time
+      !date
     ) {
       alert("Please complete all fields!");
       return;
     }
 
     console.log({
-      transactionNo,
-      payerName,
+      controlNo,
+      payeeName,
+      transactionType,
+      particulars,
       amount,
-      paymentMethod,
       date,
-      time,
     });
 
     setIsSubmitted(true);
 
     setTimeout(() => {
-      setTransactionNo("");
-      setPayerName("");
+      setControlNo("");
+      setPayeeName("");
+      setTransactionType("");
+      setParticulars("");
       setAmount("");
-      setPaymentMethod("");
       setDate("");
-      setTime("");
       setIsSubmitted(false);
     }, 1000);
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-start px-4 py-10">
+    <main className="h-full w-full space-y-7 px-5 py-4 pb-4">
       {/* Header */}
-      <div className="mb-6 text-center">
-        <h1 className="text-2xl font-bold">Payment / Transaction Entry</h1>
+      <div>
+        <h1 className="text-lg font-bold">Payments</h1>
         <p className="text-sm text-gray-500">
-          Input payment or transaction details.
+          Input transaction details below.
         </p>
       </div>
 
-      {/* Centered Form */}
-      <div className="card bg-base-100 w-full max-w-lg space-y-5 rounded-xl p-8 shadow-xl">
-        <h2 className="text-center text-xl font-bold">Payment Entry Form</h2>
-
-        {/* Transaction No */}
-        <div>
-          <label className="font-semibold">Transaction No.</label>
-          <input
-            type="text"
-            value={transactionNo}
-            onChange={(e) => setTransactionNo(e.target.value)}
-            className="input input-bordered mt-1 w-full"
-            placeholder="Enter Transaction No."
-          />
-        </div>
-
-        {/* Payer Name */}
-        <div>
-          <label className="font-semibold">Payer Name</label>
-          <input
-            type="text"
-            value={payerName}
-            onChange={(e) => setPayerName(e.target.value)}
-            className="input input-bordered mt-1 w-full"
-            placeholder="Enter Name"
-          />
-        </div>
-
-        {/* Amount */}
-        <div>
-          <label className="font-semibold">Amount</label>
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="input input-bordered mt-1 w-full"
-            placeholder="Enter Amount"
-          />
-        </div>
-
-        {/* Payment Method */}
-        <div>
-          <label className="font-semibold">Payment Method</label>
-          <select
-            value={paymentMethod}
-            onChange={(e) => setPaymentMethod(e.target.value)}
-            className="select select-bordered mt-1 w-full"
-          >
-            <option value="">Select Method</option>
-            <option>Cash</option>
-            <option>GCash</option>
-            <option>Bank Transfer</option>
-          </select>
-        </div>
-
-        {/* Date & Time (Improved Layout) */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="font-semibold">Date</label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="input input-bordered mt-1 w-full"
-            />
+      <div className="flex justify-center">
+        <div className="w-full max-w-4xl">
+          <div className="mb-4 flex justify-end">
+            <Link to="/payment-list">
+              <button className="btn btn-info flex gap-2 text-white">
+                <LucideFileClock className="h-4 w-6" />
+                Payment List
+              </button>
+            </Link>
           </div>
 
-          <div>
-            <label className="font-semibold">Time</label>
-            <input
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              className="input input-bordered mt-1 w-full"
-            />
+          {/* FORM */}
+          <div className="card bg-base-100 mb-18 w-full rounded-xl p-8 shadow-xl">
+            <h2 className="mb-6 text-center text-xl font-bold">
+              Payment Entry Form
+            </h2>
+
+            {/* GRID */}
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {/* Control No */}
+              <div>
+                <label className="font-semibold">Control No.</label>
+                <input
+                  type="text"
+                  value={controlNo}
+                  onChange={(e) => setControlNo(e.target.value)}
+                  className="input input-bordered mt-1 w-full"
+                  placeholder="Enter Control No."
+                />
+              </div>
+
+              {/* Date */}
+              <div>
+                <label className="font-semibold">Date</label>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="input input-bordered mt-1 w-full"
+                />
+              </div>
+
+              {/* Payee Name */}
+              <div>
+                <label className="font-semibold">Payee's Name</label>
+                <input
+                  type="text"
+                  value={payeeName}
+                  onChange={(e) => setPayeeName(e.target.value)}
+                  className="input input-bordered mt-1 w-full"
+                  placeholder="Enter Name"
+                />
+              </div>
+
+              {/* Transaction Type */}
+              <div>
+                <label className="font-semibold">Transaction Type</label>
+                <select
+                  value={transactionType}
+                  onChange={(e) => setTransactionType(e.target.value)}
+                  className="select select-bordered mt-1 w-full"
+                >
+                  <option value="">Select Transaction</option>
+                  <option>Reimbursement</option>
+                  <option>Insurance</option>
+                  <option>Fuel Service</option>
+                  <option>Registration</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Amount */}
+            <div className="mt-4 mb-4">
+              <label className="font-semibold">Amount</label>
+              <input
+                type="number"
+                step="0.01"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="input input-bordered mt-1 w-full"
+                placeholder="e.g. 1,000.00"
+              />
+            </div>
+
+            {/* Particulars */}
+            <div>
+              <label className="font-semibold">
+                Particulars (Period Covered, Employee Designation, Others)
+              </label>
+              <textarea
+                value={particulars}
+                onChange={(e) => setParticulars(e.target.value)}
+                className="textarea textarea-bordered mt-1 w-full"
+                placeholder="Enter details..."
+              />
+            </div>
+
+            {/* Submit */}
+            <div className="mt-8 flex justify-end">
+              <button
+                onClick={handleSubmit}
+                disabled={isSubmitted}
+                className={`btn px-10 ${
+                  isSubmitted ? "btn-disabled" : "btn-success"
+                }`}
+              >
+                {isSubmitted ? "Saved" : "Submit Transaction"}
+              </button>
+            </div>
           </div>
         </div>
-
-        {/* Submit */}
-        <button
-          onClick={handleSubmit}
-          disabled={isSubmitted}
-          className={`btn mt-2 w-full ${
-            isSubmitted ? "btn-disabled" : "btn-success"
-          }`}
-        >
-          {isSubmitted ? "Saved" : "Submit Transaction"}
-        </button>
       </div>
-    </div>
+    </main>
   );
 }
