@@ -76,7 +76,7 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <main className="min-h-screen pb-40">
+    <main className="">
       <div className="">
         <div className="min-w-full overflow-x-auto">
           <table className="table-sm lg:table-lg md:table-md table">
@@ -122,17 +122,17 @@ export default function Dashboard() {
                   );
 
                   return (
-                    <tr key={req.id}>
-                      <th className="text-base uppercase">{req.department}</th>
+                    <tr key={req.id} className="">
+                      <td className="font-bold uppercase">{req.department}</td>
 
                       <td className="truncate">
-                        <div className="flex h-full flex-col items-start justify-center">
+                        <div className="flex h-full flex-col items-start justify-center text-base">
                           <span>{format(parsedDateTime, "MMM. d, yy")}</span>
                           <span>{format(parsedDateTime, "hh:mm a")}</span>
                         </div>
                       </td>
 
-                      <td className="max-w-50 font-bold text-green-700 capitalize">
+                      <td className="tracking-tight text-green-700 capitalize italic">
                         {req.destination}
                       </td>
 
@@ -148,9 +148,7 @@ export default function Dashboard() {
                       </td>
 
                       <td className="text-xs sm:text-sm">{req.purpose}</td>
-                      <td className="text-xs sm:text-sm">
-                        {req.other_instructions}
-                      </td>
+                      <td className="text-xs">{req.other_instructions}</td>
 
                       <td className="truncate bg-blue-50">
                         {req.drivers ? (

@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { format } from "date-fns";
 import debounce from "lodash.debounce";
 import HeaderMonitoring from "../../components/HeaderMonitoring";
+import OurInput from "../../components/OurInput";
 import {
   getStatusByMonths,
   getNextDateByMonths,
@@ -165,7 +166,7 @@ export default function PMS() {
     <main className="h-full space-y-4 px-3 py-4 pb-25 sm:space-y-7 sm:px-5">
       <HeaderMonitoring
         title="PMS Monitoring"
-        description="PMS is updated every 6 months"
+        description="PMS is updated every 10,000 km or 6 months whichever comes first"
         search={search}
         setSearch={setSearch}
         debouncedSearch={debouncedSearch}
@@ -321,40 +322,28 @@ export default function PMS() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-              <label className="label">
-                <span className="label-text">Date</span>
-              </label>
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend truncate text-sm">Date</legend>
               <input
                 type="date"
                 {...register("pms_date")}
-                className="input input-border input-neutral w-full"
+                className="input input-border w-full"
               />
               {errors.pms_date && (
                 <p className="text-error mt-1 text-sm">
                   {errors.pms_date.message}
                 </p>
               )}
-            </div>
+            </fieldset>
 
-            <div>
-              <label className="label">
-                <span className="label-text">Odometer</span>
-              </label>
-
-              <input
-                type="number"
-                {...register("odometer")}
-                className="input input-border input-neutral w-full"
-                placeholder="Enter current odometer"
-              />
-
-              {errors.odometer && (
-                <p className="text-error mt-1 text-sm">
-                  {errors.odometer.message}
-                </p>
-              )}
-            </div>
+            <OurInput
+              label="Odometer"
+              type="number"
+              placeholder="100000"
+              name="odometer"
+              register={register}
+              error={errors.odometer}
+            />
 
             <div className="modal-action">
               <button type="submit" className="btn btn-success">

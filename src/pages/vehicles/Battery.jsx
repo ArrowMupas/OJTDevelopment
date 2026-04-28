@@ -139,7 +139,7 @@ export default function Battery() {
     <main className="h-full space-y-4 px-3 py-4 pb-25 sm:space-y-7 sm:px-5">
       <HeaderMonitoring
         title="Battery Monitoring"
-        description="Battery is replaced every year"
+        description="Battery is replaced 12/24 months"
         search={search}
         setSearch={setSearch}
         debouncedSearch={debouncedSearch}
@@ -306,29 +306,6 @@ export default function Battery() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <label className="label">
-                <span className="label-text">Battery Type</span>
-              </label>
-              <select
-                {...register("type_battery")}
-                className="select select-bordered w-full"
-                defaultValue=""
-              >
-                <option value="" disabled>
-                  Select battery type
-                </option>
-                <option value="Excel">Excel</option>
-                <option value="Gold">Gold</option>
-              </select>
-
-              {errors.type_battery && (
-                <p className="text-error mt-1 text-sm">
-                  {errors.type_battery.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="label">
                 <span className="label-text">Battery Description</span>
               </label>
 
@@ -341,6 +318,27 @@ export default function Battery() {
               {errors.battery_description && (
                 <p className="text-error mt-1 text-sm">
                   {errors.battery_description.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="label">
+                <span className="label-text">Battery Type</span>
+              </label>
+              <select
+                {...register("type_battery")}
+                className="select select-bordered w-full"
+                defaultValue=""
+              >
+                <option value="">Select battery type</option>
+                <option value="Excel">Excel</option>
+                <option value="Gold">Gold</option>
+              </select>
+
+              {errors.type_battery && (
+                <p className="text-error mt-1 text-sm">
+                  {errors.type_battery.message}
                 </p>
               )}
             </div>

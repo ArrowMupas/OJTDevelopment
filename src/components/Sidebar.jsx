@@ -11,6 +11,8 @@ import {
   TicketCheckIcon,
   NotebookPen,
   ShieldUser,
+  Wrench,
+  Clipboard,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { supabase } from "../supabaseClient";
@@ -25,13 +27,13 @@ export default function Sidebar() {
     return (
       <Link
         to={to}
-        className={`flex items-center gap-2 rounded-r-lg p-2 text-sm text-gray-300 transition-all ${
+        className={`flex items-center gap-2 rounded-r-lg p-2 text-xs text-gray-300 transition-all ${
           isActive
             ? "border-l-4 border-green-600 bg-green-700 text-white"
             : "border-l-4 border-transparent"
         } hover:bg-green-700 hover:text-white`}
       >
-        <Icon size={18} />
+        <Icon size={15} />
         {children}
       </Link>
     );
@@ -93,7 +95,7 @@ export default function Sidebar() {
 
           <li>
             <details className="group" open>
-              <summary className="flex cursor-pointer items-center gap-3 rounded-r-lg p-2 text-sm text-gray-200 transition-all hover:bg-green-400 hover:text-green-900">
+              <summary className="flex cursor-pointer items-center gap-3 rounded-r-lg p-2 text-xs text-gray-200 transition-all hover:bg-green-400 hover:text-green-900">
                 Monitoring
               </summary>
 
@@ -105,18 +107,14 @@ export default function Sidebar() {
                 </li> */}
 
                 <li>
-                  <MenuLink to="/vehicles" icon={Car}>
+                  <MenuLink to="/vehicles" icon={Clipboard}>
                     Insurance & Registration
                   </MenuLink>
                 </li>
-                {/* <li>
-                  <MenuLink to="/vehiclestatusqueue" icon={ActivityIcon}>
-                    Vehicle Status
-                  </MenuLink>
-                </li> */}
+
                 <li>
-                  <MenuLink to="/track" icon={MapPin}>
-                    PMS Tracking
+                  <MenuLink to="/track" icon={Wrench}>
+                    Repair Progress
                   </MenuLink>
                 </li>
               </ul>
@@ -125,14 +123,14 @@ export default function Sidebar() {
 
           <li>
             <details className="group" open>
-              <summary className="flex cursor-pointer items-center gap-3 rounded-r-lg p-2 text-sm text-gray-200 transition-all hover:bg-green-400 hover:text-green-900">
+              <summary className="flex cursor-pointer items-center gap-3 rounded-r-lg p-2 text-xs text-gray-200 transition-all hover:bg-green-400 hover:text-green-900">
                 Maintenance
               </summary>
 
               <ul className="menu rounded-box ml-4 w-full space-y-0.5 p-2">
                 <li>
                   <MenuLink to="/pms" icon={Car}>
-                    Vehicle Maintenance
+                    Vehicle Repair & Maintenance
                   </MenuLink>
                 </li>
 
@@ -141,13 +139,11 @@ export default function Sidebar() {
                     Staff
                   </MenuLink>
                 </li>
-                  <li>
+                <li>
                   <MenuLink to="/guard" icon={ShieldUser}>
                     Guard On Duty
                   </MenuLink>
                 </li>
-
-
               </ul>
             </details>
           </li>

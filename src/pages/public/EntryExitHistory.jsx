@@ -20,7 +20,9 @@ export default function EntryExitHistory() {
 
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);
-    const todayStartISO = startOfToday.toISOString();
+
+    const endOfYesterday = new Date(startOfToday);
+    endOfYesterday.setMilliseconds(-1);
 
     const { data, error } = await supabase
       .from("entry_log")
@@ -34,9 +36,8 @@ export default function EntryExitHistory() {
       )
     `,
       )
-      .not("time_out", "is", null)
-      .lt("time_out", todayStartISO)
-      .order("time_out", { ascending: false });
+      .lte("time", endOfYesterday.toISOString())
+      .order("time", { ascending: false });
 
     if (error) {
       console.error("History logs error:", error);
@@ -145,12 +146,12 @@ export default function EntryExitHistory() {
           <table className="table min-h-50">
             <thead className="uppercase">
               <tr>
-                <th>Type</th>
+                <th>Vehicle Type</th>
                 <th>Plate</th>
                 <th>Vehicle</th>
                 <th>Driver</th>
-                <th>Time In</th>
-                <th>Time Out</th>
+                <th>Log Type</th>
+                <th>Time</th>
                 <th>Guard</th>
               </tr>
             </thead>
@@ -180,32 +181,48 @@ export default function EntryExitHistory() {
               ) : (
                 filteredHistory.map((entry) => (
                   <tr key={entry.id} className="hover:bg-base-200 capitalize">
+                    {/* VEHICLE TYPE */}
                     <td>
                       <span
-                        className={`badge ${
-                          entry.type === "private"
-                            ? "badge-success"
+                        className={`badge badge-sm text-white ${
+                          entry.vehicle_type === "private"
+                            ? "badge-info"
                             : "badge-error"
-                        } badge-sm text-white`}
+                        }`}
                       >
-                        {entry.type}
+                        {entry.vehicle_type}
                       </span>
                     </td>
 
+                    {/* PLATE */}
                     <td>
                       <div className="badge badge-dash badge-primary badge-sm truncate">
                         {entry.plate_number}
                       </div>
                     </td>
 
+                    {/* VEHICLE */}
                     <td>{entry.vehicle_name}</td>
 
+                    {/* DRIVER */}
                     <td>{entry.driver_name}</td>
 
-                    <td>{formatDate(entry.time_in)}</td>
+                    <td>
+                      <span
+                        className={`badge badge-sm truncate text-white ${
+                          entry.type === "time in"
+                            ? "badge-success"
+                            : "badge-warning"
+                        }`}
+                      >
+                        {entry.type}
+                      </span>
+                    </td>
 
-                    <td>{formatDate(entry.time_out)}</td>
+                    {/* TIME */}
+                    <td>{formatDate(entry.time)}</td>
 
+                    {/* GUARD */}
                     <td>
                       {entry.guard
                         ? `${entry.guard.first_name} ${entry.guard.last_name}`
