@@ -12,8 +12,16 @@ export const guardSchema = z.object({
     .or(z.literal("")),
 
   role: z.string().min(2, "Role is required"),
-
-  email: z.email("Invalid email address").optional().or(z.literal("")),
-
-  contact: z.string().optional(),
+  email: z
+    .string()
+    .email("Invalid email address")
+    .optional()
+    .or(z.literal(""))
+    .nullable(),
+  email: z
+    .string()
+    .email("Invalid email address")
+    .nullable()
+    .optional()
+    .or(z.literal("")),
 });

@@ -132,20 +132,20 @@ export default function TripTicketPage() {
 
   return (
     <main className="min-h-screen space-y-4 px-3 py-4 pb-25 sm:px-5">
-      {/* HEADER */}
       <div>
         <h1 className="text-lg font-bold">Trip Ticket</h1>
         <p className="text-sm text-gray-500">Manage driver trip tickets</p>
       </div>
 
-      <div className="flex flex-col gap-6 md:flex-row">
-        {/* =====================
-            FORM (LIKE GUARDS)
-        ===================== */}
-        <div className="card bg-base-100 w-full space-y-4 p-6 shadow-xl md:w-1/3">
-          <h2 className="text-center text-xl font-bold">Receive Trip Ticket</h2>
+      <div className="flex w-full flex-col gap-2 md:flex-row">
+        <div className="card bg-base-100 w-full border border-gray-200 p-6 shadow-xl md:w-2/7">
+          <h2 className="text-lg font-semibold">Receive Trip Ticket</h2>
+          <p className="text-sm text-gray-500">Receive and rate trip ticket</p>
 
-          <form onSubmit={handleSubmit(createTicket)} className="space-y-3">
+          <form
+            onSubmit={handleSubmit(createTicket)}
+            className="mt-4 space-y-3"
+          >
             <OurInput
               label="DTT No."
               name="dttNo"
@@ -154,10 +154,8 @@ export default function TripTicketPage() {
             />
 
             {/* DRIVER SELECT */}
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text">Driver</span>
-              </label>
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend text-sm">Driver</legend>
 
               <select
                 className="select select-bordered w-full"
@@ -176,7 +174,7 @@ export default function TripTicketPage() {
                   {errors.driverId.message}
                 </span>
               )}
-            </div>
+            </fieldset>
 
             <OurInput
               label="Date"
@@ -194,7 +192,6 @@ export default function TripTicketPage() {
               error={errors.timeReceived}
             />
 
-            {/* RATING */}
             <div>
               <label className="label-text">Rating</label>
               <input
@@ -213,7 +210,7 @@ export default function TripTicketPage() {
 
             <button
               type="submit"
-              className="btn btn-success w-full text-white"
+              className="btn admin-btn w-full"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Saving..." : "Receive Ticket"}
@@ -221,10 +218,7 @@ export default function TripTicketPage() {
           </form>
         </div>
 
-        {/* =====================
-            TABLE (LIKE STAFF/GUARDS)
-        ===================== */}
-        <div className="card bg-base-100 w-full p-6 shadow-xl md:w-2/3">
+        <div className="card bg-base-100 w-full p-6 shadow-xl sm:w-5/7">
           <h2 className="mb-4 text-xl font-bold">Trip History</h2>
 
           {/* SEARCH + FILTER */}

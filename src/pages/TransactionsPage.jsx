@@ -1,172 +1,211 @@
-import { LucideFileClock } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "../supabaseClient";
+import toast from "react-hot-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import OurInput from "../components/OurInput";
+
+import { voucherSchema } from "../schemas/voucherSchema";
 
 export default function PaymentEntryPage() {
-  const [controlNo, setControlNo] = useState("");
-  const [payeeName, setPayeeName] = useState("");
-  const [transactionType, setTransactionType] = useState("");
-  const [particulars, setParticulars] = useState("");
-  const [amount, setAmount] = useState("");
-  const [date, setDate] = useState("");
+  const [vouchers, setVouchers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(voucherSchema),
+  });
 
-  const handleSubmit = () => {
-    if (
-      !controlNo ||
-      !payeeName ||
-      !transactionType ||
-      !particulars ||
-      !amount ||
-      !date
-    ) {
-      alert("Please complete all fields!");
-      return;
+  const fetchVouchers = async () => {
+    setLoading(true);
+
+    const { data, error } = await supabase
+      .from("vouchers")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      toast.error("Failed to load vouchers");
+      console.error(error);
+    } else {
+      setVouchers(data);
     }
 
-    console.log({
-      controlNo,
-      payeeName,
-      transactionType,
-      particulars,
-      amount,
-      date,
-    });
+    setLoading(false);
+  };
 
-    setIsSubmitted(true);
+  useEffect(() => {
+    fetchVouchers();
+  }, []);
 
-    setTimeout(() => {
-      setControlNo("");
-      setPayeeName("");
-      setTransactionType("");
-      setParticulars("");
-      setAmount("");
-      setDate("");
-      setIsSubmitted(false);
-    }, 1000);
+  const createVoucher = async (data) => {
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await supabase.from("vouchers").insert([
+        {
+          control_no: data.controlNo,
+          payee_name: data.payeeName,
+          transaction_type: data.transactionType,
+          particulars: data.particulars,
+          amount: data.amount,
+          date: data.date,
+        },
+      ]);
+
+      if (error) throw error;
+
+      toast.success("Voucher saved!");
+      reset();
+      fetchVouchers();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to save voucher");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <main className="h-full w-full space-y-7 px-5 py-4 pb-4">
-      {/* Header */}
+    <main className="min-h-screen space-y-4 px-5 py-4 pb-10">
       <div>
         <h1 className="text-lg font-bold">Payments</h1>
         <p className="text-sm text-gray-500">
-          Input transaction details below.
+          Input and manage payment vouchers
         </p>
       </div>
 
-      <div className="flex justify-center">
-        <div className="w-full max-w-4xl">
-          <div className="mb-4 flex justify-end">
-            <Link to="/payment-list">
-              <button className="btn btn-info flex gap-2 text-white">
-                <LucideFileClock className="h-4 w-6" />
-                Payment List
-              </button>
-            </Link>
-          </div>
+      <div className="flex flex-col gap-2 md:flex-row">
+        <div className="card bg-base-100 w-full border border-gray-200 p-6 shadow-xl md:w-2/5">
+          <h2 className="text-lg font-bold">Payment Entry Form</h2>
+          <p className="text-sm text-gray-500">
+            Fill in the details to create a new payment voucher
+          </p>
 
-          {/* FORM */}
-          <div className="card bg-base-100 mb-18 w-full rounded-xl p-8 shadow-xl">
-            <h2 className="mb-6 text-center text-xl font-bold">
-              Payment Entry Form
-            </h2>
+          <form
+            onSubmit={handleSubmit(createVoucher)}
+            className="mt-4 space-y-2"
+          >
+            <div className="flex gap-2">
+              <OurInput
+                label="Control No."
+                name="controlNo"
+                register={register}
+                error={errors.controlNo}
+              />
+              <OurInput
+                label="Date"
+                name="date"
+                type="date"
+                register={register}
+                error={errors.date}
+              />
+            </div>
 
-            {/* GRID */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {/* Control No */}
-              <div>
-                <label className="font-semibold">Control No.</label>
-                <input
-                  type="text"
-                  value={controlNo}
-                  onChange={(e) => setControlNo(e.target.value)}
-                  className="input input-bordered mt-1 w-full"
-                  placeholder="Enter Control No."
-                />
-              </div>
-
-              {/* Date */}
-              <div>
-                <label className="font-semibold">Date</label>
-                <input
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="input input-bordered mt-1 w-full"
-                />
-              </div>
-
-              {/* Payee Name */}
-              <div>
-                <label className="font-semibold">Payee's Name</label>
-                <input
-                  type="text"
-                  value={payeeName}
-                  onChange={(e) => setPayeeName(e.target.value)}
-                  className="input input-bordered mt-1 w-full"
-                  placeholder="Enter Name"
-                />
-              </div>
-
+            <div className="flex gap-2">
+              <OurInput
+                label="Payee Name"
+                name="payeeName"
+                register={register}
+                error={errors.payeeName}
+              />
               {/* Transaction Type */}
-              <div>
-                <label className="font-semibold">Transaction Type</label>
+              <fieldset className="fieldset w-full">
+                <legend className="fieldset-legend text-sm">
+                  Transaction Type
+                </legend>
                 <select
-                  value={transactionType}
-                  onChange={(e) => setTransactionType(e.target.value)}
-                  className="select select-bordered mt-1 w-full"
+                  className="select select-bordered w-full"
+                  {...register("transactionType")}
                 >
-                  <option value="">Select Transaction</option>
+                  <option value="">Select</option>
                   <option>Reimbursement</option>
                   <option>Insurance</option>
                   <option>Fuel Service</option>
                   <option>Registration</option>
                 </select>
-              </div>
+                {errors.transactionType && (
+                  <p className="text-error text-xs">
+                    {errors.transactionType.message}
+                  </p>
+                )}
+              </fieldset>
             </div>
 
-            {/* Amount */}
-            <div className="mt-4 mb-4">
-              <label className="font-semibold">Amount</label>
-              <input
-                type="number"
-                step="0.01"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="input input-bordered mt-1 w-full"
-                placeholder="e.g. 1,000.00"
-              />
-            </div>
+            <OurInput
+              label="Amount"
+              name="amount"
+              type="number"
+              register={register}
+              error={errors.amount}
+            />
 
             {/* Particulars */}
-            <div>
-              <label className="font-semibold">
-                Particulars (Period Covered, Employee Designation, Others)
-              </label>
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend text-sm">Particulars</legend>
               <textarea
-                value={particulars}
-                onChange={(e) => setParticulars(e.target.value)}
-                className="textarea textarea-bordered mt-1 w-full"
-                placeholder="Enter details..."
+                className="textarea textarea-bordered w-full"
+                {...register("particulars")}
               />
-            </div>
+              {errors.particulars && (
+                <p className="text-error text-xs">
+                  {errors.particulars.message}
+                </p>
+              )}
+            </fieldset>
 
             {/* Submit */}
-            <div className="mt-8 flex justify-end">
-              <button
-                onClick={handleSubmit}
-                disabled={isSubmitted}
-                className={`btn px-10 ${
-                  isSubmitted ? "btn-disabled" : "btn-success"
-                }`}
-              >
-                {isSubmitted ? "Saved" : "Submit Transaction"}
-              </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="btn btn-success w-full text-white"
+            >
+              {isSubmitting ? "Saving..." : "Submit"}
+            </button>
+          </form>
+        </div>
+
+        <div className="card bg-base-100 w-full p-6 shadow-xl md:w-3/5">
+          <h2 className="mb-4 text-xl font-bold">Voucher History</h2>
+
+          {loading ? (
+            <div className="flex h-32 items-center justify-center">
+              <span className="loading loading-infinity text-success"></span>
             </div>
-          </div>
+          ) : vouchers.length === 0 ? (
+            <p className="text-gray-500">No vouchers found.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="table w-full">
+                <thead>
+                  <tr>
+                    <th>Control No</th>
+                    <th>Payee</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {vouchers.map((v) => (
+                    <tr key={v.id}>
+                      <td>{v.control_no}</td>
+                      <td>{v.payee_name}</td>
+                      <td>{v.transaction_type}</td>
+                      <td>{v.date}</td>
+                      <td>₱{Number(v.amount).toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </main>

@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { LucideFileClock } from "lucide-react";
+import { LucideFileClock, Pencil, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { entryLogSchema } from "../../schemas/entryLogSchema";
@@ -14,10 +13,12 @@ export default function EntryExitPage() {
   const [vehicles, setVehicles] = useState([]);
   const [drivers, setDrivers] = useState([]);
   const [guards, setGuards] = useState([]);
+  const [privateVehicles, setPrivateVehicles] = useState([]);
+  const [privateStaff, setPrivateStaff] = useState([]);
   const [entryLog, setEntryLog] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const {
     register,
     handleSubmit,
@@ -31,7 +32,6 @@ export default function EntryExitPage() {
       vehicleType: "government",
     },
   });
-
   const selectedVehicleType = watch("vehicleType");
 
   const fetchEntryLogs = async () => {
@@ -75,15 +75,41 @@ export default function EntryExitPage() {
         { data: vehiclesData },
         { data: driversData },
         { data: guardsData },
+        { data: privateVehiclesData },
+        { data: privateStaffsData },
       ] = await Promise.all([
-        supabase.from("vehicles").select("*").order("name"),
-        supabase.from("drivers").select("*").order("last_name"),
-        supabase.from("guard").select("*").order("last_name"),
+        supabase
+          .from("vehicles")
+          .select("id, name, plate_number")
+          .order("name", { ascending: true }),
+        supabase
+          .from("drivers")
+          .select("id, first_name, last_name")
+          .in("designation", [
+            "Driver Mechanic B",
+            "Driver Mechanic A",
+            "Sr. Auto Mechanic",
+          ])
+          .order("last_name", { ascending: true }),
+        supabase
+          .from("guard")
+          .select("id, first_name, last_name, role")
+          .order("last_name"),
+        supabase
+          .from("private_vehicles")
+          .select("id, plate_number")
+          .order("plate_number"),
+        supabase
+          .from("private_staff")
+          .select("id, first_name, last_name")
+          .order("last_name"),
       ]);
 
       setVehicles(vehiclesData || []);
       setDrivers(driversData || []);
       setGuards(guardsData || []);
+      setPrivateVehicles(privateVehiclesData || []);
+      setPrivateStaff(privateStaffsData || []);
 
       setLoading(false);
     };
@@ -107,20 +133,21 @@ export default function EntryExitPage() {
       };
 
       if (formData.vehicleType === "private") {
-        if (
-          !formData.plateNumber ||
-          !formData.vehicleName ||
-          !formData.driverName
-        ) {
-          toast.error("Complete all private vehicle fields");
-          return;
-        }
+        const selectedPrivateVehicle = privateVehicles.find(
+          (v) => String(v.id) === String(formData.privateVehicleId),
+        );
+
+        const selectedPrivateStaff = privateStaff.find(
+          (s) => String(s.id) === String(formData.privateStaffId),
+        );
 
         payload = {
           ...payload,
-          plate_number: formData.plateNumber,
-          vehicle_name: formData.vehicleName,
-          driver_name: formData.driverName,
+          plate_number: selectedPrivateVehicle?.plate_number || "",
+          vehicle_name: "-",
+          driver_name:
+            `${selectedPrivateStaff?.first_name} ${selectedPrivateStaff?.last_name}` ||
+            "",
         };
       } else {
         const selectedVehicle = vehicles.find(
@@ -162,6 +189,8 @@ export default function EntryExitPage() {
 
         vehicleId: "",
         driverId: "",
+        privateVehicleId: "",
+        privateStaffId: "",
 
         plateNumber: "",
         vehicleName: "",
@@ -177,6 +206,151 @@ export default function EntryExitPage() {
     }
   };
 
+  const [selectedEntry, setSelectedEntry] = useState(null);
+  const [editForm, setEditForm] = useState({
+    vehicle_type: "government",
+    vehicleId: "",
+    driverId: "",
+    privateVehicleId: "",
+    privateStaffId: "",
+    plate_number: "",
+    vehicle_name: "",
+    driver_name: "",
+    type: "",
+  });
+
+  const openEditModal = (entry) => {
+    let matchedVehicle = null;
+    let matchedDriver = null;
+    let matchedPrivateVehicle = null;
+    let matchedPrivateStaff = null;
+
+    if (entry.vehicle_type === "government") {
+      matchedVehicle = vehicles.find(
+        (v) => v.plate_number === entry.plate_number,
+      );
+
+      matchedDriver = drivers.find(
+        (d) =>
+          `${d.first_name} ${d.last_name}`.trim() ===
+          (entry.driver_name || "").trim(),
+      );
+    } else {
+      matchedPrivateVehicle = privateVehicles.find(
+        (v) => v.plate_number === entry.plate_number,
+      );
+
+      matchedPrivateStaff = privateStaff.find(
+        (s) =>
+          `${s.first_name} ${s.last_name}`.trim() ===
+          (entry.driver_name || "").trim(),
+      );
+    }
+
+    setSelectedEntry(entry);
+
+    setEditForm({
+      vehicle_type: entry.vehicle_type || "government",
+      vehicleId: matchedVehicle?.id || "",
+      driverId: matchedDriver?.id || "",
+      privateVehicleId: matchedPrivateVehicle?.id || "",
+      privateStaffId: matchedPrivateStaff?.id || "",
+      plate_number: entry.plate_number || "",
+      vehicle_name: entry.vehicle_name || "",
+      driver_name: entry.driver_name || "",
+      type: entry.type || "",
+    });
+
+    document.getElementById("edit_modal").showModal();
+  };
+
+  const handleUpdate = async () => {
+    if (!selectedEntry) return;
+
+    let payload = {
+      vehicle_type: editForm.vehicle_type,
+      type: editForm.type,
+    };
+
+    if (editForm.vehicle_type === "private") {
+      const selectedPrivateVehicle = privateVehicles.find(
+        (v) => String(v.id) === String(editForm.privateVehicleId),
+      );
+
+      const selectedPrivateStaff = privateStaff.find(
+        (s) => String(s.id) === String(editForm.privateStaffId),
+      );
+
+      payload = {
+        ...payload,
+        plate_number: selectedPrivateVehicle?.plate_number || "",
+        vehicle_name: "-",
+        driver_name:
+          `${selectedPrivateStaff?.first_name} ${selectedPrivateStaff?.last_name}` ||
+          "",
+      };
+    } else {
+      const selectedVehicle = vehicles.find(
+        (v) => String(v.id) === String(editForm.vehicleId),
+      );
+
+      const selectedDriver = drivers.find(
+        (d) => String(d.id) === String(editForm.driverId),
+      );
+
+      if (!selectedVehicle || !selectedDriver) {
+        toast.error("Please select valid vehicle and driver");
+        return;
+      }
+
+      payload = {
+        ...payload,
+        plate_number: selectedVehicle.plate_number,
+        vehicle_name: selectedVehicle.name,
+        driver_name: `${selectedDriver.first_name} ${selectedDriver.last_name}`,
+      };
+    }
+
+    const { error } = await supabase
+      .from("entry_log")
+      .update(payload)
+      .eq("id", selectedEntry.id);
+
+    if (error) {
+      console.error(error);
+      toast.error("Update failed");
+      return;
+    }
+
+    toast.success("Entry updated!");
+    document.getElementById("edit_modal").close();
+    await fetchEntryLogs();
+  };
+
+  const openDeleteModal = (entry) => {
+    setSelectedEntry(entry);
+    document.getElementById("delete_modal").showModal();
+  };
+
+  const handleDelete = async () => {
+    if (!selectedEntry) return;
+
+    const { error } = await supabase
+      .from("entry_log")
+      .delete()
+      .eq("id", selectedEntry.id);
+
+    if (error) {
+      console.error(error);
+      toast.error("Delete failed");
+      return;
+    }
+
+    toast.success("Entry deleted!");
+    document.getElementById("delete_modal").close();
+    await fetchEntryLogs();
+  };
+
   const formatDate = (date) => {
     if (!date) return "-";
 
@@ -184,21 +358,32 @@ export default function EntryExitPage() {
 
     return (
       <>
-        <span className="block text-sm">{format(d, "MMM d, yyyy")}</span>
-        <span className="text-sm">{format(d, "hh:mm a")}</span>
+        <span className="block text-xs">{format(d, "MMM d, yyyy")}</span>
+        <span className="text-xs">{format(d, "hh:mm a")}</span>
       </>
     );
   };
 
+  const [newPrivateVehicle, setNewPrivateVehicle] = useState({
+    plate_number: "",
+  });
+
+  const [newPrivateStaff, setNewPrivateStaff] = useState({
+    first_name: "",
+    last_name: "",
+  });
+
   return (
-    <div className="mx-auto max-w-7xl px-8 py-20">
+    <div className="mx-auto max-w-7xl px-5 py-20 xl:px-0">
       {/* HEADER */}
       <div className="flex justify-between">
         <div className="">
           <h1 className="text-5xl font-bold uppercase">
             Entry & Exit Monitoring
           </h1>
-          <p className="text-gray-600">Monitor vehicle entry and exit</p>
+          <p className="text-gray-600">
+            Monitor vehicle entry and exit at Basement 1
+          </p>
         </div>
         <div className="mt-4 flex justify-end">
           <Link to="/entry-exit-history">
@@ -226,13 +411,13 @@ export default function EntryExitPage() {
 
             {guards.map((g) => (
               <option key={g.id} value={g.id}>
-                {g.last_name}, {g.first_name}
+                {g.role} {g.last_name}, {g.first_name}
               </option>
             ))}
           </select>
 
           {/* VEHICLE TYPE */}
-          <div className="tabs tabs-box mt-5 min-h-55">
+          <div className="tabs tabs-box mt-5">
             <input
               type="radio"
               value="government"
@@ -263,7 +448,7 @@ export default function EntryExitPage() {
 
                 {drivers.map((d) => (
                   <option key={d.id} value={d.id}>
-                    {d.first_name} {d.last_name}
+                    {d.last_name} {d.first_name}
                   </option>
                 ))}
               </select>
@@ -278,32 +463,59 @@ export default function EntryExitPage() {
             />
 
             <div className="tab-content space-y-3 p-2">
-              <label className="floating-label">
-                <span>Plate Number</span>
-                <input
-                  className="input input-bordered w-full"
-                  placeholder="Plate Number"
-                  {...register("plateNumber")}
-                />
-              </label>
+              <select
+                className="select select-bordered w-full"
+                {...register("privateVehicleId")}
+                onChange={(e) => {
+                  const value = e.target.value;
 
-              <label className="floating-label">
-                <span>Vehicle Name</span>
-                <input
-                  className="input input-bordered w-full"
-                  placeholder="Vehicle Name"
-                  {...register("vehicleName")}
-                />
-              </label>
+                  if (value === "new_private_vehicle") {
+                    document
+                      .getElementById("add_private_vehicle_modal")
+                      .showModal();
+                    return;
+                  }
 
-              <label className="floating-label">
-                <span>Driver Name</span>
-                <input
-                  className="input input-bordered w-full"
-                  placeholder="Driver Name"
-                  {...register("driverName")}
-                />
-              </label>
+                  setValue("privateVehicleId", value);
+                }}
+              >
+                <option value="">Select Vehicle</option>
+
+                {privateVehicles.map((v) => (
+                  <option key={v.id} value={v.id}>
+                    {v.plate_number}
+                  </option>
+                ))}
+
+                <option value="new_private_vehicle">+ Add New Vehicle</option>
+              </select>
+
+              <select
+                className="select select-bordered w-full"
+                {...register("privateStaffId")}
+                onChange={(e) => {
+                  const value = e.target.value;
+
+                  if (value === "new_private_staff") {
+                    document
+                      .getElementById("add_private_staff_modal")
+                      .showModal();
+                    return;
+                  }
+
+                  setValue("privateStaffId", value);
+                }}
+              >
+                <option value="">Select Staff</option>
+
+                {privateStaff.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.last_name}, {s.first_name}
+                  </option>
+                ))}
+
+                <option value="new_private_staff">+ Add New Staff</option>
+              </select>
             </div>
           </div>
 
@@ -329,7 +541,7 @@ export default function EntryExitPage() {
         </form>
 
         {/* TABLE */}
-        <div className="h-screen overflow-auto">
+        <div className="h-screen w-3/4 overflow-auto">
           <table className="md:table-sm lg:table-md table-zebra table-pin-rows table">
             <thead>
               <tr className="uppercase">
@@ -340,6 +552,7 @@ export default function EntryExitPage() {
                 <th>Log Type</th>
                 <th>Time</th>
                 <th>Guard</th>
+                <th>Actions</th>
               </tr>
             </thead>
 
@@ -357,7 +570,7 @@ export default function EntryExitPage() {
                       {/* VEHICLE TYPE */}
                       <td>
                         <span
-                          className={`badge badge-sm text-white capitalize ${
+                          className={`badge badge-xs text-white capitalize ${
                             entry.vehicle_type === "private"
                               ? "badge-info"
                               : "badge-error"
@@ -369,7 +582,7 @@ export default function EntryExitPage() {
 
                       {/* PLATE */}
                       <td>
-                        <div className="badge badge-dash badge-primary badge-sm">
+                        <div className="badge badge-dash badge-primary badge-sm truncate">
                           {entry.plate_number}
                         </div>
                       </td>
@@ -382,7 +595,7 @@ export default function EntryExitPage() {
 
                       <td>
                         <span
-                          className={`badge badge-sm truncate text-white capitalize ${
+                          className={`badge badge-xs truncate text-white capitalize ${
                             entry.type === "time in"
                               ? "badge-success"
                               : "badge-warning"
@@ -401,6 +614,26 @@ export default function EntryExitPage() {
                           ? `${entry.guard.first_name} ${entry.guard.last_name}`
                           : "-"}
                       </td>
+
+                      <td>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => openEditModal(entry)}
+                            className="btn btn-xs btn-square text-info"
+                          >
+                            <Pencil className="size-4" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => openDeleteModal(entry)}
+                            className="btn btn-xs btn-square text-error"
+                          >
+                            <Trash2 className="size-4" />
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   </>
                 ))
@@ -409,6 +642,294 @@ export default function EntryExitPage() {
           </table>
         </div>
       </div>
+
+      <dialog id="edit_modal" className="modal">
+        <div className="modal-box max-w-md">
+          <h3 className="text-lg font-bold">Edit Entry Log</h3>
+          <p className="text-sm text-gray-500">
+            Edit the entry log information below.
+          </p>
+
+          <div className="mt-4">
+            {/* Vehicle Type Tabs */}
+            <div className="tabs tabs-box bg-base-100">
+              <input
+                type="radio"
+                name="edit_vehicle_type"
+                className="tab"
+                aria-label="Government"
+                checked={editForm.vehicle_type === "government"}
+                onChange={() =>
+                  setEditForm({
+                    ...editForm,
+                    vehicle_type: "government",
+                  })
+                }
+              />
+
+              <div className="tab-content space-y-3 p-4">
+                <select
+                  className="select select-bordered w-full"
+                  value={editForm.vehicleId}
+                  onChange={(e) =>
+                    setEditForm({
+                      ...editForm,
+                      vehicleId: e.target.value,
+                    })
+                  }
+                >
+                  <option value="">Select Vehicle</option>
+
+                  {vehicles.map((v) => (
+                    <option key={v.id} value={v.id}>
+                      {v.name} ({v.plate_number})
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  className="select select-bordered w-full"
+                  value={editForm.driverId}
+                  onChange={(e) =>
+                    setEditForm({
+                      ...editForm,
+                      driverId: e.target.value,
+                    })
+                  }
+                >
+                  <option value="">Select Driver</option>
+
+                  {drivers.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.first_name} {d.last_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <input
+                type="radio"
+                name="edit_vehicle_type"
+                className="tab"
+                aria-label="Private"
+                checked={editForm.vehicle_type === "private"}
+                onChange={() =>
+                  setEditForm({
+                    ...editForm,
+                    vehicle_type: "private",
+                  })
+                }
+              />
+
+              <div className="tab-content space-y-3 p-4">
+                <select
+                  className="select select-bordered w-full"
+                  value={editForm.privateVehicleId}
+                  onChange={(e) =>
+                    setEditForm({
+                      ...editForm,
+                      privateVehicleId: e.target.value,
+                    })
+                  }
+                >
+                  <option value="">Select Vehicle</option>
+
+                  {privateVehicles.map((v) => (
+                    <option key={v.id} value={v.id}>
+                      {v.name} ({v.plate_number})
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  className="select select-bordered w-full"
+                  value={editForm.privateStaffId}
+                  onChange={(e) =>
+                    setEditForm({
+                      ...editForm,
+                      privateStaffId: e.target.value,
+                    })
+                  }
+                >
+                  <option value="">Select Staff</option>
+
+                  {privateStaff.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.first_name} {s.last_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <select
+                className="select select-bordered w-full"
+                value={editForm.type}
+                onChange={(e) =>
+                  setEditForm({
+                    ...editForm,
+                    type: e.target.value,
+                  })
+                }
+              >
+                <option value="time in">Time In</option>
+                <option value="time out">Time Out</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn">Cancel</button>
+            </form>
+
+            <button
+              type="button"
+              onClick={handleUpdate}
+              className="btn btn-success text-white"
+            >
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </dialog>
+
+      <dialog id="delete_modal" className="modal">
+        <div className="modal-box">
+          <h3 className="text-error text-lg font-bold">Delete Entry Log</h3>
+
+          <p className="py-4">Are you sure you want to delete this record?</p>
+
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn">Cancel</button>
+            </form>
+
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="btn btn-error text-white"
+            >
+              Confirm Delete
+            </button>
+          </div>
+        </div>
+      </dialog>
+
+      <dialog id="add_private_vehicle_modal" className="modal">
+        <div className="modal-box">
+          <h3 className="text-lg font-bold">Add Private Vehicle</h3>
+
+          <input
+            className="input input-bordered mt-4 w-full"
+            placeholder="Plate Number"
+            value={newPrivateVehicle.plate_number}
+            onChange={(e) =>
+              setNewPrivateVehicle({
+                ...newPrivateVehicle,
+                plate_number: e.target.value,
+              })
+            }
+          />
+
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn">Cancel</button>
+            </form>
+
+            <button
+              className="btn btn-success text-white"
+              onClick={async () => {
+                const { data, error } = await supabase
+                  .from("private_vehicles")
+                  .insert([newPrivateVehicle])
+                  .select();
+
+                if (error) {
+                  toast.error("Failed to add vehicle");
+                  return;
+                }
+
+                toast.success("Vehicle added!");
+
+                setPrivateVehicles((prev) => [...prev, data[0]]);
+                setValue("privateVehicleId", data[0].id);
+
+                setNewPrivateVehicle({ plate_number: "" });
+
+                document.getElementById("add_private_vehicle_modal").close();
+              }}
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </dialog>
+
+      <dialog id="add_private_staff_modal" className="modal">
+        <div className="modal-box">
+          <h3 className="text-lg font-bold">Add Private Staff</h3>
+
+          <div className="mt-4 space-y-3">
+            <input
+              className="input input-bordered w-full"
+              placeholder="First Name"
+              value={newPrivateStaff.first_name}
+              onChange={(e) =>
+                setNewPrivateStaff({
+                  ...newPrivateStaff,
+                  first_name: e.target.value,
+                })
+              }
+            />
+
+            <input
+              className="input input-bordered w-full"
+              placeholder="Last Name"
+              value={newPrivateStaff.last_name}
+              onChange={(e) =>
+                setNewPrivateStaff({
+                  ...newPrivateStaff,
+                  last_name: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn">Cancel</button>
+            </form>
+
+            <button
+              className="btn btn-success text-white"
+              onClick={async () => {
+                const { data, error } = await supabase
+                  .from("private_staff")
+                  .insert([newPrivateStaff])
+                  .select();
+
+                if (error) {
+                  toast.error("Failed to add staff");
+                  return;
+                }
+
+                toast.success("Staff added!");
+
+                setPrivateStaff((prev) => [...prev, data[0]]);
+                setValue("privateStaffId", data[0].id);
+
+                setNewPrivateStaff({ first_name: "", last_name: "" });
+
+                document.getElementById("add_private_staff_modal").close();
+              }}
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 }

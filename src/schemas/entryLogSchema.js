@@ -7,6 +7,8 @@ export const entryLogSchema = z.object({
 
   vehicleId: z.coerce.number().optional(),
   driverId: z.coerce.number().optional(),
+  privateVehicleId: z.coerce.number().optional(),
+  privateStaffId: z.coerce.number().optional(),
 
   plateNumber: z.string().optional(),
   driverName: z.string().optional(),

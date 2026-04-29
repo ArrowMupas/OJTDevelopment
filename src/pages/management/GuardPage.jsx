@@ -1,4 +1,4 @@
-import { Search, UserPlus, Mail, Phone } from "lucide-react";
+import { Search, UserPlus, Mail, Phone, Pencil, Trash2 } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
@@ -259,7 +259,7 @@ export default function Guards() {
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <span className="text-4xl font-bold text-green-400">
+                    <span className="text-xl font-bold text-green-400">
                       {guard.last_name?.[0]}
                     </span>
                   )}
@@ -267,11 +267,11 @@ export default function Guards() {
               </figure>
 
               <div className="card-body p-3">
-                <div className="flex gap-2">
-                  <div className="badge badge-soft badge-neutral">
+                <div className="flex items-center gap-2">
+                  <div className="badge badge-soft badge-neutral font-bold italic">
                     {guard.role}
                   </div>
-                  <h2 className="font-bold">
+                  <h2 className="text-sm font-bold">
                     {guard.last_name}, {guard.first_name}{" "}
                     {guard.middle_initial && `${guard.middle_initial}.`}
                   </h2>
@@ -290,17 +290,17 @@ export default function Guards() {
 
                 <div className="card-actions mt-2 justify-end">
                   <button
-                    className="btn btn-ghost btn-sm"
+                    className="btn btn-square btn-sm text-info"
                     onClick={() => handleEdit(guard)}
                   >
-                    Edit
+                    <Pencil className="size-4" />
                   </button>
 
                   <button
-                    className="btn btn-ghost btn-sm text-error"
+                    className="btn btn-square btn-sm text-error"
                     onClick={() => deleteGuard(guard.id)}
                   >
-                    Delete
+                    <Trash2 className="size-4" />
                   </button>
                 </div>
               </div>
@@ -309,37 +309,47 @@ export default function Guards() {
         </div>
       )}
 
-      {/* MODAL */}
       <dialog id="guardModal" className="modal">
         <div className="modal-box">
           <h1 className="text-xl font-bold">
             {isEditing ? "Update Guard" : "Add Guard"}
           </h1>
+          <p className="text-sm text-gray-500">
+            Insert the guard and their current role
+          </p>
+
+          <button
+            type="button"
+            className="btn btn-sm btn-circle btn-ghost absolute top-2 right-2"
+            onClick={closeModal}
+          >
+            ✕
+          </button>
 
           <form
             onSubmit={handleSubmit(isEditing ? updateGuard : createGuard)}
-            className="mt-4 space-y-3"
+            className="mt-4 space-y-2"
           >
-            <OurInput
-              label="First Name"
-              name="firstName"
-              register={register}
-              error={errors.firstName}
-            />
-
-            <OurInput
-              label="Middle Initial"
-              name="middleInitial"
-              register={register}
-              error={errors.middleInitial}
-            />
-
-            <OurInput
-              label="Last Name"
-              name="lastName"
-              register={register}
-              error={errors.lastName}
-            />
+            <div className="flex gap-2">
+              <OurInput
+                label="First Name"
+                name="firstName"
+                register={register}
+                error={errors.firstName}
+              />
+              <OurInput
+                label="Middle Initial"
+                name="middleInitial"
+                register={register}
+                error={errors.middleInitial}
+              />
+              <OurInput
+                label="Last Name"
+                name="lastName"
+                register={register}
+                error={errors.lastName}
+              />
+            </div>
 
             <OurInput
               label="Role"
@@ -362,23 +372,22 @@ export default function Guards() {
               error={errors.contact}
             />
 
-            <input
-              type="file"
-              className="file-input w-full"
-              onChange={(e) => setSelectedFile(e.target.files[0])}
-            />
+            <div>
+              <p className="text-sm font-bold">Guard Image</p>
+              <input
+                type="file"
+                className="file-input w-full"
+                onChange={(e) => setSelectedFile(e.target.files[0])}
+              />
+            </div>
 
             <div className="modal-action">
-              <button type="button" className="btn" onClick={closeModal}>
-                Cancel
-              </button>
-
               <button
                 type="submit"
-                className="btn btn-primary text-white"
+                className="btn admin-btn btn-block"
                 disabled={isSubmitting}
               >
-                {isEditing ? "Update" : "Save"}
+                {isEditing ? "Update Guard" : "Create Guard"}
               </button>
             </div>
           </form>

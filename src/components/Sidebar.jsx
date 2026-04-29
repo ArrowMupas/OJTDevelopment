@@ -149,12 +149,6 @@ export default function Sidebar() {
           </li>
 
           <li>
-            <MenuLink to="/inquiries" icon={MessageCircleQuestionMark}>
-              Inquiry
-            </MenuLink>
-          </li>
-
-          <li>
             <MenuLink to="/ticket" icon={TicketCheckIcon}>
               Trip Ticket
             </MenuLink>
@@ -169,6 +163,12 @@ export default function Sidebar() {
           <li>
             <MenuLink to="/transactions" icon={ScrollText}>
               Payments
+            </MenuLink>
+          </li>
+
+          <li>
+            <MenuLink to="/inquiries" icon={MessageCircleQuestionMark}>
+              Inquiry
             </MenuLink>
           </li>
         </ul>
