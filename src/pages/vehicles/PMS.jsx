@@ -17,12 +17,20 @@ import {
 
 const pmsSchema = z.object({
   pms_date: z.string().min(1, "Date is required"),
+
   odometer: z.coerce
     .number({
       required_error: "Odometer is required",
       invalid_type_error: "Odometer must be a number",
     })
     .min(0, "Odometer must be valid"),
+
+  odometer_future: z.coerce
+    .number({
+      required_error: "Future odometer is required",
+      invalid_type_error: "Future odometer must be a number",
+    })
+    .min(0, "Future odometer must be valid"),
 });
 
 export default function PMS() {
@@ -96,10 +104,10 @@ export default function PMS() {
 
   const openModal = (vehicle) => {
     setSelectedVehicle(vehicle);
-
     reset({
       pms_date: vehicle.pms_date || "",
       odometer: vehicle.odometer || "",
+      odometer_future: vehicle.odometer_future || "",
     });
 
     document.getElementById("pms_modal").showModal();
@@ -111,6 +119,7 @@ export default function PMS() {
       .update({
         pms_date: data.pms_date,
         odometer: data.odometer,
+        odometer_future: data.odometer_future,
       })
       .eq("id", selectedVehicle.id);
 
@@ -125,40 +134,33 @@ export default function PMS() {
     toast.success(`PMS info updated for ${selectedVehicle.name}`);
   };
 
-  const getOdometerStatus = (odometer = 0) => {
-    const nextMilestone = Math.ceil(odometer / 10000) * 10000;
-    const prevMilestone = nextMilestone - 10000;
-
-    const distanceToNext = nextMilestone - odometer;
-
-    if (odometer === 0) {
+  const getOdometerStatus = (odometer = 0, futureOdometer = 0) => {
+    if (!odometer || !futureOdometer) {
       return {
         status: "none",
         message: "No odometer recorded",
-        nextMilestone: 10000,
       };
     }
 
-    if (distanceToNext <= 500) {
-      return {
-        status: "warning",
-        message: `About to reach ${nextMilestone.toLocaleString()} km service interval`,
-        nextMilestone,
-      };
-    }
+    const remaining = futureOdometer - odometer;
 
-    if (odometer >= nextMilestone) {
+    if (remaining <= 0) {
       return {
         status: "overdue",
-        message: `Past ${nextMilestone.toLocaleString()} km service interval`,
-        nextMilestone,
+        message: `Past ${futureOdometer.toLocaleString()} km service interval`,
+      };
+    }
+
+    if (remaining <= 500) {
+      return {
+        status: "warning",
+        message: `About to reach ${futureOdometer.toLocaleString()} km service interval`,
       };
     }
 
     return {
       status: "ok",
-      message: `Next service at ${nextMilestone.toLocaleString()} km`,
-      nextMilestone,
+      message: `Next service at ${futureOdometer.toLocaleString()} km`,
     };
   };
 
@@ -177,11 +179,11 @@ export default function PMS() {
       />
 
       {/* VEHICLE CARDS */}
-      <div className="grid grid-cols-2 gap-1 sm:gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-1 sm:gap-2 md:grid-cols-3 lg:grid-cols-4">
         {vehicles.map((v) => {
           const status = getStatusByMonths(v.pms_date, 4, 5, 6);
           const nextPms = getNextDateByMonths(v.pms_date, 6);
-          const odo = getOdometerStatus(v.odometer);
+          const odo = getOdometerStatus(v.odometer, v.odometer_future);
 
           const statusBadge = {
             text: !v.pms_date
@@ -266,35 +268,43 @@ export default function PMS() {
                 </div>
 
                 <div className="mt-2">
-                  <p className="text-xs text-gray-500">Next PMS Schedule</p>
-
-                  {nextPms ? (
-                    <p
-                      className={`font-semibold ${
-                        status === "overdue"
-                          ? "text-error"
-                          : status === "dueSoon"
-                            ? "text-secondary"
-                            : status === "warning"
-                              ? "text-warning"
-                              : "text-success"
-                      }`}
-                    >
-                      {format(new Date(nextPms), "MMM. d, yyyy")}
-                    </p>
-                  ) : (
-                    <p className="font-semibold">N/A</p>
-                  )}
-                </div>
-
-                <div className="mt-2">
                   <p className="text-xs text-gray-500">Odometer Status</p>
-
                   <p className={`font-semibold ${odoBadge}`}>
                     {v.odometer ? `${v.odometer.toLocaleString()} km` : "N/A"}
                   </p>
+                </div>
 
-                  <p className="text-xs text-gray-500">{odo.message}</p>
+                <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <div className="">
+                    <p className="text-xs text-gray-500">Next PMS Schedule</p>
+
+                    {nextPms ? (
+                      <p
+                        className={`font-semibold ${
+                          status === "overdue"
+                            ? "text-error"
+                            : status === "dueSoon"
+                              ? "text-secondary"
+                              : status === "warning"
+                                ? "text-warning"
+                                : "text-success"
+                        }`}
+                      >
+                        {format(new Date(nextPms), "MMM. d, yyyy")}
+                      </p>
+                    ) : (
+                      <p className="font-semibold">N/A</p>
+                    )}
+                  </div>
+
+                  <div className="">
+                    <p className="text-xs text-gray-500">Next Odometer</p>
+                    <p className="font-semibold">
+                      {v.odometer_future
+                        ? `${v.odometer_future.toLocaleString()} km`
+                        : "N/A"}
+                    </p>
+                  </div>
                 </div>
 
                 <div className="card-actions mt-2">
@@ -343,6 +353,15 @@ export default function PMS() {
               name="odometer"
               register={register}
               error={errors.odometer}
+            />
+
+            <OurInput
+              label="Future Odometer"
+              type="number"
+              placeholder="110000"
+              name="odometer_future"
+              register={register}
+              error={errors.odometer_future}
             />
 
             <div className="modal-action">
