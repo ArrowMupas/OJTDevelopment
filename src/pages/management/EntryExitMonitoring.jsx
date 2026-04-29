@@ -80,20 +80,29 @@ export default function EntryExitPage() {
       ] = await Promise.all([
         supabase
           .from("vehicles")
-          .select("*")
+          .select("id, name, plate_number")
           .order("name", { ascending: true }),
         supabase
           .from("drivers")
-          .select("*")
+          .select("id, first_name, last_name")
           .in("designation", [
             "Driver Mechanic B",
             "Driver Mechanic A",
             "Sr. Auto Mechanic",
           ])
           .order("last_name", { ascending: true }),
-        supabase.from("guard").select("*").order("last_name"),
-        supabase.from("private_vehicles").select("*").order("plate_number"),
-        supabase.from("private_staff").select("*").order("last_name"),
+        supabase
+          .from("guard")
+          .select("id, first_name, last_name, role")
+          .order("last_name"),
+        supabase
+          .from("private_vehicles")
+          .select("id, plate_number")
+          .order("plate_number"),
+        supabase
+          .from("private_staff")
+          .select("id, first_name, last_name")
+          .order("last_name"),
       ]);
 
       setVehicles(vehiclesData || []);
@@ -355,6 +364,15 @@ export default function EntryExitPage() {
     );
   };
 
+  const [newPrivateVehicle, setNewPrivateVehicle] = useState({
+    plate_number: "",
+  });
+
+  const [newPrivateStaff, setNewPrivateStaff] = useState({
+    first_name: "",
+    last_name: "",
+  });
+
   return (
     <div className="mx-auto max-w-7xl px-5 py-20 xl:px-0">
       {/* HEADER */}
@@ -393,13 +411,13 @@ export default function EntryExitPage() {
 
             {guards.map((g) => (
               <option key={g.id} value={g.id}>
-                {g.last_name}, {g.first_name}
+                {g.role} {g.last_name}, {g.first_name}
               </option>
             ))}
           </select>
 
           {/* VEHICLE TYPE */}
-          <div className="tabs tabs-box mt-5 min-h-55">
+          <div className="tabs tabs-box mt-5">
             <input
               type="radio"
               value="government"
@@ -448,19 +466,45 @@ export default function EntryExitPage() {
               <select
                 className="select select-bordered w-full"
                 {...register("privateVehicleId")}
+                onChange={(e) => {
+                  const value = e.target.value;
+
+                  if (value === "new_private_vehicle") {
+                    document
+                      .getElementById("add_private_vehicle_modal")
+                      .showModal();
+                    return;
+                  }
+
+                  setValue("privateVehicleId", value);
+                }}
               >
                 <option value="">Select Vehicle</option>
 
                 {privateVehicles.map((v) => (
                   <option key={v.id} value={v.id}>
-                    ({v.plate_number})
+                    {v.plate_number}
                   </option>
                 ))}
+
+                <option value="new_private_vehicle">+ Add New Vehicle</option>
               </select>
 
               <select
                 className="select select-bordered w-full"
                 {...register("privateStaffId")}
+                onChange={(e) => {
+                  const value = e.target.value;
+
+                  if (value === "new_private_staff") {
+                    document
+                      .getElementById("add_private_staff_modal")
+                      .showModal();
+                    return;
+                  }
+
+                  setValue("privateStaffId", value);
+                }}
               >
                 <option value="">Select Staff</option>
 
@@ -469,6 +513,8 @@ export default function EntryExitPage() {
                     {s.last_name}, {s.first_name}
                   </option>
                 ))}
+
+                <option value="new_private_staff">+ Add New Staff</option>
               </select>
             </div>
           </div>
@@ -606,7 +652,7 @@ export default function EntryExitPage() {
 
           <div className="mt-4">
             {/* Vehicle Type Tabs */}
-            <div className="tabs tabs-box bg-base-100 min-h-60">
+            <div className="tabs tabs-box bg-base-100">
               <input
                 type="radio"
                 name="edit_vehicle_type"
@@ -766,6 +812,120 @@ export default function EntryExitPage() {
               className="btn btn-error text-white"
             >
               Confirm Delete
+            </button>
+          </div>
+        </div>
+      </dialog>
+
+      <dialog id="add_private_vehicle_modal" className="modal">
+        <div className="modal-box">
+          <h3 className="text-lg font-bold">Add Private Vehicle</h3>
+
+          <input
+            className="input input-bordered mt-4 w-full"
+            placeholder="Plate Number"
+            value={newPrivateVehicle.plate_number}
+            onChange={(e) =>
+              setNewPrivateVehicle({
+                ...newPrivateVehicle,
+                plate_number: e.target.value,
+              })
+            }
+          />
+
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn">Cancel</button>
+            </form>
+
+            <button
+              className="btn btn-success text-white"
+              onClick={async () => {
+                const { data, error } = await supabase
+                  .from("private_vehicles")
+                  .insert([newPrivateVehicle])
+                  .select();
+
+                if (error) {
+                  toast.error("Failed to add vehicle");
+                  return;
+                }
+
+                toast.success("Vehicle added!");
+
+                setPrivateVehicles((prev) => [...prev, data[0]]);
+                setValue("privateVehicleId", data[0].id);
+
+                setNewPrivateVehicle({ plate_number: "" });
+
+                document.getElementById("add_private_vehicle_modal").close();
+              }}
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </dialog>
+
+      <dialog id="add_private_staff_modal" className="modal">
+        <div className="modal-box">
+          <h3 className="text-lg font-bold">Add Private Staff</h3>
+
+          <div className="mt-4 space-y-3">
+            <input
+              className="input input-bordered w-full"
+              placeholder="First Name"
+              value={newPrivateStaff.first_name}
+              onChange={(e) =>
+                setNewPrivateStaff({
+                  ...newPrivateStaff,
+                  first_name: e.target.value,
+                })
+              }
+            />
+
+            <input
+              className="input input-bordered w-full"
+              placeholder="Last Name"
+              value={newPrivateStaff.last_name}
+              onChange={(e) =>
+                setNewPrivateStaff({
+                  ...newPrivateStaff,
+                  last_name: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn">Cancel</button>
+            </form>
+
+            <button
+              className="btn btn-success text-white"
+              onClick={async () => {
+                const { data, error } = await supabase
+                  .from("private_staff")
+                  .insert([newPrivateStaff])
+                  .select();
+
+                if (error) {
+                  toast.error("Failed to add staff");
+                  return;
+                }
+
+                toast.success("Staff added!");
+
+                setPrivateStaff((prev) => [...prev, data[0]]);
+                setValue("privateStaffId", data[0].id);
+
+                setNewPrivateStaff({ first_name: "", last_name: "" });
+
+                document.getElementById("add_private_staff_modal").close();
+              }}
+            >
+              Save
             </button>
           </div>
         </div>

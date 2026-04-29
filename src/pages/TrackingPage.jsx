@@ -215,8 +215,11 @@ export default function TrackingPage() {
 
       {/* MODAL */}
       <dialog id="trackingModal" className="modal">
-        <div className="modal-box rounded-xl p-8">
-          <h1 className="mb-4 text-2xl font-bold uppercase">Add New Repair</h1>
+        <div className="modal-box max-w-md rounded-xl p-8">
+          <h1 className="text-xl font-bold">Add New Repair</h1>
+          <p className="text-sm text-gray-500">
+            Fill in the details to add a new repair record
+          </p>
 
           <button
             className="btn btn-circle btn-ghost absolute top-3 right-3"
@@ -227,7 +230,7 @@ export default function TrackingPage() {
 
           <form
             onSubmit={handleSubmit(createMaintenanceRecord)}
-            className="space-y-5"
+            className="mt-4 space-y-7"
           >
             {/* VEHICLE */}
             <div>

@@ -323,13 +323,23 @@ export default function PMS() {
 
       {/* DAISYUI MODAL */}
       <dialog id="pms_modal" className="modal">
-        <div className="modal-box">
+        <div className="modal-box max-w-md">
           <div className="mb-4">
             <h3 className="text-lg font-bold">Update PMS Information</h3>
             <p className="text-sm text-gray-500">
               Insert the updated PMS information
             </p>
           </div>
+
+          <button
+            type="button"
+            className="btn btn-sm btn-circle btn-ghost absolute top-2 right-2"
+            onClick={() => {
+              document.getElementById("pms_modal")?.close();
+            }}
+          >
+            ✕
+          </button>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <fieldset className="fieldset">
@@ -365,18 +375,8 @@ export default function PMS() {
             />
 
             <div className="modal-action">
-              <button type="submit" className="btn btn-success">
-                Save
-              </button>
-
-              <button
-                type="button"
-                className="btn"
-                onClick={() => {
-                  document.getElementById("pms_modal")?.close();
-                }}
-              >
-                Cancel
+              <button type="submit" className="btn admin-btn btn-block">
+                Update PMS
               </button>
             </div>
           </form>

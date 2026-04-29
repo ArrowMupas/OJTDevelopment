@@ -303,6 +303,16 @@ export default function Battery() {
             </p>
           </div>
 
+          <button
+            type="button"
+            className="btn btn-sm btn-circle btn-ghost absolute top-2 right-2"
+            onClick={() => {
+              document.getElementById("battery_modal")?.close();
+            }}
+          >
+            ✕
+          </button>
+
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <label className="label">
@@ -360,18 +370,8 @@ export default function Battery() {
             </div>
 
             <div className="modal-action">
-              <button type="submit" className="btn btn-success">
-                Save
-              </button>
-
-              <button
-                type="button"
-                className="btn"
-                onClick={() => {
-                  document.getElementById("battery_modal")?.close();
-                }}
-              >
-                Cancel
+              <button type="submit" className="btn admin-btn btn-block">
+                Save battery Changes
               </button>
             </div>
           </form>

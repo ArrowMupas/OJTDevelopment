@@ -600,7 +600,7 @@ export default function Staff() {
 
             <button
               type="submit"
-              className="btn btn-lg hover:bg-highlight mt-4 w-full bg-green-600 text-white"
+              className="btn btn-lg admin-btn mt-4 w-full"
               disabled={isSubmitting || uploading}
             >
               <Truck className="mr-2 size-5" />

@@ -56,6 +56,10 @@ html {
   --admin: oklch(0.2 0.02 240);
 }
 
+.admin-btn {
+  @apply bg-green-600 text-white hover:bg-green-700;
+}
+
 @theme inline {
   --color-neutral: var(--neutral);
   --color-admin: var(--admin);
