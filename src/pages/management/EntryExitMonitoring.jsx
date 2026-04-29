@@ -13,10 +13,12 @@ export default function EntryExitPage() {
   const [vehicles, setVehicles] = useState([]);
   const [drivers, setDrivers] = useState([]);
   const [guards, setGuards] = useState([]);
+  const [privateVehicles, setPrivateVehicles] = useState([]);
+  const [privateStaff, setPrivateStaff] = useState([]);
   const [entryLog, setEntryLog] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const {
     register,
     handleSubmit,
@@ -30,18 +32,6 @@ export default function EntryExitPage() {
       vehicleType: "government",
     },
   });
-
-  const [selectedEntry, setSelectedEntry] = useState(null);
-  const [editForm, setEditForm] = useState({
-    vehicle_type: "government",
-    vehicleId: "",
-    driverId: "",
-    plate_number: "",
-    vehicle_name: "",
-    driver_name: "",
-    type: "",
-  });
-
   const selectedVehicleType = watch("vehicleType");
 
   const fetchEntryLogs = async () => {
@@ -85,6 +75,8 @@ export default function EntryExitPage() {
         { data: vehiclesData },
         { data: driversData },
         { data: guardsData },
+        { data: privateVehiclesData },
+        { data: privateStaffsData },
       ] = await Promise.all([
         supabase
           .from("vehicles")
@@ -100,11 +92,15 @@ export default function EntryExitPage() {
           ])
           .order("last_name", { ascending: true }),
         supabase.from("guard").select("*").order("last_name"),
+        supabase.from("private_vehicles").select("*").order("plate_number"),
+        supabase.from("private_staff").select("*").order("last_name"),
       ]);
 
       setVehicles(vehiclesData || []);
       setDrivers(driversData || []);
       setGuards(guardsData || []);
+      setPrivateVehicles(privateVehiclesData || []);
+      setPrivateStaff(privateStaffsData || []);
 
       setLoading(false);
     };
@@ -128,20 +124,21 @@ export default function EntryExitPage() {
       };
 
       if (formData.vehicleType === "private") {
-        if (
-          !formData.plateNumber ||
-          !formData.vehicleName ||
-          !formData.driverName
-        ) {
-          toast.error("Complete all private vehicle fields");
-          return;
-        }
+        const selectedPrivateVehicle = privateVehicles.find(
+          (v) => String(v.id) === String(formData.privateVehicleId),
+        );
+
+        const selectedPrivateStaff = privateStaff.find(
+          (s) => String(s.id) === String(formData.privateStaffId),
+        );
 
         payload = {
           ...payload,
-          plate_number: formData.plateNumber,
-          vehicle_name: formData.vehicleName,
-          driver_name: formData.driverName,
+          plate_number: selectedPrivateVehicle?.plate_number || "",
+          vehicle_name: "-",
+          driver_name:
+            `${selectedPrivateStaff?.first_name} ${selectedPrivateStaff?.last_name}` ||
+            "",
         };
       } else {
         const selectedVehicle = vehicles.find(
@@ -183,6 +180,8 @@ export default function EntryExitPage() {
 
         vehicleId: "",
         driverId: "",
+        privateVehicleId: "",
+        privateStaffId: "",
 
         plateNumber: "",
         vehicleName: "",
@@ -198,16 +197,46 @@ export default function EntryExitPage() {
     }
   };
 
-  const openEditModal = (entry) => {
-    const matchedVehicle = vehicles.find(
-      (v) => v.plate_number === entry.plate_number,
-    );
+  const [selectedEntry, setSelectedEntry] = useState(null);
+  const [editForm, setEditForm] = useState({
+    vehicle_type: "government",
+    vehicleId: "",
+    driverId: "",
+    privateVehicleId: "",
+    privateStaffId: "",
+    plate_number: "",
+    vehicle_name: "",
+    driver_name: "",
+    type: "",
+  });
 
-    const matchedDriver = drivers.find(
-      (d) =>
-        `${d.first_name} ${d.last_name}`.trim() ===
-        (entry.driver_name || "").trim(),
-    );
+  const openEditModal = (entry) => {
+    let matchedVehicle = null;
+    let matchedDriver = null;
+    let matchedPrivateVehicle = null;
+    let matchedPrivateStaff = null;
+
+    if (entry.vehicle_type === "government") {
+      matchedVehicle = vehicles.find(
+        (v) => v.plate_number === entry.plate_number,
+      );
+
+      matchedDriver = drivers.find(
+        (d) =>
+          `${d.first_name} ${d.last_name}`.trim() ===
+          (entry.driver_name || "").trim(),
+      );
+    } else {
+      matchedPrivateVehicle = privateVehicles.find(
+        (v) => v.plate_number === entry.plate_number,
+      );
+
+      matchedPrivateStaff = privateStaff.find(
+        (s) =>
+          `${s.first_name} ${s.last_name}`.trim() ===
+          (entry.driver_name || "").trim(),
+      );
+    }
 
     setSelectedEntry(entry);
 
@@ -215,6 +244,8 @@ export default function EntryExitPage() {
       vehicle_type: entry.vehicle_type || "government",
       vehicleId: matchedVehicle?.id || "",
       driverId: matchedDriver?.id || "",
+      privateVehicleId: matchedPrivateVehicle?.id || "",
+      privateStaffId: matchedPrivateStaff?.id || "",
       plate_number: entry.plate_number || "",
       vehicle_name: entry.vehicle_name || "",
       driver_name: entry.driver_name || "",
@@ -233,11 +264,21 @@ export default function EntryExitPage() {
     };
 
     if (editForm.vehicle_type === "private") {
+      const selectedPrivateVehicle = privateVehicles.find(
+        (v) => String(v.id) === String(editForm.privateVehicleId),
+      );
+
+      const selectedPrivateStaff = privateStaff.find(
+        (s) => String(s.id) === String(editForm.privateStaffId),
+      );
+
       payload = {
         ...payload,
-        plate_number: editForm.plate_number,
-        vehicle_name: editForm.vehicle_name,
-        driver_name: editForm.driver_name,
+        plate_number: selectedPrivateVehicle?.plate_number || "",
+        vehicle_name: "-",
+        driver_name:
+          `${selectedPrivateStaff?.first_name} ${selectedPrivateStaff?.last_name}` ||
+          "",
       };
     } else {
       const selectedVehicle = vehicles.find(
@@ -404,32 +445,31 @@ export default function EntryExitPage() {
             />
 
             <div className="tab-content space-y-3 p-2">
-              <label className="floating-label">
-                <span>Plate Number</span>
-                <input
-                  className="input input-bordered w-full"
-                  placeholder="Plate Number"
-                  {...register("plateNumber")}
-                />
-              </label>
+              <select
+                className="select select-bordered w-full"
+                {...register("privateVehicleId")}
+              >
+                <option value="">Select Vehicle</option>
 
-              <label className="floating-label">
-                <span>Vehicle Name</span>
-                <input
-                  className="input input-bordered w-full"
-                  placeholder="Vehicle Name"
-                  {...register("vehicleName")}
-                />
-              </label>
+                {privateVehicles.map((v) => (
+                  <option key={v.id} value={v.id}>
+                    ({v.plate_number})
+                  </option>
+                ))}
+              </select>
 
-              <label className="floating-label">
-                <span>Driver Name</span>
-                <input
-                  className="input input-bordered w-full"
-                  placeholder="Driver Name"
-                  {...register("driverName")}
-                />
-              </label>
+              <select
+                className="select select-bordered w-full"
+                {...register("privateStaffId")}
+              >
+                <option value="">Select Staff</option>
+
+                {privateStaff.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.last_name}, {s.first_name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -636,50 +676,43 @@ export default function EntryExitPage() {
               />
 
               <div className="tab-content space-y-3 p-4">
-                <label className="floating-label">
-                  <span>Plate Number</span>
-                  <input
-                    className="input input-bordered w-full"
-                    placeholder="Plate Number"
-                    value={editForm.plate_number}
-                    onChange={(e) =>
-                      setEditForm({
-                        ...editForm,
-                        plate_number: e.target.value,
-                      })
-                    }
-                  />
-                </label>
+                <select
+                  className="select select-bordered w-full"
+                  value={editForm.privateVehicleId}
+                  onChange={(e) =>
+                    setEditForm({
+                      ...editForm,
+                      privateVehicleId: e.target.value,
+                    })
+                  }
+                >
+                  <option value="">Select Vehicle</option>
 
-                <label className="floating-label">
-                  <span>Vehicle Name</span>
-                  <input
-                    className="input input-bordered w-full"
-                    placeholder="Vehicle Name"
-                    value={editForm.vehicle_name}
-                    onChange={(e) =>
-                      setEditForm({
-                        ...editForm,
-                        vehicle_name: e.target.value,
-                      })
-                    }
-                  />
-                </label>
+                  {privateVehicles.map((v) => (
+                    <option key={v.id} value={v.id}>
+                      {v.name} ({v.plate_number})
+                    </option>
+                  ))}
+                </select>
 
-                <label className="floating-label">
-                  <span>Driver Name</span>
-                  <input
-                    className="input input-bordered w-full"
-                    placeholder="Driver Name"
-                    value={editForm.driver_name}
-                    onChange={(e) =>
-                      setEditForm({
-                        ...editForm,
-                        driver_name: e.target.value,
-                      })
-                    }
-                  />
-                </label>
+                <select
+                  className="select select-bordered w-full"
+                  value={editForm.privateStaffId}
+                  onChange={(e) =>
+                    setEditForm({
+                      ...editForm,
+                      privateStaffId: e.target.value,
+                    })
+                  }
+                >
+                  <option value="">Select Staff</option>
+
+                  {privateStaff.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.first_name} {s.last_name}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
