@@ -5,6 +5,6 @@ export const voucherSchema = z.object({
   payeeName: z.string().min(1, "Required"),
   transactionType: z.string().min(1, "Required"),
   particulars: z.string().min(1, "Required"),
-  amount: z.number().positive(),
+  amount: z.coerce.number().positive(),
   date: z.string().min(1, "Required"),
 });

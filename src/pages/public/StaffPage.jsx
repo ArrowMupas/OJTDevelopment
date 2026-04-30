@@ -128,22 +128,23 @@ export default function StaffPage() {
 
   return (
     // FULL SCREEN BACKGROUND FIX
-    <div className="min-h-full p-4 sm:py-20">
+    <div className="min-h-screen p-4 sm:py-20">
       {/* CONTENT WRAPPER (centered, does NOT control background) */}
       <div className="mx-auto max-w-6xl space-y-6">
+        <div className="mb-6 text-center">
+          <h1 className="text-5xl font-bold uppercase">Key Personnels</h1>
+          <p className="mt-2 text-lg leading-relaxed">
+            Here are the key personnel of Transportation Operation Service Unit
+            (TOSU)
+          </p>
+        </div>
+
         {loading ? (
-          <p>Loading...</p>
+          <div className="flex justify-center">
+            <div className="loading loading-spinner loading-lg" />
+          </div>
         ) : (
           <>
-            {/* HEADER */}
-            <div className="mb-6 text-center">
-              <h1 className="text-5xl font-bold uppercase">Key Personnels</h1>
-              <p className="mt-2 text-lg leading-relaxed">
-                Here are the key personnel of Transportation Operation Service
-                Unit (TOSU)
-              </p>
-            </div>
-            {/* CHIEF */}
             <div className="flex flex-col items-center">
               {chief.map((d) => renderDriverCard(d, "large"))}
             </div>

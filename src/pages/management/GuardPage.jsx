@@ -206,11 +206,12 @@ export default function Guards() {
   return (
     <main className="h-full space-y-4 px-3 py-4 pb-25 sm:px-5">
       {/* HEADER */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col">
         <h1 className="flex items-center gap-2 text-lg font-bold">
           Guards
           <div className="badge badge-info badge-outline">{guards.length}</div>
         </h1>
+        <p className="text-sm text-gray-500">Manage your guards here</p>
       </div>
 
       {/* SEARCH + ADD */}

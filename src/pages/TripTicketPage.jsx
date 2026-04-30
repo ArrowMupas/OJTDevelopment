@@ -192,20 +192,52 @@ export default function TripTicketPage() {
               error={errors.timeReceived}
             />
 
-            <div>
-              <label className="label-text">Rating</label>
-              <input
-                type="number"
-                min="1"
-                max="5"
-                className="input input-bordered w-full"
-                {...register("rating", { valueAsNumber: true })}
-              />
-              {errors.rating && (
-                <span className="text-error text-xs">
-                  {errors.rating.message}
-                </span>
-              )}
+            <div className="flex items-center gap-2">
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend text-sm">Rating</legend>
+                <div className="rating">
+                  <input
+                    type="radio"
+                    value="1"
+                    className="mask mask-star-2 bg-green-500"
+                    aria-label="1 star"
+                    {...register("rating")}
+                  />
+                  <input
+                    type="radio"
+                    value="2"
+                    className="mask mask-star-2 bg-green-500"
+                    aria-label="2 star"
+                    {...register("rating")}
+                  />
+                  <input
+                    type="radio"
+                    value="3"
+                    className="mask mask-star-2 bg-green-500"
+                    aria-label="3 star"
+                    {...register("rating")}
+                  />
+                  <input
+                    type="radio"
+                    value="4"
+                    className="mask mask-star-2 bg-green-500"
+                    aria-label="4 star"
+                    {...register("rating")}
+                  />
+                  <input
+                    type="radio"
+                    value="5"
+                    className="mask mask-star-2 bg-green-500"
+                    aria-label="5 star"
+                    {...register("rating")}
+                  />
+                </div>
+                {errors.rating && (
+                  <span className="text-error text-xs">
+                    {errors.rating.message}
+                  </span>
+                )}
+              </fieldset>
             </div>
 
             <button
@@ -282,7 +314,45 @@ export default function TripTicketPage() {
                       <td>{item.date_received}</td>
                       <td>{item.time_received}</td>
 
-                      <td>{"★".repeat(item.rating)}</td>
+                      <td>
+                        <div className="rating rating-sm pointer-events-none">
+                          <input
+                            type="radio"
+                            name={`rating-${item.id}`}
+                            className="mask mask-star-2 bg-green-500"
+                            checked={Number(item.rating) === 1}
+                            readOnly
+                          />
+                          <input
+                            type="radio"
+                            name={`rating-${item.id}`}
+                            className="mask mask-star-2 bg-green-500"
+                            checked={Number(item.rating) === 2}
+                            readOnly
+                          />
+                          <input
+                            type="radio"
+                            name={`rating-${item.id}`}
+                            className="mask mask-star-2 bg-green-500"
+                            checked={Number(item.rating) === 3}
+                            readOnly
+                          />
+                          <input
+                            type="radio"
+                            name={`rating-${item.id}`}
+                            className="mask mask-star-2 bg-green-500"
+                            checked={Number(item.rating) === 4}
+                            readOnly
+                          />
+                          <input
+                            type="radio"
+                            name={`rating-${item.id}`}
+                            className="mask mask-star-2 bg-green-500"
+                            checked={Number(item.rating) === 5}
+                            readOnly
+                          />
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

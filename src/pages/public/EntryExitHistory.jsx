@@ -1,30 +1,30 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Search } from "lucide-react";
+import { Search, FileArchive } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import { format } from "date-fns";
+import debounce from "lodash.debounce";
+import * as XLSX from "xlsx";
 
 export default function EntryExitHistory() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const navigate = useNavigate();
-
   const [search, setSearch] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
 
-  const fetchHistoryLogs = async () => {
+  const navigate = useNavigate();
+
+  async function fetchHistory(searchTerm = "", start = "", end = "") {
     setLoading(true);
 
-    const startOfToday = new Date();
-    startOfToday.setHours(0, 0, 0, 0);
-
-    const endOfYesterday = new Date(startOfToday);
+    const endOfYesterday = new Date();
+    endOfYesterday.setHours(0, 0, 0, 0);
     endOfYesterday.setMilliseconds(-1);
 
-    const { data, error } = await supabase
+    let query = supabase
       .from("entry_log")
       .select(
         `
@@ -32,46 +32,123 @@ export default function EntryExitHistory() {
       guard (
         id,
         first_name,
-        last_name
+        last_name,
+        role
       )
     `,
       )
       .lte("time", endOfYesterday.toISOString())
       .order("time", { ascending: false });
 
-    if (error) {
-      console.error("History logs error:", error);
-      setLoading(false);
-      return;
+    const searchColumns = ["plate_number", "vehicle_name", "driver_name"];
+
+    if (searchTerm) {
+      let orQueryParts = searchColumns.map(
+        (field) => `${field}.ilike.%${searchTerm}%`,
+      );
+
+      query = query.or(orQueryParts.join(","));
     }
 
-    setHistory(data || []);
+    if (start) {
+      query = query.gte("time", start);
+    }
+
+    if (end) {
+      query = query.lte("time", end + "T23:59:59");
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("History fetch error:", error);
+    } else {
+      setHistory(data || []);
+    }
+
     setLoading(false);
-  };
+  }
 
   useEffect(() => {
-    fetchHistoryLogs();
+    fetchHistory();
   }, []);
 
-  const filteredHistory = useMemo(() => {
-    return history.filter((entry) => {
-      const matchesSearch =
-        entry.plate_number?.toLowerCase().includes(search.toLowerCase()) ||
-        entry.vehicle_name?.toLowerCase().includes(search.toLowerCase()) ||
-        entry.driver_name?.toLowerCase().includes(search.toLowerCase()) ||
-        entry.type?.toLowerCase().includes(search.toLowerCase());
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((value, start, end) => {
+        fetchHistory(value, start, end);
+      }, 400),
+    [],
+  );
 
-      const entryDate = new Date(entry.time_in);
+  function handleExport() {
+    if (!history.length) return;
 
-      const matchesFrom = fromDate ? entryDate >= new Date(fromDate) : true;
+    let reportTitle = "Entry & Exit History Report";
 
-      const matchesTo = toDate
-        ? entryDate <= new Date(toDate + "T23:59:59")
-        : true;
+    if (fromDate && toDate) {
+      const start = new Date(fromDate);
+      const end = new Date(toDate);
 
-      return matchesSearch && matchesFrom && matchesTo;
-    });
-  }, [history, search, fromDate, toDate]);
+      const sameDay = fromDate === toDate;
+
+      if (sameDay) {
+        reportTitle += ` for ${format(start, "MMMM d, yyyy")}`;
+      } else {
+        reportTitle += ` from ${format(start, "MMMM d")} to ${format(end, "MMMM d, yyyy")}`;
+      }
+    } else if (fromDate) {
+      const start = new Date(fromDate);
+      reportTitle += ` starting ${format(start, "MMMM d, yyyy")}`;
+    } else if (toDate) {
+      const end = new Date(toDate);
+      reportTitle += ` up to ${format(end, "MMMM d, yyyy")}`;
+    }
+
+    const sheetData = [
+      [reportTitle],
+      [],
+      [
+        "Vehicle Type",
+        "Plate",
+        "Vehicle",
+        "Driver",
+        "Log Type",
+        "Time",
+        "Guard",
+      ],
+      ...history.map((entry) => [
+        entry.vehicle_type,
+        entry.plate_number,
+        entry.vehicle_name,
+        entry.driver_name,
+        entry.type,
+        entry.time ? format(new Date(entry.time), "MMMM d, yyyy hh:mm a") : "-",
+        entry.guard
+          ? [entry.guard.role, entry.guard.first_name, entry.guard.last_name]
+              .filter(Boolean)
+              .join(" ")
+          : "No guard",
+      ]),
+    ];
+
+    const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+
+    worksheet["!cols"] = [
+      { wch: 15 },
+      { wch: 15 },
+      { wch: 25 },
+      { wch: 25 },
+      { wch: 15 },
+      { wch: 25 },
+      { wch: 25 },
+    ];
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "History");
+
+    XLSX.writeFile(workbook, "entry_exit_history.xlsx");
+  }
 
   const formatDate = (date) => {
     if (!date) return "-";
@@ -92,8 +169,9 @@ export default function EntryExitHistory() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="mx-auto w-4xl py-20"
+      className="mx-auto w-5xl py-15"
     >
+      {/* HEADER */}
       <div className="text-center">
         <h1 className="mt-7 text-5xl font-bold uppercase">
           Entry & Exit History
@@ -104,6 +182,7 @@ export default function EntryExitHistory() {
         </p>
       </div>
 
+      {/* ACTIONS */}
       <div className="mt-12 flex items-center justify-between">
         <button
           onClick={() => navigate(-1)}
@@ -111,39 +190,76 @@ export default function EntryExitHistory() {
         >
           ← Back to Monitoring
         </button>
+
+        <button className="btn btn-secondary" onClick={handleExport}>
+          <FileArchive className="h-4 w-4" />
+          Generate Report
+        </button>
       </div>
 
-      <div className="mt-8 grid grid-cols-3 gap-4">
-        <label className="input input-bordered flex items-center gap-2">
+      {/* FILTERS */}
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        {/* SEARCH */}
+        <label className="input input-bordered flex w-full items-center gap-2">
           <Search className="h-4 w-4" />
-
           <input
             type="text"
             placeholder="Search plate, vehicle, driver..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              setSearch(value);
+              debouncedSearch(value, fromDate, toDate);
+            }}
             className="grow"
           />
         </label>
 
-        <input
-          type="date"
-          className="input input-bordered"
-          value={fromDate}
-          onChange={(e) => setFromDate(e.target.value)}
-        />
+        <label htmlFor="" className="input">
+          <span className="label">From Date</span>
+          <input
+            type="date"
+            className="input input-bordered w-full"
+            value={fromDate}
+            onChange={(e) => {
+              const value = e.target.value;
+              setFromDate(value);
+              fetchHistory(search, value, toDate);
+            }}
+          />
+        </label>
 
-        <input
-          type="date"
-          className="input input-bordered"
-          value={toDate}
-          onChange={(e) => setToDate(e.target.value)}
-        />
+        <label htmlFor="" className="input">
+          <span className="label">To Date</span>
+          <input
+            type="date"
+            className="input input-bordered w-full"
+            value={toDate}
+            onChange={(e) => {
+              const value = e.target.value;
+              setToDate(value);
+              fetchHistory(search, fromDate, value);
+            }}
+          />
+        </label>
+
+        <button
+          className="btn btn-error btn-soft"
+          onClick={() => {
+            setSearch("");
+            setFromDate("");
+            setToDate("");
+            fetchHistory();
+          }}
+        >
+          Clear
+        </button>
       </div>
 
+      {/* TABLE */}
       <div className="bg-base-100 mt-10">
-        <div className="rounded-box border-base-content/5 bg-base-100 overflow-x-auto border">
-          <table className="table min-h-50">
+        <div className="rounded-box border-base-content/5 bg-base-100 h-screen overflow-x-auto border">
+          <table className="table-pin-rows table min-h-50">
             <thead className="uppercase">
               <tr>
                 <th>Vehicle Type</th>
@@ -166,7 +282,7 @@ export default function EntryExitHistory() {
                     </div>
                   </td>
                 </tr>
-              ) : filteredHistory.length === 0 ? (
+              ) : history.length === 0 ? (
                 <tr>
                   <td colSpan="7" className="py-12 text-center sm:py-20">
                     <div className="flex flex-col items-center gap-2">
@@ -179,9 +295,8 @@ export default function EntryExitHistory() {
                   </td>
                 </tr>
               ) : (
-                filteredHistory.map((entry) => (
+                history.map((entry) => (
                   <tr key={entry.id} className="hover:bg-base-200 capitalize">
-                    {/* VEHICLE TYPE */}
                     <td>
                       <span
                         className={`badge badge-sm text-white ${
@@ -194,22 +309,18 @@ export default function EntryExitHistory() {
                       </span>
                     </td>
 
-                    {/* PLATE */}
                     <td>
                       <div className="badge badge-dash badge-primary badge-sm truncate">
                         {entry.plate_number}
                       </div>
                     </td>
 
-                    {/* VEHICLE */}
                     <td>{entry.vehicle_name}</td>
-
-                    {/* DRIVER */}
                     <td>{entry.driver_name}</td>
 
                     <td>
                       <span
-                        className={`badge badge-sm truncate text-white ${
+                        className={`badge badge-sm text-white ${
                           entry.type === "time in"
                             ? "badge-success"
                             : "badge-warning"
@@ -219,14 +330,12 @@ export default function EntryExitHistory() {
                       </span>
                     </td>
 
-                    {/* TIME */}
                     <td>{formatDate(entry.time)}</td>
 
-                    {/* GUARD */}
                     <td>
                       {entry.guard
-                        ? `${entry.guard.first_name} ${entry.guard.last_name}`
-                        : "-"}
+                        ? `${entry.guard.role ? entry.guard.role + " " : ""}${entry.guard.last_name}, ${entry.guard.first_name} `
+                        : "No guard"}
                     </td>
                   </tr>
                 ))
@@ -236,7 +345,7 @@ export default function EntryExitHistory() {
             <tfoot className="bg-green-400 font-medium">
               <tr>
                 <td colSpan="7" className="py-5 text-center text-white">
-                  Total Records: {filteredHistory.length}
+                  Total Records: {history.length}
                 </td>
               </tr>
             </tfoot>
