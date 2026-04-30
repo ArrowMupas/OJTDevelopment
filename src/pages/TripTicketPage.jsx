@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import debounce from "lodash.debounce";
-
+import { format } from "date-fns";
 import OurInput from "../components/OurInput";
 import { tripTicketSchema } from "../schemas/tripTicketSchema";
 
@@ -32,7 +32,11 @@ export default function TripTicketPage() {
     const { data, error } = await supabase
       .from("drivers")
       .select("*")
-      .eq("designation", "Driver Mechanic B")
+      .in("designation", [
+        "Driver Mechanic B",
+        "Driver Mechanic A",
+        "Sr. Auto Mechanic",
+      ])
       .order("last_name", { ascending: true });
 
     if (error) {
@@ -59,7 +63,7 @@ export default function TripTicketPage() {
         )
       `,
       )
-      .order("created_at", { ascending: false });
+      .order("date_received", { ascending: false });
 
     if (searchTerm) {
       query = query.ilike("dtt_no", `%${searchTerm}%`);
@@ -106,10 +110,16 @@ export default function TripTicketPage() {
         },
       ]);
 
-      if (error) throw error;
+      if (error) {
+        if (error.code === "23505" && error.message.includes("dtt_no")) {
+          toast.error("DTT number already exists");
+          return;
+        }
+
+        throw error;
+      }
 
       toast.success("Trip ticket created!");
-
       reset();
       fetchTickets(search);
     } catch (err) {
@@ -311,8 +321,15 @@ export default function TripTicketPage() {
                           : "Unknown"}
                       </td>
 
-                      <td>{item.date_received}</td>
-                      <td>{item.time_received}</td>
+                      <td>
+                        {format(new Date(item.date_received), "MMM dd, yyyy")}
+                      </td>
+                      <td>
+                        {format(
+                          new Date(`1970-01-01T${item.time_received}`),
+                          "hh:mm a",
+                        )}
+                      </td>
 
                       <td>
                         <div className="rating rating-sm pointer-events-none">
