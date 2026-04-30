@@ -1,4 +1,14 @@
-import { CirclePlus } from "lucide-react";
+import {
+  CirclePlus,
+  Car,
+  Hash,
+  Tag,
+  User,
+  Users,
+  Store,
+  Undo2,
+  ArrowRightCircle,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useForm } from "react-hook-form";
@@ -6,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import OurInput from "../components/OurInput";
 import { repairSchema } from "../schemas/repairSchema";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 const internalSteps = [
   "Inspection",
@@ -69,6 +80,7 @@ export default function TrackingPage() {
         )
       `,
       )
+      .is("completed_at", null)
       .order("created_at", { ascending: false });
 
     const normalized = (data || []).map((item) => ({
@@ -149,7 +161,7 @@ export default function TrackingPage() {
           <h1 className="text-3xl font-bold uppercase sm:text-5xl">
             Repair & Maintenance
           </h1>
-          <p className="mt-2 text-sm text-gray-600 sm:text-base">
+          <p className="mt-2 text-sm text-gray-500 sm:text-base">
             Manage and monitor vehicle repair progress
           </p>
         </div>
@@ -167,7 +179,7 @@ export default function TrackingPage() {
 
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
             <button
-              className="btn btn-info w-full text-white uppercase sm:w-auto"
+              className="btn btn-accent w-full text-white uppercase sm:w-auto"
               onClick={() =>
                 document.getElementById("trackingModal").showModal()
               }
@@ -185,12 +197,18 @@ export default function TrackingPage() {
               <option value="external">External</option>
               <option value="internal-mini">Mini Repair</option>
             </select>
+
+            <Link to="/public-track-release">
+              <button className="btn btn-info w-full text-white uppercase sm:w-auto">
+                REPAIR HISTORY
+              </button>
+            </Link>
           </div>
         </div>
 
         {/* MODAL */}
         <dialog id="trackingModal" className="modal">
-          <div className="modal-box w-11/12 max-w-lg rounded-xl p-5 sm:p-8">
+          <div className="modal-box max-w-lg rounded-xl p-5 sm:p-8">
             <h1 className="mb-4 text-xl font-bold uppercase sm:text-2xl">
               Add New Repair
             </h1>
@@ -269,7 +287,6 @@ export default function TrackingPage() {
           </div>
         </dialog>
 
-        {/* LIST */}
         <div className="space-y-3 sm:space-y-4">
           {repairs
             .filter((r) => r.type === viewType)
@@ -279,45 +296,86 @@ export default function TrackingPage() {
               return (
                 <div
                   key={repair.id}
-                  className="rounded-xl bg-white p-3 shadow sm:p-8"
+                  className="overflow-hidden rounded-2xl bg-white p-4 shadow-md sm:p-6"
                 >
                   {/* HEADER */}
-                  <div className="mb-3 flex flex-col gap-2 sm:mb-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="text-sm font-semibold sm:text-base">
-                        {repair.vehicles?.name}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 sm:gap-4">
+                      <h2 className="flex min-w-0 items-center gap-2 text-xs font-bold sm:text-sm">
+                        <Car size={16} className="shrink-0" />
+                        <span className="truncate">
+                          {repair.vehicles?.name}
+                        </span>
                       </h2>
 
-                      <span className="badge badge-primary text-xs">
+                      <div className="badge badge-primary badge-sm sm:badge-md badge-dash truncate">
                         {repair.vehicles?.plate_number}
-                      </span>
+                      </div>
+
+                      <div className="badge badge-outline badge-sm uppercase">
+                        <Tag size={12} className="shrink-0" />
+                        <span className="truncate">{repair.type}</span>
+                      </div>
                     </div>
 
-                    {/* MOBILE BUTTONS */}
-                    <div className="flex gap-2 sm:hidden">
+                    {/* ACTION BUTTONS */}
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                       {repair.step > 0 && (
                         <button
-                          className="btn btn-xs"
+                          className="btn btn-xs sm:btn-sm flex items-center gap-1"
                           onClick={() => updateStep(repair.id, "prev")}
                         >
+                          <Undo2 size={14} />
                           Undo
                         </button>
                       )}
 
                       {repair.step < steps.length - 1 && (
                         <button
-                          className="btn btn-xs btn-success"
+                          className="btn btn-xs btn-success sm:btn-sm flex items-center gap-1"
                           onClick={() => updateStep(repair.id, "next")}
                         >
+                          <ArrowRightCircle size={14} />
                           Proceed
                         </button>
                       )}
                     </div>
                   </div>
 
+                  {/* DETAILS */}
+                  <div className="mt-4 grid gap-2 text-xs text-gray-500 sm:grid-cols-2 sm:text-sm">
+                    {repair.type !== "external" ? (
+                      <div className="flex flex-col">
+                        <div className="flex items-start gap-2">
+                          <User size={14} className="mt-0.5 shrink-0" />
+                          <span className="truncate">
+                            <span className="">Personnel 1:</span>{" "}
+                            {repair.assigned_personnel_1 || "—"}
+                          </span>
+                        </div>
+
+                        <div className="flex items-start gap-2">
+                          <Users size={14} className="mt-0.5 shrink-0" />
+                          <span className="truncate">
+                            <span className="">Personnel 2:</span>{" "}
+                            {repair.assigned_personnel_2 || "—"}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex min-w-0 items-start gap-2 sm:col-span-2">
+                        <Store size={14} className="mt-0.5 shrink-0" />
+                        <span className="truncate">
+                          <span className="">Service Shop:</span>{" "}
+                          {repair.service_shop || "—"}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
                   {/* TIMELINE */}
-                  <div className="overflow-hidden sm:overflow-x-auto">
-                    <ul className="steps w-full min-w-0 sm:min-w-[600px]">
+                  <div className="mt-5 overflow-x-auto">
+                    <ul className="steps">
                       {steps.map((label, i) => {
                         const active = i <= repair.step;
 
@@ -326,10 +384,7 @@ export default function TrackingPage() {
                             key={i}
                             className={`step ${active ? "step-success" : ""}`}
                           >
-                            {/* SMALLER FONT ON MOBILE */}
-                            <div className="text-center text-[9px] leading-tight sm:text-sm">
-                              {label}
-                            </div>
+                            <div className="text-xs sm:text-sm">{label}</div>
                           </li>
                         );
                       })}

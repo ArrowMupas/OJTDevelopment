@@ -19,7 +19,7 @@ export default function Navbar() {
 
   const navLinks = [
     // Uncomment for real login
-    { href: "/login", label: "login" },
+    { href: "/login", label: "Login" },
     // { href: "/admindashboard", label: "Admin" },
     { href: "/", label: "Home" },
     { href: "/dashboard", label: "Dashboard" },
@@ -30,11 +30,11 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="w-full bg-green-700 px-4 py-4 text-white sm:px-8">
+    <header className="w-full max-w-screen bg-green-700 px-4 py-4 text-white sm:px-8">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <div
-            className="flex aspect-square w-10 cursor-pointer items-center justify-center rounded-full bg-white p-1 sm:w-12"
+            className="flex aspect-square w-5 cursor-pointer items-center justify-center rounded-full bg-white p-1 sm:w-12"
             onClick={() => (window.location.href = "/")}
           >
             <img
@@ -64,14 +64,14 @@ export default function Navbar() {
         </div>
 
         {!hideNavLinks && (
-          <nav className="flex space-x-2 sm:space-x-3 md:space-x-7">
+          <nav className="flex space-x-1 sm:space-x-3 md:space-x-7">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   to={link.href}
-                  className="relative text-xs font-bold text-white uppercase transition-colors duration-200 hover:text-yellow-200"
+                  className="relative truncate text-xs font-bold text-white transition-colors duration-200 hover:text-yellow-200 md:uppercase"
                 >
                   <span className={`${isActive ? "text-yellow-100" : ""}`}>
                     {link.label}
