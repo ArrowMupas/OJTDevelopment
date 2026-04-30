@@ -27,7 +27,7 @@ export default function Sidebar() {
     return (
       <Link
         to={to}
-        className={`flex items-center gap-2 rounded-r-lg p-2 text-xs text-gray-300 transition-all ${
+        className={`flex items-center gap-2 rounded-r-lg p-1.5 text-sm text-gray-300 transition-all ${
           isActive
             ? "border-l-4 border-green-600 bg-green-700 text-white"
             : "border-l-4 border-transparent"
@@ -71,7 +71,7 @@ export default function Sidebar() {
           </div>
           <div className="tracking-tight">
             <p className="font-rubik text-base font-bold">TOSU Dashboard</p>
-            <p className="text-xs text-gray-300">
+            <p className="text-sm text-gray-300">
               Transport Operations Services Unit (TOSU)
             </p>
           </div>
@@ -95,11 +95,11 @@ export default function Sidebar() {
 
           <li>
             <details className="group" open>
-              <summary className="flex cursor-pointer items-center gap-3 rounded-r-lg p-2 text-xs text-gray-200 transition-all hover:bg-green-400 hover:text-green-900">
+              <summary className="flex cursor-pointer items-center gap-3 rounded-r-lg p-1 text-sm text-gray-200 transition-all hover:bg-green-400 hover:text-green-900">
                 Monitoring
               </summary>
 
-              <ul className="menu rounded-box ml-4 w-full space-y-0.5 p-2">
+              <ul className="menu rounded-box ml-4 w-full space-y-0.5 p-1.5">
                 {/* <li>
                   <MenuLink to="/drivermonitoring" icon={Users}>
                     Driver Monitoring
@@ -123,14 +123,14 @@ export default function Sidebar() {
 
           <li>
             <details className="group" open>
-              <summary className="flex cursor-pointer items-center gap-3 rounded-r-lg p-2 text-xs text-gray-200 transition-all hover:bg-green-400 hover:text-green-900">
+              <summary className="flex cursor-pointer items-center gap-3 rounded-r-lg p-1.5 text-sm text-gray-200 transition-all hover:bg-green-400 hover:text-green-900">
                 Maintenance
               </summary>
 
-              <ul className="menu rounded-box ml-4 w-full space-y-0.5 p-2">
+              <ul className="menu rounded-box ml-4 w-full space-y-0.5 p-1.5">
                 <li>
                   <MenuLink to="/pms" icon={Car}>
-                    Vehicle Repair & Maintenance
+                    Repair & Maintenance
                   </MenuLink>
                 </li>
 

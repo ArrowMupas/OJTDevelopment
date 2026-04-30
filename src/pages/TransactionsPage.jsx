@@ -141,6 +141,8 @@ export default function PaymentEntryPage() {
               label="Amount"
               name="amount"
               type="number"
+              placeholder="67.67"
+              step="0.01"
               register={register}
               error={errors.amount}
             />
@@ -199,7 +201,12 @@ export default function PaymentEntryPage() {
                       <td>{v.payee_name}</td>
                       <td>{v.transaction_type}</td>
                       <td>{v.date}</td>
-                      <td>₱{Number(v.amount).toLocaleString()}</td>
+                      <td>
+                        {Number(v.amount).toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

@@ -11,5 +11,8 @@ export const tripTicketSchema = z.object({
 
   timeReceived: z.string().min(1, "Time is required"),
 
-  rating: z.number().min(1, "Rating is required").max(5, "Max rating is 5"),
+  rating: z.coerce
+    .number()
+    .min(1, "Rating is required")
+    .max(5, "Max rating is 5"),
 });

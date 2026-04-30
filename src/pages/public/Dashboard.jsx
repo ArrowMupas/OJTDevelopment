@@ -76,7 +76,7 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <main className="">
+    <main className="w-full">
       <div className="">
         <div className="min-w-full overflow-x-auto">
           <table className="table-sm lg:table-lg md:table-md table">

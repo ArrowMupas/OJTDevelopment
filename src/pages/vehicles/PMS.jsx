@@ -179,7 +179,7 @@ export default function PMS() {
       />
 
       {/* VEHICLE CARDS */}
-      <div className="grid grid-cols-2 gap-1 sm:gap-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-1 sm:gap-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
         {vehicles.map((v) => {
           const status = getStatusByMonths(v.pms_date, 4, 5, 6);
           const nextPms = getNextDateByMonths(v.pms_date, 6);
