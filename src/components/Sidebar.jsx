@@ -13,6 +13,7 @@ import {
   ShieldUser,
   Wrench,
   Clipboard,
+  Box,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { supabase } from "../supabaseClient";
@@ -163,6 +164,12 @@ export default function Sidebar() {
           <li>
             <MenuLink to="/transactions" icon={ScrollText}>
               Payments
+            </MenuLink>
+          </li>
+
+          <li>
+            <MenuLink to="/inventory" icon={Box}>
+              Inventory
             </MenuLink>
           </li>
 
