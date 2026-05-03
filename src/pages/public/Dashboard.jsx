@@ -148,7 +148,11 @@ export default function Dashboard() {
                       </td>
 
                       <td className="text-xs sm:text-sm">{req.purpose}</td>
-                      <td className="text-xs">{req.other_instructions}</td>
+                      <td className="text-xs">
+                        {req.other_instructions || (
+                          <span className="text-gray-500">No Instructions</span>
+                        )}
+                      </td>
 
                       <td className="truncate bg-blue-50">
                         {req.drivers ? (
@@ -182,7 +186,19 @@ export default function Dashboard() {
                 })
               )}
             </tbody>
-            <tfoot></tfoot>
+
+            <tfoot className="bg-green-50">
+              {requests.length < 4 && (
+                <tr>
+                  <td colSpan={8} className="py-35 text-center">
+                    <p className="text-white">
+                      Transport Operations Services Unit - National
+                      Electrification Administration
+                    </p>
+                  </td>
+                </tr>
+              )}
+            </tfoot>
           </table>
         </div>
       </div>

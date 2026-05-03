@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
-    <footer className="footer footer-horizontal footer-center text-primary-content bg-green-600 p-10">
+    <footer className="footer footer-horizontal footer-center text-primary-content bg-green-600 p-15">
       <aside>
         <Link to="/admindashboard">
           <div className="flex aspect-square w-20 cursor-pointer items-center justify-center rounded-full bg-white p-1">
