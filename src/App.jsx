@@ -46,10 +46,10 @@ import UnoperationalVehicles from "./pages/vehicles/UnoperationalVehicles";
 import VehicleHistory from "./pages/vehicles/VehicleHistory";
 import TrackingHistory from "./pages/TrackingHistory";
 
-import TransactionsPage from "./pages/TransactionsPage";
+import TransactionsPage from "./pages/management/TransactionsPage";
 import PaymentList from "./pages/PaymentList";
 import DriverMonitoringPage from "./pages/DriverMonitoringPage";
-import TripTicketPage from "./pages/TripTicketPage";
+import TripTicketPage from "./pages/management/TripTicketPage";
 
 function App() {
   return (

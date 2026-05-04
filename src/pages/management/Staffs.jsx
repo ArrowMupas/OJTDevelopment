@@ -34,6 +34,7 @@ export default function Staff() {
     let query = supabase
       .from("drivers")
       .select("*")
+      // .eq("is_deleted", false)
       .order("first_name", { ascending: true });
 
     // If searching only fetch ones matching the search
@@ -234,6 +235,40 @@ export default function Staff() {
       toast.success("Staff deleted successfully!");
     }
   };
+
+  // Soft delete version for later
+  // const deleteDriver = async (id) => {
+  //   const driver = drivers.find((d) => d.id === id);
+
+  //   if (driver?.image_url) {
+  //     const filePath = driver.image_url.split("/").slice(-2).join("/");
+  //     await supabase.storage.from("NEAMotorpoolBucket").remove([filePath]);
+  //   }
+
+  //   if (driver?.license_url) {
+  //     const filePath = driver.license_url.split("/").slice(-2).join("/");
+  //     await supabase.storage.from("NEAMotorpoolBucket").remove([filePath]);
+  //   }
+
+  //   if (driver?.license_back) {
+  //     const filePath = driver.license_back.split("/").slice(-2).join("/");
+  //     await supabase.storage.from("NEAMotorpoolBucket").remove([filePath]);
+  //   }
+
+  //   const { error } = await supabase
+  //     .from("drivers")
+  //     .update({ is_deleted: true })
+  //     .eq("id", id);
+
+  //   if (error) {
+  //     console.error(error);
+  //     return;
+  //   }
+
+  //   setDrivers((prev) => prev.filter((d) => d.id !== id));
+
+  //   toast.success("Staff deleted successfully!");
+  // };
 
   const [driverToView, setDriverToView] = useState(null);
 
