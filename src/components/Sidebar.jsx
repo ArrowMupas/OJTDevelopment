@@ -13,6 +13,7 @@ import {
   ShieldUser,
   Wrench,
   Clipboard,
+  Box,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { supabase } from "../supabaseClient";

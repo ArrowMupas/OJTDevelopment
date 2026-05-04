@@ -33,7 +33,8 @@ import InquiryPage from "./pages/management/InquiryPage";
 import ManageRequestsPage from "./pages/management/ManageRequestPage";
 import SurveyResult from "./pages/management/Surveyresult";
 import GuardPage from "./pages/management/GuardPage";
-import EntryExitMonitoring from "./pages/public/EntryExitMonitoring";
+import EntryExitMonitoring from "./pages/management/EntryExitMonitoring";
+import Inventory from "./pages/Inventory";
 
 // Vehicles
 import VehiclePage from "./pages/vehicles/Vehicles";
@@ -114,6 +115,7 @@ function App() {
           <Route path="/ticket" element={<TripTicketPage />} />
           <Route path="/survey-results" element={<SurveyResult />} />
           <Route path="/payment-list" element={<PaymentList />} />
+          <Route path="/inventory" element={<Inventory />} />
         </Route>
 
         <Route element={<PublicLayout />}>
