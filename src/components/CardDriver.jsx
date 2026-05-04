@@ -90,7 +90,7 @@ export default function CardDriver({
         <button
           onClick={() => onView(driver)}
           className={clsx(
-            "btn btn-square btn-sm",
+            "btn btn-square btn-outline btn-sm",
             highlight ? "text-yellow-300" : "text-warning",
           )}
         >
@@ -103,7 +103,7 @@ export default function CardDriver({
             onEdit(driver);
           }}
           className={clsx(
-            "btn btn-square btn-sm",
+            "btn btn-square btn-outline btn-sm",
             highlight ? "text-blue-300" : "text-blue-500",
           )}
         >
@@ -115,7 +115,7 @@ export default function CardDriver({
             e.stopPropagation();
             onDelete(driver);
           }}
-          className="btn btn-square btn-sm text-error"
+          className="btn btn-square btn-outline btn-sm text-error"
         >
           <Trash2 className="h-4 w-4" />
         </button>

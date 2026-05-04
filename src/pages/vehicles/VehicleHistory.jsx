@@ -90,7 +90,7 @@ export default function VehicleHistory() {
             }}
           />
         </label>
-
+        {/* 
         <div className="dropdown">
           <div
             tabIndex={0}
@@ -112,7 +112,7 @@ export default function VehicleHistory() {
               <a>Descending</a>
             </li>
           </ul>
-        </div>
+        </div> */}
       </div>
 
       <div className="border-0 bg-white">
@@ -121,9 +121,7 @@ export default function VehicleHistory() {
             <thead className="bg-green-600 text-white">
               <tr>
                 <th>Vehicle</th>
-                <th>Plate No.</th>
                 <th>Changes</th>
-                <th>Changed At</th>
               </tr>
             </thead>
 
@@ -148,12 +146,12 @@ export default function VehicleHistory() {
               ) : (
                 history.map((item) => (
                   <tr key={item.id} className="hover:bg-green-50">
-                    <th>{item.vehicles?.name || "Unknown"}</th>
-                    <td>
+                    <th>
+                      {item.vehicles?.name || "Unknown"}{" "}
                       <div className="badge badge-dash badge-primary">
                         {item.vehicles?.plate_number || "Unknown"}
                       </div>
-                    </td>
+                    </th>
 
                     <td>
                       {Object.entries(item.changes).map(([field, value]) => (
@@ -183,10 +181,6 @@ export default function VehicleHistory() {
                           )}
                         </div>
                       ))}
-                    </td>
-
-                    <td>
-                      {format(new Date(item.changed_at), "MMM d, yyyy hh:mm a")}
                     </td>
                   </tr>
                 ))

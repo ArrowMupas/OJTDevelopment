@@ -805,7 +805,7 @@ export default function MaintenancePage() {
               return (
                 <div
                   key={vehicle.id}
-                  className="card bg-base-100 border-base-300 relative border shadow"
+                  className="card bg-base-100 border-base-300 hover:ring-primary relative border shadow hover:ring-1"
                 >
                   <div className="absolute top-1 right-1 flex flex-col items-end gap-1">
                     {vehicle.status === "warning" && (

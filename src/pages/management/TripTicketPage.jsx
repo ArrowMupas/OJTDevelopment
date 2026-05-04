@@ -7,6 +7,7 @@ import debounce from "lodash.debounce";
 import { format } from "date-fns";
 import OurInput from "../../components/OurInput";
 import { tripTicketSchema } from "../../schemas/tripTicketSchema";
+import { Pencil, Trash2 } from "lucide-react";
 
 export default function TripTicketPage() {
   const [tickets, setTickets] = useState([]);
@@ -18,6 +19,9 @@ export default function TripTicketPage() {
 
   const [filterFrom, setFilterFrom] = useState("");
   const [filterTo, setFilterTo] = useState("");
+
+  const [editingTicket, setEditingTicket] = useState(null);
+  const [deletingTicket, setDeletingTicket] = useState(null);
 
   const {
     register,
@@ -81,6 +85,12 @@ export default function TripTicketPage() {
     setLoading(false);
   };
 
+  useEffect(() => {
+    fetchDrivers();
+    fetchTickets();
+    return () => debouncedSearch.cancel();
+  }, []);
+
   const debouncedSearch = useMemo(
     () =>
       debounce((value) => {
@@ -88,13 +98,6 @@ export default function TripTicketPage() {
       }, 400),
     [],
   );
-
-  useEffect(() => {
-    fetchDrivers();
-    fetchTickets();
-
-    return () => debouncedSearch.cancel();
-  }, []);
 
   const createTicket = async (data) => {
     setIsSubmitting(true);
@@ -115,7 +118,6 @@ export default function TripTicketPage() {
           toast.error("DTT number already exists");
           return;
         }
-
         throw error;
       }
 
@@ -127,6 +129,69 @@ export default function TripTicketPage() {
       toast.error("Failed to create ticket");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const updateTicket = async (data) => {
+    if (!editingTicket) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await supabase
+        .from("trip_tickets")
+        .update({
+          dtt_no: data.dttNo,
+          driver_id: data.driverId,
+          date_received: data.dateReceived,
+          time_received: data.timeReceived,
+          rating: data.rating,
+        })
+        .eq("id", editingTicket.id);
+
+      if (error) throw error;
+
+      toast.success("Trip ticket updated!");
+      setEditingTicket(null);
+      reset();
+      fetchTickets(search);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update ticket");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleEdit = (item) => {
+    setEditingTicket(item);
+
+    reset({
+      dttNo: item.dtt_no,
+      driverId: item.driver_id,
+      dateReceived: item.date_received,
+      timeReceived: item.time_received,
+      rating: item.rating,
+    });
+  };
+
+  const handleDelete = async () => {
+    if (!deletingTicket) return;
+
+    try {
+      const { error } = await supabase
+        .from("trip_tickets")
+        .delete()
+        .eq("id", deletingTicket.id);
+
+      if (error) throw error;
+
+      toast.success("Ticket deleted!");
+      setDeletingTicket(null);
+      fetchTickets(search);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete ticket");
     }
   };
 
@@ -148,12 +213,19 @@ export default function TripTicketPage() {
       </div>
 
       <div className="flex w-full flex-col gap-2 md:flex-row">
+        {/* FORM */}
         <div className="card bg-base-100 h-full w-full border border-gray-200 p-6 shadow-xl md:w-2/7">
-          <h2 className="text-lg font-semibold">Receive Trip Ticket</h2>
-          <p className="text-sm text-gray-500">Receive and rate trip ticket</p>
+          <h2 className="text-lg font-semibold">
+            {editingTicket ? "Edit Trip Ticket" : "Receive Trip Ticket"}
+          </h2>
+          <p className="text-sm text-gray-500">
+            {editingTicket
+              ? "Edit the details of the selected trip ticket."
+              : "Fill in the details to receive a new trip ticket."}
+          </p>
 
           <form
-            onSubmit={handleSubmit(createTicket)}
+            onSubmit={handleSubmit(editingTicket ? updateTicket : createTicket)}
             className="mt-4 space-y-3"
           >
             <OurInput
@@ -163,7 +235,6 @@ export default function TripTicketPage() {
               error={errors.dttNo}
             />
 
-            {/* DRIVER SELECT */}
             <fieldset className="fieldset">
               <legend className="fieldset-legend text-sm">Driver</legend>
 
@@ -202,52 +273,16 @@ export default function TripTicketPage() {
               error={errors.timeReceived}
             />
 
-            <div className="flex items-center gap-2">
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend text-sm">Rating</legend>
-                <div className="rating">
-                  <input
-                    type="radio"
-                    value="1"
-                    className="mask mask-star-2 bg-green-500"
-                    aria-label="1 star"
-                    {...register("rating")}
-                  />
-                  <input
-                    type="radio"
-                    value="2"
-                    className="mask mask-star-2 bg-green-500"
-                    aria-label="2 star"
-                    {...register("rating")}
-                  />
-                  <input
-                    type="radio"
-                    value="3"
-                    className="mask mask-star-2 bg-green-500"
-                    aria-label="3 star"
-                    {...register("rating")}
-                  />
-                  <input
-                    type="radio"
-                    value="4"
-                    className="mask mask-star-2 bg-green-500"
-                    aria-label="4 star"
-                    {...register("rating")}
-                  />
-                  <input
-                    type="radio"
-                    value="5"
-                    className="mask mask-star-2 bg-green-500"
-                    aria-label="5 star"
-                    {...register("rating")}
-                  />
-                </div>
-                {errors.rating && (
-                  <span className="text-error text-xs">
-                    {errors.rating.message}
-                  </span>
-                )}
-              </fieldset>
+            <div className="rating">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <input
+                  key={n}
+                  type="radio"
+                  value={n}
+                  className="mask mask-star-2 bg-green-500"
+                  {...register("rating")}
+                />
+              ))}
             </div>
 
             <button
@@ -255,13 +290,37 @@ export default function TripTicketPage() {
               className="btn admin-btn w-full"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Saving..." : "Receive Ticket"}
+              {isSubmitting
+                ? "Saving..."
+                : editingTicket
+                  ? "Update Ticket"
+                  : "Receive Ticket"}
             </button>
+
+            {editingTicket && (
+              <button
+                type="button"
+                className="btn w-full"
+                onClick={() => {
+                  setEditingTicket(null);
+                  reset({
+                    dttNo: "",
+                    driverId: "",
+                    dateReceived: "",
+                    timeReceived: "",
+                    rating: "",
+                  });
+                }}
+              >
+                Cancel Edit
+              </button>
+            )}
           </form>
         </div>
 
+        {/* TABLE */}
         <div className="card bg-base-100 w-full p-6 shadow-xl sm:w-5/7">
-          {/* SEARCH + FILTER */}
+          {/* SEARCH */}
           <div className="mb-4 grid gap-3 md:grid-cols-3">
             <input
               type="text"
@@ -288,13 +347,10 @@ export default function TripTicketPage() {
             />
           </div>
 
-          {/* TABLE */}
           {loading ? (
             <div className="flex h-32 items-center justify-center">
               <span className="loading loading-infinity text-success"></span>
             </div>
-          ) : filteredTickets.length === 0 ? (
-            <p className="text-gray-500">No records found.</p>
           ) : (
             <div className="h-screen overflow-x-auto bg-white">
               <table className="table-pin-rows table">
@@ -305,6 +361,7 @@ export default function TripTicketPage() {
                     <th>Date</th>
                     <th>Time</th>
                     <th>Rating</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
 
@@ -322,6 +379,7 @@ export default function TripTicketPage() {
                       <td>
                         {format(new Date(item.date_received), "MMM dd, yyyy")}
                       </td>
+
                       <td>
                         {format(
                           new Date(`1970-01-01T${item.time_received}`),
@@ -368,6 +426,25 @@ export default function TripTicketPage() {
                           />
                         </div>
                       </td>
+
+                      <td className="space-x-2">
+                        <button
+                          onClick={() => handleEdit(item)}
+                          className="btn btn-sm btn-square text-info"
+                        >
+                          <Pencil className="size-4" />
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            setDeletingTicket(item);
+                            document.getElementById("delete_modal").showModal();
+                          }}
+                          className="btn btn-sm btn-square text-error"
+                        >
+                          <Trash2 className="size-4" />
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -376,6 +453,30 @@ export default function TripTicketPage() {
           )}
         </div>
       </div>
+
+      <dialog id="delete_modal" className="modal">
+        <div className="modal-box">
+          <h3 className="text-error text-lg font-bold">Delete Trip Ticket</h3>
+
+          <p className="py-4">Are you sure you want to delete this ticket?</p>
+
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn" onClick={() => setDeletingTicket(null)}>
+                Cancel
+              </button>
+            </form>
+
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="btn btn-error text-white"
+            >
+              Confirm Delete
+            </button>
+          </div>
+        </div>
+      </dialog>
     </main>
   );
 }
