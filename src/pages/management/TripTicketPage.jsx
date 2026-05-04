@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo } from "react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../../supabaseClient";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import debounce from "lodash.debounce";
 import { format } from "date-fns";
-import OurInput from "../components/OurInput";
-import { tripTicketSchema } from "../schemas/tripTicketSchema";
+import OurInput from "../../components/OurInput";
+import { tripTicketSchema } from "../../schemas/tripTicketSchema";
 
 export default function TripTicketPage() {
   const [tickets, setTickets] = useState([]);
@@ -148,7 +148,7 @@ export default function TripTicketPage() {
       </div>
 
       <div className="flex w-full flex-col gap-2 md:flex-row">
-        <div className="card bg-base-100 w-full border border-gray-200 p-6 shadow-xl md:w-2/7">
+        <div className="card bg-base-100 h-full w-full border border-gray-200 p-6 shadow-xl md:w-2/7">
           <h2 className="text-lg font-semibold">Receive Trip Ticket</h2>
           <p className="text-sm text-gray-500">Receive and rate trip ticket</p>
 
@@ -261,8 +261,6 @@ export default function TripTicketPage() {
         </div>
 
         <div className="card bg-base-100 w-full p-6 shadow-xl sm:w-5/7">
-          <h2 className="mb-4 text-xl font-bold">Trip History</h2>
-
           {/* SEARCH + FILTER */}
           <div className="mb-4 grid gap-3 md:grid-cols-3">
             <input
@@ -298,8 +296,8 @@ export default function TripTicketPage() {
           ) : filteredTickets.length === 0 ? (
             <p className="text-gray-500">No records found.</p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="table w-full">
+            <div className="h-screen overflow-x-auto bg-white">
+              <table className="table-pin-rows table">
                 <thead>
                   <tr>
                     <th>DTT No</th>
@@ -313,9 +311,9 @@ export default function TripTicketPage() {
                 <tbody>
                   {filteredTickets.map((item) => (
                     <tr key={item.id}>
-                      <td>{item.dtt_no}</td>
+                      <td className="text-xs">{item.dtt_no}</td>
 
-                      <td>
+                      <td className="font-bold">
                         {item.drivers
                           ? `${item.drivers.last_name}, ${item.drivers.first_name}`
                           : "Unknown"}

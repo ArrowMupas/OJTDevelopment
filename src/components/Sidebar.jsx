@@ -81,9 +81,15 @@ export default function Sidebar() {
       {/* MENU */}
       <div className="flex-1 overflow-y-auto px-1">
         <ul className="menu w-full space-y-0.5 text-sm font-semibold">
-          <li>
+          {/* <li>
             <MenuLink to="/admindashboard" icon={ChartColumnStacked}>
               Admin Dashboard
+            </MenuLink>
+          </li> */}
+
+          <li>
+            <MenuLink to="/inquiries" icon={MessageCircleQuestionMark}>
+              Inquiry
             </MenuLink>
           </li>
 
@@ -155,20 +161,14 @@ export default function Sidebar() {
           </li>
 
           <li>
-            <MenuLink to="/survey-results" icon={NotebookPen}>
-              Survey Results
-            </MenuLink>
-          </li>
-
-          <li>
             <MenuLink to="/transactions" icon={ScrollText}>
               Payments
             </MenuLink>
           </li>
 
           <li>
-            <MenuLink to="/inquiries" icon={MessageCircleQuestionMark}>
-              Inquiry
+            <MenuLink to="/survey-results" icon={NotebookPen}>
+              Survey Results
             </MenuLink>
           </li>
         </ul>

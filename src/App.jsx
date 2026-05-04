@@ -33,7 +33,7 @@ import InquiryPage from "./pages/management/InquiryPage";
 import ManageRequestsPage from "./pages/management/ManageRequestPage";
 import SurveyResult from "./pages/management/Surveyresult";
 import GuardPage from "./pages/management/GuardPage";
-import EntryExitMonitoring from "./pages/management/EntryExitMonitoring";
+import EntryExitMonitoring from "./pages/public/EntryExitMonitoring";
 
 // Vehicles
 import VehiclePage from "./pages/vehicles/Vehicles";
@@ -45,10 +45,10 @@ import UnoperationalVehicles from "./pages/vehicles/UnoperationalVehicles";
 import VehicleHistory from "./pages/vehicles/VehicleHistory";
 import TrackingHistory from "./pages/TrackingHistory";
 
-import TransactionsPage from "./pages/TransactionsPage";
+import TransactionsPage from "./pages/management/TransactionsPage";
 import PaymentList from "./pages/PaymentList";
 import DriverMonitoringPage from "./pages/DriverMonitoringPage";
-import TripTicketPage from "./pages/TripTicketPage";
+import TripTicketPage from "./pages/management/TripTicketPage";
 
 function App() {
   return (
