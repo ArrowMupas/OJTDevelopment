@@ -8,8 +8,8 @@ export default function Navbar() {
     "/survey",
     "/request-vehicle",
     "/requestinput",
-    // "/public-track",
-    // "/public-track-release",
+    // "/repairs",
+    // "/repairs/completed",
   ];
   const hideNavLinks = hiddenNavRoutes.some((route) =>
     location.pathname.startsWith(route),

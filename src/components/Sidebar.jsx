@@ -147,7 +147,7 @@ export default function Sidebar() {
                   </MenuLink>
                 </li>
                 <li>
-                  <MenuLink to="/guard" icon={ShieldUser}>
+                  <MenuLink to="/guards" icon={ShieldUser}>
                     Guard On Duty
                   </MenuLink>
                 </li>
@@ -156,7 +156,7 @@ export default function Sidebar() {
           </li>
 
           <li>
-            <MenuLink to="/ticket" icon={TicketCheckIcon}>
+            <MenuLink to="/trip-ticket" icon={TicketCheckIcon}>
               Trip Ticket
             </MenuLink>
           </li>
