@@ -10,11 +10,11 @@ import {
   ArrowRightCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../../supabaseClient";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import OurInput from "../components/OurInput";
-import { repairSchema } from "../schemas/repairSchema";
+import OurInput from "../../components/OurInput";
+import { repairSchema } from "../../schemas/repairSchema";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 
@@ -198,7 +198,7 @@ export default function TrackingPage() {
               <option value="internal-mini">Mini Repair</option>
             </select>
 
-            <Link to="/public-track-release">
+            <Link to="/repairs/completed">
               <button className="btn btn-info w-full text-white uppercase sm:w-auto">
                 REPAIR HISTORY
               </button>

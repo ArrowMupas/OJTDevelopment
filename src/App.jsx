@@ -19,11 +19,10 @@ import RequestInputPage from "./pages/public/RequestInput";
 import SurveyInput from "./pages/public/SurveyInput";
 import CompleteRequest from "./pages/management/CompleteRequest";
 import LoginPage from "./pages/public/LoginPage";
-import TrackingPage from "./pages/TrackingPage";
-import PublicTrackPage from "./pages/PublicTrackPage";
-import PublicTrackRelease from "./pages/PublicTrackRelease";
-import TrackingRelease from "./pages/TrackingRelease";
+import PublicTrackPage from "./pages/public/PublicTrackPage";
+import PublicTrackRelease from "./pages/public/PublicTrackRelease";
 import StaffPage from "./pages/public/StaffPage";
+import EntryExitMonitoring from "./pages/public/EntryExitMonitoring";
 import EntryExitHistory from "./pages/public/EntryExitHistory";
 
 // Management
@@ -33,8 +32,9 @@ import InquiryPage from "./pages/management/InquiryPage";
 import ManageRequestsPage from "./pages/management/ManageRequestPage";
 import SurveyResult from "./pages/management/Surveyresult";
 import GuardPage from "./pages/management/GuardPage";
-import EntryExitMonitoring from "./pages/management/EntryExitMonitoring";
-import Inventory from "./pages/Inventory";
+import TripTicketPage from "./pages/management/TripTicketPage";
+import TransactionsPage from "./pages/management/TransactionsPage";
+import Inventory from "./pages/management/Inventory";
 
 // Vehicles
 import VehiclePage from "./pages/vehicles/Vehicles";
@@ -44,12 +44,12 @@ import Tires from "./pages/vehicles/Tires";
 import PMS from "./pages/vehicles/PMS";
 import UnoperationalVehicles from "./pages/vehicles/UnoperationalVehicles";
 import VehicleHistory from "./pages/vehicles/VehicleHistory";
-import TrackingHistory from "./pages/TrackingHistory";
 
-import TransactionsPage from "./pages/management/TransactionsPage";
+import TrackingHistory from "./pages/TrackingHistory";
 import PaymentList from "./pages/PaymentList";
 import DriverMonitoringPage from "./pages/DriverMonitoringPage";
-import TripTicketPage from "./pages/management/TripTicketPage";
+import TrackingPage from "./pages/TrackingPage";
+import TrackingRelease from "./pages/TrackingRelease";
 
 function App() {
   return (
@@ -78,9 +78,6 @@ function App() {
             </ProtectedRoute>
           }
         >
-          {/* // Uncomment to activate google login (For later) */}
-
-          {/* <Route element={<MainLayout />}> */}
           <Route path="/admindashboard" element={<AdminDashboard />} />
           <Route path="/vehicle-requests" element={<ManageRequestsPage />} />
           <Route
@@ -109,10 +106,10 @@ function App() {
           <Route path="/tires" element={<Tires />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/staff-management" element={<Staffs />} />
-          <Route path="/guard" element={<GuardPage />} />
+          <Route path="/guards" element={<GuardPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/inquiries" element={<InquiryPage />} />
-          <Route path="/ticket" element={<TripTicketPage />} />
+          <Route path="/trip-ticket" element={<TripTicketPage />} />
           <Route path="/survey-results" element={<SurveyResult />} />
           <Route path="/payment-list" element={<PaymentList />} />
           <Route path="/inventory" element={<Inventory />} />
@@ -126,11 +123,8 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/staff" element={<StaffPage />} />
 
-          <Route path="/public-track" element={<PublicTrackPage />} />
-          <Route
-            path="/public-track-release"
-            element={<PublicTrackRelease />}
-          />
+          <Route path="/repairs" element={<PublicTrackPage />} />
+          <Route path="/repairs/completed" element={<PublicTrackRelease />} />
           <Route path="/request-vehicle" element={<RequestVehiclePage />} />
           <Route
             path="/request-vehicle/finish/:id"

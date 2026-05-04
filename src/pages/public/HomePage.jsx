@@ -69,7 +69,7 @@ export default function HomePage() {
                 Fill up survey
               </a>
               <a
-                href="/public-track"
+                href="/repairs"
                 className="btn btn-lg btn-info rounded-xl px-8 text-sm leading-tight font-bold text-white uppercase"
               >
                 Track PMS
