@@ -26,7 +26,7 @@ export default function AdminNavbar() {
   const pageTitle = pageTitles[location.pathname] || "Admin Panel";
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center justify-between bg-white px-5 shadow-lg">
+    <header className="sticky top-0 z-10 flex h-16 w-full items-center justify-between bg-white px-5 shadow-lg">
       <div className="flex items-center gap-3">
         <label
           htmlFor="admin-drawer"

@@ -23,7 +23,7 @@ export default function HomePage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, ease: "easeOut", delay: 0.7 }}
-        className="relative z-10 container flex h-full flex-col px-5 py-10 sm:py-20 lg:px-10"
+        className="relative z-10 container flex h-full flex-col px-5 py-10 sm:py-15 lg:px-10"
       >
         <div className="flex h-full max-w-xl flex-col gap-10 md:justify-between">
           <div className="space-y-4">
@@ -59,7 +59,7 @@ export default function HomePage() {
               * (1) One vehicle per request.
             </p>
 
-            <div className="space-x-2">
+            <div className="space-y-2 space-x-2">
               <a
                 href="/survey"
                 target="_blank"
@@ -73,6 +73,12 @@ export default function HomePage() {
                 className="btn btn-lg btn-info rounded-xl px-8 text-sm leading-tight font-bold text-white uppercase"
               >
                 Track PMS
+              </a>
+              <a
+                href="/entry-exit-monitoring"
+                className="btn btn-lg btn-secondary rounded-xl px-8 text-sm leading-tight font-bold text-white uppercase"
+              >
+                Entry Exit Monitoring
               </a>
             </div>
           </div>

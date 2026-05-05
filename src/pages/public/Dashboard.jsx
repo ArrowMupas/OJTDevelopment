@@ -87,7 +87,6 @@ export default function Dashboard() {
                 <th className="">Destination</th>
                 <th>Passenger Name</th>
                 <th>Purpose</th>
-                <th>Instructions</th>
                 <th className="">Assigned Driver</th>
                 <th className="">Assigned Vehicle</th>
               </tr>
@@ -123,7 +122,7 @@ export default function Dashboard() {
 
                   return (
                     <tr key={req.id} className="">
-                      <td className="font-bold uppercase">{req.department}</td>
+                      <td className="font-bold uppercase text-sm">{req.department}</td>
 
                       <td className="truncate">
                         <div className="flex h-full flex-col items-start justify-center text-base">
@@ -148,11 +147,11 @@ export default function Dashboard() {
                       </td>
 
                       <td className="text-xs sm:text-sm">{req.purpose}</td>
-                      <td className="text-xs">
+                      {/* <td className="text-xs">
                         {req.other_instructions || (
                           <span className="text-gray-500">No Instructions</span>
                         )}
-                      </td>
+                      </td> */}
 
                       <td className="truncate bg-blue-50">
                         {req.drivers ? (

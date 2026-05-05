@@ -28,7 +28,7 @@ export default function Sidebar() {
     return (
       <Link
         to={to}
-        className={`flex items-center gap-2 rounded-r-lg p-1.5 text-sm text-gray-300 transition-all ${
+        className={`flex items-center gap-2 rounded-r-lg p-1 text-xs text-gray-300 transition-all xl:p-1.5 xl:text-sm ${
           isActive
             ? "border-l-4 border-green-600 bg-green-700 text-white"
             : "border-l-4 border-transparent"
@@ -52,7 +52,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="flex min-h-full w-64 flex-col bg-green-900 text-white shadow-inner">
+    <aside className="flex min-h-full w-56 flex-col bg-green-900 text-white shadow-inner xl:w-64">
       {/* LOGO */}
       <div className="border-b border-green-300 px-4 py-3">
         <div className="flex items-center gap-3">
@@ -176,12 +176,12 @@ export default function Sidebar() {
       </div>
 
       {/* LOGOUT */}
-      <div className="border-t border-green-700 p-3">
+      <div className="border-t border-green-700 p-2">
         <button
           onClick={handleLogout}
-          className="btn btn-ghost hover:text-error flex w-full justify-start"
+          className="btn btn-ghost hover:text-error btn-sm flex w-full justify-start"
         >
-          <LogOut size={18} />
+          <LogOut size={15} />
           Logout
         </button>
       </div>

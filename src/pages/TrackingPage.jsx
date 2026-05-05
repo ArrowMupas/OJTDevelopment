@@ -1,4 +1,14 @@
-import { CirclePlus, FolderClock } from "lucide-react";
+import {
+  CirclePlus,
+  FolderClock,
+  Car,
+  Tag,
+  User,
+  Users,
+  Store,
+  Undo2,
+  ArrowRightCircle,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
@@ -186,7 +196,7 @@ export default function TrackingPage() {
 
         <div className="flex gap-2">
           <select
-            className="select text-green-700 sm:min-w-55"
+            className="select select-neutral"
             value={viewType}
             onChange={(e) => setViewType(e.target.value)}
           >
@@ -359,104 +369,112 @@ export default function TrackingPage() {
           </form>
         </div>
       </dialog>
-      {/* LIST */}
+
+      {/* LIST - Redesigned with first page's style */}
       <div className="space-y-4">
         {repairs
           .filter((repair) => repair.type === viewType)
           .map((repair) => {
             const steps = getSteps(repair.type);
 
-            const personnel = [
-              repair.assigned_personnel_1,
-              repair.assigned_personnel_2,
-            ].filter(Boolean);
-
             return (
               <div
                 key={repair.id}
-                className="rounded-xl border border-gray-200 bg-white p-8 shadow-sm transition-all duration-300 hover:border-green-600"
+                className="overflow-hidden rounded-2xl bg-white p-4 shadow-md sm:p-6"
               >
-                <div className="mb-5 flex items-center gap-2">
-                  <h2 className="text-lg font-semibold">
-                    {repair.vehicles?.name}
-                  </h2>
+                {/* HEADER with vehicle info and action buttons */}
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+                    <h2 className="flex min-w-0 items-center gap-2 text-xs font-bold sm:text-sm">
+                      <Car size={16} className="shrink-0" />
+                      <span className="truncate">{repair.vehicles?.name}</span>
+                    </h2>
 
-                  <div className="badge badge-primary badge-dash">
-                    {repair.vehicles?.plate_number}
+                    <div className="badge badge-primary badge-sm sm:badge-md badge-dash truncate">
+                      {repair.vehicles?.plate_number}
+                    </div>
+
+                    <div className="badge badge-outline badge-sm uppercase">
+                      <Tag size={12} className="shrink-0" />
+                      <span className="truncate">
+                        {repair.type === "internal-mini"
+                          ? "Mini Repair"
+                          : repair.type}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* ACTION BUTTONS */}
+                  <div className="flex gap-2">
+                    {repair.step > 0 && (
+                      <button
+                        className="btn btn-xs sm:btn-sm flex items-center gap-1"
+                        onClick={() => updateStep(repair.id, "prev")}
+                      >
+                        <Undo2 size={14} />
+                        Undo
+                      </button>
+                    )}
+
+                    {repair.step < steps.length - 1 && (
+                      <button
+                        className="btn btn-xs btn-success sm:btn-sm flex items-center gap-1"
+                        onClick={() => updateStep(repair.id, "next")}
+                      >
+                        <ArrowRightCircle size={14} />
+                        Proceed
+                      </button>
+                    )}
                   </div>
                 </div>
 
+                {/* DETAILS SECTION */}
+                <div className="mt-4 grid gap-2 text-xs text-gray-500 sm:grid-cols-2 sm:text-sm">
+                  {repair.type !== "external" ? (
+                    <>
+                      <div className="flex items-start gap-2">
+                        <User size={14} className="mt-0.5 shrink-0" />
+                        <span className="truncate">
+                          <span className="font-medium">Personnel 1:</span>{" "}
+                          {repair.assigned_personnel_1 || "—"}
+                        </span>
+                      </div>
+
+                      <div className="flex items-start gap-2">
+                        <Users size={14} className="mt-0.5 shrink-0" />
+                        <span className="truncate">
+                          <span className="font-medium">Personnel 2:</span>{" "}
+                          {repair.assigned_personnel_2 || "—"}
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex min-w-0 items-start gap-2 sm:col-span-2">
+                      <Store size={14} className="mt-0.5 shrink-0" />
+                      <span className="truncate">
+                        <span className="font-medium">Service Shop:</span>{" "}
+                        {repair.service_shop || "—"}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
                 {/* TIMELINE */}
-                <div className="relative flex justify-between">
-                  <ul className="steps w-full">
-                    {steps.map((label, index) => {
-                      const isActive = index <= repair.step;
-                      const isCurrent = index === repair.step;
+                <div className="mt-5 overflow-x-auto">
+                  <ul className="steps steps-horizontal">
+                    {steps.map((label, i) => {
+                      const active = i <= repair.step;
 
                       return (
                         <li
-                          key={index}
-                          className={`step ${isActive ? "step-success" : ""}`}
+                          key={i}
+                          className={`step ${active ? "step-success" : ""}`}
                         >
-                          <div className="flex flex-col items-center">
-                            <span>{label}</span>
-
-                            {isCurrent && (
-                              <div className="mt-2 flex gap-2">
-                                {repair.step > 0 && (
-                                  <button
-                                    className="btn btn-xs"
-                                    onClick={() =>
-                                      updateStep(repair.id, "prev")
-                                    }
-                                  >
-                                    Undo
-                                  </button>
-                                )}
-
-                                {repair.step < steps.length - 1 && (
-                                  <button
-                                    className="btn btn-xs btn-success"
-                                    onClick={() =>
-                                      updateStep(repair.id, "next")
-                                    }
-                                  >
-                                    Proceed
-                                  </button>
-                                )}
-                              </div>
-                            )}
-                          </div>
+                          <div className="text-xs sm:text-sm">{label}</div>
                         </li>
                       );
                     })}
                   </ul>
-                </div>
-
-                {/* DETAILS */}
-                <div className="mt-15 text-sm">
-                  {repair.type === "external" ? (
-                    <>
-                      <p className="font-semibold">Service Shop:</p>
-                      <p className="text-gray-600">
-                        {repair.service_shop || "N/A"}
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <p className="font-semibold">Personnel:</p>
-
-                      <ul className="mt-1 list-disc pl-5">
-                        {personnel.length > 0 ? (
-                          personnel.map((p, i) => <li key={i}>{p}</li>)
-                        ) : (
-                          <li className="text-gray-400">
-                            No personnel assigned
-                          </li>
-                        )}
-                      </ul>
-                    </>
-                  )}
                 </div>
               </div>
             );

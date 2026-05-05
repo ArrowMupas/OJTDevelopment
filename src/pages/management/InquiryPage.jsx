@@ -64,7 +64,7 @@ export default function InquiryPage() {
           />
         </label>
 
-        <div className="dropdown">
+        {/* <div className="dropdown">
           <div
             tabIndex={0}
             role="button"
@@ -91,7 +91,7 @@ export default function InquiryPage() {
               <a>Time</a>
             </li>
           </ul>
-        </div>
+        </div> */}
       </div>
 
       <div className="border-0 bg-white">
