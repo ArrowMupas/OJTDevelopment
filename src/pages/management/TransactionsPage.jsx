@@ -301,7 +301,6 @@ export default function PaymentEntryPage() {
           "Control No.",
           "Payee Name",
           "Transaction Type",
-          "Particulars",
           "Amount (PHP)",
           "Date",
           "Date Created",
@@ -310,16 +309,15 @@ export default function PaymentEntryPage() {
           voucher.control_no,
           voucher.payee_name,
           voucher.transaction_type,
-          voucher.particulars || "-",
           voucher.amount
             ? Number(voucher.amount).toLocaleString(undefined, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })
             : "0.00",
-          voucher.date ? format(new Date(voucher.date), "MMMM d, yyyy") : "-",
+          voucher.date ? format(new Date(voucher.date), "MMM d, yyyy") : "-",
           voucher.created_at
-            ? format(new Date(voucher.created_at), "MMMM d, yyyy hh:mm a")
+            ? format(new Date(voucher.created_at), "MMM d, yyyy hh:mm a")
             : "-",
         ]),
       ];
@@ -344,25 +342,6 @@ export default function PaymentEntryPage() {
         format(new Date(), "MMMM d, yyyy hh:mm a"),
       ]);
 
-      // Add breakdown by transaction type
-      sheetData.push([], ["Breakdown by Transaction Type"]);
-      const typeBreakdown = {};
-      exportData.forEach((voucher) => {
-        const type = voucher.transaction_type || "Unspecified";
-        typeBreakdown[type] =
-          (typeBreakdown[type] || 0) + (Number(voucher.amount) || 0);
-      });
-
-      Object.entries(typeBreakdown).forEach(([type, amount]) => {
-        sheetData.push([
-          type,
-          `PHP ${amount.toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}`,
-        ]);
-      });
-
       const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
 
       // Set column widths
@@ -370,28 +349,14 @@ export default function PaymentEntryPage() {
         { wch: 20 }, // Control No.
         { wch: 35 }, // Payee Name
         { wch: 20 }, // Transaction Type
-        { wch: 40 }, // Particulars
         { wch: 15 }, // Amount
         { wch: 15 }, // Date
         { wch: 25 }, // Date Created
       ];
 
-      // Style the header row
-      const headerRow = sheetData[2];
-      headerRow.forEach((_, colIndex) => {
-        const cellAddress = XLSX.utils.encode_cell({ r: 2, c: colIndex });
-        if (!worksheet[cellAddress]) return;
-        worksheet[cellAddress].s = {
-          font: { bold: true, sz: 12 },
-          fill: { fgColor: { rgb: "4F81BD" } },
-          pattern: { patternType: "solid" },
-        };
-      });
-
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Payment Vouchers");
 
-      // Generate filename with timestamp
       const fileName = `payment_vouchers_${format(
         new Date(),
         "yyyyMMdd_HHmmss",
@@ -429,7 +394,7 @@ export default function PaymentEntryPage() {
         </button>
       </div>
 
-      <div className="flex flex-col gap-4 md:flex-row">
+      <div className="flex flex-col gap-2 md:flex-row">
         {/* FORM */}
         <div className="card bg-base-100 h-full w-full border border-gray-200 p-6 shadow-xl md:w-1/3">
           <h2 className="text-lg font-bold">
@@ -447,7 +412,7 @@ export default function PaymentEntryPage() {
             )}
             className="mt-4 space-y-3"
           >
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 xl:flex-row">
               <OurInput
                 label="Control No."
                 name="controlNo"
@@ -463,7 +428,7 @@ export default function PaymentEntryPage() {
               />
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 xl:flex-row">
               <OurInput
                 label="Payee Name"
                 name="payeeName"
@@ -551,7 +516,7 @@ export default function PaymentEntryPage() {
         </div>
 
         {/* TABLE */}
-        <div className="card bg-base-100 w-full border border-gray-200 p-6 shadow-xl md:w-2/3">
+        <div className="card bg-base-100 h-screen w-full border border-gray-200 p-6 shadow-xl md:w-2/3">
           {/* FILTERS */}
           <div className="mb-4 grid gap-3 md:grid-cols-4">
             {/* Search Input */}
@@ -633,8 +598,8 @@ export default function PaymentEntryPage() {
               <span className="loading loading-infinity text-success loading-lg"></span>
             </div>
           ) : (
-            <div className="h-screen overflow-x-auto bg-white">
-              <table className="table-pin-rows table">
+            <div className="overflow-x-auto bg-white">
+              <table className="table-pin-rows table-sm xl:table-md table">
                 <thead>
                   <tr>
                     <th>Control No</th>
@@ -656,10 +621,10 @@ export default function PaymentEntryPage() {
                   ) : (
                     vouchers.map((v) => (
                       <tr key={v.id} className="hover:bg-green-50">
-                        <td className="font-mono text-xs">{v.control_no}</td>
+                        <td className="truncate text-xs">{v.control_no}</td>
                         <td className="font-bold">{v.payee_name}</td>
                         <td>
-                          <div className="badge badge-sm badge-soft badge-neutral">
+                          <div className="badge badge-xs xl:badge-sm badge-soft badge-neutral">
                             {v.transaction_type}
                           </div>
                         </td>
@@ -676,34 +641,35 @@ export default function PaymentEntryPage() {
                           })}
                         </td>
                         <td className="space-x-1">
-                          <div
-                            className="tooltip tooltip-left"
-                            data-tip={
-                              v.particulars || "No particulars provided"
-                            }
-                          >
-                            <button className="btn btn-sm btn-square">
-                              <Info className="size-4" />
+                          <div className="flex gap-2">
+                            <div
+                              className="tooltip tooltip-left"
+                              data-tip={
+                                v.particulars || "No particulars provided"
+                              }
+                            >
+                              <button className="btn btn-xs xl:btn-sm btn-square">
+                                <Info className="size-4" />
+                              </button>
+                            </div>
+                            <button
+                              onClick={() => handleEdit(v)}
+                              className="btn btn-xs xl:btn-sm btn-square text-info"
+                            >
+                              <Pencil className="size-4" />
+                            </button>
+                            <button
+                              onClick={() => {
+                                setDeletingVoucher(v);
+                                document
+                                  .getElementById("delete_modal")
+                                  .showModal();
+                              }}
+                              className="btn btn-xs xl:btn-sm btn-square text-error"
+                            >
+                              <Trash2 className="size-4" />
                             </button>
                           </div>
-
-                          <button
-                            onClick={() => handleEdit(v)}
-                            className="btn btn-sm btn-square text-info"
-                          >
-                            <Pencil className="size-4" />
-                          </button>
-                          <button
-                            onClick={() => {
-                              setDeletingVoucher(v);
-                              document
-                                .getElementById("delete_modal")
-                                .showModal();
-                            }}
-                            className="btn btn-sm btn-square text-error"
-                          >
-                            <Trash2 className="size-4" />
-                          </button>
                         </td>
                       </tr>
                     ))

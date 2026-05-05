@@ -189,36 +189,36 @@ export default function ManageRequestsPage() {
       <div className="grid w-full grid-cols-2 gap-1 sm:gap-2 md:grid-cols-4">
         <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
-            <Clipboard className="h-8 w-12 text-[#d2dc15]" />
+            <Clipboard className="text-secondary h-8 w-12" />
           </div>
-          <div className="stat-title">Today Requests</div>
-          <div className="stat-value text-[#d2dc15]">21</div>
+          <div className="stat-title">Pending Requests</div>
+          <div className="stat-value text-secondary">21</div>
         </div>
 
         <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
-            <ClipboardCheck className="text-highlight h-8 w-12" />
+            <ClipboardCheck className="text-warning h-8 w-12" />
           </div>
           <div className="stat-title">
-            Completed <span className="hidden sm:inline">Request</span>
+            On Going <span className="hidden sm:inline">Requests</span>
           </div>
-          <div className="stat-value text-highlight">4</div>
+          <div className="stat-value text-warning">4</div>
         </div>
 
         <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
-            <ClipboardClock className="h-8 w-12 text-[#745fc9]" />
+            <ClipboardClock className="text-success h-8 w-12" />
           </div>
-          <div className="stat-title">Pending Request</div>
-          <div className="stat-value text-[#745fc9]">19</div>
+          <div className="stat-title">Completed Requests</div>
+          <div className="stat-value text-success">19</div>
         </div>
 
         <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
-            <ClipboardClock className="h-8 w-12 text-[#745fc9]" />
+            <ClipboardClock className="text-error h-8 w-12" />
           </div>
-          <div className="stat-title">Another Pending</div>
-          <div className="stat-value text-[#745fc9]">19</div>
+          <div className="stat-title">Cancelled Requests</div>
+          <div className="stat-value text-error">19</div>
         </div>
       </div>
 

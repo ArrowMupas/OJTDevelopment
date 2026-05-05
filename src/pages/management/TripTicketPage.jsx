@@ -84,7 +84,7 @@ export default function TripTicketPage() {
       `,
         { count: "exact" },
       )
-      .order("date_received", { ascending: false })
+      .order("dtt_no", { ascending: false })
       .range(from, to);
 
     // Search by DTT number
@@ -330,7 +330,6 @@ export default function TripTicketPage() {
         [
           "DTT No.",
           "Driver",
-          "Driver Designation",
           "Date Received",
           "Time Received",
           "Rating",
@@ -341,7 +340,6 @@ export default function TripTicketPage() {
           ticket.drivers
             ? `${ticket.drivers.last_name}, ${ticket.drivers.first_name} ${ticket.drivers.middle_initial || ""}`
             : "Unknown Driver",
-          ticket.drivers?.designation || "-",
           ticket.date_received
             ? format(new Date(ticket.date_received), "MMMM d, yyyy")
             : "-",
@@ -355,7 +353,6 @@ export default function TripTicketPage() {
         ]),
       ];
 
-      // Add summary at the bottom
       sheetData.push([], ["Report Summary"]);
       sheetData.push(["Total Tickets:", exportData.length]);
       sheetData.push([
@@ -363,51 +360,17 @@ export default function TripTicketPage() {
         format(new Date(), "MMMM d, yyyy hh:mm a"),
       ]);
 
-      // Calculate rating distribution
-      const ratingCounts = {
-        1: 0,
-        2: 0,
-        3: 0,
-        4: 0,
-        5: 0,
-      };
-      exportData.forEach((ticket) => {
-        if (ticket.rating && ratingCounts[ticket.rating] !== undefined) {
-          ratingCounts[ticket.rating]++;
-        }
-      });
-
-      sheetData.push([], ["Rating Distribution"]);
-      sheetData.push(["1 Star", ratingCounts[1]]);
-      sheetData.push(["2 Stars", ratingCounts[2]]);
-      sheetData.push(["3 Stars", ratingCounts[3]]);
-      sheetData.push(["4 Stars", ratingCounts[4]]);
-      sheetData.push(["5 Stars", ratingCounts[5]]);
-
       const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
 
       // Set column widths
       worksheet["!cols"] = [
         { wch: 20 }, // DTT No.
         { wch: 35 }, // Driver
-        { wch: 25 }, // Driver Designation
         { wch: 20 }, // Date Received
         { wch: 15 }, // Time Received
         { wch: 15 }, // Rating
         { wch: 25 }, // Date Created
       ];
-
-      // Style the header row
-      const headerRow = sheetData[2];
-      headerRow.forEach((_, colIndex) => {
-        const cellAddress = XLSX.utils.encode_cell({ r: 2, c: colIndex });
-        if (!worksheet[cellAddress]) return;
-        worksheet[cellAddress].s = {
-          font: { bold: true, sz: 12 },
-          fill: { fgColor: { rgb: "4F81BD" } },
-          pattern: { patternType: "solid" },
-        };
-      });
 
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Trip Tickets");
@@ -648,12 +611,12 @@ export default function TripTicketPage() {
             </div>
           ) : (
             <div className="h-screen overflow-x-auto bg-white">
-              <table className="table-pin-rows table">
+              <table className="table-pin-rows table-sm xl:table-md table">
                 <thead>
                   <tr>
                     <th>DTT No</th>
                     <th>Driver</th>
-                    <th>Date</th>
+                    <th>Date Received</th>
                     <th>Time</th>
                     <th>Rating</th>
                     <th>Actions</th>
@@ -670,7 +633,7 @@ export default function TripTicketPage() {
                   ) : (
                     tickets.map((item) => (
                       <tr key={item.id}>
-                        <td className="text-xs">{item.dtt_no}</td>
+                        <td className="truncate text-xs">{item.dtt_no}</td>
 
                         <td className="font-bold">
                           {item.drivers
@@ -682,7 +645,7 @@ export default function TripTicketPage() {
                           {format(new Date(item.date_received), "MMM dd, yyyy")}
                         </td>
 
-                        <td>
+                        <td className="truncate">
                           {format(
                             new Date(`1970-01-01T${item.time_received}`),
                             "hh:mm a",
@@ -729,7 +692,7 @@ export default function TripTicketPage() {
                           </div>
                         </td>
 
-                        <td className="space-x-2">
+                        <td className="flex gap-2">
                           <button
                             onClick={() => handleEdit(item)}
                             className="btn btn-sm btn-square text-info"

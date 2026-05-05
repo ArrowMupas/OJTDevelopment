@@ -411,7 +411,7 @@ export default function CompleteRequest() {
           "DATE OF DEPARTURE",
           "DISPATCHED VEHICLE",
           "DRIVER",
-          "RATING",
+          // "RATING",
           "STATUS",
         ],
         ...completedRequests.map((r, index) => [
@@ -428,7 +428,7 @@ export default function CompleteRequest() {
               ", " +
               drivers.find((d) => d.id === r.driver_id)?.first_name
             : "Not Assigned",
-          r.rating ?? "-",
+          // r.rating ?? "-",
           r.status ?? "-",
         ]),
       ];
@@ -436,27 +436,6 @@ export default function CompleteRequest() {
       // Add summary at the bottom
       sheetData.push([], ["Report Summary"]);
       sheetData.push(["Total Completed Requests:", completedRequests.length]);
-
-      // Calculate rating distribution
-      const ratingCounts = {
-        1: 0,
-        2: 0,
-        3: 0,
-        4: 0,
-        5: 0,
-      };
-      completedRequests.forEach((request) => {
-        if (request.rating && ratingCounts[request.rating] !== undefined) {
-          ratingCounts[request.rating]++;
-        }
-      });
-
-      sheetData.push([], ["Rating Distribution"]);
-      sheetData.push(["1 Star", ratingCounts[1]]);
-      sheetData.push(["2 Stars", ratingCounts[2]]);
-      sheetData.push(["3 Stars", ratingCounts[3]]);
-      sheetData.push(["4 Stars", ratingCounts[4]]);
-      sheetData.push(["5 Stars", ratingCounts[5]]);
 
       sheetData.push([
         "Generated On:",
@@ -580,7 +559,7 @@ export default function CompleteRequest() {
           <option value="">All Vehicles</option>
           {vehicles.map((vehicle) => (
             <option key={vehicle.id} value={vehicle.id}>
-              {vehicle.name} - {vehicle.plate_no}
+              {vehicle.name} - {vehicle.plate_number}
             </option>
           ))}
         </select>
