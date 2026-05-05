@@ -155,17 +155,8 @@ export default function EntryExitHistory() {
     const sheetData = [
       [reportTitle],
       [],
-      [
-        "Vehicle Type",
-        "Plate",
-        "Vehicle",
-        "Driver",
-        "Log Type",
-        "Time",
-        "Guard",
-      ],
+      ["Plate", "Vehicle", "Driver", "Log Type", "Time", "Guard"],
       ...exportData.map((entry) => [
-        entry.vehicle_type,
         entry.plate_number,
         entry.vehicle_name,
         entry.driver_name,
@@ -309,11 +300,10 @@ export default function EntryExitHistory() {
 
       {/* TABLE */}
       <div className="bg-base-100 mt-10">
-        <div className="rounded-box border-base-content/5 bg-base-100 h-screen overflow-x-auto border">
-          <table className="table-pin-rows table min-h-50">
+        <div className="border-base-content/5 bg-base-100 h-screen overflow-x-auto border">
+          <table className="table-pin-rows table w-full">
             <thead className="uppercase">
               <tr>
-                <th>Vehicle Type</th>
                 <th>Plate</th>
                 <th>Vehicle</th>
                 <th>Driver</th>
@@ -326,30 +316,19 @@ export default function EntryExitHistory() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="7" className="py-12 text-center">
+                  <td colSpan="6" className="py-12 text-center">
                     <span className="loading loading-infinity loading-xl"></span>
                   </td>
                 </tr>
               ) : history.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="py-12 text-center">
+                  <td colSpan="6" className="py-12 text-center">
                     No history found
                   </td>
                 </tr>
               ) : (
                 history.map((entry) => (
                   <tr key={entry.id} className="hover:bg-base-200 capitalize">
-                    <td>
-                      <span
-                        className={`badge badge-sm text-white ${
-                          entry.vehicle_type === "private"
-                            ? "badge-info"
-                            : "badge-error"
-                        }`}
-                      >
-                        {entry.vehicle_type}
-                      </span>
-                    </td>
                     <td>
                       <div className="badge badge-dash badge-primary badge-sm truncate">
                         {entry.plate_number}
@@ -381,10 +360,10 @@ export default function EntryExitHistory() {
 
             <tfoot>
               <tr>
-                <td colSpan="6" className="py-4 text-center">
+                <td colSpan="4" className="py-4 text-center">
                   Total Records: {totalCount}
                 </td>
-                <td colSpan="1" className="py text-center">
+                <td colSpan="2" className="py text-center">
                   <div className="flex justify-center">
                     <div className="join">
                       <button

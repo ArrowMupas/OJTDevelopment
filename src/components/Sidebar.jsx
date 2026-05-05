@@ -28,7 +28,7 @@ export default function Sidebar() {
     return (
       <Link
         to={to}
-        className={`flex items-center gap-2 rounded-r-lg p-1.5 text-sm text-gray-300 transition-all ${
+        className={`flex items-center gap-2 rounded-r-lg p-1 text-sm text-gray-300 transition-all xl:p-1.5 ${
           isActive
             ? "border-l-4 border-green-600 bg-green-700 text-white"
             : "border-l-4 border-transparent"
@@ -52,7 +52,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="flex min-h-full w-64 flex-col bg-green-900 text-white shadow-inner">
+    <aside className="flex min-h-full w-56 flex-col bg-green-900 text-white shadow-inner xl:w-64">
       {/* LOGO */}
       <div className="border-b border-green-300 px-4 py-3">
         <div className="flex items-center gap-3">
