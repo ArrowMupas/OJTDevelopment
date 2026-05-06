@@ -8,6 +8,7 @@ import {
   Undo2,
   User,
   Users,
+  History,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
@@ -26,7 +27,7 @@ const externalSteps = [
   "Inspection",
   "Job Order",
   "Received Disbursement Voucher with Check",
-  "Auto Repair Service",
+  "On-Going Repair",
   "Accomplished | For Release",
 ];
 
@@ -44,7 +45,7 @@ export default function PublicTrackRelease() {
   };
 
   async function fetchCompleted() {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("maintenance_records")
       .select(
         `
@@ -71,51 +72,45 @@ export default function PublicTrackRelease() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 px-3 py-10 sm:px-6 sm:py-20">
-      <div className="mx-auto max-w-5xl">
+    <main className="min-h-screen px-3 py-10 sm:px-6 sm:py-20">
+      <div className="mx-auto max-w-4xl">
         {/* HEADER */}
-        <div className="mb-8 text-center sm:mb-12">
-          <h1 className="text-3xl font-bold uppercase sm:text-5xl">
-            Repair & Maintenance
-          </h1>
-          <p className="mt-2 text-sm text-gray-600 sm:text-base">
-            Completed repair records
-          </p>
+        <div className="mb-5 flex justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold uppercase sm:text-5xl">
+              Completed Repairs
+            </h1>
+            <p className="text-sm sm:text-base">
+              Archive of finished maintenance jobs
+            </p>
+          </div>
+          <button
+            className="btn btn-info btn-sm sm:btn-md truncate text-white uppercase"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="size-5" />
+          </button>
         </div>
 
         {/* TOP BAR */}
-        <div className="mb-5 flex flex-col gap-4 rounded-xl bg-[#30694B] p-4 text-white sm:flex-row sm:items-center sm:justify-between sm:p-6">
-          <div className="flex items-center gap-3">
-            <button
-              className="btn btn-square btn-outline"
-              onClick={() => navigate(-1)}
-            >
-              <ArrowLeft className="size-7" />
-            </button>
-            <ClockCheck className="h-6 w-6 sm:h-8 sm:w-8" />
-
-            <div>
-              <h2 className="text-lg font-semibold uppercase sm:text-2xl">
-                Completed Repairs
-              </h2>
-              <p className="text-xs opacity-90 sm:text-sm">
-                Archive of finished maintenance jobs
-              </p>
-            </div>
+        <div className="mb-5 flex flex-row justify-between">
+          <div className="flex w-full justify-between gap-2 sm:w-auto sm:items-center">
+            <label htmlFor="" className="select select-sm sm:select-md">
+              <span className="label">Type</span>
+              <select
+                className="select select-sm sm:select-md text-green-700"
+                value={viewType}
+                onChange={(e) => setViewType(e.target.value)}
+              >
+                <option value="external">External</option>
+                <option value="internal">Internal</option>
+                <option value="internal-mini">Mini Repair</option>
+              </select>
+            </label>
           </div>
-
-          <select
-            className="select w-full text-green-700 sm:w-auto"
-            value={viewType}
-            onChange={(e) => setViewType(e.target.value)}
-          >
-            <option value="external">External</option>
-            <option value="internal">Internal</option>
-            <option value="internal-mini">Internal (Mini Repair)</option>
-          </select>
         </div>
 
-        <div className="space-y-3 sm:space-y-4">
+        <div className="h-screen space-y-2 overflow-auto sm:space-y-4">
           {cars
             .filter((car) => car.type === viewType)
             .map((car) => {
@@ -124,92 +119,106 @@ export default function PublicTrackRelease() {
               return (
                 <div
                   key={car.id}
-                  className="overflow-hidden rounded-2xl bg-white p-4 shadow-md sm:p-6"
+                  className="card bg-base-100 rounded-xl border shadow-sm"
                 >
-                  {/* HEADER - MATCHING ORIGINAL REPAIR DESIGN */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 sm:gap-4">
-                      <h2 className="flex min-w-0 items-center gap-2 text-xs font-bold sm:text-sm">
-                        <Car size={16} className="shrink-0" />
-                        <span className="truncate">{car.vehicles?.name}</span>
-                      </h2>
-
-                      <div className="badge badge-primary badge-sm sm:badge-md badge-dash truncate">
-                        {car.vehicles?.plate_number}
+                  <div className="card-body p-4 sm:p-5">
+                    {/* HEADER */}
+                    <div className="flex justify-between">
+                      <div className="flex items-center gap-2">
+                        <h2 className="flex items-center gap-2 truncate text-base font-semibold sm:text-lg">
+                          {car.vehicles?.name}
+                        </h2>
+                        <div className="badge badge-primary badge-dash badge-sm truncate">
+                          {car.vehicles?.plate_number}
+                        </div>
                       </div>
 
-                      <div className="badge badge-outline badge-sm uppercase">
-                        <Tag size={12} className="shrink-0" />
-                        <span className="truncate">{car.type}</span>
+                      <div className="flex flex-col sm:flex-row sm:gap-2">
+                        <p className="text-center text-xs text-gray-500 sm:text-sm">
+                          Completed:
+                        </p>
+                        <p className="text-xs font-bold sm:text-sm">
+                          {car.completed_at
+                            ? format(new Date(car.completed_at), "MMM dd, yyyy")
+                            : "—"}
+                        </p>
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                      <p className="text-sm text-gray-500">
-                        Completed at:{" "}
-                        {car.completed_at
-                          ? format(
-                              new Date(car.completed_at),
-                              "MMM dd, yyyy • hh:mm a",
-                            )
-                          : "—"}
-                      </p>
+                    <div className="flex items-start gap-2">
+                      <div className="min-w-0">
+                        <div className="text-xs text-gray-500">Remarks</div>
+                        <p className="text-xs">{car?.remarks || "-"}</p>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* DETAILS - MATCHING ORIGINAL EXACTLY */}
-                  <div className="mt-4 grid gap-2 text-xs text-gray-500 sm:grid-cols-2 sm:text-sm">
-                    {car.type !== "external" ? (
-                      <div className="flex flex-col">
-                        <div className="flex items-start gap-2">
-                          <User size={14} className="mt-0.5 shrink-0" />
-                          <span className="truncate">
-                            <span className="">Personnel 1:</span>{" "}
-                            {car.assigned_personnel_1 || "—"}
-                          </span>
-                        </div>
-
-                        <div className="flex items-start gap-2">
-                          <Users size={14} className="mt-0.5 shrink-0" />
-                          <span className="truncate">
-                            <span className="">Personnel 2:</span>{" "}
-                            {car.assigned_personnel_2 || "—"}
-                          </span>
-                        </div>
+                    <div className="flex flex-col">
+                      <div className="my-5 flex flex-col gap-2">
+                        <ul className="steps steps-vertical sm:steps-horizontal w-full overflow-x-clip">
+                          {steps.map((label, i) => {
+                            const active = i <= car.step;
+                            return (
+                              <li
+                                key={i}
+                                className={`step text-xs font-bold ${
+                                  active ? "step-success text-success" : ""
+                                }`}
+                              >
+                                {label}
+                              </li>
+                            );
+                          })}
+                        </ul>
                       </div>
-                    ) : (
-                      <div className="flex min-w-0 items-start gap-2 sm:col-span-2">
-                        <Store size={14} className="mt-0.5 shrink-0" />
-                        <span className="truncate">
-                          <span className="">Service Shop:</span>{" "}
-                          {car.service_shop || "—"}
-                        </span>
+
+                      {/* DETAILS */}
+                      <div className="text-base-content space-y-2 text-xs sm:text-sm">
+                        {car.type !== "external" ? (
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                              <User size={14} />
+                              <div className="min-w-0">
+                                <div className="truncate text-xs text-gray-500">
+                                  Personnel 1
+                                </div>
+                                <div className="truncate text-xs font-bold sm:text-sm">
+                                  {car.assigned_personnel_1 || "—"}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Users size={14} />
+                              <div className="min-w-0">
+                                <div className="truncate text-xs text-gray-500">
+                                  Personnel 2
+                                </div>
+                                <div className="truncate text-xs font-bold sm:text-sm">
+                                  {car.assigned_personnel_2 || "—"}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex items-start gap-2">
+                            <Store size={14} />
+                            <div className="min-w-0">
+                              <div className="text-xs text-gray-500">
+                                Service Shop
+                              </div>
+                              <div className="truncate text-sm font-medium">
+                                {car.service_shop || "—"}
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-
-                  {/* TIMELINE - MATCHING ORIGINAL EXACTLY */}
-                  <div className="mt-5 overflow-x-auto">
-                    <ul className="steps">
-                      {steps.map((label, i) => {
-                        const active = i <= car.step;
-
-                        return (
-                          <li
-                            key={i}
-                            className={`step ${active ? "step-success" : ""}`}
-                          >
-                            <div className="text-xs sm:text-sm">{label}</div>
-                          </li>
-                        );
-                      })}
-                    </ul>
+                    </div>
                   </div>
                 </div>
               );
             })}
         </div>
       </div>
-    </div>
+    </main>
   );
 }
