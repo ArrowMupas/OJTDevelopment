@@ -29,10 +29,10 @@ export default function Navbar() {
 
   return (
     <header className="w-full max-w-screen bg-green-700 px-4 py-4 text-white sm:px-8">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center">
           <div
-            className="flex aspect-square w-10 cursor-pointer items-center justify-center rounded-full bg-white p-1 sm:w-12"
+            className="flex aspect-square w-8 cursor-pointer items-center justify-center rounded-full bg-white p-1 sm:w-12"
             onClick={() => (window.location.href = "/")}
           >
             <img
@@ -62,14 +62,14 @@ export default function Navbar() {
         </div>
 
         {!hideNavLinks && (
-          <nav className="flex space-x-2 sm:space-x-4 md:space-x-7">
+          <nav className="flex space-x-1.5 sm:space-x-4 md:space-x-7">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   to={link.href}
-                  className="relative truncate text-xs font-bold text-white uppercase transition-colors duration-200 hover:text-yellow-200"
+                  className="relative truncate text-[11px] font-bold text-white uppercase transition-colors duration-200 hover:text-yellow-200"
                 >
                   <span className={`${isActive ? "text-yellow-100" : ""}`}>
                     {link.label}
