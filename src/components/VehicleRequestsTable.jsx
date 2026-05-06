@@ -1,4 +1,3 @@
-// components/RequestsTable.jsx
 import { parse, format } from "date-fns";
 import clsx from "clsx";
 import Tippy from "@tippyjs/react";
@@ -14,19 +13,21 @@ export default function VehicleRequestsTable({
   updateAssignedVehicle,
   updateStatus,
 }) {
-  const colSpan = 8;
+  const colSpan = 10;
 
   return (
     <div className="bg-base-100">
       <div className="rounded-box border-base-content/5 bg-base-100 overflow-x-auto border">
-        <table className="table min-h-50">
+        <table className="table-sm 2xl:table-md table min-h-50">
           {/* HEADER */}
           <thead className="uppercase">
             <tr>
               <th>Department</th>
               <th>Passengers</th>
               <th>Destination</th>
+              <th>Purpose</th>
               <th>Date & Time</th>
+              <th>Duration</th>
               <th>Driver</th>
               <th>Vehicle</th>
               <th>Status</th>
@@ -69,13 +70,13 @@ export default function VehicleRequestsTable({
                 );
 
                 return (
-                  <tr key={req.id} className="hover:bg-base-200">
+                  <tr key={req.id} className="hover:bg-green-50">
                     {/* DEPARTMENT */}
                     <th className="text-xs uppercase">{req.department}</th>
 
                     {/* PASSENGERS */}
-                    <td className="max-w-100">
-                      <div className="line-clamp-2 font-bold capitalize hover:line-clamp-none">
+                    <td className="">
+                      <div className="line-clamp-3 font-bold capitalize hover:line-clamp-none">
                         {req.passengers}
                       </div>
                       <span className="text-xs font-medium">
@@ -84,8 +85,15 @@ export default function VehicleRequestsTable({
                     </td>
 
                     {/* DESTINATION */}
-                    <td className="text-success font-bold capitalize">
+                    <td className="text-success capitalize italic">
                       {req.destination}
+                    </td>
+
+                    {/* PURPOSE */}
+                    <td className="">
+                      <div className="line-clamp-3 hover:line-clamp-none">
+                        {req.purpose}
+                      </div>
                     </td>
 
                     {/* DATE */}
@@ -97,6 +105,10 @@ export default function VehicleRequestsTable({
                       <span className="text-xs">
                         {format(parsedDateTime, "hh:mm a")}
                       </span>
+                    </td>
+
+                    <td className="text-xs sm:text-sm">
+                      {req.travel_duration}
                     </td>
 
                     {/* DRIVER */}
@@ -150,7 +162,7 @@ export default function VehicleRequestsTable({
                     </td>
 
                     {/* STATUS */}
-                    <td className="min-w-30">
+                    <td className="">
                       <select
                         className={clsx("select select-sm", {
                           "select-success text-success":

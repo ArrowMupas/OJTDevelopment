@@ -86,7 +86,7 @@ export default function Dashboard() {
                 <th>Date & Time</th>
                 <th className="">Destination</th>
                 <th>Passenger Name</th>
-                <th>Purpose</th>
+                {/* <th>Purpose</th> */}
                 <th className="">Assigned Driver</th>
                 <th className="">Assigned Vehicle</th>
               </tr>
@@ -122,7 +122,9 @@ export default function Dashboard() {
 
                   return (
                     <tr key={req.id} className="">
-                      <td className="font-bold uppercase text-sm">{req.department}</td>
+                      <td className="text-sm font-bold uppercase">
+                        {req.department}
+                      </td>
 
                       <td className="truncate">
                         <div className="flex h-full flex-col items-start justify-center text-base">
@@ -146,7 +148,7 @@ export default function Dashboard() {
                         </div>
                       </td>
 
-                      <td className="text-xs sm:text-sm">{req.purpose}</td>
+                      {/* <td className="text-xs sm:text-sm">{req.purpose}</td> */}
                       {/* <td className="text-xs">
                         {req.other_instructions || (
                           <span className="text-gray-500">No Instructions</span>
@@ -167,18 +169,18 @@ export default function Dashboard() {
                       <td className="bg-violet-50">
                         <div className="truncate">
                           {req.vehicles ? (
-                            <p className="text-base font-bold">
-                              {req.vehicles.name}
-                            </p>
+                            <div>
+                              <p className="text-base font-bold">
+                                {req.vehicles.name}
+                              </p>
+                              <p className="text-sm">
+                                {req.vehicles?.plate_number}
+                              </p>
+                            </div>
                           ) : (
                             <p className="text-sm text-gray-500">Unassigned</p>
                           )}
                         </div>
-                        {req.vehicles?.plate_number && (
-                          <div className="badge badge-dash badge-primary">
-                            {req.vehicles.plate_number}
-                          </div>
-                        )}
                       </td>
                     </tr>
                   );

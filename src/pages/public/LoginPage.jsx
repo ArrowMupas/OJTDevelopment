@@ -44,7 +44,7 @@ export default function Login() {
       initial={{ opacity: 0, y: -40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className="flex min-h-full items-center justify-center p-4 sm:py-20"
+      className="flex min-h-screen items-start justify-center px-8 py-15 sm:items-center"
     >
       <div className="flex w-full max-w-lg flex-col items-center gap-5">
         {/* Logo */}
@@ -60,7 +60,7 @@ export default function Login() {
         </div>
 
         {/* Heading */}
-        <h2 className="text-center text-xl font-bold uppercase sm:text-5xl">
+        <h2 className="text-center text-5xl font-bold uppercase sm:text-5xl">
           Transport Operations Services Unit
         </h2>
 

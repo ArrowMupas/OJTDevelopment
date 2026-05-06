@@ -3,11 +3,11 @@ import React from "react";
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, error: null };
   }
 
   static getDerivedStateFromError(error) {
-    return { hasError: true };
+    return { hasError: true, error };
   }
 
   componentDidCatch(error, info) {
@@ -19,15 +19,17 @@ class ErrorBoundary extends React.Component {
       return (
         <div className="flex min-h-screen items-center justify-center">
           <div className="card bg-base-100 max-w-md space-y-4 p-8 text-center">
-            <h2 className="text-center text-5xl font-bold tracking-tight uppercase">
+            <h2 className="text-5xl font-bold uppercase">
               Something went wrong
             </h2>
-            <p className="relative z-10 mx-auto max-w-2xl px-4 text-lg leading-relaxed text-black">
-              Please refresh the page or try again later.
+
+            <p className="text-sm wrap-break-word text-red-500">
+              {this.state.error?.message}
             </p>
+
             <button
               onClick={() => window.location.reload()}
-              className="btn btn-error btn-dash btn-lg uppercase"
+              className="btn btn-error btn-lg uppercase"
             >
               Refresh Page
             </button>
