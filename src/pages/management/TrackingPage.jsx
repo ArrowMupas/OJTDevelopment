@@ -15,7 +15,7 @@ import { supabase } from "../../supabaseClient";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import OurInput from "../../components/OurInput";
-import { repairSchema } from "../schemas/repairSchema";
+import { repairSchema } from "../../schemas/repairSchema";
 import toast from "react-hot-toast";
 
 const internalSteps = [
