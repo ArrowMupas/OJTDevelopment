@@ -61,11 +61,10 @@ const UnoperationalVehicles = lazy(
 const VehicleHistory = lazy(() => import("./pages/vehicles/VehicleHistory"));
 
 // Others
-const TrackingHistory = lazy(() => import("./pages/TrackingHistory"));
-const PaymentList = lazy(() => import("./pages/PaymentList"));
-const DriverMonitoringPage = lazy(() => import("./pages/DriverMonitoringPage"));
-const TrackingPage = lazy(() => import("./pages/TrackingPage"));
-const TrackingRelease = lazy(() => import("./pages/TrackingRelease"));
+const TrackingHistory = lazy(
+  () => import("./pages/management/TrackingHistory"),
+);
+const TrackingPage = lazy(() => import("./pages/management/TrackingPage"));
 
 function App() {
   return (
@@ -119,13 +118,7 @@ function App() {
               element={<VehicleHistory />}
             />
 
-            <Route
-              path="/drivermonitoring"
-              element={<DriverMonitoringPage />}
-            />
-
             <Route path="/track" element={<TrackingPage />} />
-            <Route path="/track-release" element={<TrackingRelease />} />
             <Route path="/tracking-history" element={<TrackingHistory />} />
 
             <Route path="/pms" element={<PMS />} />
@@ -138,7 +131,6 @@ function App() {
             <Route path="/inquiries" element={<InquiryPage />} />
             <Route path="/trip-ticket" element={<TripTicketPage />} />
             <Route path="/survey-results" element={<SurveyResult />} />
-            <Route path="/payment-list" element={<PaymentList />} />
             <Route path="/inventory" element={<Inventory />} />
           </Route>
 
