@@ -5,11 +5,12 @@ import ScrollToTop from "./utils/ScrollToTop";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ProtectedRoute from "./utils/ProtectedRoute";
 
-import MainLayout from "./layouts/MainLayout";
+const MainLayout = lazy(() => import("./layouts/MainLayout"));
 import PublicLayout from "./layouts/PublicLayout";
 
-// Public (Lazy)
-const HomePage = lazy(() => import("./pages/public/HomePage"));
+// Public
+import HomePage from "./pages/public/HomePage";
+import LoginPage from "./pages/public/LoginPage";
 const Dashboard = lazy(() => import("./pages/public/Dashboard"));
 const SurveyPage = lazy(() => import("./pages/public/SurveyPage"));
 const ContactPage = lazy(() => import("./pages/public/ContactPage"));
@@ -23,7 +24,6 @@ const SurveyInput = lazy(() => import("./pages/public/SurveyInput"));
 const CompleteRequest = lazy(
   () => import("./pages/management/CompleteRequest"),
 );
-const LoginPage = lazy(() => import("./pages/public/LoginPage"));
 const PublicTrackPage = lazy(() => import("./pages/public/PublicTrackPage"));
 const PublicTrackRelease = lazy(
   () => import("./pages/public/PublicTrackRelease"),
@@ -34,7 +34,7 @@ const EntryExitMonitoring = lazy(
 );
 const EntryExitHistory = lazy(() => import("./pages/public/EntryExitHistory"));
 
-// Management (Lazy)
+// Management
 const AdminDashboard = lazy(() => import("./pages/management/AdminDashboard"));
 const Staffs = lazy(() => import("./pages/management/Staffs"));
 const InquiryPage = lazy(() => import("./pages/management/InquiryPage"));
@@ -49,7 +49,7 @@ const TransactionsPage = lazy(
 );
 const Inventory = lazy(() => import("./pages/management/Inventory"));
 
-// Vehicles (Lazy)
+// Vehicles
 const VehiclePage = lazy(() => import("./pages/vehicles/Vehicles"));
 const HistoryPage = lazy(() => import("./pages/vehicles/HistoryPage"));
 const Battery = lazy(() => import("./pages/vehicles/Battery"));
@@ -60,7 +60,7 @@ const UnoperationalVehicles = lazy(
 );
 const VehicleHistory = lazy(() => import("./pages/vehicles/VehicleHistory"));
 
-// Others (Lazy)
+// Others
 const TrackingHistory = lazy(() => import("./pages/TrackingHistory"));
 const PaymentList = lazy(() => import("./pages/PaymentList"));
 const DriverMonitoringPage = lazy(() => import("./pages/DriverMonitoringPage"));
@@ -90,7 +90,7 @@ function App() {
       <Suspense
         fallback={
           <div className="flex h-screen items-center justify-center">
-            <p>Loading page...</p>
+            <progress className="progress progress-success w-56"></progress>
           </div>
         }
       >

@@ -69,7 +69,7 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   to={link.href}
-                  className="relative truncate text-[11px] font-bold text-white uppercase transition-colors duration-200 hover:text-yellow-200"
+                  className="relative truncate text-[11px] font-bold text-white uppercase transition-colors duration-200 hover:text-yellow-200 sm:text-xs"
                 >
                   <span className={`${isActive ? "text-yellow-100" : ""}`}>
                     {link.label}
