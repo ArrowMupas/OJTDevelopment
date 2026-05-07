@@ -1,5 +1,6 @@
 import { format, parse } from "date-fns";
 import { supabase } from "../../supabaseClient";
+import useDriverStore from "../../stores/driverStore";
 import {
   ArrowLeft,
   CheckCircle,
@@ -18,7 +19,7 @@ import * as XLSX from "xlsx";
 import VehicleRequestsTable from "../../components/VehicleRequestsTable";
 
 export default function CompleteRequest() {
-  const [drivers, setDrivers] = useState([]);
+  const { getDrivers, fetchDrivers } = useDriverStore();
   const [vehicles, setVehicles] = useState([]);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +33,7 @@ export default function CompleteRequest() {
   const [exporting, setExporting] = useState(false);
 
   const PAGE_SIZE = 50;
+  const drivers = useMemo(() => getDrivers("service_drivers"), [getDrivers]);
 
   async function fetchRequests(
     searchTerm = "",
@@ -103,30 +105,17 @@ export default function CompleteRequest() {
     async function fetchAllData() {
       setLoading(true);
 
-      const [
-        { data: driversData, error: driversError },
-        { data: vehiclesData, error: vehiclesError },
-      ] = await Promise.all([
-        supabase
-          .from("drivers")
-          .select("*")
-          .in("designation", [
-            "Driver Mechanic B",
-            "Driver Mechanic A",
-            "Sr. Auto Mechanic",
-          ])
-          .order("last_name", { ascending: true }),
-        supabase
-          .from("vehicles")
-          .select("*")
-          .neq("operational", false)
-          .order("name", { ascending: true }),
-      ]);
+      if (drivers.length === 0 && !driversLoading) {
+        await fetchDrivers(true);
+      }
 
-      if (driversError) console.error("Drivers error:", driversError);
+      const { data: vehiclesData, error: vehiclesError } = await supabase
+        .from("vehicles")
+        .select("*")
+        .neq("operational", false)
+        .order("name", { ascending: true });
+
       if (vehiclesError) console.error("Vehicles error:", vehiclesError);
-
-      if (driversData) setDrivers(driversData);
       if (vehiclesData) setVehicles(vehiclesData);
 
       // Fetch initial requests with pagination
@@ -145,7 +134,7 @@ export default function CompleteRequest() {
     }
 
     fetchAllData();
-  }, []);
+  }, [drivers.length, fetchDrivers]);
 
   useEffect(() => {
     async function loadRequests() {
