@@ -15,4 +15,8 @@ export const staffSchema = z.object({
   email: z.email("Invalid email address"),
 
   contact: z.string().min(7, "Contact number must be at least 7 digits"),
+
+  isMechanic: z.boolean().default(false),
+
+  licenseExpiration: z.string().optional().or(z.literal("")),
 });

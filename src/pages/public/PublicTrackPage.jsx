@@ -41,7 +41,7 @@ export default function TrackingPage() {
   const [repairs, setRepairs] = useState([]);
   const [vehicles, setVehicles] = useState([]);
   const [viewType, setViewType] = useState("internal");
-
+  const [mechanics, setMechanics] = useState([]);
   const [remarksModal, setRemarksModal] = useState(false);
   const [pendingRepair, setPendingRepair] = useState(null);
   const [remarks, setRemarks] = useState("");
@@ -63,6 +63,23 @@ export default function TrackingPage() {
     if (type === "external") return externalSteps;
     return internalSteps;
   };
+
+  async function fetchMechanics() {
+    const { data } = await supabase
+      .from("drivers")
+      .select("*")
+      .eq("is_mechanic", true)
+      .eq("is_deleted", false)
+      .order("last_name", { ascending: true });
+
+    const formattedMechanics = (data || []).map((mechanic) => ({
+      ...mechanic,
+      full_name:
+        `${mechanic.first_name} ${mechanic.middle_initial}. ${mechanic.last_name}`.trim(),
+    }));
+
+    setMechanics(formattedMechanics || []);
+  }
 
   async function fetchVehicles() {
     const { data } = await supabase
@@ -99,6 +116,7 @@ export default function TrackingPage() {
   useEffect(() => {
     fetchVehicles();
     fetchRecords();
+    fetchMechanics();
   }, []);
 
   async function createMaintenanceRecord(formData) {
@@ -297,22 +315,26 @@ export default function TrackingPage() {
                     className="select select-bordered w-full"
                     {...register("maintenance1")}
                   >
-                    <option value="">Maintenance 1</option>
-                    <option>Fernando L. Aquino</option>
-                    <option>Joseph Neil S. Leonardo</option>
-                    <option>Ruel V. Bebanco</option>
-                    <option>None</option>
+                    <option value="">Select Mechanic 1</option>
+                    {mechanics.map((mechanic) => (
+                      <option key={mechanic.id} value={mechanic.full_name}>
+                        {mechanic.full_name}
+                      </option>
+                    ))}
+                    <option value="None">None</option>
                   </select>
 
                   <select
                     className="select select-bordered w-full"
                     {...register("maintenance2")}
                   >
-                    <option value="">Maintenance 2</option>
-                    <option>Fernando L. Aquino</option>
-                    <option>Joseph Neil S. Leonardo</option>
-                    <option>Ruel V. Bebanco</option>
-                    <option>None</option>
+                    <option value="">Select Mechanic 2</option>
+                    {mechanics.map((mechanic) => (
+                      <option key={mechanic.id} value={mechanic.full_name}>
+                        {mechanic.full_name}
+                      </option>
+                    ))}
+                    <option value="None">None</option>
                   </select>
                 </>
               )}

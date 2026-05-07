@@ -9,6 +9,7 @@ import {
   Users,
 } from "lucide-react";
 import { supabase } from "../../supabaseClient";
+import useDriverStore from "../../stores/driverStore";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,57 +22,25 @@ import { staffSchema } from "../../schemas/staffSchema";
 
 export default function Staff() {
   // Driver fetch states
-  const [drivers, setDrivers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { getDrivers, fetchDrivers, loading } = useDriverStore();
   const [search, setSearch] = useState("");
 
-  // Driver fetch with searching
-  const fetchDrivers = async (searchTerm = "") => {
-    // Start loading
-    setLoading(true);
+  const drivers = getDrivers();
 
-    // Query supabase
-    let query = supabase
-      .from("drivers")
-      .select("*")
-      // .eq("is_deleted", false)
-      .order("first_name", { ascending: true });
-
-    // If searching only fetch ones matching the search
-    if (searchTerm) {
-      query = query.or(
-        `first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%`,
-      );
+  useEffect(() => {
+    if (drivers.length === 0 && !loading) {
+      fetchDrivers();
     }
+  }, [drivers.length, loading, fetchDrivers]);
 
-    // Get data and save it to state or error if there's error
-    const { data, error } = await query;
-    if (error) console.error(error);
-    else setDrivers(data);
-
-    // End loading
-    setLoading(false);
-  };
-
-  // The fetching of data is delayed while user is still typing on search
-  const debouncedSearch = useMemo(
-    () =>
-      debounce((value) => {
-        if (!value) fetchDrivers("");
-        else fetchDrivers(value);
-      }, 400),
-    [],
-  );
-
-  // Fetch the drivers at page load
-  useEffect(() => {
-    fetchDrivers();
-  }, []);
-
-  // Cleanup of debounce
-  useEffect(() => {
-    return () => debouncedSearch.cancel();
-  }, [debouncedSearch]);
+  const filteredDrivers = useMemo(() => {
+    if (!search) return drivers;
+    return drivers.filter(
+      (driver) =>
+        driver.first_name?.toLowerCase().includes(search.toLowerCase()) ||
+        driver.last_name?.toLowerCase().includes(search.toLowerCase()),
+    );
+  }, [drivers, search]);
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -110,6 +79,10 @@ export default function Staff() {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(staffSchema),
+    defaultValues: {
+      isMechanic: false,
+      licenseExpiration: "",
+    },
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -133,6 +106,8 @@ export default function Staff() {
           image_url: imageUrl,
           license_url: licenseUrl,
           license_back: licenseBackUrl,
+          is_mechanic: data.isMechanic,
+          license_expiration: data.licenseExpiration || null,
         },
       ]);
 
@@ -142,11 +117,22 @@ export default function Staff() {
           position: "top-center",
         });
         document.getElementById("driverModal")?.close();
-        reset();
+
+        reset({
+          firstName: "",
+          lastName: "",
+          middleInitial: "",
+          designation: "",
+          email: "",
+          contact: "",
+          isMechanic: false,
+          licenseExpiration: "",
+        });
+
         setSelectedFile(null);
         setLicenseFile(null);
         setLicenseBack(null);
-        fetchDrivers(search);
+        await fetchDrivers();
       }
     } catch (error) {
       toast.error("An error occurred while creating staff");
@@ -188,6 +174,8 @@ export default function Staff() {
           image_url: imageUrl,
           license_url: licenseUrl,
           license_back: licenseBackUrl,
+          is_mechanic: data.isMechanic,
+          license_expiration: data.licenseExpiration || null,
         })
         .eq("id", driverToEdit.id);
 
@@ -195,13 +183,24 @@ export default function Staff() {
       else {
         toast.success(`staff updated successfully!`);
         document.getElementById("driverModal")?.close();
-        reset();
+
+        reset({
+          firstName: "",
+          lastName: "",
+          middleInitial: "",
+          designation: "",
+          email: "",
+          contact: "",
+          isMechanic: false,
+          licenseExpiration: "",
+        });
+
         setSelectedFile(null);
         setLicenseFile(null);
         setLicenseBack(null);
         setDriverToEdit(null);
         setIsEditing(false);
-        fetchDrivers(search);
+        await fetchDrivers();
       }
     } catch (error) {
       console.error(error);
@@ -231,7 +230,7 @@ export default function Staff() {
     const { error } = await supabase.from("drivers").delete().eq("id", id);
     if (error) console.error(error);
     else {
-      setDrivers((prev) => prev.filter((d) => d.id !== id));
+      await fetchDrivers();
       toast.success("Staff deleted successfully!");
     }
   };
@@ -284,7 +283,8 @@ export default function Staff() {
     const special = [];
     const regular = [];
 
-    drivers.forEach((driver) => {
+    filteredDrivers.forEach((driver) => {
+      // ← Change to filteredDrivers
       if (specialDesignations.includes(driver.designation)) {
         special.push(driver);
       } else {
@@ -293,7 +293,7 @@ export default function Staff() {
     });
 
     return { specialDrivers: special, regularDrivers: regular };
-  }, [drivers]);
+  }, [filteredDrivers]);
 
   return (
     <main className="h-full space-y-4 px-3 py-4 pb-25 sm:space-y-7 sm:px-5">
@@ -313,34 +313,9 @@ export default function Staff() {
               type="search"
               placeholder="Search drivers..."
               value={search}
-              onChange={(e) => {
-                const value = e.target.value;
-                setSearch(value);
-                debouncedSearch(value);
-              }}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </label>
-
-          {/* <div className="dropdown">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn bg-green-600 text-white"
-            >
-              <FilterIcon className="h-4 w-6" /> Filter
-            </div>
-            <ul
-              tabIndex="-1"
-              className="dropdown-content menu bg-base-100 rounded-box w-52 p-2 shadow-sm"
-            >
-              <li className="rounded-sm focus:bg-highlight">
-                <a className="active:bg-highlight">Ascending</a>
-              </li>
-              <li>
-                <a className="active:bg-highlight">Descending</a>
-              </li>
-            </ul>
-          </div> */}
         </div>
 
         <button
@@ -352,8 +327,11 @@ export default function Staff() {
               firstName: "",
               lastName: "",
               middleInitial: "",
+              designation: "",
               email: "",
               contact: "",
+              isMechanic: false,
+              licenseExpiration: "",
             });
             setSelectedFile(null);
             setLicenseFile(null);
@@ -361,43 +339,10 @@ export default function Staff() {
             document.getElementById("driverModal").showModal();
           }}
         >
-          <UserPlus className="h-4 w-6" /> Add New Staff
+          <UserPlus className="h-4 w-6" />
+          Add New Staff
         </button>
       </div>
-
-      {/* <div className="grid w-full grid-cols-2 gap-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-4">
-        <div className="stat bg-base-100 rounded-md shadow">
-          <div className="stat-figure">
-            <CircleStar className="text-warning h-8 w-12" />
-          </div>
-          <div className="stat-title">Average Rating</div>
-          <div className="stat-value text-warning">1.6</div>
-        </div>
-
-        <div className="stat bg-base-100 rounded-md shadow">
-          <div className="stat-figure">
-            <Scroll className="h-8 w-12 text-green-600" />
-          </div>
-          <div className="stat-title">Total Survey</div>
-          <div className="stat-value text-green-600">10</div>
-        </div>
-
-        <div className="stat bg-base-100 rounded-md shadow">
-          <div className="stat-figure">
-            <ClockCheck className="h-8 w-12 text-yellow-600" />
-          </div>
-          <div className="stat-title">On-Time Rate</div>
-          <div className="stat-value text-yellow-600">94%</div>
-        </div>
-
-        <div className="stat bg-base-100 rounded-md shadow">
-          <div className="stat-figure">
-            <Users className="h-8 w-12 text-green-600" />
-          </div>
-          <div className="stat-title">Active Drivers</div>
-          <div className="stat-value text-green-600">11</div>
-        </div>
-      </div> */}
 
       <ModalLicense
         licenseFront={driverToView?.license_url}
@@ -433,6 +378,8 @@ export default function Staff() {
                     designation: driver.designation,
                     email: driver.email || "",
                     contact: driver.contact_number || "",
+                    isMechanic: driver.is_mechanic || false,
+                    licenseExpiration: driver.license_expiration || "",
                   });
 
                   setSelectedFile(null);
@@ -485,6 +432,8 @@ export default function Staff() {
                     designation: driver.designation,
                     email: driver.email || "",
                     contact: driver.contact_number || "",
+                    isMechanic: driver.is_mechanic || false,
+                    licenseExpiration: driver.license_expiration || "",
                   });
 
                   setSelectedFile(null);
@@ -559,21 +508,33 @@ export default function Staff() {
               </div>
             </div>
 
-            <OurInput
-              label="Designation"
-              name="designation"
-              register={register}
-              error={errors.designation}
-              list="designations"
-              options={[
-                "Transport Operations Services Chief",
-                "Sr. Auto Mechanic",
-                "Data Transport",
-                "Maintenance",
-                "Driver Mechanic A",
-                "Driver Mechanic B",
-              ]}
-            />
+            <div className="flex items-end gap-2">
+              <OurInput
+                label="Designation"
+                name="designation"
+                register={register}
+                error={errors.designation}
+                list="designations"
+                options={[
+                  "Transport Operations Services Chief",
+                  "Sr. Auto Mechanic",
+                  "Data Transport",
+                  "Maintenance",
+                  "Driver Mechanic A",
+                  "Driver Mechanic B",
+                ]}
+              />
+              <fieldset className="fieldset bg-base-100 border-base-300 rounded-box w-50 border p-3">
+                <label className="label">
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-primary"
+                    {...register("isMechanic")}
+                  />
+                  Mechanic
+                </label>
+              </fieldset>
+            </div>
 
             <OurInput
               label="Email"
@@ -587,6 +548,14 @@ export default function Staff() {
               name="contact"
               register={register}
               error={errors.contact}
+            />
+
+            <OurInput
+              type="date"
+              label="License Expiration"
+              name="licenseExpiration"
+              register={register}
+              error={errors.licenseExpiration}
             />
 
             <div className="space-y-4">

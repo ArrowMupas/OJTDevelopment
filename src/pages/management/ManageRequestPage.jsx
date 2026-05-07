@@ -1,5 +1,6 @@
 import { format, parse } from "date-fns";
 import { supabase } from "../../supabaseClient";
+import useDriverStore from "../../stores/driverStore";
 import {
   Clipboard,
   ClipboardCheck,
@@ -19,11 +20,12 @@ import clsx from "clsx";
 import VehicleRequestsTable from "../../components/VehicleRequestsTable";
 
 export default function ManageRequestsPage() {
-  const [drivers, setDrivers] = useState([]);
+  const { getDrivers, fetchDrivers } = useDriverStore();
   const [vehicles, setVehicles] = useState([]);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const drivers = useMemo(() => getDrivers("service_drivers"), [getDrivers]);
 
   async function fetchRequests(searchTerm = "") {
     let query = supabase
@@ -67,46 +69,35 @@ export default function ManageRequestsPage() {
     async function fetchAllData() {
       setLoading(true);
 
-      const [
-        { data: driversData, error: driversError },
-        { data: vehiclesData, error: vehiclesError },
-        requestsData,
-      ] = await Promise.all([
-        supabase
-          .from("drivers")
-          .select("*")
-          .in("designation", [
-            "Driver Mechanic B",
-            "Driver Mechanic A",
-            "Sr. Auto Mechanic",
-          ])
-          .order("last_name", { ascending: true }),
-        supabase
-          .from("vehicles")
-          .select("*")
-          .neq("operational", false)
-          .order("name", { ascending: true }),
-        fetchRequests(),
-      ]);
+      if (drivers.length === 0) {
+        await fetchDrivers();
+      }
 
-      if (driversError) console.error("Drivers error:", driversError);
+      const { data: vehiclesData, error: vehiclesError } = await supabase
+        .from("vehicles")
+        .select("*")
+        .neq("operational", false)
+        .order("name", { ascending: true });
+
       if (vehiclesError) console.error("Vehicles error:", vehiclesError);
-
-      if (driversData) setDrivers(driversData);
       if (vehiclesData) setVehicles(vehiclesData);
-      if (requestsData) setRequests(requestsData);
+
+      const requestsData = await fetchRequests();
+      setRequests(requestsData);
 
       setLoading(false);
     }
 
     const handleFocus = async () => {
       console.log("Tab focused → refetching data");
-      await fetchRequests();
+      const requestsData = await fetchRequests();
+      setRequests(requestsData);
     };
     window.addEventListener("focus", handleFocus);
-
     fetchAllData();
-  }, []);
+
+    return () => window.removeEventListener("focus", handleFocus);
+  }, [drivers.length, fetchDrivers]);
 
   const debouncedSearch = useMemo(
     () =>
