@@ -33,7 +33,7 @@ export default function CompleteRequest() {
   const [exporting, setExporting] = useState(false);
 
   const PAGE_SIZE = 50;
-  const drivers = useMemo(() => getDrivers("service_drivers"), [getDrivers]);
+  const drivers = getDrivers("service");
 
   async function fetchRequests(
     searchTerm = "",
@@ -105,7 +105,7 @@ export default function CompleteRequest() {
     async function fetchAllData() {
       setLoading(true);
 
-      if (drivers.length === 0 && !driversLoading) {
+      if (drivers.length === 0) {
         await fetchDrivers(true);
       }
 

@@ -25,7 +25,7 @@ export default function ManageRequestsPage() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const drivers = useMemo(() => getDrivers("service_drivers"), [getDrivers]);
+  const drivers = getDrivers("service");
 
   async function fetchRequests(searchTerm = "") {
     let query = supabase

@@ -1,14 +1,6 @@
 import { create } from "zustand";
 import { supabase } from "../supabaseClient";
 
-const DESIGNATION_FILTERS = {
-  service_drivers: [
-    "Driver Mechanic B",
-    "Driver Mechanic A",
-    "Sr. Auto Mechanic",
-  ],
-};
-
 const useDriverStore = create((set, get) => ({
   drivers: [],
   loading: false,
@@ -24,30 +16,31 @@ const useDriverStore = create((set, get) => ({
         .order("last_name", { ascending: true });
 
       if (error) throw error;
-
       set({ drivers: data, loading: false });
     } catch (error) {
       set({ error: error.message, loading: false });
     }
   },
 
+  getDrivers: (filterKey = null) => {
+    const { drivers } = get();
+
+    if (filterKey === "service") {
+      return drivers.filter((driver) =>
+        [
+          "Driver Mechanic B",
+          "Driver Mechanic A",
+          "Sr. Auto Mechanic",
+        ].includes(driver.designation),
+      );
+    }
+
+    return drivers;
+  },
+
   refreshDrivers: async () => {
     await get().fetchDrivers();
   },
-
-  getDrivers: (filterKey = null) => {
-    const drivers = get().drivers;
-
-    if (!filterKey) return drivers;
-
-    const designationMap = DESIGNATION_FILTERS[filterKey];
-
-    if (!designationMap) return drivers;
-
-    return drivers.filter((d) => designationMap.includes(d.designation));
-  },
-
-  DESIGNATION_FILTERS,
 }));
 
 export default useDriverStore;

@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "../../supabaseClient";
+import useDriverStore from "../../stores/driverStore";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,7 +13,7 @@ import * as XLSX from "xlsx";
 
 export default function TripTicketPage() {
   const [tickets, setTickets] = useState([]);
-  const [drivers, setDrivers] = useState([]);
+  const { getDrivers, fetchDrivers } = useDriverStore();
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
@@ -29,6 +30,7 @@ export default function TripTicketPage() {
   const [exporting, setExporting] = useState(false);
 
   const PAGE_SIZE = 50;
+  const drivers = getDrivers("service");
 
   const {
     register,
@@ -38,25 +40,6 @@ export default function TripTicketPage() {
   } = useForm({
     resolver: zodResolver(tripTicketSchema),
   });
-
-  const fetchDrivers = async () => {
-    const { data, error } = await supabase
-      .from("drivers")
-      .select("*")
-      .in("designation", [
-        "Driver Mechanic B",
-        "Driver Mechanic A",
-        "Sr. Auto Mechanic",
-      ])
-      .order("last_name", { ascending: true });
-
-    if (error) {
-      toast.error("Failed to load drivers");
-      console.error(error);
-    } else {
-      setDrivers(data);
-    }
-  };
 
   const fetchTickets = async (
     searchTerm = "",
@@ -119,9 +102,14 @@ export default function TripTicketPage() {
   };
 
   useEffect(() => {
-    fetchDrivers();
     fetchTickets(search, filterDriver, filterFrom, filterTo, page);
   }, [page]);
+
+  useEffect(() => {
+    if (drivers.length === 0) {
+      fetchDrivers();
+    }
+  }, [drivers.length, fetchDrivers]);
 
   const debouncedSearch = useMemo(
     () =>

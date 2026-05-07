@@ -1,5 +1,6 @@
 import { File, FileArchive, FilterIcon, Search } from "lucide-react";
 import { supabase } from "../../supabaseClient";
+import useDriverStore from "../../stores/driverStore";
 import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import debounce from "lodash.debounce";
@@ -8,23 +9,10 @@ import * as XLSX from "xlsx";
 export default function SurveyPage() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [drivers, setDrivers] = useState([]);
+  const { getDrivers, fetchDrivers } = useDriverStore();
   const [selectedDriver, setSelectedDriver] = useState("");
 
-  async function fetchDrivers() {
-    const { data, error } = await supabase
-      .from("drivers")
-      .select("id, first_name, middle_initial, last_name")
-      .in("designation", [
-        "Driver Mechanic B",
-        "Driver Mechanic A",
-        "Sr. Auto Mechanic",
-      ])
-      .order("last_name", { ascending: true });
-
-    if (error) console.error(error);
-    else setDrivers(data);
-  }
+  const drivers = getDrivers("service");
 
   const [surveys, setSurveys] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -84,8 +72,13 @@ export default function SurveyPage() {
 
   useEffect(() => {
     fetchSurveys();
-    fetchDrivers();
   }, []);
+
+  useEffect(() => {
+    if (drivers.length === 0) {
+      fetchDrivers();
+    }
+  }, [drivers.length, fetchDrivers]);
 
   const debouncedSearch = useMemo(
     () =>
