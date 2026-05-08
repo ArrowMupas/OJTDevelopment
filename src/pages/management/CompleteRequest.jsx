@@ -1,6 +1,7 @@
 import { format, parse } from "date-fns";
 import { supabase } from "../../supabaseClient";
 import useDriverStore from "../../stores/driverStore";
+import { exportCompletedRequests } from "../../utils/exportCompletedRequests";
 import {
   ArrowLeft,
   CheckCircle,
@@ -16,6 +17,7 @@ import { Link } from "react-router-dom";
 import debounce from "lodash.debounce";
 import clsx from "clsx";
 import * as XLSX from "xlsx";
+import toast from "react-hot-toast";
 import VehicleRequestsTable from "../../components/VehicleRequestsTable";
 
 export default function CompleteRequest() {
@@ -104,10 +106,6 @@ export default function CompleteRequest() {
   useEffect(() => {
     async function fetchAllData() {
       setLoading(true);
-
-      if (drivers.length === 0) {
-        await fetchDrivers(true);
-      }
 
       const { data: vehiclesData, error: vehiclesError } = await supabase
         .from("vehicles")
@@ -284,182 +282,19 @@ export default function CompleteRequest() {
   async function handleExport() {
     setExporting(true);
 
-    try {
-      // Get all data with current filters (no pagination)
-      let query = supabase
-        .from("service_vehicle_requests")
-        .select("*")
-        .in("status", ["Completed", "Cancelled"])
-        .order("departure_date", { ascending: false })
-        .order("departure_time", { ascending: false });
+    await exportCompletedRequests({
+      supabase,
+      search,
+      filterDriver,
+      filterVehicle,
+      filterFrom,
+      filterTo,
+      drivers,
+      vehicles,
+      toast,
+    });
 
-      const searchColumns = [
-        "department",
-        "email",
-        "destination",
-        "purpose",
-        "items",
-        "passengers",
-        "other_instructions",
-        "passenger_contact_number",
-        "requested_by",
-      ];
-
-      if (search) {
-        let orQueryParts = searchColumns.map(
-          (field) => `${field}.ilike.%${search}%`,
-        );
-        query = query.or(orQueryParts.join(","));
-      }
-
-      if (filterDriver) {
-        query = query.eq("driver_id", parseInt(filterDriver));
-      }
-
-      if (filterVehicle) {
-        query = query.eq("vehicle_id", parseInt(filterVehicle));
-      }
-
-      if (filterFrom) {
-        query = query.gte("departure_date", filterFrom);
-      }
-      if (filterTo) {
-        query = query.lte("departure_date", filterTo);
-      }
-
-      const { data: allRequests, error } = await query;
-
-      if (error) {
-        console.error(error);
-        toast.error("Failed to export data");
-        return;
-      }
-
-      if (!allRequests || allRequests.length === 0) {
-        toast.error("No data to export");
-        return;
-      }
-
-      // Filter for completed and surveyed only for the main data
-      const completedRequests = allRequests.filter(
-        (r) => r.status === "Completed" && r.is_surveyed === true,
-      );
-
-      // Generate report title
-      let reportTitle = "Completed Vehicle Requests Report";
-
-      if (filterFrom && filterTo) {
-        const start = new Date(filterFrom);
-        const end = new Date(filterTo);
-        const sameDay = filterFrom === filterTo;
-
-        if (sameDay) {
-          reportTitle += ` for ${format(start, "MMMM d, yyyy")}`;
-        } else {
-          reportTitle += ` from ${format(start, "MMMM d")} to ${format(
-            end,
-            "MMMM d, yyyy",
-          )}`;
-        }
-      } else if (filterFrom) {
-        reportTitle += ` starting ${format(new Date(filterFrom), "MMMM d, yyyy")}`;
-      } else if (filterTo) {
-        reportTitle += ` up to ${format(new Date(filterTo), "MMMM d, yyyy")}`;
-      }
-
-      if (filterDriver) {
-        const selectedDriver = drivers.find(
-          (d) => d.id === parseInt(filterDriver),
-        );
-        if (selectedDriver) {
-          reportTitle += ` - Driver: ${selectedDriver.last_name}, ${selectedDriver.first_name}`;
-        }
-      }
-
-      if (filterVehicle) {
-        const selectedVehicle = vehicles.find(
-          (v) => v.id === parseInt(filterVehicle),
-        );
-        if (selectedVehicle) {
-          reportTitle += ` - Vehicle: ${selectedVehicle.name}`;
-        }
-      }
-
-      if (search) {
-        reportTitle += ` (Search: "${search}")`;
-      }
-
-      const sheetData = [
-        [reportTitle],
-        [],
-        [
-          "No.",
-          "REQUESTING PERSONNEL/OFFICE",
-          "DESTINATION",
-          "DATE REQUESTED",
-          "DATE OF DEPARTURE",
-          "DISPATCHED VEHICLE",
-          "DRIVER",
-          // "RATING",
-          "STATUS",
-        ],
-        ...completedRequests.map((r, index) => [
-          index + 1,
-          r.department ?? "-",
-          r.destination ?? "-",
-          r.timestamp ? format(new Date(r.timestamp), "MMMM d, yyyy") : "-",
-          r.departure_date
-            ? format(new Date(r.departure_date), "MMMM d, yyyy")
-            : "-",
-          vehicleMap.get(r.vehicle_id) ?? "Not Assigned",
-          r.driver_id
-            ? drivers.find((d) => d.id === r.driver_id)?.last_name +
-              ", " +
-              drivers.find((d) => d.id === r.driver_id)?.first_name
-            : "Not Assigned",
-          // r.rating ?? "-",
-          r.status ?? "-",
-        ]),
-      ];
-
-      // Add summary at the bottom
-      sheetData.push([], ["Report Summary"]);
-      sheetData.push(["Total Completed Requests:", completedRequests.length]);
-
-      sheetData.push([
-        "Generated On:",
-        format(new Date(), "MMMM d, yyyy hh:mm a"),
-      ]);
-
-      const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
-
-      worksheet["!cols"] = [
-        { wch: 8 }, // No.
-        { wch: 35 }, // Requesting Office
-        { wch: 35 }, // Destination
-        { wch: 20 }, // Date Requested
-        { wch: 20 }, // Departure Date
-        { wch: 25 }, // Vehicle
-        { wch: 35 }, // Driver
-        { wch: 10 }, // Rating
-        { wch: 15 }, // Status
-      ];
-
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Completed Requests");
-
-      const fileName = `completed_requests_${format(new Date(), "yyyyMMdd_HHmmss")}.xlsx`;
-      XLSX.writeFile(workbook, fileName);
-
-      toast.success(
-        `Exported ${completedRequests.length} requests successfully!`,
-      );
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to export data");
-    } finally {
-      setExporting(false);
-    }
+    setExporting(false);
   }
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);

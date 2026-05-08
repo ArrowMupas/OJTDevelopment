@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Search, Info, FilterIcon } from "lucide-react";
+import { ArrowLeft, Search, Info, FilterIcon, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import debounce from "lodash.debounce";
@@ -74,6 +74,25 @@ export default function HistoryPage() {
   useEffect(() => {
     return () => debouncedSearch.cancel();
   }, [debouncedSearch]);
+
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm("Delete this history entry?");
+    if (!confirmDelete) return;
+
+    const { error } = await supabase
+      .from("vehicle_pms_history")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error(error);
+      alert("Failed to delete history entry");
+      return;
+    }
+
+    // remove from UI
+    setHistory((prev) => prev.filter((h) => h.id !== id));
+  };
 
   const formatValue = (value) => {
     if (value === null || value === undefined) return "-";
@@ -163,6 +182,7 @@ export default function HistoryPage() {
               <th>Activity</th>
               <th>Previous Data</th>
               <th>New Data</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -219,6 +239,15 @@ export default function HistoryPage() {
                             <p>{formatValue(value)}</p>
                           </div>
                         ))}
+                    </td>
+
+                    <td>
+                      <button
+                        onClick={() => handleDelete(h.id)}
+                        className="btn btn-error btn-sm text-white"
+                      >
+                        <Trash2 className="size-4" />
+                      </button>
                     </td>
                   </tr>
                 );

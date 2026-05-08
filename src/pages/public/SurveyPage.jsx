@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
+import useDriverStore from "../../stores/driverStore";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,32 +9,21 @@ import { useNavigate } from "react-router-dom";
 import { surveySchema } from "../../schemas/surveySchema";
 
 export default function SurveyPage() {
-  const [drivers, setDrivers] = useState([]);
+  const { getDrivers, fetchDrivers } = useDriverStore();
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const drivers = getDrivers("service");
 
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
-
-      const { data: driverData, error: driverError } = await supabase
-        .from("drivers")
-        .select("*")
-        .in("designation", [
-          "Driver Mechanic B",
-          "Driver Mechanic A",
-          "Sr. Auto Mechanic",
-        ])
-        .order("last_name", { ascending: true });
 
       const { data: vehicleData, error: vehicleError } = await supabase
         .from("vehicles")
         .select("*")
         .neq("operational", false)
         .order("name", { ascending: true });
-
-      if (driverError) console.error(driverError);
-      else setDrivers(driverData);
 
       if (vehicleError) console.error(vehicleError);
       else setVehicles(vehicleData);
@@ -43,6 +33,12 @@ export default function SurveyPage() {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (drivers.length === 0) {
+      fetchDrivers();
+    }
+  }, [drivers.length, fetchDrivers]);
 
   const navigate = useNavigate();
 

@@ -6,7 +6,7 @@ export const entryLogSchema = z.object({
   guardId: z.coerce.number().min(1, "Guard is required"),
 
   vehicleId: z.coerce.number().optional(),
-  driverId: z.coerce.number().optional(),
+  driverId: z.string().optional(),
   privateVehicleId: z.coerce.number().optional(),
   privateStaffId: z.coerce.number().optional(),
 
