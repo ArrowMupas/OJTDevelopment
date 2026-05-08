@@ -195,17 +195,34 @@ export default function EntryExitPage() {
       (v) => v.plate_number === entry.plate_number,
     );
 
-    const matchedDriver = drivers.find(
+    let matchedDriver = null;
+    let matchedDriverType = "";
+
+    matchedDriver = drivers.find(
       (d) =>
         `${d.first_name} ${d.last_name}`.trim() ===
         (entry.driver_name || "").trim(),
     );
 
+    if (matchedDriver) {
+      matchedDriverType = "driver";
+    } else {
+      matchedDriver = privateStaff.find(
+        (s) =>
+          `${s.first_name} ${s.last_name}`.trim() ===
+          (entry.driver_name || "").trim(),
+      );
+
+      if (matchedDriver) {
+        matchedDriverType = "staff";
+      }
+    }
+
     setSelectedEntry(entry);
 
     setEditForm({
       vehicleId: matchedVehicle?.id || "",
-      driverId: matchedDriver?.id || "",
+      driverId: matchedDriver ? `${matchedDriverType}-${matchedDriver.id}` : "",
       plate_number: entry.plate_number || "",
       vehicle_name: entry.vehicle_name || "",
       driver_name: entry.driver_name || "",
@@ -225,9 +242,15 @@ export default function EntryExitPage() {
       (v) => String(v.id) === String(editForm.vehicleId),
     );
 
-    const selectedDriver = drivers.find(
-      (d) => String(d.id) === String(editForm.driverId),
-    );
+    let selectedDriver = null;
+
+    if (editForm.driverId.startsWith("driver-")) {
+      const id = editForm.driverId.replace("driver-", "");
+      selectedDriver = drivers.find((d) => String(d.id) === String(id));
+    } else if (editForm.driverId.startsWith("staff-")) {
+      const id = editForm.driverId.replace("staff-", "");
+      selectedDriver = privateStaff.find((s) => String(s.id) === String(id));
+    }
 
     if (!selectedVehicle || !selectedDriver) {
       toast.error("Please select valid vehicle and driver");
@@ -569,20 +592,44 @@ export default function EntryExitPage() {
             <select
               className="select select-bordered w-full"
               value={editForm.driverId}
-              onChange={(e) =>
+              onChange={(e) => {
+                const value = e.target.value;
+
+                if (value === "add-new-driver") {
+                  setEditForm({
+                    ...editForm,
+                    driverId: "",
+                  });
+
+                  document.getElementById("private_staff_modal").showModal();
+                  return;
+                }
+
                 setEditForm({
                   ...editForm,
-                  driverId: e.target.value,
-                })
-              }
+                  driverId: value,
+                });
+              }}
             >
               <option value="">Select Driver</option>
 
               {drivers.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.first_name} {d.last_name}
+                <option key={`driver-${d.id}`} value={`driver-${d.id}`}>
+                  {d.last_name} {d.first_name}
                 </option>
               ))}
+
+              {privateStaff.length > 0 && (
+                <optgroup label="Private Staff">
+                  {privateStaff.map((s) => (
+                    <option key={`staff-${s.id}`} value={`staff-${s.id}`}>
+                      {s.last_name} {s.first_name}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+
+              <option value="add-new-driver">+ Add New Driver</option>
             </select>
 
             <select
