@@ -252,21 +252,6 @@ export default function Guards() {
               key={guard.id}
               className="card border-base-200 bg-base-100 border shadow"
             >
-              <figure className="p-3">
-                <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-green-100">
-                  {guard.image_url ? (
-                    <img
-                      src={guard.image_url}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-xl font-bold text-green-400">
-                      {guard.last_name?.[0]}
-                    </span>
-                  )}
-                </div>
-              </figure>
-
               <div className="card-body p-3">
                 <div className="flex items-center gap-2">
                   <div className="badge badge-soft badge-neutral font-bold italic">
