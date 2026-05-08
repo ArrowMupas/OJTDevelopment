@@ -90,7 +90,7 @@ export default function VehicleRequestsTable({
                     </td>
 
                     {/* PURPOSE */}
-                    <td className="">
+                    <td className="text-xs">
                       <div className="line-clamp-3 hover:line-clamp-none">
                         {req.purpose}
                       </div>

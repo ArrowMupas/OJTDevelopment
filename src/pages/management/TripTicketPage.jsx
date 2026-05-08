@@ -105,12 +105,6 @@ export default function TripTicketPage() {
     fetchTickets(search, filterDriver, filterFrom, filterTo, page);
   }, [page]);
 
-  useEffect(() => {
-    if (drivers.length === 0) {
-      fetchDrivers();
-    }
-  }, [drivers.length, fetchDrivers]);
-
   const debouncedSearch = useMemo(
     () =>
       debounce((value, driverId, start, end) => {

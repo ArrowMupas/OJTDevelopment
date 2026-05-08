@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { LucideFileClock, Pencil, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
+import useDriverStore from "../../stores/driverStore";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
@@ -11,10 +12,17 @@ import { entryLogSchema } from "../../schemas/entryLogSchema";
 
 export default function EntryExitPage() {
   const [vehicles, setVehicles] = useState([]);
-  const [drivers, setDrivers] = useState([]);
+  const { getDrivers, fetchDrivers } = useDriverStore();
   const [guards, setGuards] = useState([]);
   const [entryLog, setEntryLog] = useState([]);
+  const [privateStaff, setPrivateStaff] = useState([]);
+  const drivers = getDrivers("service");
+  const [staffForm, setStaffForm] = useState({
+    first_name: "",
+    last_name: "",
+  });
 
+  const [addingStaff, setAddingStaff] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
@@ -31,11 +39,12 @@ export default function EntryExitPage() {
   });
 
   const fetchEntryLogs = async () => {
-    const startOfToday = new Date();
-    startOfToday.setHours(0, 0, 0, 0);
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 1); // yesterday
+    startDate.setHours(0, 0, 0, 0);
 
-    const endOfToday = new Date();
-    endOfToday.setHours(23, 59, 59, 999);
+    const endDate = new Date();
+    endDate.setHours(23, 59, 59, 999);
 
     const { data, error } = await supabase
       .from("entry_log")
@@ -50,8 +59,8 @@ export default function EntryExitPage() {
       )
     `,
       )
-      .gte("time", startOfToday.toISOString())
-      .lte("time", endOfToday.toISOString())
+      .gte("time", startDate.toISOString())
+      .lte("time", endDate.toISOString())
       .order("time", { ascending: false });
 
     if (error) {
@@ -70,37 +79,38 @@ export default function EntryExitPage() {
 
       const [
         { data: vehiclesData },
-        { data: driversData },
         { data: guardsData },
+        { data: privateStaffData },
       ] = await Promise.all([
         supabase
           .from("vehicles")
           .select("id, name, plate_number")
           .order("name", { ascending: true }),
         supabase
-          .from("drivers")
-          .select("id, first_name, last_name")
-          .in("designation", [
-            "Driver Mechanic B",
-            "Driver Mechanic A",
-            "Sr. Auto Mechanic",
-          ])
-          .order("last_name", { ascending: true }),
-        supabase
           .from("guard")
           .select("id, first_name, last_name, role")
           .order("last_name"),
+        supabase
+          .from("private_staff")
+          .select("*")
+          .order("last_name", { ascending: true }),
       ]);
 
       setVehicles(vehiclesData || []);
-      setDrivers(driversData || []);
       setGuards(guardsData || []);
+      setPrivateStaff(privateStaffData || []);
 
       setLoading(false);
     };
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (drivers.length === 0) {
+      fetchDrivers();
+    }
+  }, [drivers.length, fetchDrivers]);
 
   const handleEntry = async (formData, logType) => {
     setIsSubmitting(true);
@@ -115,9 +125,17 @@ export default function EntryExitPage() {
         (v) => String(v.id) === String(formData.vehicleId),
       );
 
-      const selectedDriver = drivers.find(
-        (d) => String(d.id) === String(formData.driverId),
-      );
+      let selectedDriver = null;
+
+      if (formData.driverId.startsWith("driver-")) {
+        const id = formData.driverId.replace("driver-", "");
+
+        selectedDriver = drivers.find((d) => String(d.id) === String(id));
+      } else if (formData.driverId.startsWith("staff-")) {
+        const id = formData.driverId.replace("staff-", "");
+
+        selectedDriver = privateStaff.find((s) => String(s.id) === String(id));
+      }
 
       if (!selectedVehicle || !selectedDriver) {
         toast.error("Select valid vehicle and driver");
@@ -169,6 +187,7 @@ export default function EntryExitPage() {
     vehicle_name: "",
     driver_name: "",
     type: "",
+    time: "",
   });
 
   const openEditModal = (entry) => {
@@ -191,6 +210,9 @@ export default function EntryExitPage() {
       vehicle_name: entry.vehicle_name || "",
       driver_name: entry.driver_name || "",
       type: entry.type || "",
+      time: entry.time
+        ? format(new Date(entry.time), "yyyy-MM-dd'T'HH:mm")
+        : "",
     });
 
     document.getElementById("edit_modal").showModal();
@@ -218,6 +240,7 @@ export default function EntryExitPage() {
       plate_number: selectedVehicle.plate_number,
       vehicle_name: selectedVehicle.name,
       driver_name: `${selectedDriver.first_name} ${selectedDriver.last_name}`,
+      time: new Date(editForm.time).toISOString(),
     };
 
     const { error } = await supabase
@@ -258,6 +281,48 @@ export default function EntryExitPage() {
     toast.success("Entry deleted!");
     document.getElementById("delete_modal").close();
     await fetchEntryLogs();
+  };
+
+  const handleAddPrivateStaff = async () => {
+    if (!staffForm.first_name || !staffForm.last_name) {
+      toast.error("First name and last name are required");
+      return;
+    }
+
+    setAddingStaff(true);
+
+    const payload = {
+      first_name: staffForm.first_name,
+      last_name: staffForm.last_name,
+    };
+
+    const { data, error } = await supabase
+      .from("private_staff")
+      .insert([payload])
+      .select()
+      .single();
+
+    if (error) {
+      console.error(error);
+      toast.error("Failed to add staff");
+      setAddingStaff(false);
+      return;
+    }
+
+    setPrivateStaff((prev) =>
+      [...prev, data].sort((a, b) => a.last_name.localeCompare(b.last_name)),
+    );
+
+    toast.success("Private staff added!");
+
+    setStaffForm({
+      first_name: "",
+      last_name: "",
+    });
+
+    document.getElementById("private_staff_modal").close();
+
+    setAddingStaff(false);
   };
 
   const formatDate = (date) => {
@@ -332,18 +397,37 @@ export default function EntryExitPage() {
                 </option>
               ))}
             </select>
-
             <select
               className="select select-bordered w-full"
               {...register("driverId")}
+              onChange={(e) => {
+                if (e.target.value === "add-new-driver") {
+                  e.target.value = "";
+                  document.getElementById("private_staff_modal").showModal();
+                }
+              }}
             >
               <option value="">Select Driver</option>
 
+              {/* GOVERNMENT DRIVERS */}
               {drivers.map((d) => (
-                <option key={d.id} value={d.id}>
+                <option key={`driver-${d.id}`} value={`driver-${d.id}`}>
                   {d.last_name} {d.first_name}
                 </option>
               ))}
+
+              {/* PRIVATE STAFF */}
+              {privateStaff.length > 0 && (
+                <optgroup label="Private Staff">
+                  {privateStaff.map((s) => (
+                    <option key={`staff-${s.id}`} value={`staff-${s.id}`}>
+                      {s.last_name}, {s.first_name}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+
+              <option value="add-new-driver">+ Add New Driver</option>
             </select>
           </div>
 
@@ -514,6 +598,18 @@ export default function EntryExitPage() {
               <option value="time in">Time In</option>
               <option value="time out">Time Out</option>
             </select>
+
+            <input
+              type="datetime-local"
+              className="input input-bordered w-full"
+              value={editForm.time}
+              onChange={(e) =>
+                setEditForm({
+                  ...editForm,
+                  time: e.target.value,
+                })
+              }
+            />
           </div>
 
           <div className="modal-action">
@@ -527,6 +623,59 @@ export default function EntryExitPage() {
               className="btn btn-success text-white"
             >
               Save Changes
+            </button>
+          </div>
+        </div>
+      </dialog>
+
+      <dialog id="private_staff_modal" className="modal">
+        <div className="modal-box max-w-md">
+          <h3 className="text-lg font-bold">Add Private Staff</h3>
+
+          <p className="text-sm text-gray-500">
+            Add a private staff driver to the system.
+          </p>
+
+          <div className="mt-4 space-y-3">
+            <input
+              type="text"
+              placeholder="First Name"
+              className="input input-bordered w-full"
+              value={staffForm.first_name}
+              onChange={(e) =>
+                setStaffForm({
+                  ...staffForm,
+                  first_name: e.target.value,
+                })
+              }
+            />
+
+            <input
+              type="text"
+              placeholder="Last Name"
+              className="input input-bordered w-full"
+              value={staffForm.last_name}
+              onChange={(e) =>
+                setStaffForm({
+                  ...staffForm,
+                  last_name: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn">Cancel</button>
+            </form>
+
+            <button
+              type="button"
+              onClick={handleAddPrivateStaff}
+              disabled={addingStaff}
+              className="btn btn-success text-white"
+            >
+              {addingStaff ? "Saving..." : "Add Staff"}
             </button>
           </div>
         </div>

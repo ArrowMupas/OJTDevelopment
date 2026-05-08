@@ -17,6 +17,7 @@ import "tippy.js/themes/light.css";
 import { Link } from "react-router-dom";
 import debounce from "lodash.debounce";
 import clsx from "clsx";
+import toast from "react-hot-toast";
 import VehicleRequestsTable from "../../components/VehicleRequestsTable";
 
 export default function ManageRequestsPage() {
@@ -68,10 +69,6 @@ export default function ManageRequestsPage() {
   useEffect(() => {
     async function fetchAllData() {
       setLoading(true);
-
-      if (drivers.length === 0) {
-        await fetchDrivers();
-      }
 
       const { data: vehiclesData, error: vehiclesError } = await supabase
         .from("vehicles")
