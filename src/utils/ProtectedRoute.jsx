@@ -9,12 +9,16 @@ export default function ProtectedRoute({ children }) {
   const isDev = import.meta.env.DEV;
 
   useEffect(() => {
-    const handleSession = async (session) => {
+    const checkSession = async () => {
       if (isDev) {
         setAuthenticated(true);
         setLoading(false);
         return;
       }
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
       if (!session) {
         setAuthenticated(false);
@@ -22,43 +26,27 @@ export default function ProtectedRoute({ children }) {
         return;
       }
 
-      try {
-        const userEmail = session.user.email;
+      const { data, error } = await supabase
+        .from("users")
+        .select("email")
+        .eq("email", session.user.email)
+        .maybeSingle();
 
-        const { data, error } = await supabase
-          .from("users")
-          .select("email")
-          .eq("email", userEmail)
-          .single();
-
-        if (error || !data) {
-          await supabase.auth.signOut();
-          setAuthenticated(false);
-        } else {
-          setAuthenticated(true);
-        }
-      } catch (err) {
-        console.error("Auth check error:", err.message);
+      if (error || !data) {
         setAuthenticated(false);
+      } else {
+        setAuthenticated(true);
       }
 
       setLoading(false);
     };
 
-    const checkInitialSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      await handleSession(session);
-    };
-
-    checkInitialSession();
+    checkSession();
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      handleSession(session);
+      checkSession();
     });
 
     return () => subscription.unsubscribe();
