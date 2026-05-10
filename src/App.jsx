@@ -7,6 +7,7 @@ import ProtectedRoute from "./utils/ProtectedRoute";
 
 const MainLayout = lazy(() => import("./layouts/MainLayout"));
 import PublicLayout from "./layouts/PublicLayout";
+import RoleRouter from "./utils/RoleRouter";
 
 // Public
 import HomePage from "./pages/public/HomePage";
@@ -158,6 +159,7 @@ function App() {
             <Route path="/entry-exit-history" element={<EntryExitHistory />} />
           </Route>
 
+          <Route path="/auth/redirect" element={<RoleRouter />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
