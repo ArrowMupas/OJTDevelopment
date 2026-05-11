@@ -1,0 +1,67 @@
+create or replace function log_vehicle_changes()
+returns trigger as $$
+declare
+  col text;
+  changes jsonb := '{}';
+begin
+
+  for col in 
+    select column_name 
+    from information_schema.columns 
+    where table_name = 'vehicles'
+  loop
+
+    -- skip ignored fields
+    if col in (
+      'name',
+      'pms_date',
+      'odometer',
+      'odometer_future',
+      'type_battery',
+      'install_date_battery',
+      'type_tire',
+      'install_date_tire',
+      'pms_last_date',
+      'engine_number',
+      'chassis_number',
+      'file_number',
+      'year_model'
+    ) then
+      continue;
+    end if;
+
+    -- compare values directly using jsonb (keeps types)
+    if (to_jsonb(old) -> col) is distinct from (to_jsonb(new) -> col) then
+      changes := changes || jsonb_build_object(
+        col,
+        jsonb_build_object(
+          'old', to_jsonb(old) -> col,
+          'new', to_jsonb(new) -> col
+        )
+      );
+    end if;
+
+  end loop;
+
+  -- insert only if something changed
+  if changes <> '{}' then
+    insert into vehicle_update_history (
+      vehicle_id,
+      changes
+    )
+    values (
+      old.id,
+      changes
+    );
+  end if;
+
+  return new;
+end;
+$$ language plpgsql;
+
+drop trigger if exists vehicles_history_trigger on vehicles;
+
+create trigger vehicles_history_trigger
+after update on vehicles
+for each row
+execute function log_vehicle_changes();

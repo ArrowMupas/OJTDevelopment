@@ -37,13 +37,14 @@ export default function TrackingPage() {
       .from("maintenance_records")
       .select(
         `
-        *,
-        vehicles (
-          name,
-          plate_number
-        )
-      `,
+      *,
+      vehicles (
+        name,
+        plate_number
       )
+    `,
+      )
+      .is("completed_at", null)
       .order("created_at", { ascending: false });
 
     if (!error) {
@@ -85,108 +86,150 @@ export default function TrackingPage() {
             </select>
           </label>
 
-          {/* <button
+          <button
             className="btn btn-info text-white"
             onClick={() => navigate("/tracking-history")}
           >
             <FolderClock className="size-4" />
             Tracking History
-          </button> */}
+          </button>
         </div>
       </div>
 
       {/* LIST - Pure display with remarks */}
-      <div className="grid grid-cols-2 gap-2">
-        {repairs
-          .filter((repair) => viewType === "all" || repair.type === viewType)
-          .map((repair) => {
-            const steps = getSteps(repair.type);
+      <div className="grid grid-cols-1 gap-2 xl:grid-cols-2">
+        {repairs.filter(
+          (repair) => viewType === "all" || repair.type === viewType,
+        ).length === 0 ? (
+          <div className="col-span-full">
+            <div className="card bg-base-100 rounded-xl border border-dashed shadow-sm">
+              <div className="card-body items-center py-14 text-center">
+                <FolderClock className="size-14 text-gray-400" />
 
-            return (
-              <div
-                key={repair.id}
-                className="card bg-base-100 rounded-xl border shadow-sm"
-              >
-                <div className="card-body p-4 sm:p-5">
-                  {/* HEADER with vehicle info */}
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="flex items-center gap-2 truncate text-base font-semibold sm:text-lg">
-                        {repair.vehicles?.name}
-                      </h2>
-                      <div className="badge badge-primary badge-dash badge-sm truncate">
-                        {repair.vehicles?.plate_number}
+                <h2 className="text-lg font-semibold">
+                  No active repairs found
+                </h2>
+
+                <p className="max-w-sm text-sm text-gray-500">
+                  Ongoing maintenance and repair records will appear here.
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          repairs
+            .filter((repair) => viewType === "all" || repair.type === viewType)
+            .map((repair) => {
+              const steps = getSteps(repair.type);
+
+              return (
+                <div
+                  key={repair.id}
+                  className="card bg-base-100 rounded-xl border border-gray-300 shadow-sm hover:ring hover:ring-green-500"
+                >
+                  <div className="card-body p-4 sm:p-5">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h2 className="flex items-center gap-2 truncate text-base font-semibold sm:text-lg">
+                          {repair.vehicles?.name}
+                        </h2>
+
+                        <div className="badge badge-primary badge-dash badge-sm truncate">
+                          {repair.vehicles?.plate_number}
+                        </div>
+
+                        <div
+                          className={`badge badge-sm uppercase ${
+                            repair.type === "external"
+                              ? "badge-warning"
+                              : repair.type === "internal-mini"
+                                ? "badge-info"
+                                : "badge-primary"
+                          }`}
+                        >
+                          {repair.type === "internal-mini"
+                            ? "Mini Repair"
+                            : repair.type === "internal"
+                              ? "Internal"
+                              : "External"}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* REMARKS SECTION */}
-                  <div className="">
-                    <div className="text-xs text-gray-500">Remarks</div>
-                    <p className="text-xs">{repair?.remarks || "—"}</p>
-                  </div>
+                    {/* REMARKS SECTION */}
+                    <div>
+                      <div className="text-xs text-gray-500">Remarks</div>
 
-                  {/* TIMELINE */}
-                  <div className="mt-5 flex flex-col gap-2">
-                    <ul className="steps steps-vertical sm:steps-horizontal w-full overflow-x-clip">
-                      {steps.map((label, i) => {
-                        const active = i <= repair.step;
-                        return (
-                          <li
-                            key={i}
-                            className={`step text-xs font-bold ${
-                              active ? "step-success text-success" : ""
-                            }`}
-                          >
-                            {label}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
+                      <p className="text-xs">{repair?.remarks || "—"}</p>
+                    </div>
 
-                  {/* DETAILS SECTION */}
-                  <div className="text-base-content space-y-2 text-xs sm:text-sm">
-                    {repair.type !== "external" ? (
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
+                    {/* TIMELINE */}
+                    <div className="mt-5 flex flex-col gap-2">
+                      <ul className="steps steps-vertical sm:steps-horizontal w-full overflow-x-clip">
+                        {steps.map((label, i) => {
+                          const active = i <= repair.step;
+
+                          return (
+                            <li
+                              key={i}
+                              className={`step text-xs font-bold ${
+                                active ? "step-success text-success" : ""
+                              }`}
+                            >
+                              {label}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+
+                    {/* DETAILS SECTION */}
+                    <div className="text-base-content space-y-2 text-xs sm:text-sm">
+                      {repair.type !== "external" ? (
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <div className="min-w-0">
+                              <div className="truncate text-xs text-gray-500">
+                                Personnel 1
+                              </div>
+
+                              <div className="truncate text-xs font-bold sm:text-sm">
+                                {repair.assigned_personnel_1 || "—"}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <div className="min-w-0">
+                              <div className="truncate text-xs text-gray-500">
+                                Personnel 2
+                              </div>
+
+                              <div className="truncate text-xs font-bold sm:text-sm">
+                                {repair.assigned_personnel_2 || "—"}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-start gap-2">
                           <div className="min-w-0">
-                            <div className="truncate text-xs text-gray-500">
-                              Personnel 1
+                            <div className="text-xs text-gray-500">
+                              Service Shop
                             </div>
-                            <div className="truncate text-xs font-bold sm:text-sm">
-                              {repair.assigned_personnel_1 || "—"}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="min-w-0">
-                            <div className="truncate text-xs text-gray-500">
-                              Personnel 2
-                            </div>
-                            <div className="truncate text-xs font-bold sm:text-sm">
-                              {repair.assigned_personnel_2 || "—"}
+
+                            <div className="truncate text-sm font-medium">
+                              {repair.service_shop || "—"}
                             </div>
                           </div>
                         </div>
-                      </div>
-                    ) : (
-                      <div className="flex items-start gap-2">
-                        <div className="min-w-0">
-                          <div className="text-xs text-gray-500">
-                            Service Shop
-                          </div>
-                          <div className="truncate text-sm font-medium">
-                            {repair.service_shop || "—"}
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+        )}
       </div>
     </main>
   );

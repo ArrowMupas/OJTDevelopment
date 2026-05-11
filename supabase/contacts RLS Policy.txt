@@ -1,0 +1,22 @@
+create policy "public insert"
+on public.contacts
+for insert
+with check (true);
+
+
+create or replace function public.is_whitelisted()
+returns boolean
+language sql
+stable
+as $$
+  select exists (
+    select 1
+    from public.users
+    where email = auth.jwt() ->> 'email'
+  );
+$$;
+
+create policy "whitelist select"
+on public.your_table
+for select
+using (public.is_whitelisted());

@@ -230,9 +230,9 @@ export default function VehicleRequestsTable({
           </tbody>
 
           {/* FOOTER */}
-          <tfoot className="bg-green-400 font-medium">
+          <tfoot className="font-medium">
             <tr>
-              <td colSpan={colSpan} className="py-5 text-center text-white">
+              <td colSpan={colSpan} className="py-5 text-center">
                 Total Requests: {data.length}
               </td>
             </tr>

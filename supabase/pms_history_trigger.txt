@@ -1,0 +1,78 @@
+CREATE OR REPLACE FUNCTION public.log_vehicle_pms_changes()
+RETURNS trigger AS $$
+DECLARE
+    changed jsonb;
+    old_data jsonb;
+    change_type text;
+BEGIN
+    -- Check tire change
+    IF (old.type_tire IS DISTINCT FROM new.type_tire) 
+       OR (old.install_date_tire IS DISTINCT FROM new.install_date_tire) THEN
+
+        old_data := jsonb_build_object(
+            'type_tire', old.type_tire,
+            'install_date_tire', old.install_date_tire
+        );
+
+        changed := jsonb_build_object(
+            'type_tire', new.type_tire,
+            'install_date_tire', new.install_date_tire
+        );
+
+        change_type := 'tire';
+
+        INSERT INTO public.vehicle_pms_history(vehicle_id, change_type, old_value, new_value)
+        VALUES (new.id, change_type, old_data, changed);
+    END IF;
+
+    -- Check battery change
+    IF (old.type_battery IS DISTINCT FROM new.type_battery) 
+       OR (old.install_date_battery IS DISTINCT FROM new.install_date_battery)
+       OR (old.battery_description IS DISTINCT FROM new.battery_description) THEN
+
+        old_data := jsonb_build_object(
+            'type_battery', old.type_battery,
+            'install_date_battery', old.install_date_battery,
+            'battery_description', old.battery_description
+        );
+
+        changed := jsonb_build_object(
+            'type_battery', new.type_battery,
+            'install_date_battery', new.install_date_battery,
+            'battery_description', new.battery_description
+        );
+
+        change_type := 'battery';
+
+        INSERT INTO public.vehicle_pms_history(vehicle_id, change_type, old_value, new_value)
+        VALUES (new.id, change_type, old_data, changed);
+    END IF;
+
+    -- Check PMS change
+    IF (old.pms_date IS DISTINCT FROM new.pms_date)
+       OR (old.odometer_future IS DISTINCT FROM new.odometer_future) THEN
+
+        old_data := jsonb_build_object(
+            'pms_date', old.pms_date,
+            'odometer_future', old.odometer_future
+        );
+
+        changed := jsonb_build_object(
+            'pms_date', new.pms_date,
+            'odometer_future', new.odometer_future
+        );
+
+        change_type := 'pms';
+
+        INSERT INTO public.vehicle_pms_history(vehicle_id, change_type, old_value, new_value)
+        VALUES (new.id, change_type, old_data, changed);
+    END IF;
+
+    RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER vehicles_pms_history_trigger
+AFTER UPDATE ON public.vehicles
+FOR EACH ROW
+EXECUTE FUNCTION public.log_vehicle_pms_changes();
