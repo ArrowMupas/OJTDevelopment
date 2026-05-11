@@ -1,0 +1,18 @@
+CREATE OR REPLACE FUNCTION mark_request_surveyed()
+RETURNS trigger AS $$
+BEGIN
+    UPDATE service_vehicle_requests r
+    SET 
+        is_surveyed = TRUE,
+        rating = NEW.average_score
+    WHERE r.driver_id = NEW.driver_id
+      AND r.departure_date = NEW.travel_date;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_mark_surveyed
+AFTER INSERT ON passenger_survey
+FOR EACH ROW
+EXECUTE FUNCTION mark_request_surveyed();

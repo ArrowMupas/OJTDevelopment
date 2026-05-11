@@ -1,0 +1,29 @@
+create or replace function set_completed_at()
+returns trigger as $$
+declare
+  max_step int;
+begin
+  -- determine max step based on type
+  if new.type = 'internal-mini' then
+    max_step := 1;
+  else
+    max_step := 4;
+  end if;
+
+  -- if finished
+  if new.current_step >= max_step then
+    new.completed_at := now();
+  else
+    -- if not finished (or stepped back), clear it
+    new.completed_at := null;
+  end if;
+
+  return new;
+end;
+$$ language plpgsql;
+
+create trigger trigger_set_completed_at
+before update of current_step
+on maintenance_records
+for each row
+execute function set_completed_at();

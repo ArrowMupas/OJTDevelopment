@@ -167,20 +167,74 @@ export default function ManageRequestsPage() {
 
   return (
     <main className="h-full space-y-4 px-3 py-4 pb-25 sm:space-y-7 sm:px-5">
-      <div>
-        <h1 className="text-lg font-bold">Manage Request</h1>
-        <p className="text-sm text-gray-500">
-          View and manage all service requests here.
-        </p>
+      <div className="flex justify-between gap-2">
+        <div>
+          <h1 className="text-lg font-bold">Manage Request</h1>
+          <p className="text-sm text-gray-500">
+            View and manage all service requests here.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="input input-neutral">
+            <Search className="h-4 w-6" />
+            <input
+              type="search"
+              placeholder="Search vehicle requests"
+              value={search}
+              list="departments"
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearch(value);
+                debouncedSearch(value);
+              }}
+            />
+            <datalist id="departments">
+              <option value="TOSU"></option>
+              <option value="NETI"></option>
+              <option value="HRAD"></option>
+              <option value="LSO"></option>
+              <option value="CORSEC"></option>
+              <option value="NEA"></option>
+            </datalist>
+          </label>
+
+          <Link to={"/vehicle-requests/completed"}>
+            <button className="btn btn-success text-white">
+              <span className="hidden sm:inline">View </span>Completed
+              <ArrowRight className="size-4" />
+            </button>
+          </Link>
+        </div>
       </div>
 
       <div className="grid w-full grid-cols-2 gap-1 sm:gap-2 md:grid-cols-4">
         <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
+            <ClipboardClock className="text-error h-8 w-12" />
+          </div>
+          <div className="stat-title">Requests Today</div>
+          <div className="stat-value text-error">
+            {
+              requests.filter((r) => {
+                if (!r.departure_date) return false;
+
+                const today = new Date().toISOString().split("T")[0];
+
+                return r.departure_date === today;
+              }).length
+            }
+          </div>
+        </div>
+
+        <div className="stat bg-base-100 rounded-md shadow">
+          <div className="stat-figure">
             <Clipboard className="text-secondary h-8 w-12" />
           </div>
           <div className="stat-title">Pending Requests</div>
-          <div className="stat-value text-secondary">21</div>
+          <div className="stat-value text-secondary">
+            {requests.filter((r) => r.status === "Pending").length}
+          </div>
         </div>
 
         <div className="stat bg-base-100 rounded-md shadow">
@@ -190,54 +244,18 @@ export default function ManageRequestsPage() {
           <div className="stat-title">
             On Going <span className="hidden sm:inline">Requests</span>
           </div>
-          <div className="stat-value text-warning">4</div>
+          <div className="stat-value text-warning">
+            {requests.filter((r) => r.status === "On_Going").length}
+          </div>
         </div>
 
         <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
             <ClipboardClock className="text-success h-8 w-12" />
           </div>
-          <div className="stat-title">Completed Requests</div>
-          <div className="stat-value text-success">19</div>
+          <div className="stat-title">Active Requests</div>
+          <div className="stat-value text-success">{requests.length}</div>
         </div>
-
-        <div className="stat bg-base-100 rounded-md shadow">
-          <div className="stat-figure">
-            <ClipboardClock className="text-error h-8 w-12" />
-          </div>
-          <div className="stat-title">Cancelled Requests</div>
-          <div className="stat-value text-error">19</div>
-        </div>
-      </div>
-
-      <div className="flex justify-between">
-        <label className="input input-neutral">
-          <Search className="h-4 w-6" />
-          <input
-            type="search"
-            placeholder="Search vehicle requests"
-            value={search}
-            list="departments"
-            onChange={(e) => {
-              const value = e.target.value;
-              setSearch(value);
-              debouncedSearch(value);
-            }}
-          />
-          <datalist id="departments">
-            <option value="TOSU"></option>
-            <option value="DOH"></option>
-            <option value="HRAD"></option>
-            <option value="ACCOUNTING"></option>
-            <option value="NEA"></option>
-          </datalist>
-        </label>
-        <Link to={"/vehicle-requests/completed"}>
-          <button className="btn btn-success text-white">
-            <span className="hidden sm:inline">View </span>Completed
-            <ArrowRight className="size-4" />
-          </button>
-        </Link>
       </div>
 
       <VehicleRequestsTable

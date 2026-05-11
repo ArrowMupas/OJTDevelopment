@@ -42,56 +42,28 @@ export default function InquiryPage() {
 
   return (
     <main className="h-full w-full space-y-7 px-5 py-4 pb-25">
-      <div>
-        <h1 className="text-lg font-bold">Inquiry</h1>
-        <p className="text-sm text-gray-500">
-          All inquiries can be viewed here.
-        </p>
-      </div>
-
-      <div className="space-x-2">
-        <label className="input input-neutral">
-          <Search className="h-4 w-6" />
-          <input
-            type="search"
-            placeholder="Search"
-            value={search}
-            onChange={(e) => {
-              const value = e.target.value;
-              setSearch(value);
-              debouncedSearch(value);
-            }}
-          />
-        </label>
-
-        {/* <div className="dropdown">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn bg-green-600 text-white"
-          >
-            <FilterIcon className="h-4 w-6" />
-            Filter
-          </div>
-
-          <ul
-            tabIndex={-1}
-            className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
-          >
-            <li>
-              <a>Ascending</a>
-            </li>
-            <li>
-              <a>Descending</a>
-            </li>
-            <li>
-              <a>Date</a>
-            </li>
-            <li>
-              <a>Time</a>
-            </li>
-          </ul>
-        </div> */}
+      <div className="ites flex justify-between">
+        <div>
+          <h1 className="text-lg font-bold">Inquiry</h1>
+          <p className="text-sm text-gray-500">
+            All inquiries can be viewed here.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <label className="input input-neutral">
+            <Search className="h-4 w-6" />
+            <input
+              type="search"
+              placeholder="Search"
+              value={search}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearch(value);
+                debouncedSearch(value);
+              }}
+            />
+          </label>
+        </div>
       </div>
 
       <div className="border-0 bg-white">

@@ -1,14 +1,4 @@
-import {
-  ArrowLeft,
-  Car,
-  Store,
-  Tag,
-  User,
-  Users,
-  ClockCheck,
-  SearchIcon,
-  Search,
-} from "lucide-react";
+import { ArrowLeft, ClockCheck, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
@@ -38,18 +28,19 @@ export default function TrackingHistory() {
   const [filterType, setFilterType] = useState("all");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   const getSteps = (type) => {
     if (type === "internal-mini") return miniSteps;
     if (type === "external") return externalSteps;
+
     return internalSteps;
   };
 
   async function fetchRecords() {
     setLoading(true);
 
-    // FIX: Query completed records directly from Supabase
     const { data, error } = await supabase
       .from("maintenance_records")
       .select(
@@ -65,12 +56,10 @@ export default function TrackingHistory() {
       .order("completed_at", { ascending: false });
 
     if (error) {
-      console.error("Error fetching records:", error);
+      console.error(error);
       setLoading(false);
       return;
     }
-
-    console.log("Fetched completed records:", data); // Debug log
 
     const normalized = (data || []).map((item) => ({
       ...item,
@@ -79,6 +68,7 @@ export default function TrackingHistory() {
 
     setRepairs(normalized);
     setFiltered(normalized);
+
     setLoading(false);
   }
 
@@ -112,7 +102,7 @@ export default function TrackingHistory() {
   return (
     <main className="min-h-screen space-y-7 px-3 py-4 pb-25 sm:px-5">
       {/* HEADER */}
-      <div className="flex justify-between">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex gap-2">
           <button
             onClick={() => navigate(-1)}
@@ -120,146 +110,198 @@ export default function TrackingHistory() {
           >
             <ArrowLeft size={20} />
           </button>
+
           <div>
             <h1 className="text-lg font-bold">Repair History</h1>
+
             <p className="text-sm text-gray-500">
-              View your vehicle&apos;s repair history
+              View completed repair records
             </p>
           </div>
         </div>
-        <div className="flex flex-col gap-2 sm:w-full sm:flex-row sm:items-center sm:justify-end">
-          <label className="input input-neutral">
-            <Search className="h-4 w-6" />
+
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <label className="input input-bordered min-w-full sm:min-w-80">
+            <Search className="size-4 opacity-60" />
+
             <input
               type="search"
-              placeholder="Search vehicle, plate, shop..."
+              placeholder="Search vehicle, plate, personnel..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </label>
 
-          <select
-            className="select select-neutral w-full sm:w-auto"
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value)}
-          >
-            <option value="all">All Types</option>
-            <option value="internal">Internal</option>
-            <option value="external">External</option>
-            <option value="internal-mini">Mini Repair</option>
-          </select>
+          <label className="select min-w-full sm:min-w-60">
+            <span className="label">Type</span>
+
+            <select
+              className="select select-neutral"
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+            >
+              <option value="all">All</option>
+              <option value="internal">Internal</option>
+              <option value="external">External</option>
+              <option value="internal-mini">Internal (Mini Repair)</option>
+            </select>
+          </label>
         </div>
       </div>
 
       {/* LIST */}
-      <div className="space-y-3 sm:space-y-4">
-        {loading && (
-          <div className="rounded-2xl bg-white p-12 text-center shadow-md">
-            <div className="loading loading-spinner loading-lg text-green-600"></div>
-            <p className="mt-3 text-gray-500">Loading records...</p>
+      {loading ? (
+        <div className="flex justify-center py-16">
+          <span className="loading loading-spinner loading-lg"></span>
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="card bg-base-100 border shadow-sm">
+          <div className="card-body items-center py-12 text-center">
+            <ClockCheck className="size-14 text-gray-400" />
+
+            <h2 className="text-lg font-semibold">
+              No completed repairs found
+            </h2>
+
+            <p className="text-sm text-gray-500">
+              Completed maintenance records will appear here
+            </p>
           </div>
-        )}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
+          {filtered.length === 0 ? (
+            <div className="col-span-full">
+              <div className="card bg-base-100 rounded-xl border border-dashed shadow-sm">
+                <div className="card-body items-center py-14 text-center">
+                  <ClockCheck className="size-14 text-gray-400" />
 
-        {!loading && filtered.length === 0 && (
-          <div className="rounded-2xl bg-white p-12 text-center text-gray-500 shadow-md">
-            <ClockCheck className="mx-auto mb-3 size-12 opacity-50" />
-            <p className="text-lg font-medium">No completed records found</p>
-            <p className="text-sm">Completed repairs will appear here</p>
-          </div>
-        )}
+                  <h2 className="text-lg font-semibold">
+                    No completed repairs found
+                  </h2>
 
-        {!loading &&
-          filtered.map((repair) => {
-            const steps = getSteps(repair.type);
-
-            return (
-              <div
-                key={repair.id}
-                className="overflow-hidden rounded-2xl bg-white p-4 shadow-md sm:p-6"
-              >
-                {/* HEADER */}
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-                    <h2 className="flex min-w-0 items-center gap-2 text-xs font-bold sm:text-sm">
-                      <Car size={16} className="shrink-0" />
-                      <span className="truncate">{repair.vehicles?.name}</span>
-                    </h2>
-
-                    <div className="badge badge-primary badge-sm sm:badge-md badge-dash truncate">
-                      {repair.vehicles?.plate_number}
-                    </div>
-
-                    <div className="badge badge-outline badge-sm uppercase">
-                      <Tag size={12} className="shrink-0" />
-                      <span className="truncate">
-                        {repair.type === "internal-mini"
-                          ? "Mini Repair"
-                          : repair.type}
-                      </span>
-                    </div>
-
-                    <div className="badge badge-success badge-sm">
-                      Completed
-                    </div>
-                  </div>
-
-                  {repair.completed_at && (
-                    <p className="text-xs text-gray-500 sm:text-sm">
-                      {format(
-                        new Date(repair.completed_at),
-                        "MMM dd, yyyy • hh:mm a",
-                      )}
-                    </p>
-                  )}
-                </div>
-
-                {/* DETAILS */}
-                <div className="mt-4 grid gap-2 text-xs text-gray-500 sm:grid-cols-2 sm:text-sm">
-                  {repair.type !== "external" ? (
-                    <>
-                      <div className="flex items-start gap-2">
-                        <User size={14} className="mt-0.5 shrink-0" />
-                        <span className="truncate">
-                          <span className="font-medium">Personnel 1:</span>{" "}
-                          {repair.assigned_personnel_1 || "—"}
-                        </span>
-                      </div>
-
-                      <div className="flex items-start gap-2">
-                        <Users size={14} className="mt-0.5 shrink-0" />
-                        <span className="truncate">
-                          <span className="font-medium">Personnel 2:</span>{" "}
-                          {repair.assigned_personnel_2 || "—"}
-                        </span>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="flex min-w-0 items-start gap-2 sm:col-span-2">
-                      <Store size={14} className="mt-0.5 shrink-0" />
-                      <span className="truncate">
-                        <span className="font-medium">Service Shop:</span>{" "}
-                        {repair.service_shop || "—"}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* TIMELINE - All steps completed */}
-                <div className="mt-5 overflow-x-auto">
-                  <ul className="steps">
-                    {steps.map((label, i) => {
-                      return (
-                        <li key={i} className="step step-success">
-                          <div className="text-xs sm:text-sm">{label}</div>
-                        </li>
-                      );
-                    })}
-                  </ul>
+                  <p className="max-w-sm text-sm text-gray-500">
+                    Completed maintenance records will appear here.
+                  </p>
                 </div>
               </div>
-            );
-          })}
-      </div>
+            </div>
+          ) : (
+            filtered.map((repair) => {
+              const steps = getSteps(repair.type);
+
+              return (
+                <div
+                  key={repair.id}
+                  className="card bg-base-100 rounded-xl border border-gray-300 shadow-sm hover:ring hover:ring-green-500"
+                >
+                  <div className="card-body p-4 sm:p-5">
+                    {/* HEADER */}
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h2 className="truncate text-base font-semibold sm:text-lg">
+                          {repair.vehicles?.name}
+                        </h2>
+
+                        <div className="badge badge-primary badge-dash badge-sm truncate">
+                          {repair.vehicles?.plate_number}
+                        </div>
+
+                        <div
+                          className={`badge badge-sm uppercase ${
+                            repair.type === "external"
+                              ? "badge-warning"
+                              : repair.type === "internal-mini"
+                                ? "badge-info"
+                                : "badge-primary"
+                          }`}
+                        >
+                          {repair.type === "internal-mini"
+                            ? "Mini Repair"
+                            : repair.type === "internal"
+                              ? "Internal"
+                              : "External"}
+                        </div>
+
+                        <div className="badge badge-success badge-sm">
+                          Completed
+                        </div>
+                      </div>
+
+                      {repair.completed_at && (
+                        <div className="text-xs text-gray-500">
+                          {format(
+                            new Date(repair.completed_at),
+                            "MMM dd, yyyy • hh:mm a",
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* REMARKS */}
+                    <div>
+                      <div className="text-xs text-gray-500">Remarks</div>
+
+                      <p className="text-xs">{repair?.remarks || "—"}</p>
+                    </div>
+
+                    {/* TIMELINE */}
+                    <div className="mt-5">
+                      <ul className="steps steps-vertical sm:steps-horizontal w-full overflow-x-clip">
+                        {steps.map((label, i) => (
+                          <li
+                            key={i}
+                            className="step step-success text-success text-xs font-bold"
+                          >
+                            {label}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* DETAILS */}
+                    <div className="text-base-content space-y-2 text-xs sm:text-sm">
+                      {repair.type !== "external" ? (
+                        <div className="space-y-2">
+                          <div>
+                            <div className="truncate text-xs text-gray-500">
+                              Personnel 1
+                            </div>
+
+                            <div className="truncate text-xs font-bold sm:text-sm">
+                              {repair.assigned_personnel_1 || "—"}
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="truncate text-xs text-gray-500">
+                              Personnel 2
+                            </div>
+
+                            <div className="truncate text-xs font-bold sm:text-sm">
+                              {repair.assigned_personnel_2 || "—"}
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div>
+                          <div className="text-xs text-gray-500">
+                            Service Shop
+                          </div>
+
+                          <div className="truncate text-sm font-medium">
+                            {repair.service_shop || "—"}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      )}
     </main>
   );
 }

@@ -1,0 +1,11 @@
+create policy "Allow whitelisted emails to read contacts"
+on public.contacts
+for select
+to authenticated
+using (
+  exists (
+    select 1
+    from public.users u
+    where u.email = auth.jwt() ->> 'email'
+  )
+);

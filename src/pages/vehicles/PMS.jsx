@@ -298,7 +298,9 @@ export default function PMS() {
                   </div>
 
                   <div className="">
-                    <p className="text-xs text-gray-500">Next Odometer</p>
+                    <p className="text-xs text-gray-500">
+                      Next Odometer Schedule
+                    </p>
                     <p className="font-semibold">
                       {v.odometer_future
                         ? `${v.odometer_future.toLocaleString()} km`

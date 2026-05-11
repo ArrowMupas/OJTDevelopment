@@ -30,7 +30,7 @@ export default function Navbar() {
   return (
     <header className="w-full max-w-screen bg-green-700 px-4 py-4 text-white sm:px-8">
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center">
+        <div className="flex items-center sm:gap-2">
           <div
             className="flex aspect-square w-8 cursor-pointer items-center justify-center rounded-full bg-white p-1 sm:w-12"
             onClick={() => (window.location.href = "/")}

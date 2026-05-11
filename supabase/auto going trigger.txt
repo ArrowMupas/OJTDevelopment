@@ -1,0 +1,23 @@
+create or replace function auto_set_status()
+returns trigger as $$
+begin
+  -- ❗ Do NOT override final states
+  if new.status in ('Completed', 'Cancelled') then
+    return new;
+  end if;
+
+  -- 🔁 auto logic for active states
+  if new.driver_id is not null and new.vehicle_id is not null then
+    new.status := 'On_Going';
+  else
+    new.status := 'Pending';
+  end if;
+
+  return new;
+end;
+$$ language plpgsql;
+
+create trigger trg_auto_status
+before update on service_vehicle_requests
+for each row
+execute function auto_set_status();

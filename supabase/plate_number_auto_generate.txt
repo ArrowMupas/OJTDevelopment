@@ -1,0 +1,14 @@
+ALTER TABLE vehicles
+ADD COLUMN last_digit INTEGER
+GENERATED ALWAYS AS (
+  CASE
+    WHEN plate_number ~ '\d'
+    THEN
+      CASE
+        WHEN RIGHT(REGEXP_REPLACE(plate_number, '.*(\d).*', '\1'), 1)::INTEGER = 0
+        THEN 10
+        ELSE RIGHT(REGEXP_REPLACE(plate_number, '.*(\d).*', '\1'), 1)::INTEGER
+      END
+    ELSE NULL
+  END
+) STORED;

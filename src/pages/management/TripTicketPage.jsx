@@ -8,8 +8,9 @@ import debounce from "lodash.debounce";
 import { format } from "date-fns";
 import OurInput from "../../components/OurInput";
 import { tripTicketSchema } from "../../schemas/tripTicketSchema";
-import { Pencil, Trash2, Search, FileArchive } from "lucide-react";
+import { Pencil, Trash2, Search, FileArchive, Star } from "lucide-react";
 import * as XLSX from "xlsx";
+import { exportTripTickets } from "../../utils/exportTripTickets";
 
 export default function TripTicketPage() {
   const [tickets, setTickets] = useState([]);
@@ -220,157 +221,28 @@ export default function TripTicketPage() {
     fetchTickets("", "", "", "", 1);
   };
 
-  const handleExport = async () => {
-    setExporting(true);
-
-    try {
-      let query = supabase
-        .from("trip_tickets")
-        .select(
-          `
-          *,
-          drivers (
-            id,
-            first_name,
-            last_name,
-            middle_initial
-          )
-        `,
-        )
-        .order("date_received", { ascending: false });
-
-      // Apply current filters to export
-      if (search) {
-        query = query.ilike("dtt_no", `%${search}%`);
-      }
-
-      if (filterDriver) {
-        query = query.eq("driver_id", parseInt(filterDriver));
-      }
-
-      if (filterFrom) {
-        query = query.gte("date_received", filterFrom);
-      }
-      if (filterTo) {
-        query = query.lte("date_received", filterTo);
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error(error);
-        toast.error("Failed to export data");
-        return;
-      }
-
-      const exportData = data || [];
-
-      if (exportData.length === 0) {
-        toast.error("No data to export");
-        return;
-      }
-
-      // Generate report title
-      let reportTitle = "Trip Tickets Report";
-
-      if (filterFrom && filterTo) {
-        const start = new Date(filterFrom);
-        const end = new Date(filterTo);
-        const sameDay = filterFrom === filterTo;
-
-        if (sameDay) {
-          reportTitle += ` for ${format(start, "MMMM d, yyyy")}`;
-        } else {
-          reportTitle += ` from ${format(start, "MMMM d")} to ${format(
-            end,
-            "MMMM d, yyyy",
-          )}`;
-        }
-      } else if (filterFrom) {
-        reportTitle += ` starting ${format(new Date(filterFrom), "MMMM d, yyyy")}`;
-      } else if (filterTo) {
-        reportTitle += ` up to ${format(new Date(filterTo), "MMMM d, yyyy")}`;
-      }
-
-      if (filterDriver) {
-        const selectedDriver = drivers.find(
-          (d) => d.id === parseInt(filterDriver),
-        );
-        if (selectedDriver) {
-          reportTitle += ` - Driver: ${selectedDriver.last_name}, ${selectedDriver.first_name}`;
-        }
-      }
-
-      if (search) {
-        reportTitle += ` (Search: "${search}")`;
-      }
-
-      // Prepare data for Excel
-      const sheetData = [
-        [reportTitle],
-        [],
-        [
-          "DTT No.",
-          "Driver",
-          "Date Received",
-          "Time Received",
-          "Rating",
-          "Date Created",
-        ],
-        ...exportData.map((ticket) => [
-          ticket.dtt_no,
-          ticket.drivers
-            ? `${ticket.drivers.last_name}, ${ticket.drivers.first_name} ${ticket.drivers.middle_initial || ""}`
-            : "Unknown Driver",
-          ticket.date_received
-            ? format(new Date(ticket.date_received), "MMMM d, yyyy")
-            : "-",
-          ticket.time_received || "-",
-          ticket.rating
-            ? `${ticket.rating} Star${ticket.rating > 1 ? "s" : ""}`
-            : "-",
-          ticket.created_at
-            ? format(new Date(ticket.created_at), "MMMM d, yyyy hh:mm a")
-            : "-",
-        ]),
-      ];
-
-      sheetData.push([], ["Report Summary"]);
-      sheetData.push(["Total Tickets:", exportData.length]);
-      sheetData.push([
-        "Generated On:",
-        format(new Date(), "MMMM d, yyyy hh:mm a"),
-      ]);
-
-      const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
-
-      // Set column widths
-      worksheet["!cols"] = [
-        { wch: 20 }, // DTT No.
-        { wch: 35 }, // Driver
-        { wch: 20 }, // Date Received
-        { wch: 15 }, // Time Received
-        { wch: 15 }, // Rating
-        { wch: 25 }, // Date Created
-      ];
-
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Trip Tickets");
-
-      // Generate filename with timestamp
-      const fileName = `trip_tickets_${format(new Date(), "yyyyMMdd_HHmmss")}.xlsx`;
-      XLSX.writeFile(workbook, fileName);
-
-      toast.success(`Exported ${exportData.length} tickets successfully!`);
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to export data");
-    } finally {
-      setExporting(false);
-    }
+  const handleExport = () => {
+    exportTripTickets({
+      search,
+      filterDriver,
+      filterFrom,
+      filterTo,
+      drivers,
+      setExporting,
+      toast,
+    });
   };
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+
+  const averageRating =
+    tickets.length > 0
+      ? (
+          tickets.reduce((sum, ticket) => {
+            return sum + Number(ticket.rating || 0);
+          }, 0) / tickets.length
+        ).toFixed(2)
+      : "0.00";
 
   return (
     <main className="min-h-screen space-y-4 px-3 py-4 pb-25 sm:px-5">
@@ -392,7 +264,7 @@ export default function TripTicketPage() {
 
       <div className="flex w-full flex-col gap-2 md:flex-row">
         {/* FORM */}
-        <div className="card bg-base-100 h-full w-full border border-gray-200 p-6 shadow-xl md:w-2/7">
+        <div className="card bg-base-100 h-full w-full border border-gray-200 p-6 shadow-sm md:w-2/7">
           <h2 className="text-lg font-semibold">
             {editingTicket ? "Edit Trip Ticket" : "Receive Trip Ticket"}
           </h2>
@@ -451,28 +323,28 @@ export default function TripTicketPage() {
               error={errors.timeReceived}
             />
 
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Rating</span>
-              </label>
-              <div className="rating rating-lg">
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <input
-                    key={n}
-                    type="radio"
-                    value={n}
-                    className="mask mask-star-2 bg-green-500"
-                    {...register("rating", {
-                      required: "Please select a rating",
-                    })}
-                  />
-                ))}
-              </div>
-              {errors.rating && (
-                <span className="text-error mt-1 text-xs">
-                  {errors.rating.message}
-                </span>
-              )}
+            <div className="flex items-center gap-2">
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend text-sm">Rating</legend>
+                <div className="rating rating-lg">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <input
+                      key={n}
+                      type="radio"
+                      value={n}
+                      className="mask mask-star-2 bg-green-500"
+                      {...register("rating", {
+                        required: "Please select a rating",
+                      })}
+                    />
+                  ))}
+                </div>
+                {errors.rating && (
+                  <span className="text-error mt-1 text-xs">
+                    {errors.rating.message}
+                  </span>
+                )}
+              </fieldset>
             </div>
 
             <button
@@ -509,7 +381,7 @@ export default function TripTicketPage() {
         </div>
 
         {/* TABLE */}
-        <div className="card bg-base-100 w-full p-6 shadow-xl sm:w-5/7">
+        <div className="card bg-base-100 w-full border border-gray-200 p-6 shadow-sm sm:w-5/7">
           {/* FILTERS */}
           <div className="mb-4 grid gap-3 md:grid-cols-4">
             {/* Search Input */}
@@ -702,9 +574,6 @@ export default function TripTicketPage() {
                 <tfoot>
                   <tr>
                     <td colSpan="3" className="py-4">
-                      Total Records: {totalCount}
-                    </td>
-                    <td colSpan="3" className="py-4 text-right">
                       <div className="join">
                         <button
                           className="join-item btn btn-sm"
@@ -736,6 +605,18 @@ export default function TripTicketPage() {
                           »
                         </button>
                       </div>
+                    </td>
+                    <td colSpan="1" className="py-4">
+                      Average Rating:{" "}
+                    </td>
+                    <td colSpan="1" className="py-4">
+                      <div className="flex items-center gap-2 text-lg font-bold text-green-600">
+                        <Star className="size-5 fill-green-500 text-green-500" />
+                        {averageRating}
+                      </div>
+                    </td>
+                    <td colSpan="1" className="py-4 text-right">
+                      Tickets: {totalCount}
                     </td>
                   </tr>
                 </tfoot>
