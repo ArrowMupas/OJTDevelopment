@@ -54,38 +54,10 @@ Some colors from DaisyUI are used for specific entities
 
 ---
 
-## 🚀 Git Commands (Quick Reference)
+## Thank you everyone
 
-```bash
-# Create a new branch
-git checkout -b your-branch-name
-
-# Switch to an existing branch
-git checkout your-branch-name
-
-# Switch back to main branch
-git checkout main
-
-# Stage all changes
-git add .
-
-# Commit changes with a message
-git commit -m "your message here"
-
-# Push your branch to GitHub
-git push origin your-branch-name
-
-# List all local branches
-git branch
-
-# List remote branches
-git branch -r
-
-# pull latest main
-git pull origin main
-
-# fetch
-git fetch
-```
+It did not last very long. It is barely any length but I enjoyed here.
+I will still be updating the codebase for documentation.
+I hate bittersweet but I hoped it lasts.
 
 ---
