@@ -89,12 +89,6 @@ export default function Sidebar() {
           </li> */}
 
           <li>
-            <MenuLink to="/inquiries" icon={MessageCircleQuestionMark}>
-              Inquiry
-            </MenuLink>
-          </li>
-
-          <li>
             <MenuLink to="/vehicle-requests" icon={Car}>
               Vehicle Requests
             </MenuLink>
@@ -153,6 +147,12 @@ export default function Sidebar() {
                 </li>
               </ul>
             </details>
+          </li>
+
+          <li>
+            <MenuLink to="/inquiries" icon={MessageCircleQuestionMark}>
+              Inquiry
+            </MenuLink>
           </li>
 
           <li>

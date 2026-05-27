@@ -9,6 +9,7 @@ import {
   ClipboardClock,
   ClipboardX,
 } from "lucide-react";
+import clsx from "clsx";
 
 export default function HeaderMonitoring({
   title,
@@ -27,14 +28,16 @@ export default function HeaderMonitoring({
     `tab flex gap-2 ${activeTab === tab ? "tab-active" : ""}`;
 
   return (
-    <div className="space-y-4 sm:space-y-7">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4">
+      <div className="flex items-start justify-between gap-2">
         <div className="flex gap-5">
           <div>
             <h1 className="flex items-center gap-2 text-lg font-bold">
               {title}
             </h1>
-            <p className="text-sm text-gray-500">{description}</p>
+            <div className="line-clamp-1 text-sm text-gray-500 sm:line-clamp-none">
+              {description}
+            </div>
           </div>
         </div>
 
@@ -42,14 +45,15 @@ export default function HeaderMonitoring({
           onClick={() => navigate("/history")}
           className="btn btn-info gap-2 text-white"
         >
-          <History size={18} /> View History
+          <History className="size-4" />
+          <span className="hidden sm:inline">View History</span>
         </button>
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:justify-between">
-        <div className="flex flex-col gap-2">
-          <div className="mb-2 flex gap-2">
-            <label className="input input-neutral w-full">
+      <div className="flex flex-col-reverse sm:flex-row sm:justify-between">
+        <div className="flex flex-col items-center justify-end gap-2">
+          <div className="flex w-full flex-row items-start gap-2 sm:flex-col">
+            <label className="input input-neutral">
               <Search className="h-4 w-6" />
               <input
                 type="search"
@@ -63,45 +67,47 @@ export default function HeaderMonitoring({
               />
             </label>
 
-            <div className="dropdown">
-              <div
-                tabIndex={0}
-                role="button"
-                className="btn bg-green-600 text-white"
+            <div className="join rounded-lg bg-gray-100 p-1">
+              <NavLink
+                to="/pms"
+                className={({ isActive }) =>
+                  clsx(
+                    "btn btn-sm join-item",
+                    isActive ? "btn-primary text-white" : "btn-outline",
+                  )
+                }
               >
-                <FilterIcon className="h-4 w-6" /> Filter
-              </div>
+                PMS
+              </NavLink>
 
-              <ul className="dropdown-content menu bg-base-100 rounded-box w-52 p-2 shadow-sm">
-                <li>
-                  <a>Ascending</a>
-                </li>
-                <li>
-                  <a>Descending</a>
-                </li>
-              </ul>
+              <NavLink
+                to="/battery"
+                className={({ isActive }) =>
+                  clsx(
+                    "btn btn-sm join-item",
+                    isActive ? "btn-primary text-white" : "btn-outline",
+                  )
+                }
+              >
+                Battery
+              </NavLink>
+
+              <NavLink
+                to="/tires"
+                className={({ isActive }) =>
+                  clsx(
+                    "btn btn-sm join-item",
+                    isActive ? "btn-primary text-white" : "btn-outline",
+                  )
+                }
+              >
+                Tires
+              </NavLink>
             </div>
-          </div>
-
-          <div role="tablist" className="tabs tabs-border">
-            <NavLink to="/pms" className={tabClass("pms")}>
-              <Gauge className="size-4" />
-              PMS
-            </NavLink>
-
-            <NavLink to="/battery" className={tabClass("battery")}>
-              <BatteryCharging className="size-4" />
-              Battery
-            </NavLink>
-
-            <NavLink to="/tires" className={tabClass("tires")}>
-              <LoaderPinwheel className="size-4" />
-              Tires
-            </NavLink>
           </div>
         </div>
 
-        <div className="overflow-auto">
+        <div className="mb-4 overflow-auto sm:mb-0">
           <div className="grid min-w-150 grid-cols-3 gap-2">
             <div className="stat bg-base-100 rounded-md shadow">
               <div className="stat-figure">

@@ -61,22 +61,22 @@ export default function VehicleHistory() {
 
   return (
     <main className="h-full w-full space-y-7 px-5 py-4 pb-25">
-      <div className="flex gap-2">
-        <div className="flex items-center gap-5">
-          <button
-            onClick={() => navigate(-1)}
-            className="btn btn-square btn-neutral btn-dash h-full"
-          >
-            <ArrowLeft size={20} />
-          </button>
+      <div className="flex justify-between gap-2">
+        <div className="flex gap-2">
+          <div className="flex items-center gap-5">
+            <button
+              onClick={() => navigate(-1)}
+              className="btn btn-square btn-neutral btn-dash h-full"
+            >
+              <ArrowLeft size={20} />
+            </button>
+          </div>
+          <div>
+            <h1 className="text-lg font-bold">Vehicle Update History</h1>
+            <p className="text-sm text-gray-500">All vehicle updates</p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-lg font-bold">Vehicle Update History</h1>
-          <p className="text-sm text-gray-500">All vehicle updates</p>
-        </div>
-      </div>
 
-      <div className="flex items-center space-x-2">
         <label className="input input-neutral flex items-center">
           <Search className="mr-2 h-4 w-6" />
           <input
@@ -90,29 +90,6 @@ export default function VehicleHistory() {
             }}
           />
         </label>
-        {/* 
-        <div className="dropdown">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn bg-green-600 text-white"
-          >
-            <FilterIcon className="mr-1 h-4 w-6" />
-            Filter
-          </div>
-
-          <ul
-            tabIndex={-1}
-            className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
-          >
-            <li>
-              <a>Ascending</a>
-            </li>
-            <li>
-              <a>Descending</a>
-            </li>
-          </ul>
-        </div> */}
       </div>
 
       <div className="border-0 bg-white">

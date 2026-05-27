@@ -13,6 +13,8 @@ import {
   getStatusByMonths,
   getNextDateByMonths,
 } from "../../helpers/statusHelper";
+import clsx from "clsx";
+import VehiclePMSCard from "../../components/VehiclePMSCard";
 
 const batterySchema = z.object({
   type_battery: z.enum(["Excel", "Gold"], {
@@ -152,143 +154,81 @@ export default function Battery() {
       {/* VEHICLE CARDS */}
       <div className="grid grid-cols-2 gap-1 sm:gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {vehicles.map((v) => {
-          const status = getStatusByMonths(v.install_date_battery, 10, 11, 12);
-          const batteryMonths =
+          const batteryConfig =
             v.type_battery === "Excel"
-              ? 24
-              : v.type_battery === "Gold"
-                ? 12
-                : 12;
+              ? { warning: 22, dueSoon: 23, overdue: 24 }
+              : { warning: 10, dueSoon: 11, overdue: 12 };
+
+          const status = getStatusByMonths(
+            v.install_date_battery,
+            batteryConfig.warning,
+            batteryConfig.dueSoon,
+            batteryConfig.overdue,
+          );
 
           const nextChange = getNextDateByMonths(
             v.install_date_battery,
-            batteryMonths,
+            batteryConfig.overdue,
           );
 
-          const statusBadge = {
-            text: !v.install_date_battery
-              ? "NOT RECORDED"
-              : status === "overdue"
-                ? "REPLACEMENT NEEDED"
-                : status === "dueSoon"
-                  ? "NEAR EXPIRATION"
-                  : status === "warning"
-                    ? "WARNING"
-                    : "BATTERY OK",
-
-            color: !v.install_date_battery
-              ? "badge-neutral"
-              : status === "overdue"
-                ? "badge-error font-bold"
-                : status === "dueSoon"
-                  ? "badge-secondary"
-                  : status === "warning"
-                    ? "badge-warning"
-                    : "badge-success",
-          };
-
           return (
-            <div
-              key={v.id}
-              className="card bg-base-100 relative shadow-sm transition-all hover:ring-2 hover:ring-indigo-400"
-            >
-              <div
-                className={`absolute top-1 right-1 ${statusBadge.color} badge badge-sm badge-soft`}
-              >
-                {statusBadge.text}
+            <VehiclePMSCard key={v.id} status={status} vehicle={v}>
+              <div className="">
+                <p className="text-xs text-gray-500">Battery Description</p>
+                <p className="font-semibold">
+                  {v.battery_description || "N/A"}
+                </p>
               </div>
 
-              <div className="card-body p-4">
-                <div className="flex h-24 w-full items-center justify-center overflow-hidden rounded-xl bg-indigo-100 sm:h-42">
-                  {v.image_url ? (
-                    <img
-                      src={v.image_url}
-                      alt={v.name}
-                      className="h-full w-full object-fill"
-                    />
-                  ) : (
-                    <Van className="size-12 text-gray-300" />
-                  )}
-                </div>
+              <div className="">
+                <p className="text-xs text-gray-500">Battery Type</p>
+                <p className="font-semibold">{v.type_battery || "N/A"}</p>
+              </div>
 
-                <div className="flex justify-between">
-                  <div>
-                    <p className="text-sm font-bold">{v.name}</p>
-                    <div className="badge badge-primary badge-dash badge-sm">
-                      {v.plate_number}
-                    </div>
-                  </div>
+              <div className="">
+                <p className="text-xs text-gray-500">
+                  Latest Battery Installation Date
+                </p>
+                <p className="font-semibold">
+                  {v.install_date_battery
+                    ? format(new Date(v.install_date_battery), "MMM. d, yyyy")
+                    : "N/A"}
+                </p>
+              </div>
 
-                  {!v.install_date_battery ? (
-                    <AlertTriangle className="text-gray-500" />
-                  ) : status === "overdue" ? (
-                    <AlertTriangle className="text-error" />
-                  ) : status === "dueSoon" ? (
-                    <AlertTriangle className="text-secondary" />
-                  ) : status === "warning" ? (
-                    <AlertTriangle className="text-warning" />
-                  ) : (
-                    <CheckCircle className="text-success" />
-                  )}
-                </div>
+              <div className="">
+                <p className="text-xs text-gray-500">
+                  Next Battery Replacement Schedule
+                </p>
 
-                <div className="mt-2">
-                  <p className="text-xs text-gray-500">Battery Description</p>
-                  <p className="font-semibold">
-                    {v.battery_description || "N/A"}
-                  </p>
-                </div>
-
-                <div className="mt-2">
-                  <p className="text-xs text-gray-500">Battery Type</p>
-                  <p className="font-semibold">{v.type_battery || "N/A"}</p>
-                </div>
-
-                <div className="mt-2">
-                  <p className="text-xs text-gray-500">
-                    Latest Battery Installation Date
-                  </p>
-                  <p className="font-semibold">
-                    {v.install_date_battery
-                      ? format(new Date(v.install_date_battery), "MMM. d, yyyy")
-                      : "N/A"}
-                  </p>
-                </div>
-
-                <div className="mt-2">
-                  <p className="text-xs text-gray-500">
-                    Next Battery Replacement Schedule
-                  </p>
-
-                  {nextChange ? (
-                    <p
-                      className={`font-semibold ${
-                        status === "overdue"
-                          ? "text-error"
-                          : status === "dueSoon"
-                            ? "text-secondary"
-                            : status === "warning"
-                              ? "text-warning"
-                              : "text-success"
-                      }`}
-                    >
-                      {format(new Date(nextChange), "MMM. d, yyyy")}
-                    </p>
-                  ) : (
-                    <p className="font-semibold">N/A</p>
-                  )}
-                </div>
-
-                <div className="card-actions mt-2">
-                  <button
-                    className="btn btn-success w-full text-white"
-                    onClick={() => openModal(v)}
+                {nextChange ? (
+                  <p
+                    className={`font-semibold ${
+                      status === "overdue"
+                        ? "text-error"
+                        : status === "dueSoon"
+                          ? "text-secondary"
+                          : status === "warning"
+                            ? "text-warning"
+                            : "text-success"
+                    }`}
                   >
-                    Update Battery
-                  </button>
-                </div>
+                    {format(new Date(nextChange), "MMM. d, yyyy")}
+                  </p>
+                ) : (
+                  <p className="font-semibold">N/A</p>
+                )}
               </div>
-            </div>
+
+              <div className="card-actions">
+                <button
+                  className="btn btn-success w-full text-white"
+                  onClick={() => openModal(v)}
+                >
+                  Update Battery
+                </button>
+              </div>
+            </VehiclePMSCard>
           );
         })}
       </div>

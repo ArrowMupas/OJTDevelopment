@@ -210,7 +210,7 @@ export default function ManageRequestsPage() {
 
       <div className="grid w-full grid-cols-2 gap-1 sm:gap-2 md:grid-cols-4">
         <div className="stat bg-base-100 rounded-md shadow">
-          <div className="stat-figure">
+          <div className="stat-figure hidden sm:block">
             <ClipboardClock className="text-error h-8 w-12" />
           </div>
           <div className="stat-title">Requests Today</div>
@@ -228,7 +228,7 @@ export default function ManageRequestsPage() {
         </div>
 
         <div className="stat bg-base-100 rounded-md shadow">
-          <div className="stat-figure">
+          <div className="stat-figure hidden sm:block">
             <Clipboard className="text-secondary h-8 w-12" />
           </div>
           <div className="stat-title">Pending Requests</div>
@@ -238,7 +238,7 @@ export default function ManageRequestsPage() {
         </div>
 
         <div className="stat bg-base-100 rounded-md shadow">
-          <div className="stat-figure">
+          <div className="stat-figure hidden sm:block">
             <ClipboardCheck className="text-warning h-8 w-12" />
           </div>
           <div className="stat-title">
@@ -250,7 +250,7 @@ export default function ManageRequestsPage() {
         </div>
 
         <div className="stat bg-base-100 rounded-md shadow">
-          <div className="stat-figure">
+          <div className="stat-figure hidden sm:block">
             <ClipboardClock className="text-success h-8 w-12" />
           </div>
           <div className="stat-title">Active Requests</div>

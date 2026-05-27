@@ -320,6 +320,7 @@ export default function UnoperationalVehicles() {
         </div>
       </div>
 
+      {/* 
       <div className="grid w-full grid-cols-2 gap-1 sm:gap-2 md:grid-cols-2 lg:grid-cols-4">
         <div className="stat bg-base-100 rounded-md shadow">
           <div className="stat-figure">
@@ -358,7 +359,7 @@ export default function UnoperationalVehicles() {
             {stats.registrationExpired}
           </div>
         </div>
-      </div>
+      </div> */}
 
       <dialog id="vehicleModal" className="modal">
         <div className="modal-box max-w-3xl">
