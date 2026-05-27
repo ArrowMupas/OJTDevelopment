@@ -22,7 +22,10 @@ export default function VehicleRequestsTable({
           {/* HEADER */}
           <thead className="uppercase">
             <tr>
-              <th>Department</th>
+              <th>
+                <span className="hidden 2xl:inline">Department</span>
+                <span className="2xl:hidden">Dept</span>
+              </th>
               <th>Passengers</th>
               <th>Destination</th>
               <th>Purpose</th>

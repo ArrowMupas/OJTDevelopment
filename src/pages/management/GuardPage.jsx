@@ -206,38 +206,41 @@ export default function Guards() {
   return (
     <main className="h-full space-y-4 px-3 py-4 pb-25 sm:px-5">
       {/* HEADER */}
-      <div className="flex flex-col">
-        <h1 className="flex items-center gap-2 text-lg font-bold">
-          Guards
-          <div className="badge badge-info badge-outline">{guards.length}</div>
-        </h1>
-        <p className="text-sm text-gray-500">Manage your guards here</p>
-      </div>
 
-      {/* SEARCH + ADD */}
       <div className="flex justify-between gap-3">
-        <label className="input input-neutral flex items-center gap-2">
-          <Search size={18} />
-          <input
-            value={search}
-            placeholder="Search guards..."
-            onChange={(e) => {
-              setSearch(e.target.value);
-              debouncedSearch(e.target.value);
-            }}
-          />
-        </label>
+        <div className="flex flex-col">
+          <h1 className="flex items-center gap-2 text-lg font-bold">
+            Guards
+            <div className="badge badge-info badge-outline">
+              {guards.length}
+            </div>
+          </h1>
+          <p className="text-sm text-gray-500">Manage your guards here</p>
+        </div>
 
-        <button
-          className="btn btn-primary text-white"
-          onClick={() => {
-            setIsEditing(false);
-            reset();
-            document.getElementById("guardModal").showModal();
-          }}
-        >
-          <UserPlus size={18} /> Add Guard
-        </button>
+        <div className="flex items-center gap-2">
+          <label className="input input-neutral flex items-center gap-2">
+            <Search size={18} />
+            <input
+              value={search}
+              placeholder="Search guards..."
+              onChange={(e) => {
+                setSearch(e.target.value);
+                debouncedSearch(e.target.value);
+              }}
+            />
+          </label>
+          <button
+            className="btn btn-primary text-white"
+            onClick={() => {
+              setIsEditing(false);
+              reset();
+              document.getElementById("guardModal").showModal();
+            }}
+          >
+            <UserPlus size={18} /> Add Guard
+          </button>
+        </div>
       </div>
 
       {/* LIST */}

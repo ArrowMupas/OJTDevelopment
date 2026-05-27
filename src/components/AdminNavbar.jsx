@@ -37,39 +37,6 @@ export default function AdminNavbar() {
 
         <h1 className="font-semibold">{pageTitle}</h1>
       </div>
-      <div className="flex items-center gap-6">
-        <button className="transition hover:opacity-80">
-          <Bell className="h-5 w-5" />
-        </button>
-
-        <div className="dropdown dropdown-end">
-          <div
-            tabIndex={0}
-            role="button"
-            className="flex cursor-pointer items-center gap-2 hover:opacity-80"
-          >
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white font-semibold text-green-600">
-              A
-            </div>
-            <ChevronDown className="h-4 w-4" />
-          </div>
-
-          <ul
-            tabIndex={0}
-            className="dropdown-content menu rounded-box z-50 w-48 bg-white p-2 text-black shadow"
-          >
-            <li>
-              <a>Profile</a>
-            </li>
-            <li>
-              <a>Settings</a>
-            </li>
-            <li>
-              <a className="text-error">Logout</a>
-            </li>
-          </ul>
-        </div>
-      </div>
     </header>
   );
 }

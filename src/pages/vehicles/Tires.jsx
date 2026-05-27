@@ -9,6 +9,8 @@ import toast from "react-hot-toast";
 import { format } from "date-fns";
 import debounce from "lodash.debounce";
 import HeaderMonitoring from "../../components/HeaderMonitoring";
+import clsx from "clsx";
+import VehiclePMSCard from "../../components/VehiclePMSCard";
 import {
   getStatusByMonths,
   getNextDateByMonths,
@@ -162,98 +164,55 @@ export default function Tires() {
           };
 
           return (
-            <div
-              key={v.id}
-              className="card bg-base-100 relative shadow-sm transition-all hover:ring-2 hover:ring-indigo-400"
-            >
-              <div
-                className={`absolute top-1 right-1 ${statusBadge.color} badge badge-sm badge-soft`}
-              >
-                {statusBadge.text}
+            <VehiclePMSCard key={v.id} status={status} vehicle={v}>
+              <div className="">
+                <p className="text-xs text-gray-500">Tire Type</p>
+                <p className="text-sm font-semibold">{v.type_tire || "N/A"}</p>
               </div>
 
-              <div className="card-body p-4">
-                <div className="flex-1 space-y-4">
-                  <div className="flex h-24 w-full items-center justify-center overflow-hidden rounded-xl bg-indigo-100 sm:h-42">
-                    {v.image_url ? (
-                      <img
-                        src={v.image_url}
-                        alt={v.name}
-                        className="h-full w-full object-fill"
-                      />
-                    ) : (
-                      <Van className="size-12 text-gray-300" />
-                    )}
-                  </div>
-                  <div className="flex justify-between">
-                    <div>
-                      <p className="text-sm font-bold">{v.name}</p>
-                      <div className="badge badge-primary badge-dash badge-sm">
-                        {v.plate_number}
-                      </div>
-                    </div>
-                    {!v.install_date_tire ? (
-                      <AlertTriangle className="text-gray-500" /> // or badge-info color
-                    ) : status === "overdue" ? (
-                      <AlertTriangle className="text-error" />
-                    ) : status === "dueSoon" ? (
-                      <AlertTriangle className="text-secondary" />
-                    ) : status === "warning" ? (
-                      <AlertTriangle className="text-warning" />
-                    ) : (
-                      <CheckCircle className="text-success" />
-                    )}
-                  </div>
-                  <div className="">
-                    <p className="text-xs text-gray-500">Tire Type</p>
-                    <p className="text-sm font-semibold">
-                      {v.type_tire || "N/A"}
-                    </p>
-                  </div>
-                  <div className="">
-                    <p className="text-xs text-gray-500">
-                      Latest Tire Installation Date
-                    </p>
-                    <p className="font-semibold">
-                      {v.install_date_tire
-                        ? format(new Date(v.install_date_tire), "MMM. d, yyyy")
-                        : "N/A"}
-                    </p>
-                  </div>
-                  <div className="">
-                    <p className="text-xs text-gray-500">
-                      Next Tire Replacement Schedule
-                    </p>
-                    {nextChange ? (
-                      <p
-                        className={`font-semibold ${
-                          status === "overdue"
-                            ? "text-error"
-                            : status === "dueSoon"
-                              ? "text-secondary"
-                              : status === "warning"
-                                ? "text-warning"
-                                : "text-success"
-                        }`}
-                      >
-                        {format(new Date(nextChange), "MMM. d, yyyy")}
-                      </p>
-                    ) : (
-                      <p className="font-semibold">N/A</p>
-                    )}
-                  </div>
-                </div>
+              <div className="">
+                <p className="text-xs text-gray-500">
+                  Latest Tire Installation Date
+                </p>
+                <p className="font-semibold">
+                  {v.install_date_tire
+                    ? format(new Date(v.install_date_tire), "MMM. d, yyyy")
+                    : "N/A"}
+                </p>
+              </div>
 
-                <div className="card-actions">
-                  <button
-                    className="btn btn-success w-full text-white"
-                    onClick={() => openModal(v)}
+              <div className="">
+                <p className="text-xs text-gray-500">
+                  Next Tire Replacement Schedule
+                </p>
+                {nextChange ? (
+                  <p
+                    className={`font-semibold ${
+                      status === "overdue"
+                        ? "text-error"
+                        : status === "dueSoon"
+                          ? "text-secondary"
+                          : status === "warning"
+                            ? "text-warning"
+                            : "text-success"
+                    }`}
                   >
-                    Update Tires
-                  </button>
-                </div>
+                    {format(new Date(nextChange), "MMM. d, yyyy")}
+                  </p>
+                ) : (
+                  <p className="font-semibold">N/A</p>
+                )}
               </div>
-            </div>
+
+              <div className="card-actions">
+                <button
+                  className="btn btn-success w-full text-white"
+                  onClick={() => openModal(v)}
+                >
+                  Update Tires
+                </button>
+              </div>
+            </VehiclePMSCard>
           );
         })}
       </div>

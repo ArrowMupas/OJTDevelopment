@@ -297,15 +297,17 @@ export default function Staff() {
 
   return (
     <main className="h-full space-y-4 px-3 py-4 pb-25 sm:space-y-7 sm:px-5">
-      <div>
-        <h1 className="flex items-center gap-2 text-lg font-bold">
-          Staff
-          <div className="badge badge-outline badge-info">{drivers.length}</div>
-        </h1>
-        <p className="text-sm text-gray-500">All the staff are listed here</p>
-      </div>
-
       <div className="flex justify-between gap-3">
+        <div>
+          <h1 className="flex items-center gap-2 text-lg font-bold">
+            Staff
+            <div className="badge badge-outline badge-info">
+              {drivers.length}
+            </div>
+          </h1>
+          <p className="text-sm text-gray-500">All the staff are listed here</p>
+        </div>
+
         <div className="flex gap-2">
           <label className="input input-neutral">
             <Search className="h-4 w-6" />
@@ -316,32 +318,32 @@ export default function Staff() {
               onChange={(e) => setSearch(e.target.value)}
             />
           </label>
-        </div>
 
-        <button
-          className="btn btn-primary font-bold text-white"
-          onClick={() => {
-            setIsEditing(false);
-            setDriverToEdit(null);
-            reset({
-              firstName: "",
-              lastName: "",
-              middleInitial: "",
-              designation: "",
-              email: "",
-              contact: "",
-              isMechanic: false,
-              licenseExpiration: "",
-            });
-            setSelectedFile(null);
-            setLicenseFile(null);
-            setLicenseBack(null);
-            document.getElementById("driverModal").showModal();
-          }}
-        >
-          <UserPlus className="h-4 w-6" />
-          Add New Staff
-        </button>
+          <button
+            className="btn btn-primary font-bold text-white"
+            onClick={() => {
+              setIsEditing(false);
+              setDriverToEdit(null);
+              reset({
+                firstName: "",
+                lastName: "",
+                middleInitial: "",
+                designation: "",
+                email: "",
+                contact: "",
+                isMechanic: false,
+                licenseExpiration: "",
+              });
+              setSelectedFile(null);
+              setLicenseFile(null);
+              setLicenseBack(null);
+              document.getElementById("driverModal").showModal();
+            }}
+          >
+            <UserPlus className="h-4 w-6" />
+            Add New Staff
+          </button>
+        </div>
       </div>
 
       <ModalLicense
@@ -355,8 +357,6 @@ export default function Staff() {
 
       {specialDrivers.length > 0 && (
         <div className="space-y-2">
-          <h2 className="text-md font-bold text-green-700">⭐ Key Personnel</h2>
-
           <div className="grid grid-cols-2 gap-1 sm:gap-2 md:grid-cols-5">
             {specialDrivers.map((driver) => (
               <CardDriver

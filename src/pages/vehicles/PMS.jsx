@@ -10,6 +10,8 @@ import { format } from "date-fns";
 import debounce from "lodash.debounce";
 import HeaderMonitoring from "../../components/HeaderMonitoring";
 import OurInput from "../../components/OurInput";
+import clsx from "clsx";
+import VehiclePMSCard from "../../components/VehiclePMSCard";
 import {
   getStatusByMonths,
   getNextDateByMonths,
@@ -214,111 +216,67 @@ export default function PMS() {
                 : "badge-success";
 
           return (
-            <div
-              key={v.id}
-              className="card bg-base-100 relative shadow-sm transition-all hover:ring-2 hover:ring-indigo-400"
-            >
-              <div
-                className={`absolute top-1 right-1 ${statusBadge.color} badge badge-sm badge-soft`}
-              >
-                {statusBadge.text}
+            <VehiclePMSCard key={v.id} status={status} vehicle={v}>
+              <div className="">
+                <p className="text-xs text-gray-500">Latest PMS Date</p>
+                <p className="font-semibold">
+                  {v.pms_date
+                    ? format(new Date(v.pms_date), "MMM. d, yyyy")
+                    : "N/A"}
+                </p>
               </div>
 
-              <div className="card-body p-4">
-                <div className="flex h-24 w-full items-center justify-center overflow-hidden rounded-xl bg-indigo-100 sm:h-42">
-                  {v.image_url ? (
-                    <img
-                      src={v.image_url}
-                      alt={v.name}
-                      className="h-full w-full object-fill"
-                    />
+              <div className="">
+                <p className="text-xs text-gray-500">Odometer Status</p>
+                <p className={`font-semibold ${odoBadge}`}>
+                  {v.odometer ? `${v.odometer.toLocaleString()} km` : "N/A"}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <div className="">
+                  <p className="text-xs text-gray-500">Next PMS Schedule</p>
+
+                  {nextPms ? (
+                    <p
+                      className={`font-semibold ${
+                        status === "overdue"
+                          ? "text-error"
+                          : status === "dueSoon"
+                            ? "text-secondary"
+                            : status === "warning"
+                              ? "text-warning"
+                              : "text-success"
+                      }`}
+                    >
+                      {format(new Date(nextPms), "MMM. d, yyyy")}
+                    </p>
                   ) : (
-                    <Van className="size-12 text-gray-300" />
+                    <p className="font-semibold">N/A</p>
                   )}
                 </div>
 
-                <div className="flex justify-between">
-                  <div>
-                    <p className="text-sm font-bold">{v.name}</p>
-                    <div className="badge badge-primary badge-dash badge-sm">
-                      {v.plate_number}
-                    </div>
-                  </div>
-
-                  {!v.pms_date ? (
-                    <AlertTriangle className="text-gray-500" />
-                  ) : status === "overdue" ? (
-                    <AlertTriangle className="text-error" />
-                  ) : status === "dueSoon" ? (
-                    <AlertTriangle className="text-secondary" />
-                  ) : status === "warning" ? (
-                    <AlertTriangle className="text-warning" />
-                  ) : (
-                    <CheckCircle className="text-success" />
-                  )}
-                </div>
-
-                <div className="mt-2">
-                  <p className="text-xs text-gray-500">Latest PMS Date</p>
+                <div className="">
+                  <p className="text-xs text-gray-500">
+                    Next Odometer Schedule
+                  </p>
                   <p className="font-semibold">
-                    {v.pms_date
-                      ? format(new Date(v.pms_date), "MMM. d, yyyy")
+                    {v.odometer_future
+                      ? `${v.odometer_future.toLocaleString()} km`
                       : "N/A"}
                   </p>
                 </div>
-
-                <div className="mt-2">
-                  <p className="text-xs text-gray-500">Odometer Status</p>
-                  <p className={`font-semibold ${odoBadge}`}>
-                    {v.odometer ? `${v.odometer.toLocaleString()} km` : "N/A"}
-                  </p>
-                </div>
-
-                <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  <div className="">
-                    <p className="text-xs text-gray-500">Next PMS Schedule</p>
-
-                    {nextPms ? (
-                      <p
-                        className={`font-semibold ${
-                          status === "overdue"
-                            ? "text-error"
-                            : status === "dueSoon"
-                              ? "text-secondary"
-                              : status === "warning"
-                                ? "text-warning"
-                                : "text-success"
-                        }`}
-                      >
-                        {format(new Date(nextPms), "MMM. d, yyyy")}
-                      </p>
-                    ) : (
-                      <p className="font-semibold">N/A</p>
-                    )}
-                  </div>
-
-                  <div className="">
-                    <p className="text-xs text-gray-500">
-                      Next Odometer Schedule
-                    </p>
-                    <p className="font-semibold">
-                      {v.odometer_future
-                        ? `${v.odometer_future.toLocaleString()} km`
-                        : "N/A"}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="card-actions mt-2">
-                  <button
-                    className="btn btn-success w-full text-white"
-                    onClick={() => openModal(v)}
-                  >
-                    Update PMS
-                  </button>
-                </div>
               </div>
-            </div>
+
+              <div className="card-actions">
+                <button
+                  className="btn btn-success w-full text-white"
+                  onClick={() => openModal(v)}
+                >
+                  Update PMS
+                </button>
+              </div>
+            </VehiclePMSCard>
           );
         })}
       </div>
