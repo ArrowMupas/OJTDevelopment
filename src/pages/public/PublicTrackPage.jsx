@@ -17,6 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import OurInput from "../../components/OurInput";
 import { repairSchema } from "../../schemas/repairSchema";
 import toast from "react-hot-toast";
+import { format } from "date-fns";
 import { Link } from "react-router-dom";
 
 const internalSteps = [
@@ -117,6 +118,18 @@ export default function TrackingPage() {
     fetchVehicles();
     fetchRecords();
     fetchMechanics();
+  }, []);
+
+  useEffect(() => {
+    const handleFocus = () => {
+      fetchRecords();
+    };
+
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+    };
   }, []);
 
   async function createMaintenanceRecord(formData) {
@@ -352,12 +365,32 @@ export default function TrackingPage() {
             .map((repair) => {
               const steps = getSteps(repair.type);
 
+              const isRecentlyUpdated = () => {
+                if (!repair.last_updated_at) return false;
+                const updated = new Date(repair.last_updated_at);
+                const now = new Date();
+                const diffSeconds = (now - updated) / 1000;
+                return diffSeconds < 120;
+              };
+
+              const recentlyUpdated = isRecentlyUpdated();
+
               return (
                 <div
                   key={repair.id}
-                  className="card bg-base-100 rounded-xl border shadow-sm"
+                  className={`card bg-base-100 rounded-xl border shadow-sm transition-all duration-300 ${
+                    recentlyUpdated ? "border-info bg-info/5 " : ""
+                  }`}
                 >
-                  <div className="card-body p-4 sm:p-5">
+                  <div className="card-body relative p-4 sm:p-5">
+                    {recentlyUpdated && (
+                      <div className="absolute top-0 right-0 z-10">
+                        <div className="badge badge-info badge-sm badge-soft">
+                          Recently Updated
+                        </div>
+                      </div>
+                    )}
+
                     {/* HEADER */}
                     <div className="flex justify-between">
                       <div className="flex items-center gap-2">
@@ -392,10 +425,18 @@ export default function TrackingPage() {
                     </div>
 
                     <div className="flex items-start gap-2">
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <div className="text-xs text-gray-500">Remarks</div>
                         <p className="text-xs">{repair?.remarks || "-"}</p>
                       </div>
+                      {repair.last_updated_at && (
+                        <div className="shrink-0 text-right">
+                          <div className="text-xs text-gray-400">
+                            Updated:{" "}
+                            {format(new Date(repair.last_updated_at), "HH:mm")}
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex flex-col">

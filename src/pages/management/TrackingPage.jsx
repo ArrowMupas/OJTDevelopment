@@ -61,6 +61,18 @@ export default function TrackingPage() {
     fetchRecords();
   }, []);
 
+  useEffect(() => {
+    const handleFocus = () => {
+      fetchRecords();
+    };
+
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, []);
+
   return (
     <main className="min-h-screen space-y-7 px-3 py-4 pb-25 sm:px-5">
       <div className="flex justify-between">
@@ -122,12 +134,34 @@ export default function TrackingPage() {
             .map((repair) => {
               const steps = getSteps(repair.type);
 
+              const isRecentlyUpdated = () => {
+                if (!repair.last_updated_at) return false;
+                const updated = new Date(repair.last_updated_at);
+                const now = new Date();
+                const diffSeconds = (now - updated) / 1000;
+                return diffSeconds < 120;
+              };
+
+              const recentlyUpdated = isRecentlyUpdated();
+
               return (
                 <div
                   key={repair.id}
-                  className="card bg-base-100 rounded-xl border border-gray-300 shadow-sm hover:ring hover:ring-green-500"
+                  className={`card bg-base-100 rounded-xl border shadow-sm transition-all duration-300 ${
+                    recentlyUpdated
+                      ? "border-info bg-info/5 "
+                      : "border-gray-300"
+                  } hover:ring-success hover:ring-2`}
                 >
-                  <div className="card-body p-4 sm:p-5">
+                  <div className="card-body relative p-4 sm:p-5">
+                    {recentlyUpdated && (
+                      <div className="absolute top-0 right-0 z-10">
+                        <div className="badge badge-info badge-sm badge-soft">
+                          Recently Updated
+                        </div>
+                      </div>
+                    )}
+
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div className="flex flex-wrap items-center gap-2">
                         <h2 className="flex items-center gap-2 truncate text-base font-semibold sm:text-lg">
