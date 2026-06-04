@@ -1,15 +1,19 @@
-import { ArrowLeft, ClockCheck, FileArchive, Search } from "lucide-react";
+import {
+  ArrowLeft,
+  ClockCheck,
+  FileArchive,
+  Search,
+  Edit,
+  Trash2,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import debounce from "lodash.debounce";
 import * as XLSX from "xlsx";
+import toast from "react-hot-toast";
 
-// This is done on last day of my OJT so its rushed. Hope it still works fine
-// May 12, 2026 - Last day of Arrow at NEA
-// I plan to still adjust this codebase and docunment here and there.
-// Just really not a lot of time now.
 const internalSteps = [
   "Inspection",
   "Job Order",
@@ -39,6 +43,12 @@ export default function TrackingHistory() {
   const [mechanics, setMechanics] = useState([]);
   const [selectedMechanic, setSelectedMechanic] = useState("");
 
+  // Modal states
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedRepair, setSelectedRepair] = useState(null);
+  const [selectedStep, setSelectedStep] = useState(0);
+
   // PAGINATION
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -67,6 +77,75 @@ export default function TrackingHistory() {
     }));
 
     setMechanics(formattedMechanics || []);
+  }
+
+  async function updateRepairStep(id, newStepIndex) {
+    const target = repairs.find((r) => r.id === id);
+    if (!target) return;
+
+    const steps = getSteps(target.type);
+
+    // Validate step index
+    if (newStepIndex < 0 || newStepIndex >= steps.length) {
+      toast.error("Invalid step");
+      return;
+    }
+
+    // If moving to last step (accomplished), set completed_at
+    const isAccomplished = newStepIndex === steps.length - 1;
+    const updateData = { current_step: newStepIndex };
+
+    if (isAccomplished && !target.completed_at) {
+      updateData.completed_at = new Date().toISOString();
+    } else if (!isAccomplished && target.completed_at) {
+      // If moving back from accomplished, remove completed_at
+      updateData.completed_at = null;
+    }
+
+    const { error } = await supabase
+      .from("maintenance_records")
+      .update(updateData)
+      .eq("id", id);
+
+    if (error) {
+      toast.error("Failed to update step");
+      return;
+    }
+
+    await fetchRecords(
+      search,
+      filterType,
+      startDate,
+      endDate,
+      page,
+      selectedMechanic,
+    );
+
+    toast.success(
+      `${target.vehicles?.name} (${target.vehicles?.plate_number}) - Step updated`,
+    );
+    setEditModalOpen(false);
+    setSelectedRepair(null);
+    setSelectedStep(0);
+  }
+
+  // Delete repair record
+  async function deleteRepair(id) {
+    const { error } = await supabase
+      .from("maintenance_records")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      toast.error("Failed to delete record");
+      return;
+    }
+
+    // Remove from local state
+    setRepairs((prev) => prev.filter((r) => r.id !== id));
+    toast.success("Record deleted successfully");
+    setDeleteModalOpen(false);
+    setSelectedRepair(null);
   }
 
   async function fetchRecords(
@@ -183,6 +262,25 @@ export default function TrackingHistory() {
       selectedMechanic,
     );
   }, [page, selectedMechanic]);
+
+  useEffect(() => {
+    const handleFocus = () => {
+      fetchRecords(
+        search,
+        filterType,
+        startDate,
+        endDate,
+        page,
+        selectedMechanic,
+      );
+    };
+
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, [search, filterType, startDate, endDate, page, selectedMechanic]);
 
   const debouncedSearch = useMemo(
     () =>
@@ -310,7 +408,7 @@ export default function TrackingHistory() {
           "DATE REQUESTED",
           "INSPECTION/FINDINGS",
           "ASSIGNED MECHANIC",
-          "DATE REPAIRED",
+          "DATE COMPLETED",
         ],
         ...exportData.map((repair) => {
           // Determine assigned mechanic (prioritize personnel 1, then personnel 2)
@@ -345,7 +443,7 @@ export default function TrackingHistory() {
         { wch: 20 }, // DATE REQUESTED
         { wch: 50 }, // INSPECTION/FINDINGS
         { wch: 30 }, // ASSIGNED MECHANIC
-        { wch: 20 }, // DATE REPAIRED
+        { wch: 20 }, // DATE COMPLETED
       ];
 
       // Apply styling to header row
@@ -389,6 +487,17 @@ export default function TrackingHistory() {
     setSelectedMechanic("");
     setPage(1);
     fetchRecords("", "all", "", "", 1, "");
+  };
+
+  const openEditModal = (repair) => {
+    setSelectedRepair(repair);
+    setSelectedStep(repair.step);
+    setEditModalOpen(true);
+  };
+
+  const openDeleteModal = (repair) => {
+    setSelectedRepair(repair);
+    setDeleteModalOpen(true);
   };
 
   return (
@@ -594,20 +703,42 @@ export default function TrackingHistory() {
                         </div>
                       </div>
 
-                      {repair.completed_at && (
-                        <div className="text-xs text-gray-500">
-                          {format(
-                            new Date(repair.completed_at),
-                            "MMM dd, yyyy • hh:mm a",
-                          )}
-                        </div>
-                      )}
+                      <div className="flex gap-1">
+                        <button
+                          className="btn btn-sm btn-info btn-square btn-outline"
+                          onClick={() => openEditModal(repair)}
+                          title="Edit step"
+                        >
+                          <Edit size={14} />
+                        </button>
+                        <button
+                          className="btn btn-sm btn-error btn-square btn-outline"
+                          onClick={() => openDeleteModal(repair)}
+                          title="Delete record"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
                     </div>
 
                     {/* REMARKS */}
                     <div>
                       <div className="text-xs text-gray-500">Remarks</div>
                       <p className="text-xs">{repair?.remarks || "—"}</p>
+                    </div>
+
+                    <div>
+                      <div className="text-xs text-gray-500">
+                        Completed Date
+                      </div>
+                      <p className="text-xs">
+                        {repair?.completed_at
+                          ? format(
+                              new Date(repair.completed_at),
+                              "MMM dd, yyyy",
+                            )
+                          : "—"}
+                      </p>
                     </div>
 
                     {/* TIMELINE */}
@@ -700,6 +831,90 @@ export default function TrackingHistory() {
             </div>
           </div>
         </>
+      )}
+
+      {/* EDIT STEP MODAL */}
+      {editModalOpen && selectedRepair && (
+        <dialog open className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="text-lg font-bold">Update Repair Step</h3>
+            <p className="mt-1 text-sm text-gray-500">
+              {selectedRepair.vehicles?.name} (
+              {selectedRepair.vehicles?.plate_number})
+            </p>
+
+            <div className="form-control mt-4">
+              <label className="label">
+                <span className="label-text">Select Step</span>
+              </label>
+              <select
+                className="select select-bordered w-full"
+                value={selectedStep}
+                onChange={(e) => setSelectedStep(parseInt(e.target.value))}
+              >
+                {getSteps(selectedRepair.type).map((step, index) => (
+                  <option key={index} value={index}>
+                    {index + 1}. {step}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="modal-action">
+              <button
+                className="btn"
+                onClick={() => {
+                  setEditModalOpen(false);
+                  setSelectedRepair(null);
+                  setSelectedStep(0);
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={() =>
+                  updateRepairStep(selectedRepair.id, selectedStep)
+                }
+              >
+                Update Step
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
+
+      {/* DELETE CONFIRMATION MODAL */}
+      {deleteModalOpen && selectedRepair && (
+        <dialog open className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="text-lg font-bold">Confirm Deletion</h3>
+            <p className="py-4">
+              Are you sure you want to delete the repair record for{" "}
+              <span className="font-bold">{selectedRepair.vehicles?.name}</span>
+              ?
+              <br />
+              This action cannot be undone.
+            </p>
+            <div className="modal-action">
+              <button
+                className="btn"
+                onClick={() => {
+                  setDeleteModalOpen(false);
+                  setSelectedRepair(null);
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-error text-white"
+                onClick={() => deleteRepair(selectedRepair.id)}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </dialog>
       )}
     </main>
   );
