@@ -73,7 +73,7 @@ export default function HeaderMonitoring({
                 className={({ isActive }) =>
                   clsx(
                     "btn btn-sm join-item",
-                    isActive ? "btn-primary text-white" : "btn-outline",
+                    isActive ? "btn-success text-white" : "btn-ghost",
                   )
                 }
               >
@@ -85,7 +85,7 @@ export default function HeaderMonitoring({
                 className={({ isActive }) =>
                   clsx(
                     "btn btn-sm join-item",
-                    isActive ? "btn-primary text-white" : "btn-outline",
+                    isActive ? "btn-success text-white" : "btn-ghost",
                   )
                 }
               >
@@ -97,7 +97,7 @@ export default function HeaderMonitoring({
                 className={({ isActive }) =>
                   clsx(
                     "btn btn-sm join-item",
-                    isActive ? "btn-primary text-white" : "btn-outline",
+                    isActive ? "btn-success text-white" : "btn-ghost",
                   )
                 }
               >
@@ -123,7 +123,7 @@ export default function HeaderMonitoring({
               <div className="stat-title">Due in 1 month</div>
               <div className="stat-value text-error">{dueSoon}</div>
             </div>
-            <div className="stat rounded-md border-red-200 bg-red-100 shadow">
+            <div className="stat border-error bg-error/20 rounded-md shadow">
               <div className="stat-figure">
                 <ClipboardX className="text-error size-8" />
               </div>

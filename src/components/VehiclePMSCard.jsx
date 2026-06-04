@@ -14,10 +14,10 @@ export default function VehiclePMSCard({
         !status && "bg-base-100",
 
         status === "overdue" &&
-          "border-error bg-error/10 hover:ring-error border",
+          "border-error bg-error/20 hover:ring-error border",
 
         status === "dueSoon" &&
-          "border-error bg-error/5 hover:ring-error border",
+          "border-error/50 bg-error/5 hover:ring-error border",
 
         status === "warning" &&
           "border-warning bg-warning/5 hover:ring-warning border",

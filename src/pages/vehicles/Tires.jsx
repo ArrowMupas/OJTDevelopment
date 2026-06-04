@@ -67,7 +67,7 @@ export default function Tires() {
 
   const tireStats = vehicles.reduce(
     (acc, v) => {
-      const status = getStatusByMonths(v.install_date_tire, 34, 35, 36);
+      const status = getStatusByMonths(v.install_date_tire, 58, 59, 60);
 
       if (!v.install_date_tire) acc.notRecorded += 1;
       if (status === "warning") acc.warning += 1;
@@ -125,7 +125,7 @@ export default function Tires() {
     <main className="h-full space-y-4 px-3 py-4 pb-25 sm:space-y-7 sm:px-5">
       <HeaderMonitoring
         title="Tire Monitoring"
-        description="Tire is replaced every 3 years"
+        description="Tire is replaced every 5 years"
         search={search}
         setSearch={setSearch}
         debouncedSearch={debouncedSearch}
@@ -138,8 +138,8 @@ export default function Tires() {
       {/* VEHICLE CARDS */}
       <div className="grid grid-cols-2 gap-1 sm:gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {vehicles.map((v) => {
-          const status = getStatusByMonths(v.install_date_tire, 34, 35, 36);
-          const nextChange = getNextDateByMonths(v.install_date_tire, 36);
+          const status = getStatusByMonths(v.install_date_tire, 58, 59, 60);
+          const nextChange = getNextDateByMonths(v.install_date_tire, 60);
 
           const statusBadge = {
             text: !v.install_date_tire
