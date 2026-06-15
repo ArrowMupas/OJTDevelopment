@@ -13,12 +13,9 @@ export default function Guards() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  const [selectedFile, setSelectedFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [isEditing, setIsEditing] = useState(false);
   const [guardToEdit, setGuardToEdit] = useState(null);
-
   const [guardToDelete, setGuardToDelete] = useState(null);
 
   const fetchGuards = async (searchTerm = "") => {
@@ -60,32 +57,6 @@ export default function Guards() {
     return () => debouncedSearch.cancel();
   }, []);
 
-  const uploadFile = async (file) => {
-    if (!file) return null;
-
-    const ext = file.name.split(".").pop();
-    const fileName = `${Math.random()
-      .toString(36)
-      .substring(2)}_${Date.now()}.${ext}`;
-
-    const filePath = `guard-images/${fileName}`;
-
-    const { error } = await supabase.storage
-      .from("NEAMotorpoolBucket")
-      .upload(filePath, file);
-
-    if (error) {
-      toast.error("Upload failed");
-      return null;
-    }
-
-    const { data } = supabase.storage
-      .from("NEAMotorpoolBucket")
-      .getPublicUrl(filePath);
-
-    return data.publicUrl;
-  };
-
   const {
     register,
     handleSubmit,
@@ -100,8 +71,6 @@ export default function Guards() {
     setIsSubmitting(true);
 
     try {
-      const imageUrl = selectedFile ? await uploadFile(selectedFile) : null;
-
       const { error } = await supabase.from("guard").insert([
         {
           first_name: data.firstName,
@@ -110,7 +79,6 @@ export default function Guards() {
           role: data.role,
           email: data.email,
           contact_number: data.contact,
-          image_url: imageUrl,
         },
       ]);
 
@@ -133,10 +101,6 @@ export default function Guards() {
     setIsSubmitting(true);
 
     try {
-      const imageUrl = selectedFile
-        ? await uploadFile(selectedFile)
-        : guardToEdit.image_url;
-
       const { error } = await supabase
         .from("guard")
         .update({
@@ -146,7 +110,6 @@ export default function Guards() {
           role: data.role,
           email: data.email,
           contact_number: data.contact,
-          image_url: imageUrl,
         })
         .eq("id", guardToEdit.id);
 
@@ -164,13 +127,6 @@ export default function Guards() {
   };
 
   const deleteGuard = async (id) => {
-    const guard = guards.find((g) => g.id === id);
-
-    if (guard?.image_url) {
-      const filePath = guard.image_url.split("/").slice(-2).join("/");
-      await supabase.storage.from("NEAMotorpoolBucket").remove([filePath]);
-    }
-
     const { error } = await supabase.from("guard").delete().eq("id", id);
 
     if (error) {
@@ -178,6 +134,7 @@ export default function Guards() {
     } else {
       setGuards((prev) => prev.filter((g) => g.id !== id));
       toast.success("Guard deleted");
+      setGuardToDelete(null);
     }
   };
 
@@ -199,7 +156,6 @@ export default function Guards() {
     reset();
     setIsEditing(false);
     setGuardToEdit(null);
-    setSelectedFile(null);
     document.getElementById("guardModal")?.close();
   };
 
@@ -249,7 +205,7 @@ export default function Guards() {
           <span className="loading loading-infinity text-success"></span>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-5 lg:grid-cols-6">
+        <div className="grid grid-cols-2 gap-2 md:grid-cols-5 lg:grid-cols-5 xl:grid-cols-6">
           {guards.map((guard) => (
             <div
               key={guard.id}
@@ -257,7 +213,7 @@ export default function Guards() {
             >
               <div className="card-body p-3">
                 <div className="flex items-center gap-2">
-                  <div className="badge badge-soft badge-neutral font-bold italic">
+                  <div className="badge badge-soft badge-sm badge-neutral font-bold italic">
                     {guard.role}
                   </div>
                   <h2 className="text-sm font-bold">
@@ -287,7 +243,10 @@ export default function Guards() {
 
                   <button
                     className="btn btn-square btn-sm text-error"
-                    onClick={() => deleteGuard(guard.id)}
+                    onClick={() => {
+                      setGuardToDelete(guard);
+                      document.getElementById("deleteModal").showModal();
+                    }}
                   >
                     <Trash2 className="size-4" />
                   </button>
@@ -298,6 +257,7 @@ export default function Guards() {
         </div>
       )}
 
+      {/* Add/Edit Modal */}
       <dialog id="guardModal" className="modal">
         <div className="modal-box">
           <h1 className="text-xl font-bold">
@@ -361,15 +321,6 @@ export default function Guards() {
               error={errors.contact}
             />
 
-            <div>
-              <p className="text-sm font-bold">Guard Image</p>
-              <input
-                type="file"
-                className="file-input w-full"
-                onChange={(e) => setSelectedFile(e.target.files[0])}
-              />
-            </div>
-
             <div className="modal-action">
               <button
                 type="submit"
@@ -383,6 +334,42 @@ export default function Guards() {
         </div>
 
         <div className="modal-backdrop" onClick={closeModal} />
+      </dialog>
+
+      {/* Delete Confirmation Modal */}
+      <dialog id="deleteModal" className="modal">
+        <div className="modal-box">
+          <h3 className="text-lg font-bold">Confirm Delete</h3>
+          <p className="py-4">
+            Are you sure you want to delete{" "}
+            <span className="font-bold">
+              {guardToDelete?.last_name}, {guardToDelete?.first_name}
+            </span>
+            ? This action cannot be undone.
+          </p>
+          <div className="modal-action">
+            <button
+              className="btn"
+              onClick={() => document.getElementById("deleteModal").close()}
+            >
+              Cancel
+            </button>
+            <button
+              className="btn btn-error text-white"
+              onClick={() => {
+                if (guardToDelete) {
+                  deleteGuard(guardToDelete.id);
+                }
+                document.getElementById("deleteModal").close();
+              }}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
       </dialog>
     </main>
   );

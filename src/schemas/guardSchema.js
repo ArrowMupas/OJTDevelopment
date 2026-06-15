@@ -12,15 +12,18 @@ export const guardSchema = z.object({
     .or(z.literal("")),
 
   role: z.string().min(2, "Role is required"),
+
   email: z
     .string()
     .email("Invalid email address")
+    .nullable()
     .optional()
-    .or(z.literal(""))
-    .nullable(),
-  email: z
+    .or(z.literal("")),
+
+  contact: z
     .string()
-    .email("Invalid email address")
+    .min(10, "Contact number must be at least 10 digits")
+    .max(15, "Contact number must be at most 15 digits")
     .nullable()
     .optional()
     .or(z.literal("")),
