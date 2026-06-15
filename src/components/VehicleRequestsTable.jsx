@@ -78,7 +78,7 @@ export default function VehicleRequestsTable({
                     <th className="text-xs uppercase">{req.department}</th>
 
                     {/* PASSENGERS */}
-                    <td className="">
+                    <td className="max-w-100">
                       <div className="line-clamp-3 font-bold capitalize hover:line-clamp-none">
                         {req.passengers}
                       </div>
@@ -88,12 +88,12 @@ export default function VehicleRequestsTable({
                     </td>
 
                     {/* DESTINATION */}
-                    <td className="text-success capitalize italic">
+                    <td className="text-success max-w-50 capitalize italic">
                       {req.destination}
                     </td>
 
                     {/* PURPOSE */}
-                    <td className="text-xs">
+                    <td className="max-w-50 text-xs">
                       <div className="line-clamp-3 hover:line-clamp-none">
                         {req.purpose}
                       </div>
@@ -115,7 +115,7 @@ export default function VehicleRequestsTable({
                     </td>
 
                     {/* DRIVER */}
-                    <td>
+                    <td className="truncate">
                       <select
                         className="select select-sm"
                         disabled={
@@ -140,7 +140,7 @@ export default function VehicleRequestsTable({
                     </td>
 
                     {/* VEHICLE */}
-                    <td>
+                    <td className="truncate">
                       <select
                         className="select select-sm"
                         disabled={
@@ -194,15 +194,11 @@ export default function VehicleRequestsTable({
 
                     {/* SURVEY */}
                     <td>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-col items-center gap-1">
                         {req.is_surveyed ? (
-                          <div className="badge badge-success badge-soft">
-                            <CheckCircle className="size-3" />
-                          </div>
+                          <CheckCircle className="text-success size-4" />
                         ) : (
-                          <div className="badge badge-error badge-soft">
-                            <XCircle className="size-3" />
-                          </div>
+                          <XCircle className="text-error size-4" />
                         )}
 
                         <Tippy
