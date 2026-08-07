@@ -1,8 +1,8 @@
 # This is an OJT Internship System for the National Electrification Administration
 
-Not finished yet and not sure what really will be the future of this but
-We will be doing our best to finish the tasks asigned to us for our OJT
-Which is 300 Hours
+Finished at May 12, 2026 but still updated it a bit for some small changes afterwards
+Most likely though this commit will be the last and final change of this codebase
+Time to move on forward and throw the withered flowers away I guess
 
 ## 🛠 Technologies Used
 
@@ -13,20 +13,7 @@ Which is 300 Hours
 - **React** - Js Framework for making websites easier
 - **DaisyUI** - Component library that supports tailwind for ease of UI making
 - **Tailwind** - Utility first design library for faster webside designing
-
-## Supabase Google Auth
-
-In progress...
-
-## Views
-
-Views are basically a specific query to the database that becomes its own table
-which we can query directly. Basically you would see that instead of querying
-the tables, sometimes we query a view instead for a more specific view of the
-supabase database itself. You would see them together with the supabase tables.
-
-I will also leave the query for their creation so if ever needed they can be
-updated, adjusted or deleted.
+- **Render** - Website hosting platform for the website **Frontend** for free
 
 ## Triggers
 
@@ -57,7 +44,8 @@ Some colors from DaisyUI are used for specific entities
 ## Thank you everyone
 
 It did not last very long. It is barely any length but I enjoyed here.
-I will still be updating the codebase for documentation.
-I hate bittersweet but I hoped it lasts.
+My vice was alwayys thinking I will still be updating my past codebases.
+But time for me to move on with my life I graduated now.
+Also lost the google account login of the company to my computer XD.
 
 ---
