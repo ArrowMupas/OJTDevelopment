@@ -21,6 +21,8 @@ export default function AdminNavbar() {
     "/history": "Vehicle Changes History",
     "/vehicle-requests/completed": "Completed Requests",
     "/track": "PMS Tracking",
+    "/survey-results": "Survey",
+    "/trip-ticket": "Trip Ticket",
   };
 
   const pageTitle = pageTitles[location.pathname] || "Admin Panel";
