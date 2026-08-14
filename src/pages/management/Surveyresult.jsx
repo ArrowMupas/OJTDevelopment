@@ -50,7 +50,7 @@ export default function SurveyPage() {
     `,
         { count: "exact" },
       )
-      .order("timestamp", { ascending: false })
+      .order("travel_date", { ascending: false })
       .range(from, to);
 
     // Search
@@ -401,23 +401,23 @@ export default function SurveyPage() {
                         : "-"}
                     </td>
 
-                    <td className="text-center">
+                    <td className="text-center font-bold">
                       {survey.rating_appearance ?? "-"}
                     </td>
 
-                    <td className="text-center">
+                    <td className="text-center font-bold">
                       {survey.rating_behavior ?? "-"}
                     </td>
 
-                    <td className="text-center">
+                    <td className="text-center font-bold">
                       {survey.rating_safety ?? "-"}
                     </td>
 
-                    <td className="text-center">
+                    <td className="text-center font-bold">
                       {survey.rating_vehicle ?? "-"}
                     </td>
 
-                    <td className="text-center">
+                    <td className="text-center font-bold">
                       {survey.rating_ontime ?? "-"}
                     </td>
 
@@ -435,25 +435,6 @@ export default function SurveyPage() {
                 ))
               )}
             </tbody>
-
-            <tfoot className="bg-green-50 font-medium">
-              <tr>
-                <td colSpan="6" className="py-5 text-left text-gray-700">
-                  Total Responses: {totalCount}
-                </td>
-                <td colSpan="1" className="py-5 text-left text-gray-700">
-                  {selectedDriver && overallAverage !== null
-                    ? "Overall Average"
-                    : ""}
-                </td>
-                <td className="text-center font-semibold text-gray-700">
-                  {selectedDriver && overallAverage !== null
-                    ? overallAverage.toFixed(2)
-                    : ""}
-                </td>
-                <td colSpan="2"></td>
-              </tr>
-            </tfoot>
           </table>
         </div>
 
