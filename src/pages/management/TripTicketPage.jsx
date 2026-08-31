@@ -573,8 +573,19 @@ export default function TripTicketPage() {
 
                 <tfoot>
                   <tr>
-                    <td colSpan="3" className="py-4">
-                      <div className="join">
+                    <td colSpan="4" className="py-4">
+                      Tickets: {totalCount}
+                    </td>
+
+                    <td colSpan="1" className="py-4">
+                      Average Rating:
+                      <div className="flex items-center gap-2 text-lg font-bold text-green-600">
+                        <Star className="size-5 fill-green-500 text-green-500" />
+                        {averageRating}
+                      </div>
+                    </td>
+                    <td colSpan="2" className="py-4">
+                      <div className="join flex justify-end">
                         <button
                           className="join-item btn btn-sm"
                           disabled={page === 1}
@@ -583,19 +594,9 @@ export default function TripTicketPage() {
                           «
                         </button>
 
-                        {Array.from({ length: totalPages }, (_, i) => i + 1)
-                          .slice(Math.max(0, page - 3), page + 2)
-                          .map((p) => (
-                            <button
-                              key={p}
-                              className={`join-item btn btn-sm ${
-                                p === page ? "btn-active" : ""
-                              }`}
-                              onClick={() => setPage(p)}
-                            >
-                              {p}
-                            </button>
-                          ))}
+                        <button className="join-item btn btn-sm btn-active">
+                          {page}
+                        </button>
 
                         <button
                           className="join-item btn btn-sm"
@@ -605,18 +606,6 @@ export default function TripTicketPage() {
                           »
                         </button>
                       </div>
-                    </td>
-                    <td colSpan="1" className="py-4">
-                      Average Rating:{" "}
-                    </td>
-                    <td colSpan="1" className="py-4">
-                      <div className="flex items-center gap-2 text-lg font-bold text-green-600">
-                        <Star className="size-5 fill-green-500 text-green-500" />
-                        {averageRating}
-                      </div>
-                    </td>
-                    <td colSpan="1" className="py-4 text-right">
-                      Tickets: {totalCount}
                     </td>
                   </tr>
                 </tfoot>
