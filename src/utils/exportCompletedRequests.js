@@ -12,12 +12,17 @@ export async function exportCompletedRequests({
   drivers,
   vehicles,
   toast,
+  includeCancelled = false,
 }) {
   try {
+    const statuses = includeCancelled
+      ? ["Completed", "Cancelled"]
+      : ["Completed"];
+
     let query = supabase
       .from("service_vehicle_requests")
       .select("*")
-      .in("status", ["Completed", "Cancelled"])
+      .in("status", statuses)
       .order("departure_date", { ascending: false })
       .order("departure_time", { ascending: false });
 
@@ -62,50 +67,87 @@ export async function exportCompletedRequests({
       (r) => r.status === "Completed" && r.is_surveyed === true,
     );
 
-    let reportTitle = "Completed Vehicle Requests Report";
+    const cancelledRequests = includeCancelled
+      ? allRequests.filter((r) => r.status === "Cancelled")
+      : [];
+
+    if (!completedRequests.length && !cancelledRequests.length) {
+      toast.error("No data to export");
+      return;
+    }
+
+    let reportTitle = includeCancelled
+      ? "Completed and Cancelled Vehicle Requests Report"
+      : "Completed Vehicle Requests Report";
 
     if (filterFrom && filterTo) {
-      reportTitle += ` from ${format(new Date(filterFrom), "MMMM d")} to ${format(
-        new Date(filterTo),
-        "MMMM d, yyyy",
-      )}`;
+      reportTitle += ` from ${format(
+        new Date(filterFrom),
+        "MMMM d",
+      )} to ${format(new Date(filterTo), "MMMM d, yyyy")}`;
     }
 
     const vehicleMap = new Map(vehicles.map((v) => [v.id, v.name]));
 
+    const formatRequestRow = (r, index) => [
+      index + 1,
+      r.department ?? "-",
+      r.destination ?? "-",
+      r.timestamp ? format(new Date(r.timestamp), "MMMM d, yyyy") : "-",
+      r.departure_date
+        ? format(new Date(r.departure_date), "MMMM d, yyyy")
+        : "-",
+      vehicleMap.get(r.vehicle_id) ?? "-",
+      r.driver_id
+        ? `${drivers.find((d) => d.id === r.driver_id)?.last_name ?? ""}, ${drivers.find((d) => d.id === r.driver_id)?.first_name ?? ""}`
+        : "-",
+      r.status ?? "-",
+      r.rating ?? "-",
+    ];
+
+    const headers = [
+      "No.",
+      "REQUESTING PERSONNEL/OFFICE",
+      "DESTINATION",
+      "DATE REQUESTED",
+      "DATE OF DEPARTURE",
+      "DISPATCHED VEHICLE",
+      "DRIVER",
+      "STATUS",
+      "RATING",
+    ];
+
     const sheetData = [
       [reportTitle],
       [],
-      [
-        "No.",
-        "REQUESTING PERSONNEL/OFFICE",
-        "DESTINATION",
-        "DATE REQUESTED",
-        "DATE OF DEPARTURE",
-        "DISPATCHED VEHICLE",
-        "DRIVER",
-        "STATUS",
-      ],
-      ...completedRequests.map((r, index) => [
-        index + 1,
-        r.department ?? "-",
-        r.destination ?? "-",
-        r.timestamp ? format(new Date(r.timestamp), "MMMM d, yyyy") : "-",
-        r.departure_date
-          ? format(new Date(r.departure_date), "MMMM d, yyyy")
-          : "-",
-        vehicleMap.get(r.vehicle_id) ?? "Not Assigned",
-        r.driver_id
-          ? `${drivers.find((d) => d.id === r.driver_id)?.last_name}, ${
-              drivers.find((d) => d.id === r.driver_id)?.first_name
-            }`
-          : "Not Assigned",
-        r.status ?? "-",
-      ]),
+      headers,
+      ...completedRequests.map(formatRequestRow),
     ];
 
+    if (includeCancelled && cancelledRequests.length > 0) {
+      sheetData.push(
+        [],
+        [],
+        ["Cancelled Requests"],
+        [],
+        headers,
+        ...cancelledRequests.map(formatRequestRow),
+      );
+    }
+
     sheetData.push([], ["Report Summary"]);
+
     sheetData.push(["Total Completed Requests:", completedRequests.length]);
+
+    if (includeCancelled) {
+      sheetData.push(["Total Cancelled Requests:", cancelledRequests.length]);
+    }
+
+    sheetData.push([
+      "Total Requests Exported:",
+      completedRequests.length + cancelledRequests.length,
+    ]);
+
     sheetData.push([
       "Generated On:",
       format(new Date(), "MMMM d, yyyy hh:mm a"),
@@ -120,24 +162,30 @@ export async function exportCompletedRequests({
       { wch: 20 }, // Date Requested
       { wch: 20 }, // Departure Date
       { wch: 25 }, // Vehicle
-      { wch: 35 }, // Driver
+      { wch: 30 }, // Driver
+      { wch: 10 }, // Status
       { wch: 10 }, // Rating
-      { wch: 15 }, // Status
     ];
 
     const workbook = XLSX.utils.book_new();
 
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Completed Requests");
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      includeCancelled ? "Completed + Cancelled" : "Completed Requests",
+    );
 
-    const fileName = `completed_requests_${format(
-      new Date(),
-      "yyyyMMdd_HHmmss",
-    )}.xlsx`;
+    const fileName = includeCancelled
+      ? `completed_cancelled_requests_${format(
+          new Date(),
+          "yyyyMMdd_HHmmss",
+        )}.xlsx`
+      : `completed_requests_${format(new Date(), "yyyyMMdd_HHmmss")}.xlsx`;
 
     XLSX.writeFile(workbook, fileName);
 
     toast.success(
-      `Exported ${completedRequests.length} requests successfully!`,
+      `Exported ${completedRequests.length + cancelledRequests.length} requests successfully!`,
     );
   } catch (err) {
     console.error(err);

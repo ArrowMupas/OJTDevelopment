@@ -1,22 +1,11 @@
-import { format, parse } from "date-fns";
 import { supabase } from "../../supabaseClient";
 import useDriverStore from "../../stores/driverStore";
 import { exportCompletedRequests } from "../../utils/exportCompletedRequests";
-import {
-  ArrowLeft,
-  CheckCircle,
-  FileArchive,
-  Info,
-  Search,
-  XCircle,
-} from "lucide-react";
+import { ArrowLeft, FileArchive, Search } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
-import Tippy from "@tippyjs/react";
 import "tippy.js/themes/light.css";
 import { Link } from "react-router-dom";
 import debounce from "lodash.debounce";
-import clsx from "clsx";
-import * as XLSX from "xlsx";
 import toast from "react-hot-toast";
 import VehicleRequestsTable from "../../components/VehicleRequestsTable";
 
@@ -279,22 +268,25 @@ export default function CompleteRequest() {
     });
   };
 
-  async function handleExport() {
+  async function handleExport(includeCancelled = false) {
     setExporting(true);
 
-    await exportCompletedRequests({
-      supabase,
-      search,
-      filterDriver,
-      filterVehicle,
-      filterFrom,
-      filterTo,
-      drivers,
-      vehicles,
-      toast,
-    });
-
-    setExporting(false);
+    try {
+      await exportCompletedRequests({
+        supabase,
+        search,
+        filterDriver,
+        filterVehicle,
+        filterFrom,
+        filterTo,
+        drivers,
+        vehicles,
+        toast,
+        includeCancelled,
+      });
+    } finally {
+      setExporting(false);
+    }
   }
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
@@ -319,14 +311,38 @@ export default function CompleteRequest() {
           </div>
         </div>
 
-        <button
-          className="btn btn-secondary"
-          onClick={handleExport}
-          disabled={exporting}
-        >
-          <FileArchive className="h-4 w-4" />
-          {exporting ? "Exporting..." : "Generate Report"}
-        </button>
+        <details className="dropdown">
+          <summary className="btn btn-secondary m-1">
+            {exporting ? (
+              <span className="loading loading-spinner loading-sm"></span>
+            ) : (
+              <FileArchive className="h-4 w-4" />
+            )}
+            Generate Report
+          </summary>
+
+          <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-64 p-2 shadow-sm">
+            <li>
+              <button
+                onClick={() => {
+                  handleExport(false);
+                }}
+              >
+                Completed Requests
+              </button>
+            </li>
+
+            <li>
+              <button
+                onClick={() => {
+                  handleExport(true);
+                }}
+              >
+                Completed + Cancelled
+              </button>
+            </li>
+          </ul>
+        </details>
       </div>
 
       {/* FILTERS SECTION */}
@@ -336,7 +352,7 @@ export default function CompleteRequest() {
           <Search className="h-4 w-6" />
           <input
             type="search"
-            placeholder="Search completed requests"
+            placeholder="Search requests"
             value={search}
             onChange={(e) => {
               const value = e.target.value;

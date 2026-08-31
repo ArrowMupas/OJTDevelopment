@@ -4,6 +4,7 @@ import useDriverStore from "../../stores/driverStore";
 import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import debounce from "lodash.debounce";
+import { exportSurveyReport } from "../../utils/exportSurveyReport";
 import * as XLSX from "xlsx";
 
 export default function SurveyPage() {
@@ -120,140 +121,20 @@ export default function SurveyPage() {
   }, [surveys, selectedDriver]);
 
   async function handleExport() {
-    try {
-      let query = supabase
-        .from("passenger_survey")
-        .select(
-          `
-          *,
-          drivers!inner (
-            id,
-            first_name,
-            middle_initial,
-            last_name
-          )
-        `,
-        )
-        .order("timestamp", { ascending: false });
-
-      // Apply filters
-      if (search) {
-        query = query.or(
-          `passenger_name.ilike.%${search}%,comments.ilike.%${search}%`,
-        );
-      }
-
-      if (selectedDriver) {
-        query = query.eq("driver_id", selectedDriver);
-      }
-
-      if (startDate) {
-        query = query.gte("travel_date", startDate);
-      }
-
-      if (endDate) {
-        query = query.lte("travel_date", endDate);
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error(error);
-        return;
-      }
-
-      const exportData = data || [];
-
-      if (!exportData.length) return;
-
-      const valid = exportData.filter(
-        (s) => s.average_score !== null && s.average_score !== undefined,
-      );
-
-      const average =
-        valid.length > 0
-          ? valid.reduce((sum, s) => sum + s.average_score, 0) / valid.length
-          : null;
-
-      const sheetData = [
-        ["Passenger Survey Report"],
-        [],
-        ["Total Responses:", exportData.length],
-
-        ...(selectedDriver && average !== null
-          ? [["Overall Average:", average.toFixed(2)]]
-          : []),
-
-        [],
-
-        [
-          "Name",
-          "Travel Date",
-          "Appearance",
-          "Behavior",
-          "Safety",
-          "Vehicle",
-          "On-time",
-          "Average",
-          "Comments",
-          "Driver Name",
-        ],
-
-        ...exportData.map((s) => [
-          s.passenger_name || "Anonymous",
-
-          s.travel_date ? format(new Date(s.travel_date), "MMMM d, yyyy") : "-",
-
-          s.rating_appearance ?? "-",
-          s.rating_behavior ?? "-",
-          s.rating_safety ?? "-",
-          s.rating_vehicle ?? "-",
-          s.rating_ontime ?? "-",
-
-          s.average_score ? s.average_score.toFixed(2) : "-",
-
-          s.comments || "-",
-
-          `${s.drivers.last_name}, ${s.drivers.first_name} ${s.drivers.middle_initial}.`,
-        ]),
-      ];
-
-      const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
-
-      worksheet["!merges"] = [
-        {
-          s: { r: 0, c: 0 },
-          e: { r: 0, c: 9 },
-        },
-      ];
-
-      worksheet["!cols"] = [
-        { wch: 25 },
-        { wch: 20 },
-        { wch: 10 },
-        { wch: 10 },
-        { wch: 10 },
-        { wch: 10 },
-        { wch: 10 },
-        { wch: 10 },
-        { wch: 35 },
-        { wch: 30 },
-      ];
-
-      const workbook = XLSX.utils.book_new();
-
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Survey Report");
-
-      XLSX.writeFile(
-        workbook,
-        `survey_report_${format(new Date(), "yyyyMMdd_HHmmss")}.xlsx`,
-      );
-    } catch (err) {
-      console.error(err);
-    }
+    await exportSurveyReport({
+      search,
+      selectedDriver,
+      startDate,
+      endDate,
+    });
   }
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+  const finalAverage =
+    surveys.length > 0
+      ? surveys.reduce((sum, survey) => sum + (survey.average_score || 0), 0) /
+        surveys.length
+      : null;
 
   return (
     <main className="h-full w-full space-y-7 px-5 py-4 pb-25">
@@ -363,7 +244,6 @@ export default function SurveyPage() {
                 <th className="w-40">Driver Name</th>
               </tr>
             </thead>
-
             <tbody>
               {loading ? (
                 <tr>
@@ -435,43 +315,58 @@ export default function SurveyPage() {
                 ))
               )}
             </tbody>
+            <tfoot>
+              <tr>
+                <td colSpan={6}>
+                  <div className="flex items-center justify-between pb-4">
+                    <p className="text-sm text-gray-600">
+                      Total Records: {totalCount}
+                    </p>
+                  </div>
+                </td>
+                <td colSpan={2}>
+                  <div className="flex items-center justify-between px-2 pb-4">
+                    <p className="text-sm text-gray-600">
+                      Overall Average: {finalAverage?.toFixed(2) || "-"}
+                    </p>
+                  </div>
+                </td>
+                <td colSpan={2}>
+                  <div className="join flex justify-end">
+                    <button
+                      className="join-item btn btn-sm"
+                      disabled={page === 1}
+                      onClick={() => setPage((p) => p - 1)}
+                    >
+                      «
+                    </button>
+
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .slice(Math.max(0, page - 3), page + 2)
+                      .map((p) => (
+                        <button
+                          key={p}
+                          className={`join-item btn btn-sm ${
+                            p === page ? "btn-active" : ""
+                          }`}
+                          onClick={() => setPage(p)}
+                        >
+                          {p}
+                        </button>
+                      ))}
+
+                    <button
+                      className="join-item btn btn-sm"
+                      disabled={page >= totalPages}
+                      onClick={() => setPage((p) => p + 1)}
+                    >
+                      »
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tfoot>
           </table>
-        </div>
-
-        <div className="mt-4 flex items-center justify-between px-2 pb-4">
-          <p className="text-sm text-gray-600">Total Records: {totalCount}</p>
-
-          <div className="join">
-            <button
-              className="join-item btn btn-sm"
-              disabled={page === 1}
-              onClick={() => setPage((p) => p - 1)}
-            >
-              «
-            </button>
-
-            {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .slice(Math.max(0, page - 3), page + 2)
-              .map((p) => (
-                <button
-                  key={p}
-                  className={`join-item btn btn-sm ${
-                    p === page ? "btn-active" : ""
-                  }`}
-                  onClick={() => setPage(p)}
-                >
-                  {p}
-                </button>
-              ))}
-
-            <button
-              className="join-item btn btn-sm"
-              disabled={page >= totalPages}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              »
-            </button>
-          </div>
         </div>
       </div>
     </main>
