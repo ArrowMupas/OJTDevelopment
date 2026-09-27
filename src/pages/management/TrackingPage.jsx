@@ -100,7 +100,7 @@ export default function TrackingPage() {
 
           <button
             className="btn btn-info text-white"
-            onClick={() => navigate("/tracking-history")}
+            onClick={() => navigate("/repair-history")}
           >
             <FolderClock className="size-4" />
             Tracking History

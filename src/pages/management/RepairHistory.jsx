@@ -11,8 +11,8 @@ import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import debounce from "lodash.debounce";
-import * as XLSX from "xlsx";
 import toast from "react-hot-toast";
+import { exportRepairHistory } from "../../utils/exportRepairHistory";
 
 const internalSteps = [
   "Inspection",
@@ -34,18 +34,25 @@ const miniSteps = ["Inspection", "Accomplished | For Release"];
 
 export default function TrackingHistory() {
   const [repairs, setRepairs] = useState([]);
-  const [filterType, setFilterType] = useState("all");
-  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
   const [mechanics, setMechanics] = useState([]);
-  const [selectedMechanic, setSelectedMechanic] = useState("");
+  const [vehicles, setVehicles] = useState([]);
+
+  const [filters, setFilters] = useState({
+    search: "",
+    type: "all",
+    startDate: "",
+    endDate: "",
+    mechanic: "",
+    vehicle: "",
+  });
 
   // Modal states
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [editCompletedDateModalOpen, setEditCompletedDateModalOpen] =
+    useState(false);
   const [selectedRepair, setSelectedRepair] = useState(null);
   const [selectedStep, setSelectedStep] = useState(0);
 
@@ -55,6 +62,15 @@ export default function TrackingHistory() {
   const PAGE_SIZE = 10;
   const navigate = useNavigate();
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+
+  const updateFilter = (key, value) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+
+    setPage(1);
+  };
 
   const getSteps = (type) => {
     if (type === "internal-mini") return miniSteps;
@@ -77,6 +93,20 @@ export default function TrackingHistory() {
     }));
 
     setMechanics(formattedMechanics || []);
+  }
+
+  async function fetchVehicles() {
+    const { data, error } = await supabase
+      .from("vehicles")
+      .select("id, name, plate_number")
+      .order("name", { ascending: true });
+
+    if (error) {
+      console.error("Error fetching vehicles:", error);
+      return;
+    }
+
+    setVehicles(data || []);
   }
 
   async function updateRepairStep(id, newStepIndex) {
@@ -119,14 +149,43 @@ export default function TrackingHistory() {
       endDate,
       page,
       selectedMechanic,
+      selectedVehicle,
     );
 
     toast.success(
       `${target.vehicles?.name} (${target.vehicles?.plate_number}) - Step updated`,
     );
+
     setEditModalOpen(false);
     setSelectedRepair(null);
     setSelectedStep(0);
+  }
+
+  async function updateCompletedAt(id, completedAt) {
+    const { error } = await supabase
+      .from("maintenance_records")
+      .update({ completed_at: completedAt })
+      .eq("id", id);
+
+    if (error) {
+      toast.error("Failed to update completed date");
+      return;
+    }
+
+    await fetchRecords(
+      search,
+      filterType,
+      startDate,
+      endDate,
+      page,
+      selectedMechanic,
+      selectedVehicle,
+    );
+
+    toast.success("Completed date updated successfully");
+
+    setEditCompletedDateModalOpen(false);
+    setSelectedRepair(null);
   }
 
   // Delete repair record
@@ -148,14 +207,15 @@ export default function TrackingHistory() {
     setSelectedRepair(null);
   }
 
-  async function fetchRecords(
+  async function fetchRecords({
     searchTerm = "",
     type = "all",
     start = "",
     end = "",
     pageNum = 1,
     mechanicId = "",
-  ) {
+    vehicleId = "",
+  }) {
     setLoading(true);
 
     const from = (pageNum - 1) * PAGE_SIZE;
@@ -165,17 +225,16 @@ export default function TrackingHistory() {
       .from("maintenance_records")
       .select(
         `
-        *,
-        vehicles (
-          name,
-          plate_number
-        )
-      `,
+      *,
+      vehicles (
+        name,
+        plate_number
+      )
+    `,
         { count: "exact" },
       )
       .not("completed_at", "is", null)
-      .order("completed_at", { ascending: false })
-      .range(from, to);
+      .order("completed_at", { ascending: false });
 
     // TYPE FILTER
     if (type !== "all") {
@@ -184,13 +243,26 @@ export default function TrackingHistory() {
 
     // SEARCH
     if (searchTerm) {
-      query = query.or(
-        `
-        service_shop.ilike.%${searchTerm}%,
-        assigned_personnel_1.ilike.%${searchTerm}%,
-        assigned_personnel_2.ilike.%${searchTerm}%
-      `,
+      query = query.or(`service_shop.ilike.%${searchTerm}%`);
+    }
+
+    // MECHANIC FILTER
+    if (mechanicId) {
+      const selectedMechanicData = mechanics.find(
+        (m) => m.id.toString() === mechanicId,
       );
+
+      if (selectedMechanicData) {
+        const mechanicFullName = selectedMechanicData.full_name;
+
+        query = query.or(
+          `assigned_personnel_1.eq.${mechanicFullName},assigned_personnel_2.eq.${mechanicFullName}`,
+        );
+      }
+    }
+
+    if (vehicleId) {
+      query = query.eq("vehicle_id", vehicleId);
     }
 
     // DATE FILTER
@@ -201,6 +273,9 @@ export default function TrackingHistory() {
     if (end) {
       query = query.lte("completed_at", end);
     }
+
+    // PAGINATION
+    query = query.range(from, to);
 
     const { data, error, count } = await query;
 
@@ -215,34 +290,6 @@ export default function TrackingHistory() {
       step: item.current_step ?? 0,
     }));
 
-    // VEHICLE SEARCH
-    if (searchTerm) {
-      const keyword = searchTerm.toLowerCase();
-      normalized = normalized.filter(
-        (r) =>
-          r.vehicles?.name?.toLowerCase().includes(keyword) ||
-          r.vehicles?.plate_number?.toLowerCase().includes(keyword) ||
-          r.service_shop?.toLowerCase().includes(keyword) ||
-          r.assigned_personnel_1?.toLowerCase().includes(keyword) ||
-          r.assigned_personnel_2?.toLowerCase().includes(keyword),
-      );
-    }
-
-    // MECHANIC FILTER
-    if (mechanicId) {
-      const selectedMechanicData = mechanics.find(
-        (m) => m.id.toString() === mechanicId,
-      );
-      if (selectedMechanicData) {
-        const mechanicFullName = selectedMechanicData.full_name;
-        normalized = normalized.filter(
-          (r) =>
-            r.assigned_personnel_1 === mechanicFullName ||
-            r.assigned_personnel_2 === mechanicFullName,
-        );
-      }
-    }
-
     setRepairs(normalized);
     setTotalCount(count || 0);
     setLoading(false);
@@ -250,37 +297,20 @@ export default function TrackingHistory() {
 
   useEffect(() => {
     fetchMechanics();
+    fetchVehicles();
   }, []);
 
   useEffect(() => {
-    fetchRecords(
-      search,
-      filterType,
-      startDate,
-      endDate,
-      page,
-      selectedMechanic,
-    );
-  }, [page, selectedMechanic]);
-
-  useEffect(() => {
-    const handleFocus = () => {
-      fetchRecords(
-        search,
-        filterType,
-        startDate,
-        endDate,
-        page,
-        selectedMechanic,
-      );
-    };
-
-    window.addEventListener("focus", handleFocus);
-
-    return () => {
-      window.removeEventListener("focus", handleFocus);
-    };
-  }, [search, filterType, startDate, endDate, page, selectedMechanic]);
+    fetchRecords({
+      searchTerm: filters.search,
+      type: filters.type,
+      start: filters.startDate,
+      end: filters.endDate,
+      pageNum: page,
+      mechanicId: filters.mechanic,
+      vehicleId: filters.vehicle,
+    });
+  }, [filters, page]);
 
   const debouncedSearch = useMemo(
     () =>
@@ -295,204 +325,45 @@ export default function TrackingHistory() {
     setExporting(true);
 
     try {
-      let query = supabase
-        .from("maintenance_records")
-        .select(
-          `
-        *,
-        vehicles (
-          name,
-          plate_number
-        )
-      `,
-        )
-        .not("completed_at", "is", null)
-        .order("completed_at", { ascending: false });
-
-      // TYPE FILTER
-      if (filterType !== "all") {
-        query = query.eq("type", filterType);
-      }
-
-      // SEARCH
-      if (search) {
-        query = query.or(`
-        service_shop.ilike.%${search}%,
-        assigned_personnel_1.ilike.%${search}%,
-        assigned_personnel_2.ilike.%${search}%
-      `);
-      }
-
-      // DATE FILTER
-      if (startDate) {
-        query = query.gte("completed_at", startDate);
-      }
-
-      if (endDate) {
-        query = query.lte("completed_at", endDate);
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error(error);
-        setExporting(false);
-        return;
-      }
-
-      let exportData = data || [];
-
-      // VEHICLE SEARCH
-      if (search) {
-        const keyword = search.toLowerCase();
-        exportData = exportData.filter(
-          (r) =>
-            r.vehicles?.name?.toLowerCase().includes(keyword) ||
-            r.vehicles?.plate_number?.toLowerCase().includes(keyword) ||
-            r.service_shop?.toLowerCase().includes(keyword) ||
-            r.assigned_personnel_1?.toLowerCase().includes(keyword) ||
-            r.assigned_personnel_2?.toLowerCase().includes(keyword),
-        );
-      }
-
-      // MECHANIC FILTER for export
-      let selectedMechanicName = "";
-      if (selectedMechanic) {
-        const selectedMechanicData = mechanics.find(
-          (m) => m.id.toString() === selectedMechanic,
-        );
-        if (selectedMechanicData) {
-          selectedMechanicName = selectedMechanicData.full_name;
-          exportData = exportData.filter(
-            (r) =>
-              r.assigned_personnel_1 === selectedMechanicName ||
-              r.assigned_personnel_2 === selectedMechanicName,
-          );
-        }
-      }
-
-      if (exportData.length === 0) {
-        setExporting(false);
-        return;
-      }
-
-      // Build filter info for the report header
-      const filterInfo = [];
-      if (startDate)
-        filterInfo.push(`From: ${format(new Date(startDate), "MMM dd, yyyy")}`);
-      if (endDate)
-        filterInfo.push(`To: ${format(new Date(endDate), "MMM dd, yyyy")}`);
-      if (selectedMechanicName)
-        filterInfo.push(`Mechanic: ${selectedMechanicName}`);
-      if (filterType !== "all") {
-        const typeLabel =
-          filterType === "internal-mini"
-            ? "Mini Repair"
-            : filterType === "internal"
-              ? "Internal"
-              : "External";
-        filterInfo.push(`Repair Type: ${typeLabel}`);
-      }
-      if (search) filterInfo.push(`Search: ${search}`);
-
-      const sheetData = [
-        ["REPAIR HISTORY REPORT"],
-        [],
-        ["TOTAL RECORDS:", exportData.length],
-        ["GENERATED ON:", format(new Date(), "MMMM d, yyyy hh:mm a")],
-        ...(filterInfo.length > 0
-          ? [["FILTERS APPLIED:", filterInfo.join(" | ")], []]
-          : [[""], []]),
-        [
-          "VEHICLE DESCRIPTION",
-          "DATE REQUESTED",
-          "INSPECTION/FINDINGS",
-          "ASSIGNED MECHANIC",
-          "DATE COMPLETED",
-        ],
-        ...exportData.map((repair) => {
-          // Determine assigned mechanic (prioritize personnel 1, then personnel 2)
-          let assignedMechanic = "-";
-          if (repair.type !== "external") {
-            if (repair.assigned_personnel_1) {
-              assignedMechanic = repair.assigned_personnel_1;
-            } else if (repair.assigned_personnel_2) {
-              assignedMechanic = repair.assigned_personnel_2;
-            }
-          } else {
-            assignedMechanic = repair.service_shop || "-";
-          }
-
-          return [
-            repair.vehicles?.name || "-",
-            repair.created_at
-              ? format(new Date(repair.created_at), "MMM dd, yyyy")
-              : "-",
-            repair.remarks || "-",
-            assignedMechanic,
-            repair.completed_at
-              ? format(new Date(repair.completed_at), "MMM dd, yyyy")
-              : "-",
-          ];
-        }),
-      ];
-
-      const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
-      worksheet["!cols"] = [
-        { wch: 35 }, // VEHICLE DESCRIPTION
-        { wch: 20 }, // DATE REQUESTED
-        { wch: 50 }, // INSPECTION/FINDINGS
-        { wch: 30 }, // ASSIGNED MECHANIC
-        { wch: 20 }, // DATE COMPLETED
-      ];
-
-      // Apply styling to header row
-      const headerRange = XLSX.utils.decode_range(worksheet["!ref"]);
-      for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
-        const headerCell = worksheet[XLSX.utils.encode_cell({ r: 5, c: C })];
-        if (headerCell) {
-          headerCell.s = {
-            font: { bold: true, sz: 12 },
-            fill: { fgColor: { rgb: "4F81BD" }, patternType: "solid" },
-            alignment: { horizontal: "center", vertical: "center" },
-          };
-        }
-      }
-
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Repair History");
-      XLSX.writeFile(
-        workbook,
-        `repair_history_${format(new Date(), "yyyyMMdd_HHmmss")}.xlsx`,
-      );
-    } catch (err) {
-      console.error(err);
+      await exportRepairHistory({
+        supabase,
+        search: filters.search,
+        filterType: filters.type,
+        startDate: filters.startDate,
+        endDate: filters.endDate,
+        selectedMechanic: filters.mechanic,
+        mechanics,
+        selectedVehicle: filters.vehicle,
+        vehicles,
+        toast,
+      });
     } finally {
       setExporting(false);
     }
   }
 
-  const handleMechanicChange = (e) => {
-    const value = e.target.value;
-    setSelectedMechanic(value);
-    setPage(1);
-    fetchRecords(search, filterType, startDate, endDate, 1, value);
-  };
-
   const handleClearFilters = () => {
-    setSearch("");
-    setFilterType("all");
-    setStartDate("");
-    setEndDate("");
-    setSelectedMechanic("");
+    setFilters({
+      search: "",
+      type: "all",
+      startDate: "",
+      endDate: "",
+      mechanic: "",
+      vehicle: "",
+    });
+
     setPage(1);
-    fetchRecords("", "all", "", "", 1, "");
   };
 
   const openEditModal = (repair) => {
     setSelectedRepair(repair);
     setSelectedStep(repair.step);
     setEditModalOpen(true);
+  };
+
+  const openCompletedDateModal = (repair) => {
+    setEditCompletedDateModalOpen(true);
+    setSelectedRepair(repair);
   };
 
   const openDeleteModal = (repair) => {
@@ -534,21 +405,28 @@ export default function TrackingHistory() {
       <div className="flex flex-col gap-2">
         <div className="flex flex-col gap-2 lg:flex-row">
           {/* SEARCH */}
-          <label className="input input-bordered">
+          <label className="input input-bordered min-w-60">
             <Search className="size-4 opacity-60" />
             <input
               type="search"
-              placeholder="Search vehicle, plate, personnel..."
-              value={search}
+              placeholder="Search by service shop"
+              value={filters.search}
               onChange={(e) => {
                 const value = e.target.value;
-                setSearch(value);
+
+                setFilters((prev) => ({
+                  ...prev,
+                  search: value,
+                }));
+
+                setPage(1);
                 debouncedSearch(
                   value,
-                  filterType,
-                  startDate,
-                  endDate,
-                  selectedMechanic,
+                  filters.type,
+                  filters.startDate,
+                  filters.endDate,
+                  filters.mechanic,
+                  filters.vehicle,
                 );
               }}
             />
@@ -556,21 +434,9 @@ export default function TrackingHistory() {
 
           {/* TYPE */}
           <select
-            className="select select-bordered min-w-full sm:min-w-60"
-            value={filterType}
-            onChange={(e) => {
-              const value = e.target.value;
-              setFilterType(value);
-              setPage(1);
-              fetchRecords(
-                search,
-                value,
-                startDate,
-                endDate,
-                1,
-                selectedMechanic,
-              );
-            }}
+            className="select select-bordered"
+            value={filters.type}
+            onChange={(e) => updateFilter("type", e.target.value)}
           >
             <option value="all">All</option>
             <option value="internal">Internal</option>
@@ -581,13 +447,29 @@ export default function TrackingHistory() {
           {/* MECHANIC FILTER */}
           <select
             className="select select-bordered min-w-full sm:min-w-60"
-            value={selectedMechanic}
-            onChange={handleMechanicChange}
+            value={filters.mechanic}
+            onChange={(e) => updateFilter("mechanic", e.target.value)}
           >
             <option value="">All Mechanics</option>
+
             {mechanics.map((mechanic) => (
               <option key={mechanic.id} value={mechanic.id}>
                 {mechanic.full_name}
+              </option>
+            ))}
+          </select>
+
+          <select
+            className="select select-bordered"
+            value={filters.vehicle}
+            onChange={(e) => updateFilter("vehicle", e.target.value)}
+          >
+            <option value="">All Vehicles</option>
+
+            {vehicles.map((vehicle) => (
+              <option key={vehicle.id} value={vehicle.id}>
+                {vehicle.name}{" "}
+                {vehicle.plate_number && `- ${vehicle.plate_number}`}
               </option>
             ))}
           </select>
@@ -596,40 +478,16 @@ export default function TrackingHistory() {
           <input
             type="date"
             className="input input-bordered"
-            value={startDate}
-            onChange={(e) => {
-              const value = e.target.value;
-              setStartDate(value);
-              setPage(1);
-              fetchRecords(
-                search,
-                filterType,
-                value,
-                endDate,
-                1,
-                selectedMechanic,
-              );
-            }}
+            value={filters.startDate}
+            onChange={(e) => updateFilter("startDate", e.target.value)}
           />
 
           {/* DATE TO */}
           <input
             type="date"
             className="input input-bordered"
-            value={endDate}
-            onChange={(e) => {
-              const value = e.target.value;
-              setEndDate(value);
-              setPage(1);
-              fetchRecords(
-                search,
-                filterType,
-                startDate,
-                value,
-                1,
-                selectedMechanic,
-              );
-            }}
+            value={filters.endDate}
+            onChange={(e) => updateFilter("endDate", e.target.value)}
           />
 
           {/* CLEAR */}
@@ -668,7 +526,7 @@ export default function TrackingHistory() {
               return (
                 <div
                   key={repair.id}
-                  className="card bg-base-100 rounded-xl border border-gray-300 shadow-sm hover:ring hover:ring-green-500"
+                  className="card bg-base-100 hover:ring-success rounded-xl border border-gray-300 shadow-sm hover:bg-green-50 hover:ring-1"
                 >
                   <div className="card-body p-4 sm:p-5">
                     {/* HEADER */}
@@ -727,18 +585,28 @@ export default function TrackingHistory() {
                       <p className="text-xs">{repair?.remarks || "—"}</p>
                     </div>
 
-                    <div>
-                      <div className="text-xs text-gray-500">
-                        Completed Date
+                    <div className="flex flex-wrap items-center gap-2">
+                      <div>
+                        <div className="text-xs text-gray-500">
+                          Completed Date
+                        </div>
+                        <p className="text-xs">
+                          {repair?.completed_at
+                            ? format(
+                                new Date(repair.completed_at),
+                                "MMM dd, yyyy",
+                              )
+                            : "—"}
+                        </p>
                       </div>
-                      <p className="text-xs">
-                        {repair?.completed_at
-                          ? format(
-                              new Date(repair.completed_at),
-                              "MMM dd, yyyy",
-                            )
-                          : "—"}
-                      </p>
+
+                      <button
+                        className="btn btn-sm btn-square btn-info btn-outline"
+                        onClick={() => openCompletedDateModal(repair)}
+                        title="Edit Completed Date"
+                      >
+                        <Edit size={14} />
+                      </button>
                     </div>
 
                     {/* TIMELINE */}
@@ -833,7 +701,6 @@ export default function TrackingHistory() {
         </>
       )}
 
-      {/* EDIT STEP MODAL */}
       {editModalOpen && selectedRepair && (
         <dialog open className="modal modal-open">
           <div className="modal-box">
@@ -878,6 +745,59 @@ export default function TrackingHistory() {
                 }
               >
                 Update Step
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
+
+      {editCompletedDateModalOpen && (
+        <dialog open className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="text-lg font-bold">Update Completed Date</h3>
+            <p className="mt-1 text-sm text-gray-500">
+              Set the completed date for this repair record.
+            </p>
+
+            <div className="form-control mt-4">
+              <label className="label">
+                <span className="label-text">Select Date</span>
+              </label>
+              <input
+                type="date"
+                className="input input-bordered w-full"
+                value={selectedRepair?.completed_at?.split("T")[0] || ""}
+                onChange={(e) => {
+                  const newDate = e.target.value;
+                  setSelectedRepair((prev) => ({
+                    ...prev,
+                    completed_at: newDate
+                      ? new Date(newDate).toISOString()
+                      : null,
+                  }));
+                }}
+              />
+            </div>
+            <div className="modal-action">
+              <button
+                className="btn"
+                onClick={() => {
+                  setEditCompletedDateModalOpen(false);
+                  setSelectedRepair(null);
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={() =>
+                  updateCompletedAt(
+                    selectedRepair.id,
+                    selectedRepair.completed_at,
+                  )
+                }
+              >
+                Update Completed Date
               </button>
             </div>
           </div>

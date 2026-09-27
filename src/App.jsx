@@ -62,9 +62,7 @@ const UnoperationalVehicles = lazy(
 const VehicleHistory = lazy(() => import("./pages/vehicles/VehicleHistory"));
 
 // Others
-const TrackingHistory = lazy(
-  () => import("./pages/management/TrackingHistory"),
-);
+const RepairHistory = lazy(() => import("./pages/management/RepairHistory"));
 const TrackingPage = lazy(() => import("./pages/management/TrackingPage"));
 
 function App() {
@@ -120,7 +118,7 @@ function App() {
             />
 
             <Route path="/track" element={<TrackingPage />} />
-            <Route path="/tracking-history" element={<TrackingHistory />} />
+            <Route path="/repair-history" element={<RepairHistory />} />
 
             <Route path="/pms" element={<PMS />} />
             <Route path="/battery" element={<Battery />} />
