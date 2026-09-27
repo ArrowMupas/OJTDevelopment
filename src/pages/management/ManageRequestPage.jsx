@@ -5,19 +5,14 @@ import {
   Clipboard,
   ClipboardCheck,
   ClipboardClock,
-  Info,
   Search,
   ArrowRight,
-  CheckCircle,
-  XCircle,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import Tippy from "@tippyjs/react";
 import "tippy.js/themes/light.css";
 import { Link } from "react-router-dom";
 import debounce from "lodash.debounce";
-import clsx from "clsx";
-import toast from "react-hot-toast";
 import VehicleRequestsTable from "../../components/VehicleRequestsTable";
 
 export default function ManageRequestsPage() {

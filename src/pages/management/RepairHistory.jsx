@@ -143,13 +143,13 @@ export default function TrackingHistory() {
     }
 
     await fetchRecords(
-      search,
-      filterType,
-      startDate,
-      endDate,
+      filters.search,
+      filters.type,
+      filters.startDate,
+      filters.endDate,
       page,
-      selectedMechanic,
-      selectedVehicle,
+      filters.mechanic,
+      filters.vehicle,
     );
 
     toast.success(
@@ -172,14 +172,9 @@ export default function TrackingHistory() {
       return;
     }
 
-    await fetchRecords(
-      search,
-      filterType,
-      startDate,
-      endDate,
-      page,
-      selectedMechanic,
-      selectedVehicle,
+    // update local state
+    setRepairs((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, completed_at: completedAt } : r)),
     );
 
     toast.success("Completed date updated successfully");
@@ -519,7 +514,7 @@ export default function TrackingHistory() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
+          <div className="grid grid-cols-2 sm:gap-3">
             {repairs.map((repair) => {
               const steps = getSteps(repair.type);
 
@@ -536,12 +531,12 @@ export default function TrackingHistory() {
                           {repair.vehicles?.name}
                         </h2>
 
-                        <div className="badge badge-primary badge-dash badge-sm truncate">
+                        <div className="badge badge-primary badge-dash truncate">
                           {repair.vehicles?.plate_number}
                         </div>
 
                         <div
-                          className={`badge badge-sm uppercase ${
+                          className={`badge badge-soft uppercase ${
                             repair.type === "external"
                               ? "badge-warning"
                               : repair.type === "internal-mini"
@@ -555,22 +550,18 @@ export default function TrackingHistory() {
                               ? "Internal"
                               : "External"}
                         </div>
-
-                        <div className="badge badge-success badge-sm">
-                          Completed
-                        </div>
                       </div>
 
                       <div className="flex gap-1">
                         <button
-                          className="btn btn-sm btn-info btn-square btn-outline"
+                          className="btn btn-info btn-square btn-outline"
                           onClick={() => openEditModal(repair)}
                           title="Edit step"
                         >
                           <Edit size={14} />
                         </button>
                         <button
-                          className="btn btn-sm btn-error btn-square btn-outline"
+                          className="btn btn-error btn-square btn-outline"
                           onClick={() => openDeleteModal(repair)}
                           title="Delete record"
                         >
@@ -610,12 +601,18 @@ export default function TrackingHistory() {
                     </div>
 
                     {/* TIMELINE */}
-                    <div className="mt-5">
+                    <div className="mt-5 hidden sm:block">
                       <ul className="steps steps-vertical sm:steps-horizontal w-full overflow-x-clip">
                         {steps.map((label, i) => (
                           <li
                             key={i}
-                            className="step step-success text-success text-xs font-bold"
+                            className={`step text-xs font-bold ${
+                              repair.type === "external"
+                                ? "step-warning"
+                                : repair.type === "internal-mini"
+                                  ? "step-info"
+                                  : "step-primary"
+                            }`}
                           >
                             {label}
                           </li>
@@ -739,7 +736,7 @@ export default function TrackingHistory() {
                 Cancel
               </button>
               <button
-                className="btn btn-primary"
+                className="btn admin-btn"
                 onClick={() =>
                   updateRepairStep(selectedRepair.id, selectedStep)
                 }
@@ -751,7 +748,7 @@ export default function TrackingHistory() {
         </dialog>
       )}
 
-      {editCompletedDateModalOpen && (
+      {editCompletedDateModalOpen && selectedRepair && (
         <dialog open className="modal modal-open">
           <div className="modal-box">
             <h3 className="text-lg font-bold">Update Completed Date</h3>
@@ -789,7 +786,7 @@ export default function TrackingHistory() {
                 Cancel
               </button>
               <button
-                className="btn btn-primary"
+                className="btn admin-btn"
                 onClick={() =>
                   updateCompletedAt(
                     selectedRepair.id,
@@ -804,7 +801,6 @@ export default function TrackingHistory() {
         </dialog>
       )}
 
-      {/* DELETE CONFIRMATION MODAL */}
       {deleteModalOpen && selectedRepair && (
         <dialog open className="modal modal-open">
           <div className="modal-box">
