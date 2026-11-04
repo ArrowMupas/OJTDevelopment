@@ -289,6 +289,14 @@ export default function VehicleRequestsTable({
                             <h3 className="font-bold">Requested By</h3>
                             <p>{req.requested_by || "None"}</p>
 
+                            <h3 className="mt-2 font-bold">Requested On</h3>
+                            <p>
+                              {format(
+                                new Date(req.timestamp),
+                                "MMM. d, yyyy, hh:mm a",
+                              )}
+                            </p>
+
                             <h3 className="mt-2 font-bold">Instructions</h3>
                             <p>{req.other_instructions || "None"}</p>
 
